@@ -2,5 +2,6 @@
 {
     Grass,
     Water,
-    Stone
+    Stone,
+    Forrest
 }
