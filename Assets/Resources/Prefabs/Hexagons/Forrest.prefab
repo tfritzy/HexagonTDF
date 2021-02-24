@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecorationOptions:
-  - {fileID: 4661435515762455780, guid: e289bf5debb17f6459818c207d781953, type: 3}
+  - {fileID: 7818883673552861376, guid: a1db0d457da88e94a932410192b66751, type: 3}
   NumDecorations: 2
 --- !u!1001 &79080408143863217
 PrefabInstance:

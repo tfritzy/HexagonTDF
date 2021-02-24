@@ -63,4 +63,12 @@ public class BoardManager : MonoBehaviour
         Contract.Map map = JsonConvert.DeserializeObject<Contract.Map>(text.text);
         return map.TypeMap;
     }
+
+    public void SetGreyscale()
+    {
+        foreach (Hexagon hexagon in Map)
+        {
+            hexagon.SetMaterial(Constants.Materials.Greyscale);
+        }
+    }
 }

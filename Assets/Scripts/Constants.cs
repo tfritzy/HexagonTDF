@@ -19,4 +19,20 @@ public static class Constants
         public static int Default = 1 << 0;
         public static int Hexagons = 1 << 8;
     }
+
+    public static class Materials
+    {
+        private static Material greyscale;
+        public static Material Greyscale
+        {
+            get
+            {
+                if (greyscale == null)
+                {
+                    greyscale = Resources.Load<Material>("Materials/Greyscale");
+                }
+                return greyscale;
+            }
+        }
+    }
 }
