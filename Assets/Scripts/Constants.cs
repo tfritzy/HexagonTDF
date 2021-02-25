@@ -34,5 +34,18 @@ public static class Constants
                 return greyscale;
             }
         }
+
+        private static Material normal;
+        public static Material Normal
+        {
+            get
+            {
+                if (normal == null)
+                {
+                    normal = Resources.Load<Material>("Materials/ColorPalette");
+                }
+                return normal;
+            }
+        }
     }
 }
