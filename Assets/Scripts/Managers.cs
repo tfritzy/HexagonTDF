@@ -45,4 +45,30 @@ public static class Managers
             return boardManager;
         }
     }
+
+    private static Builder builder;
+    public static Builder Builder
+    {
+        get
+        {
+            if (builder == null)
+            {
+                builder = GameObject.Find("Builder").GetComponent<Builder>();
+            }
+            return builder;
+        }
+    }
+
+    private static Transform canvas;
+    public static Transform Canvas
+    {
+        get
+        {
+            if (canvas == null)
+            {
+                canvas = GameObject.Find("Canvas").transform;
+            }
+            return canvas;
+        }
+    }
 }

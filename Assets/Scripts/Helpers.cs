@@ -13,4 +13,12 @@ public static class Helpers
 
         return null;
     }
+
+    public static void SetMaterialsRecursively(this GameObject gameobject, Material material)
+    {
+        foreach (MeshRenderer renderer in gameobject.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.material = material;
+        }
+    }
 }

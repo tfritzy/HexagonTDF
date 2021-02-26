@@ -29,14 +29,12 @@ public class Hexagon : MonoBehaviour, Interactable
     {
         Destroy(model);
         this.model = Instantiate(Prefabs.Hexagons[Type], this.transform, false);
+        this.model.transform.position = this.model.transform.position + Vector3.down;
     }
 
     public void SetMaterial(Material material)
     {
-        foreach (MeshRenderer renderer in this.meshRenderers)
-        {
-            renderer.material = material;
-        }
+        this.gameObject.SetMaterialsRecursively(material);
     }
 
     private void FindMeshRenderers()
