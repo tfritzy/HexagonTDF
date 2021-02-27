@@ -59,6 +59,20 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<UIIconType, Sprite> uIIcons;
+    public static Dictionary<UIIconType, Sprite> UIIcons
+    {
+        get
+        {
+            uIIcons = new Dictionary<UIIconType, Sprite>();
+            foreach (UIIconType iconType in Enum.GetValues(typeof(UIIconType)))
+            {
+                uIIcons[iconType] = Resources.Load<Sprite>("Icons/" + iconType);
+            }
+            return uIIcons;
+        }
+    }
+
     private static GameObject attackTowerBuildMenu;
     public static GameObject AttackTowerBuildMenu
     {

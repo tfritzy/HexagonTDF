@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
+    public const float MOVEMENT_SPEED = 9f;
+    public bool IsFrozen;
+
     private const float INPUT_BUFFER_DURATION = .25f;
     private const float MAX_CAMERA_VELOCITY = 20f;
-
-    public const float MOVEMENT_SPEED = 9f;
     private Vector3? touchStartPosition;
     private Vector3 originalCameraPosition;
     private Vector3 lastInputPosition;
@@ -31,6 +32,11 @@ public class CameraControl : MonoBehaviour
 
     void Update()
     {
+        if (IsFrozen)
+        {
+            return;
+        }
+
         HandleTouchInput();
         this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.deltaTime;
     }
@@ -97,7 +103,32 @@ public class CameraControl : MonoBehaviour
             velocity = velocity.normalized * MAX_CAMERA_VELOCITY;
         }
 
+        if (IsValidVector(velocity) == false)
+        {
+            return Vector3.zero;
+        }
+
         return velocity;
+    }
+
+    private bool IsValidVector(Vector3 vector)
+    {
+        if (float.IsInfinity(vector.x) || float.IsNaN(vector.x))
+        {
+            return false;
+        }
+
+        if (float.IsInfinity(vector.y) || float.IsNaN(vector.y))
+        {
+            return false;
+        }
+
+        if (float.IsInfinity(vector.z) || float.IsNaN(vector.z))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private Vector3 GetScrollVector(Vector3 inputScreenPosition, Vector3 startScreenPosition)

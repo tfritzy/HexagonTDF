@@ -7,6 +7,7 @@ public abstract class BuildMenu : MonoBehaviour
 {
     public abstract List<BuildingType> BuildingTypes { get; }
 
+    private const int NumButtons = 12;
     private List<Building> buildings;
 
     void Start()
@@ -31,10 +32,16 @@ public abstract class BuildMenu : MonoBehaviour
             button.GetComponent<SelectBuildingButton>().Building = buildings[i];
         }
 
-        for (; i < this.transform.childCount; i++)
+        for (; i < NumButtons; i++)
         {
             Button button = this.transform.GetChild(i).GetComponent<Button>();
             button.gameObject.SetActive(false);
         }
+    }
+
+    public void Close()
+    {
+        Managers.Builder.ToggleBuildMode();
+        Destroy(this.gameObject);
     }
 }

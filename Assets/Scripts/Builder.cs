@@ -5,8 +5,18 @@ using UnityEngine;
 public class Builder : MonoBehaviour
 {
     public bool IsInBuildMode { get; private set; }
-    public Building SelectedBuilding;
+    public Building SelectedBuilding
+    {
+        get { return selectedBuilding; }
+        set
+        {
+            selectedBuilding = value;
+            Managers.CameraControl.IsFrozen = value == null ? false : true;
+            UnHighlightHexagon();
+        }
+    }
 
+    private Building selectedBuilding;
     private Hexagon highlightedHexagon;
     private GameObject buildingInst;
 
@@ -29,10 +39,21 @@ public class Builder : MonoBehaviour
 
         if (IsInBuildMode == false)
         {
-            Destroy(buildingInst);
-            highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
-            highlightedHexagon = null;
+            SelectedBuilding = null;
+            UnHighlightHexagon();
+            Managers.BuildButton.gameObject.SetActive(true);
         }
+        else
+        {
+            Managers.BuildButton.gameObject.SetActive(false);
+        }
+    }
+
+    private void UnHighlightHexagon()
+    {
+        Destroy(buildingInst);
+        highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
+        highlightedHexagon = null;
     }
 
     private void HighlightHexagon()

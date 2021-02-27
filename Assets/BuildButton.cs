@@ -8,11 +8,14 @@ public class BuildButton : MonoBehaviour
 
     public void Click()
     {
-        Destroy(menu);
         Managers.Builder.ToggleBuildMode();
         if (Managers.Builder.IsInBuildMode)
         {
             menu = Instantiate(Prefabs.AttackTowerBuildMenu, Managers.Canvas);
+        }
+        else
+        {
+            Destroy(menu);
         }
     }
 }

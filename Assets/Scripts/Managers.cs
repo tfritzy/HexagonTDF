@@ -32,6 +32,19 @@ public static class Managers
         }
     }
 
+    private static CameraControl cameraControl;
+    public static CameraControl CameraControl
+    {
+        get
+        {
+            if (cameraControl == null)
+            {
+                cameraControl = Camera.GetComponent<CameraControl>();
+            }
+            return cameraControl;
+        }
+    }
+
     private static BoardManager boardManager;
     public static BoardManager BoardManager
     {
@@ -69,6 +82,19 @@ public static class Managers
                 canvas = GameObject.Find("Canvas").transform;
             }
             return canvas;
+        }
+    }
+
+    private static BuildButton buildButton;
+    public static BuildButton BuildButton
+    {
+        get
+        {
+            if (buildButton == null)
+            {
+                buildButton = GameObject.Find("BuildButton").GetComponent<BuildButton>();
+            }
+            return buildButton;
         }
     }
 }
