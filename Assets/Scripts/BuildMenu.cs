@@ -29,7 +29,7 @@ public abstract class BuildMenu : MonoBehaviour
         {
             Button button = this.transform.GetChild(i).GetComponent<Button>();
             button.transform.Find("Image").GetComponent<Image>().sprite = buildings[i].Icon;
-            button.GetComponent<SelectBuildingButton>().Building = buildings[i];
+            button.GetComponent<ButtonFunctions>().Building = buildings[i];
         }
 
         for (; i < NumButtons; i++)

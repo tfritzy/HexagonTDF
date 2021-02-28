@@ -73,16 +73,21 @@ public static class Prefabs
         }
     }
 
-    private static GameObject attackTowerBuildMenu;
-    public static GameObject AttackTowerBuildMenu
+    private static Dictionary<UIElementType, GameObject> uiElements;
+    public static Dictionary<UIElementType, GameObject> UIElements
     {
         get
         {
-            if (attackTowerBuildMenu == null)
+            if (uiElements == null)
             {
-                attackTowerBuildMenu = Resources.Load<GameObject>("Prefabs/UI/AttackTowerBuildMenu");
+                uiElements = new Dictionary<UIElementType, GameObject>();
+                foreach (UIElementType uiElementType in Enum.GetValues(typeof(UIElementType)))
+                {
+                    uiElements[uiElementType] = Resources.Load<GameObject>("Prefabs/UI/" + uiElementType);
+                }
             }
-            return attackTowerBuildMenu;
+
+            return uiElements;
         }
     }
 }

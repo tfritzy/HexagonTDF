@@ -11,7 +11,7 @@ public class BuildButton : MonoBehaviour
         Managers.Builder.ToggleBuildMode();
         if (Managers.Builder.IsInBuildMode)
         {
-            menu = Instantiate(Prefabs.AttackTowerBuildMenu, Managers.Canvas);
+            menu = Instantiate(Prefabs.UIElements[UIElementType.AttackTowerBuildMenu], Managers.Canvas);
         }
         else
         {

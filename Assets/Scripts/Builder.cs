@@ -8,17 +8,27 @@ public class Builder : MonoBehaviour
     public Building SelectedBuilding
     {
         get { return selectedBuilding; }
-        set
+        private set
         {
             selectedBuilding = value;
             Managers.CameraControl.IsFrozen = value == null ? false : true;
             UnHighlightHexagon();
+            ExitConfirmBuildMode();
+            if (selectedBuilding != null)
+            {
+                selectBuildingTime = Time.time;
+            }
         }
     }
 
+    private float selectBuildingTime;
     private Building selectedBuilding;
     private Hexagon highlightedHexagon;
+    private ButtonFunctions responsibleButton;
     private GameObject buildingInst;
+    private bool isInConfirmBuild;
+    private GameObject acceptButton;
+    private GameObject denyButton;
 
     void Start()
     {
@@ -42,6 +52,7 @@ public class Builder : MonoBehaviour
             SelectedBuilding = null;
             UnHighlightHexagon();
             Managers.BuildButton.gameObject.SetActive(true);
+            ExitConfirmBuildMode();
         }
         else
         {
@@ -58,9 +69,15 @@ public class Builder : MonoBehaviour
 
     private void HighlightHexagon()
     {
-        if (SelectedBuilding == null)
+        if (SelectedBuilding == null || isInConfirmBuild)
         {
             return;
+        }
+
+        if (Input.GetMouseButtonUp(0) && Time.time - selectBuildingTime > .25f)
+        {
+            isInConfirmBuild = true;
+            InstantiateAcceptAndDenyButtons();
         }
 
         Hexagon hexagon = Helpers.FindHexByRaycast();
@@ -82,5 +99,43 @@ public class Builder : MonoBehaviour
         }
 
         buildingInst.transform.position = hexagon.transform.position;
+    }
+
+    private void InstantiateAcceptAndDenyButtons()
+    {
+        float distanceBetweenButtons = 150;
+        acceptButton = Instantiate(Prefabs.UIElements[UIElementType.Accept], Managers.Canvas);
+        acceptButton.transform.position = Managers.Camera.WorldToScreenPoint(highlightedHexagon.transform.position) + new Vector3(150, distanceBetweenButtons / 2);
+
+        denyButton = Instantiate(Prefabs.UIElements[UIElementType.Deny], Managers.Canvas);
+        denyButton.transform.position = Managers.Camera.WorldToScreenPoint(highlightedHexagon.transform.position) + new Vector3(150, -distanceBetweenButtons / 2);
+    }
+
+    private void ExitConfirmBuildMode()
+    {
+        selectBuildingTime = Time.time;
+        isInConfirmBuild = false;
+        Destroy(acceptButton);
+        Destroy(denyButton);
+    }
+
+    public void AcceptConstructBuilding()
+    {
+        Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion());
+        UnHighlightHexagon();
+        ExitConfirmBuildMode();
+        this.SelectedBuilding = null;
+        responsibleButton.RevertIcon();
+    }
+
+    public void SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
+    {
+        this.SelectedBuilding = building;
+        this.responsibleButton = responsibleButton;
+    }
+
+    public void DenyConstructBuilding()
+    {
+        ExitConfirmBuildMode();
     }
 }

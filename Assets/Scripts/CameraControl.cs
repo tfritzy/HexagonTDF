@@ -5,8 +5,17 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour
 {
     public const float MOVEMENT_SPEED = 9f;
-    public bool IsFrozen;
+    public bool IsFrozen
+    {
+        get { return isFrozen; }
+        set
+        {
+            isFrozen = value;
+            previousInputBuffer = new LinkedList<InputBufferEntry>();
+        }
+    }
 
+    private bool isFrozen;
     private const float INPUT_BUFFER_DURATION = .25f;
     private const float MAX_CAMERA_VELOCITY = 20f;
     private Vector3? touchStartPosition;
@@ -88,6 +97,11 @@ public class CameraControl : MonoBehaviour
 
     private Vector3 GetTouchEndVelocity(LinkedList<InputBufferEntry> previousInputBuffer)
     {
+        if (previousInputBuffer.Count < 2)
+        {
+            return Vector3.zero;
+        }
+
         float timeDelta = previousInputBuffer.Last.Value.Time - previousInputBuffer.First.Value.Time;
         Vector3 delta = GetScrollVector(previousInputBuffer.Last.Value.Position, previousInputBuffer.First.Value.Position);
 

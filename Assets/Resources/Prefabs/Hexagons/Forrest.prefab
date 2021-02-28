@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecorationOptions:
   - {fileID: 7818883673552861376, guid: a1db0d457da88e94a932410192b66751, type: 3}
-  NumDecorations: 2
+  NumDecorations: 1
 --- !u!1001 &79080408143863217
 PrefabInstance:
   m_ObjectHideFlags: 0
