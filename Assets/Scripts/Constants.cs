@@ -60,5 +60,18 @@ public static class Constants
                 return blueSeethrough;
             }
         }
+
+        private static Material redSeethrough;
+        public static Material RedSeethrough
+        {
+            get
+            {
+                if (redSeethrough == null)
+                {
+                    redSeethrough = Resources.Load<Material>("Materials/RedSeethrough");
+                }
+                return redSeethrough;
+            }
+        }
     }
 }

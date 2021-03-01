@@ -25,8 +25,9 @@ public class BoardManager : MonoBehaviour
             for (int x = 0; x < typeMap.GetLength(0); x++)
             {
                 GameObject go = Instantiate(Hexagon, GetHexagonPosition(x, y), new Quaternion(), this.transform);
+                Hexagon hexagonScript = Prefabs.GetHexagonScript(typeMap[x, y]);
+                go.AddComponent(hexagonScript.GetType());
                 Map[x, y] = go.GetComponent<Hexagon>();
-                Map[x, y].Type = typeMap[x, y];
             }
         }
     }

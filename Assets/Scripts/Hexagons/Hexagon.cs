@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hexagon : MonoBehaviour, Interactable
+public abstract class Hexagon : MonoBehaviour, Interactable
 {
-    public HexagonType Type;
+    public abstract HexagonType Type { get; }
+    public abstract bool IsBuildable { get; }
     public Vector2Int GridPosition;
 
     private GameObject model;
@@ -20,7 +21,6 @@ public class Hexagon : MonoBehaviour, Interactable
     {
         if (Managers.Editor != null)
         {
-            this.Type = Managers.Editor.SelectedType;
             SetModel();
         }
     }
@@ -28,7 +28,7 @@ public class Hexagon : MonoBehaviour, Interactable
     private void SetModel()
     {
         Destroy(model);
-        this.model = Instantiate(Prefabs.Hexagons[Type], this.transform, false);
+        this.model = Instantiate(Prefabs.HexagonModels[Type], this.transform, false);
         this.model.transform.position = this.model.transform.position + Vector3.down;
     }
 

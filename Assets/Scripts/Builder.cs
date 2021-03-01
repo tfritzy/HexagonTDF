@@ -74,31 +74,41 @@ public class Builder : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonUp(0) && Time.time - selectBuildingTime > .25f)
+        HighlightHexagon(Helpers.FindHexByRaycast());
+
+        if (Input.GetMouseButtonUp(0) && Time.time - selectBuildingTime > .25f && highlightedHexagon.IsBuildable)
         {
             isInConfirmBuild = true;
             InstantiateAcceptAndDenyButtons();
         }
+    }
 
-        Hexagon hexagon = Helpers.FindHexByRaycast();
-        if (hexagon != null)
+    private void HighlightHexagon(Hexagon newPotentialHexagon)
+    {
+        if (newPotentialHexagon == null)
         {
-            if (hexagon != highlightedHexagon)
-            {
-                highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
-                hexagon.SetMaterial(Constants.Materials.Greyscale);
-                highlightedHexagon = hexagon;
-                Destroy(buildingInst);
-            }
+            return;
         }
 
-        if (buildingInst == null)
+        if (newPotentialHexagon == highlightedHexagon)
         {
-            buildingInst = Instantiate(SelectedBuilding.gameObject);
+            return;
+        }
+
+        highlightedHexagon = newPotentialHexagon;
+
+        Destroy(buildingInst);
+        buildingInst = Instantiate(SelectedBuilding.gameObject);
+        buildingInst.transform.position = highlightedHexagon.transform.position;
+
+        if (highlightedHexagon.IsBuildable)
+        {
             buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
         }
-
-        buildingInst.transform.position = hexagon.transform.position;
+        else
+        {
+            buildingInst.SetMaterialsRecursively(Constants.Materials.RedSeethrough);
+        }
     }
 
     private void InstantiateAcceptAndDenyButtons()
