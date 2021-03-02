@@ -10,8 +10,8 @@ public class Editor : MonoBehaviour
 
     public void Save()
     {
-        Contract.Map map = new Contract.Map();
-        map.TypeMap = Managers.BoardManager.GetTypeMap();
+        Map map = new Map();
+        map.Hexagons = Managers.BoardManager.GetTypeMap();
 
         string json = JsonConvert.SerializeObject(map);
         string fileName = Application.dataPath + "/Resources/Maps/" + Guid.NewGuid().ToString("N") + ".json";
