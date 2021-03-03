@@ -8,6 +8,8 @@ public static class Constants
     public const float HEXAGON_R = 1.066f;
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
+    public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
+    public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
 
     public static class FilePaths
     {

@@ -621,8 +621,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cbad0a6491390842a802033be91c186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hexagon: {fileID: 5531579731685991949, guid: e3870a1bff5b33f489ee2703f3b0f3dc, type: 3}
+  HexagonPrefab: {fileID: 5531579731685991949, guid: e3870a1bff5b33f489ee2703f3b0f3dc, type: 3}
   BoardSideLength: 30
+  Source: {fileID: 0}
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
 --- !u!4 &1096331704
 Transform:

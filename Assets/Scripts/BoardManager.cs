@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public GameObject Hexagon;
+    public GameObject HexagonPrefab;
     public int BoardSideLength = 30;
     public Hexagon[,] Hexagons;
     public new Dictionary<Vector2Int, Building> Buildings;
+    public Building Source;
     public string ActiveMapName;
 
     void Start()
@@ -36,10 +37,11 @@ public class BoardManager : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = Instantiate(Hexagon, GetHexagonPosition(x, y), new Quaternion(), this.transform);
+                GameObject go = Instantiate(HexagonPrefab, Hexagon.ToWorldPosition(x, y), new Quaternion(), this.transform);
                 Hexagon hexagonScript = Prefabs.GetHexagonScript(hexagonMap[x, y].Value);
                 go.AddComponent(hexagonScript.GetType());
                 this.Hexagons[x, y] = go.GetComponent<Hexagon>();
+                this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
             }
         }
     }
@@ -53,10 +55,16 @@ public class BoardManager : MonoBehaviour
             Vector2Int position = new Vector2Int(int.Parse(posSplits[0]), int.Parse(posSplits[1]));
             this.Buildings[position] = Instantiate(
                     Prefabs.Buildings[buildingMap[strPosition]],
-                    GetHexagonPosition(position.x, position.y),
+                    Hexagon.ToWorldPosition(position),
                     new Quaternion(),
                     this.transform)
                 .GetComponent<Building>();
+            this.Buildings[position].Position = position;
+
+            if (buildingMap[strPosition] == BuildingType.Source)
+            {
+                Source = this.Buildings[position];
+            }
         }
     }
 
@@ -72,13 +80,6 @@ public class BoardManager : MonoBehaviour
         }
 
         return typeMap;
-    }
-
-    private Vector3 GetHexagonPosition(int x, int y)
-    {
-        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
-        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        return new Vector3(xF, 0f, zF);
     }
 
     private Map LoadMap()

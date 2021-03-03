@@ -10,6 +10,25 @@ public abstract class Hexagon : MonoBehaviour, Interactable
 
     private GameObject model;
     private List<MeshRenderer> meshRenderers;
+    private readonly List<Vector2Int> oddNeighborPattern = new List<Vector2Int>()
+    {
+        new Vector2Int(-1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(1, 1),
+        new Vector2Int(0, 1),
+        new Vector2Int(-1, 1)
+    };
+
+    private readonly List<Vector2Int> evenNeighborPattern = new List<Vector2Int>()
+    {
+        new Vector2Int(-1,-1),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, 1),
+        new Vector2Int(-1, 0)
+    };
 
     void Start()
     {
@@ -22,6 +41,14 @@ public abstract class Hexagon : MonoBehaviour, Interactable
         if (Managers.Editor != null)
         {
             SetModel();
+        }
+    }
+
+    public bool IsTraversable
+    {
+        get
+        {
+            return IsBuildable;
         }
     }
 
@@ -44,5 +71,29 @@ public abstract class Hexagon : MonoBehaviour, Interactable
         {
             meshRenderers.Add(renderer);
         }
+    }
+
+    public Vector2Int GetNeighborPosition(int index)
+    {
+        if (GridPosition.x % 2 == 0)
+        {
+            return GridPosition + evenNeighborPattern[index];
+        }
+        else
+        {
+            return GridPosition + oddNeighborPattern[index];
+        }
+    }
+
+    public static Vector3 ToWorldPosition(int x, int y)
+    {
+        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
+        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
+        return new Vector3(xF, 0f, zF);
+    }
+
+    public static Vector3 ToWorldPosition(Vector2Int position)
+    {
+        return ToWorldPosition(position.x, position.y);
     }
 }
