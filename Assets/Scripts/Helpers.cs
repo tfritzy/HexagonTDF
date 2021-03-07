@@ -42,7 +42,11 @@ public static class Helpers
                     continue;
                 }
 
-                predecessorGrid[testPosition.x, testPosition.y] = current;
+                if (predecessorGrid[testPosition.x, testPosition.y] == Constants.MaxVector2Int)
+                {
+                    predecessorGrid[testPosition.x, testPosition.y] = current;
+                }
+
                 if (testPosition == endPos)
                 {
                     return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, endPos);
@@ -78,6 +82,8 @@ public static class Helpers
             path.Add(current);
             current = grid[current.x, current.y];
         }
+
+        path.Reverse();
 
         return path;
     }

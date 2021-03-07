@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: {x: 0, y: 0}
   Dot: {fileID: 5621509275669379319, guid: 1185b39b99a176c439cf0af0e1818de8, type: 3}
+  Enemy: {fileID: 4902055353940787090, guid: 52514cd2c334bbd48a06c0f8829615e4, type: 3}
 --- !u!1001 &6463697264862019153
 PrefabInstance:
   m_ObjectHideFlags: 0

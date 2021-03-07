@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Portal : Building
 {
-    private List<Vector2Int> pathToSource;
     public override BuildingType Type => BuildingType.Portal;
     public GameObject Dot;
+    public GameObject Enemy;
+
+    private List<Vector2Int> pathToSource;
 
     protected override void Setup()
     {
@@ -18,5 +20,16 @@ public class Portal : Building
         }
 
         base.Setup();
+    }
+
+    private float lastEnemyTime;
+    protected override void UpdateLoop()
+    {
+        if (Time.time > lastEnemyTime + 5f)
+        {
+            GameObject enemy = Instantiate(Enemy, this.transform.position, new Quaternion(), null);
+            enemy.GetComponent<Enemy>().Setup(pathToSource);
+            lastEnemyTime = Time.time;
+        }
     }
 }
