@@ -42,6 +42,23 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<BuildingType, GameObject> projectiles;
+    public static Dictionary<BuildingType, GameObject> Projectiles
+    {
+        get
+        {
+            if (projectiles == null)
+            {
+                projectiles = new Dictionary<BuildingType, GameObject>();
+                foreach (BuildingType buildingType in Enum.GetValues(typeof(BuildingType)))
+                {
+                    projectiles[buildingType] = Resources.Load<GameObject>("Prefabs/Projectiles/" + buildingType);
+                }
+            }
+            return projectiles;
+        }
+    }
+
     public static Hexagon GetHexagonScript(HexagonType hexagonType)
     {
         switch (hexagonType)

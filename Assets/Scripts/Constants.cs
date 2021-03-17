@@ -20,6 +20,7 @@ public static class Constants
     {
         public static int Default = 1 << 0;
         public static int Hexagons = 1 << 8;
+        public static int Characters = 1 << 9;
     }
 
     public static class Materials

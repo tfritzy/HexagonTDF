@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Character
 {
     public float MovementSpeed;
     public int PathProgress;
+    public override Alliances Alliance => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Player;
 
     private List<Vector2Int> path;
     private Rigidbody rb;
+
 
     public void Setup(List<Vector2Int> path)
     {

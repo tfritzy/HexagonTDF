@@ -111,6 +111,13 @@ public class Builder : MonoBehaviour
         }
     }
 
+    private void CreateHighlightBuilding()
+    {
+        Destroy(buildingInst);
+        buildingInst = Instantiate(SelectedBuilding.gameObject);
+        Destroy(buildingInst.GetComponent<Character>());
+    }
+
     private void InstantiateAcceptAndDenyButtons()
     {
         float distanceBetweenButtons = 150;

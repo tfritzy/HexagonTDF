@@ -5,6 +5,11 @@ using UnityEngine;
 public class Portal : Building
 {
     public override BuildingType Type => BuildingType.Portal;
+
+    public override Alliances Alliance => Alliances.Illigons;
+
+    public override Alliances Enemies => Alliances.Player;
+
     public GameObject Dot;
     public GameObject Enemy;
 
