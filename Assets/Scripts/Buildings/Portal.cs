@@ -5,9 +5,7 @@ using UnityEngine;
 public class Portal : Building
 {
     public override BuildingType Type => BuildingType.Portal;
-
     public override Alliances Alliance => Alliances.Illigons;
-
     public override Alliances Enemies => Alliances.Player;
 
     public GameObject Dot;
@@ -21,7 +19,6 @@ public class Portal : Building
         foreach (Vector2Int position in pathToSource)
         {
             Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null);
-            Debug.Log(position);
         }
 
         base.Setup();
@@ -33,7 +30,7 @@ public class Portal : Building
         if (Time.time > lastEnemyTime + 5f)
         {
             GameObject enemy = Instantiate(Enemy, this.transform.position, new Quaternion(), null);
-            enemy.GetComponent<Enemy>().Setup(pathToSource);
+            enemy.GetComponent<Enemy>().SetPath(pathToSource);
             lastEnemyTime = Time.time;
         }
     }

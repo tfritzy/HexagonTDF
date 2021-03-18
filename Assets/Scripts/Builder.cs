@@ -97,8 +97,7 @@ public class Builder : MonoBehaviour
 
         highlightedHexagon = newPotentialHexagon;
 
-        Destroy(buildingInst);
-        buildingInst = Instantiate(SelectedBuilding.gameObject);
+        CreateHighlightBuildingIfNeeded();
         buildingInst.transform.position = highlightedHexagon.transform.position;
 
         if (highlightedHexagon.IsBuildable)
@@ -111,11 +110,13 @@ public class Builder : MonoBehaviour
         }
     }
 
-    private void CreateHighlightBuilding()
+    private void CreateHighlightBuildingIfNeeded()
     {
-        Destroy(buildingInst);
-        buildingInst = Instantiate(SelectedBuilding.gameObject);
-        Destroy(buildingInst.GetComponent<Character>());
+        if (buildingInst == null)
+        {
+            buildingInst = Instantiate(SelectedBuilding.gameObject);
+            Destroy(buildingInst.GetComponent<Building>());
+        }
     }
 
     private void InstantiateAcceptAndDenyButtons()

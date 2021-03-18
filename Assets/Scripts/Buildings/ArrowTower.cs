@@ -7,7 +7,7 @@ public class ArrowTower : AttackTower
 {
     public override BuildingType Type => BuildingType.ArrowTower;
     public override float Cooldown => 3f;
-    public override float Damage => 5f;
+    public override int Damage => 1;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override float Range => 5;

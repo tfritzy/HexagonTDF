@@ -8,26 +8,27 @@ public class Enemy : Character
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
+    public override int StartingHealth => 2;
 
     private List<Vector2Int> path;
     private Rigidbody rb;
 
-
-    public void Setup(List<Vector2Int> path)
+    public void SetPath(List<Vector2Int> path)
     {
         this.path = path;
+    }
+
+    protected override void Setup()
+    {
         PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
+        base.Setup();
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
+    protected override void UpdateLoop()
     {
         FollowPath();
+        base.UpdateLoop();
     }
 
     private void FollowPath()

@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class AttackTower : Building
 {
     public abstract float Cooldown { get; }
-    public abstract float Damage { get; }
+    public abstract int Damage { get; }
     public abstract float Range { get; }
     public Character Target;
     private const float projectileSpeed = 10;
@@ -26,7 +26,7 @@ public abstract class AttackTower : Building
         if (Time.time > lastAttackTime + Cooldown && Target != null)
         {
             GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.transform.position, new Quaternion());
-            projectile.GetComponent<Projectile>().Initialize(null, this);
+            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
             projectile.GetComponent<Rigidbody>().velocity = (Target.transform.position - projectile.transform.position).normalized * projectileSpeed;
             lastAttackTime = Time.time;
         }
@@ -73,5 +73,10 @@ public abstract class AttackTower : Building
         }
 
         return closest;
+    }
+
+    private void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    {
+        target.TakeDamage(Damage);
     }
 }

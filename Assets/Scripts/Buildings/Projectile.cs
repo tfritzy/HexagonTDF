@@ -9,6 +9,7 @@ public class Projectile : MonoBehaviour
     protected Character target;
     protected float birthTime;
     private Character attacker;
+    private bool hasAlreadyTriggered;
 
     void Start()
     {
@@ -44,9 +45,15 @@ public class Projectile : MonoBehaviour
             return;
         }
 
+        if (hasAlreadyTriggered)
+        {
+            return;
+        }
+
         if (isCollisionTarget(attacker, other.gameObject))
         {
-            dealDamageToEnemy(attacker, other.transform.parent.GetComponent<Character>(), this.gameObject);
+            hasAlreadyTriggered = true;
+            dealDamageToEnemy(attacker, other.transform.GetComponent<Character>(), this.gameObject);
             GameObject.Destroy(this.gameObject);
         }
     }
