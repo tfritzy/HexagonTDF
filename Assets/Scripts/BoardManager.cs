@@ -8,7 +8,8 @@ public class BoardManager : MonoBehaviour
     public GameObject HexagonPrefab;
     public int BoardSideLength = 30;
     public Hexagon[,] Hexagons;
-    public new Dictionary<Vector2Int, Building> Buildings;
+    public Dictionary<Vector2Int, Building> Buildings;
+    public List<Portal> Portals;
     public Building Source;
     public string ActiveMapName;
 
@@ -46,6 +47,21 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void AddBuilding(Building building)
+    {
+        if (Buildings.ContainsKey(building.Position) && Buildings[building.Position] != null)
+        {
+            throw new System.ArgumentException("Cannot build a building on an occupied spot.");
+        }
+
+        Buildings[building.Position] = building;
+
+        foreach (Portal portal in Portals)
+        {
+            portal.RecalculatePath();
+        }
+    }
+
     private void SpawnBuildings(Dictionary<string, BuildingType> buildingMap)
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
@@ -53,17 +69,22 @@ public class BoardManager : MonoBehaviour
         {
             string[] posSplits = strPosition.Split(',');
             Vector2Int position = new Vector2Int(int.Parse(posSplits[0]), int.Parse(posSplits[1]));
-            this.Buildings[position] = Instantiate(
+            Building building = Instantiate(
                     Prefabs.Buildings[buildingMap[strPosition]],
                     Hexagon.ToWorldPosition(position),
                     new Quaternion(),
                     this.transform)
-                .GetComponent<Building>();
-            this.Buildings[position].Position = position;
+                    .GetComponent<Building>();
+            building.Initialize(position);
 
             if (buildingMap[strPosition] == BuildingType.Source)
             {
                 Source = this.Buildings[position];
+            }
+
+            if (buildingMap[strPosition] == BuildingType.Portal)
+            {
+                Portals.Add((Portal)building);
             }
         }
     }
@@ -87,5 +108,10 @@ public class BoardManager : MonoBehaviour
         TextAsset text = Resources.Load<TextAsset>(Constants.FilePaths.Maps + ActiveMapName);
         Map map = JsonConvert.DeserializeObject<Map>(text.text);
         return map;
+    }
+
+    public bool IsBlockedByBuilding(Vector2Int gridPosition)
+    {
+        return Buildings.ContainsKey(gridPosition) && Buildings[gridPosition] != null;
     }
 }

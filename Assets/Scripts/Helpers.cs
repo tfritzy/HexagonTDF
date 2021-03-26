@@ -33,11 +33,16 @@ public static class Helpers
         while (q.Count > 0)
         {
             Vector2Int current = q.Dequeue();
+            if (visited.Contains(current))
+            {
+                continue;
+            }
+
             visited.Add(current);
             for (int i = 0; i < 6; i++)
             {
                 Vector2Int testPosition = grid[current.x, current.y].GetNeighborPosition(i);
-                if (visited.Contains(testPosition) || grid[testPosition.x, testPosition.y].IsTraversable == false)
+                if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
                 }
@@ -50,6 +55,11 @@ public static class Helpers
                 if (testPosition == endPos)
                 {
                     return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, endPos);
+                }
+
+                if (visited.Contains(testPosition) || grid[testPosition.x, testPosition.y].IsTraversable == false)
+                {
+                    continue;
                 }
 
                 q.Enqueue(testPosition);
@@ -81,10 +91,30 @@ public static class Helpers
         {
             path.Add(current);
             current = grid[current.x, current.y];
+
+            if (current == startPosition)
+            {
+                break;
+            }
         }
 
         path.Reverse();
 
         return path;
+    }
+
+    public static bool IsInBounds(Vector2Int position)
+    {
+        if (position.x < 0 || position.x >= Managers.BoardManager.Hexagons.GetLength(0))
+        {
+            return false;
+        }
+
+        if (position.y < 0 || position.y >= Managers.BoardManager.Hexagons.GetLength(1))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

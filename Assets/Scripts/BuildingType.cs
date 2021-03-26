@@ -1,6 +1,9 @@
 ﻿public enum BuildingType
 {
-    ArrowTower,
     Source,
     Portal,
+    ArrowTower,
+    MageTower,
+    RockTower,
+    Lumbermill,
 }

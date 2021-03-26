@@ -139,7 +139,8 @@ public class Builder : MonoBehaviour
 
     public void AcceptConstructBuilding()
     {
-        Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion());
+        Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
+        building.Initialize(highlightedHexagon.GridPosition);
         UnHighlightHexagon();
         ExitConfirmBuildMode();
         this.SelectedBuilding = null;

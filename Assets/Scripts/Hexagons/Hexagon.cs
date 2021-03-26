@@ -48,7 +48,7 @@ public abstract class Hexagon : MonoBehaviour, Interactable
     {
         get
         {
-            return IsBuildable;
+            return IsBuildable && Managers.BoardManager.IsBlockedByBuilding(this.GridPosition) == false;
         }
     }
 
@@ -75,13 +75,24 @@ public abstract class Hexagon : MonoBehaviour, Interactable
 
     public Vector2Int GetNeighborPosition(int index)
     {
+        Vector2Int position;
+
         if (GridPosition.x % 2 == 0)
         {
-            return GridPosition + evenNeighborPattern[index];
+            position = GridPosition + evenNeighborPattern[index];
         }
         else
         {
-            return GridPosition + oddNeighborPattern[index];
+            position = GridPosition + oddNeighborPattern[index];
+        }
+
+        if (Helpers.IsInBounds(position))
+        {
+            return position;
+        }
+        else
+        {
+            return Constants.MinVector2Int;
         }
     }
 

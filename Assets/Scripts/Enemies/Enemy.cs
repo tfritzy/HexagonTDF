@@ -16,6 +16,12 @@ public class Enemy : Character
     public void SetPath(List<Vector2Int> path)
     {
         this.path = path;
+
+        if (this.path == null || this.path.Count == 0)
+        {
+            Destroy(this.gameObject);
+            throw new System.ArgumentException("No path was provided to this enemy. Deleting.");
+        }
     }
 
     protected override void Setup()

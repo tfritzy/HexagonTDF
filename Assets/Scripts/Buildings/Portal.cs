@@ -15,13 +15,30 @@ public class Portal : Building
 
     protected override void Setup()
     {
-        pathToSource = Helpers.FindPath(Managers.BoardManager.Hexagons, Position, Managers.BoardManager.Source.Position);
-        foreach (Vector2Int position in pathToSource)
+        dots = new List<GameObject>();
+        RecalculatePath();
+        base.Setup();
+    }
+
+    private List<GameObject> dots;
+    public void RecalculatePath()
+    {
+        foreach (GameObject dot in dots)
         {
-            Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null);
+            Destroy(dot);
         }
 
-        base.Setup();
+        pathToSource = Helpers.FindPath(Managers.BoardManager.Hexagons, Position, Managers.BoardManager.Source.Position);
+
+        if (pathToSource == null)
+        {
+            throw new System.NullReferenceException($"Portal was unable to find path to source.");
+        }
+
+        foreach (Vector2Int position in pathToSource)
+        {
+            dots.Add(Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null));
+        }
     }
 
     private float lastEnemyTime;
