@@ -6,4 +6,6 @@
     MageTower,
     RockTower,
     Lumbermill,
+    LightningTower,
+    FireTower,
 }

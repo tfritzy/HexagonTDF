@@ -117,4 +117,26 @@ public static class Helpers
 
         return true;
     }
+
+    public static void TriggerAllParticleSystems(Transform transform, bool start)
+    {
+        if (transform == null)
+        {
+            return;
+        }
+
+        transform.gameObject.TryGetComponent<ParticleSystem>(out ParticleSystem parentPS);
+        parentPS?.Stop();
+        foreach (ParticleSystem ps in transform.GetComponentsInChildren<ParticleSystem>())
+        {
+            if (start)
+            {
+                ps.Play();
+            }
+            else
+            {
+                ps.Stop();
+            }
+        }
+    }
 }

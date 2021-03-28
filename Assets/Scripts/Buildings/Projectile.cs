@@ -10,9 +10,14 @@ public class Projectile : MonoBehaviour
     protected float birthTime;
     private Character attacker;
     private bool hasAlreadyTriggered;
+    private Transform trailParticles;
+    private Transform explosionParticles;
 
     void Start()
     {
+        this.trailParticles = this.transform.Find("Trail");
+        this.explosionParticles = this.transform.Find("Explosion");
+        Helpers.TriggerAllParticleSystems(this.explosionParticles, false);
         StartLogic();
     }
 
@@ -54,6 +59,9 @@ public class Projectile : MonoBehaviour
         {
             hasAlreadyTriggered = true;
             dealDamageToEnemy(attacker, other.transform.GetComponent<Character>(), this.gameObject);
+            Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
+            DetachParticles(this.explosionParticles);
+            DetachParticles(this.trailParticles);
             GameObject.Destroy(this.gameObject);
         }
     }
@@ -72,5 +80,16 @@ public class Projectile : MonoBehaviour
     {
         this.Rigidbody = this.gameObject.AddComponent<Rigidbody>();
         this.Rigidbody.useGravity = false;
+    }
+
+    private void DetachParticles(Transform particleGroup)
+    {
+        if (particleGroup == null)
+        {
+            return;
+        }
+
+        particleGroup.parent = null;
+        GameObject.Destroy(particleGroup.gameObject, 1f);
     }
 }

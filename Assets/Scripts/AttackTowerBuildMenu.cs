@@ -8,7 +8,9 @@ public class AttackTowerBuildMenu : BuildMenu
     {
         BuildingType.ArrowTower,
         BuildingType.MageTower,
-        BuildingType.RockTower
+        BuildingType.RockTower,
+        BuildingType.LightningTower,
+        BuildingType.FireTower
     };
 
     public override List<BuildingType> BuildingTypes

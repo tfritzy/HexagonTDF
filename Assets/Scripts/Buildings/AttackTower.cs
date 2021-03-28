@@ -7,9 +7,11 @@ public abstract class AttackTower : Building
     public abstract float Range { get; }
     public Character Target;
     private const float projectileSpeed = 10;
+    protected Vector3 projectileStartPosition;
 
     protected override void Setup()
     {
+        this.projectileStartPosition = this.transform.Find("ProjectileStartPosition")?.transform.position ?? this.transform.position;
         base.Setup();
     }
 
@@ -25,16 +27,16 @@ public abstract class AttackTower : Building
     {
         if (Time.time > lastAttackTime + Cooldown && Target != null)
         {
-            GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.transform.position, new Quaternion());
-            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
-            projectile.GetComponent<Rigidbody>().velocity = (Target.transform.position - projectile.transform.position).normalized * projectileSpeed;
+            Attack();
             lastAttackTime = Time.time;
         }
     }
 
-    private void Attack()
+    protected virtual void Attack()
     {
-        GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.transform.position, new Quaternion(), null);
+        GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.projectileStartPosition, new Quaternion());
+        projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
+        projectile.GetComponent<Rigidbody>().velocity = (Target.transform.position - projectile.transform.position).normalized * projectileSpeed;
     }
 
     protected float timeBetweenTargetChecks = .5f;
