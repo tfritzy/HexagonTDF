@@ -10,7 +10,7 @@ public class MobileUtilsScript : MonoBehaviour
 
     void Start()
     {
-        style.fontSize = 25;
+        style.fontSize = 50;
         StartCoroutine(FPS());
     }
 
