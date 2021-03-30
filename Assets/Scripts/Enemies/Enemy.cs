@@ -8,7 +8,7 @@ public class Enemy : Character
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public override int StartingHealth => 2;
+    public override int StartingHealth => 10;
 
     private List<Vector2Int> path;
     private Rigidbody rb;

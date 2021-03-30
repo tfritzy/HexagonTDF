@@ -6,7 +6,7 @@ public abstract class AttackTower : Building
     public abstract int Damage { get; }
     public abstract float Range { get; }
     public Character Target;
-    private const float projectileSpeed = 10;
+    protected const float projectileSpeed = 10;
     protected Vector3 projectileStartPosition;
 
     protected override void Setup()
@@ -22,7 +22,7 @@ public abstract class AttackTower : Building
         AttackIfPossible();
     }
 
-    private float lastAttackTime;
+    protected float lastAttackTime;
     private void AttackIfPossible()
     {
         if (Time.time > lastAttackTime + Cooldown && Target != null)
@@ -36,7 +36,7 @@ public abstract class AttackTower : Building
     {
         GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.projectileStartPosition, new Quaternion());
         projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
-        projectile.GetComponent<Rigidbody>().velocity = (Target.transform.position - projectile.transform.position).normalized * projectileSpeed;
+        SetProjectileVelocity(projectile);
     }
 
     protected float timeBetweenTargetChecks = .5f;
@@ -77,8 +77,15 @@ public abstract class AttackTower : Building
         return closest;
     }
 
-    private void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    protected void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
     {
         target.TakeDamage(Damage);
+    }
+
+    protected void SetProjectileVelocity(GameObject projectile)
+    {
+        float flightDuration = (Target.transform.position - projectile.transform.position).magnitude / projectileSpeed;
+        Vector3 targetPosition = Target.transform.position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
+        projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * projectileSpeed;
     }
 }

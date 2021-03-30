@@ -13,7 +13,7 @@ public class Orbit : MonoBehaviour
     private float bobOffset;
     private bool hasSetup;
 
-    public void Setup(Vector3 angularVelocity, float rotationSpeed, float bobDistance, Transform center)
+    public void Setup(Vector3 angularVelocity, float rotationSpeed, float bobDistance, Transform center, float startRotationOffset = 0)
     {
         this.bobDistance = bobDistance;
         this.rotationSpeed = rotationSpeed;
@@ -23,6 +23,7 @@ public class Orbit : MonoBehaviour
         if (center != null)
         {
             radius = (center.position - this.transform.position).magnitude;
+            transform.RotateAround(center.position, axis, startRotationOffset + rotationSpeed * Time.time);
         }
 
         this.GetComponent<Rigidbody>().angularVelocity = angularVelocity;

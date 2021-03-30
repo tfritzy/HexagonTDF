@@ -36,8 +36,6 @@ public class Projectile : MonoBehaviour
         this.target = target;
         this.birthTime = Time.time;
         SetupRigidbody();
-
-        GameObject.Destroy(this.gameObject, 10f);
     }
 
     protected virtual void UpdateLoop() { }
