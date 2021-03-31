@@ -88,6 +88,6 @@ public class Projectile : MonoBehaviour
         }
 
         particleGroup.parent = null;
-        GameObject.Destroy(particleGroup.gameObject, 1f);
+        GameObject.Destroy(particleGroup.gameObject, 5f);
     }
 }
