@@ -36,6 +36,7 @@ public abstract class AttackTower : Building
     {
         GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.projectileStartPosition, new Quaternion());
         projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
+        projectile.transform.LookAt(this.Target.transform, Vector3.up);
         SetProjectileVelocity(projectile);
     }
 

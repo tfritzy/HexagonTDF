@@ -7,8 +7,6 @@ public class AttackTowerBuildMenu : BuildMenu
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
         BuildingType.ArrowTower,
-        BuildingType.MageTower,
-        BuildingType.RockTower,
         BuildingType.LightningTower,
         BuildingType.FireTower,
         BuildingType.EarthTower,
