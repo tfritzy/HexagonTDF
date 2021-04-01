@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class Helpers
@@ -67,6 +68,38 @@ public static class Helpers
         }
 
         return null;
+    }
+
+    public static List<Vector2Int> GetPointsInRange(Vector2Int startPos, int range)
+    {
+        HashSet<Vector2Int> pointsInRange = new HashSet<Vector2Int>();
+        DFS(startPos, pointsInRange, 0, range);
+        return pointsInRange.ToList();
+    }
+
+    private static void DFS(Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops)
+    {
+        if (currentHops > maxHops)
+        {
+            return;
+        }
+
+        if (visited.Contains(position))
+        {
+            return;
+        }
+
+        visited.Add(position);
+        for (int i = 0; i < 6; i++)
+        {
+            Vector2Int neighborPos = Managers.BoardManager.Hexagons[position.x, position.y].GetNeighborPosition(i);
+            if (neighborPos == Constants.MinVector2Int)
+            {
+                continue;
+            }
+
+            DFS(neighborPos, visited, currentHops + 1, maxHops);
+        }
     }
 
     private static Vector2Int[,] BuildPredecessorGrid(int sizeX, int sizeY)

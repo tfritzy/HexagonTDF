@@ -8,5 +8,5 @@
     Lumbermill,
     LightningTower,
     FireTower,
-    EarthTower
+    EarthTower,
 }

@@ -80,6 +80,12 @@ public abstract class AttackTower : Building
 
     protected void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
     {
+        // For cases where the projectile hits the ground and such.
+        if (target == null)
+        {
+            return;
+        }
+
         target.TakeDamage(Damage);
     }
 

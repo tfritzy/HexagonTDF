@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7642193214754342527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7009103578071899333}
+  - component: {fileID: 7408403713048644420}
+  m_Layer: 0
+  m_Name: Lumbermill
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7009103578071899333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642193214754342527}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 23.86, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 7248142197675610074}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7408403713048644420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642193214754342527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0adb3cd84d08035429b8f598233e9bea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &7141631007975024689
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7009103578071899333}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.229
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.57924163
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.38326463
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.05859157
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7170456
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.035
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6664804
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -51.792
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -86.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 267724609816465728, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 58.617
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+      propertyPath: m_Name
+      value: Lumbermill2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+--- !u!4 &7248142197675610074 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b775434ccc7f78049914a16aa5ea725c, type: 3}
+  m_PrefabInstance: {fileID: 7141631007975024689}
+  m_PrefabAsset: {fileID: 0}

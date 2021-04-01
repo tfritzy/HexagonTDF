@@ -14619,7 +14619,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0.6}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.8352941}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -38418,19 +38418,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: -0.6531675
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.2706453
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.27055082
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 0.65339553
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_RootOrder
@@ -38438,11 +38438,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -89.98
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4082458e4ceb7ec48912606c84c77454, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z

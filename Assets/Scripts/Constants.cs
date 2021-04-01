@@ -23,6 +23,11 @@ public static class Constants
         public static int Characters = 1 << 9;
     }
 
+    public static class Tags
+    {
+        public const string Hexagon = "Hexagon";
+    }
+
     public static class Materials
     {
         private static Material greyscale;

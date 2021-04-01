@@ -56,6 +56,7 @@ public class Projectile : MonoBehaviour
         if (isCollisionTarget(attacker, other.gameObject))
         {
             hasAlreadyTriggered = true;
+            OnCollision(other.gameObject);
             dealDamageToEnemy(attacker, other.transform.GetComponent<Character>(), this.gameObject);
             Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
             DetachParticles(this.explosionParticles);
@@ -71,6 +72,11 @@ public class Projectile : MonoBehaviour
             return attacker.Enemies == targetCharacter.Alliance;
         }
 
+        if (other.CompareTag(Constants.Tags.Hexagon))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -79,6 +85,8 @@ public class Projectile : MonoBehaviour
         this.Rigidbody = this.gameObject.AddComponent<Rigidbody>();
         this.Rigidbody.useGravity = false;
     }
+
+    protected virtual void OnCollision(GameObject other) { }
 
     private void DetachParticles(Transform particleGroup)
     {
