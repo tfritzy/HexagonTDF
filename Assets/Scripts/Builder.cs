@@ -65,6 +65,11 @@ public class Builder : MonoBehaviour
         Destroy(buildingInst);
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
+
+        if (selectedBuilding is ResourceCollector)
+        {
+            ((ResourceCollector)selectedBuilding).RemoveHighlighting();
+        }
     }
 
     private void HighlightHexagon()
@@ -95,10 +100,21 @@ public class Builder : MonoBehaviour
             return;
         }
 
+        if (selectedBuilding is ResourceCollector)
+        {
+            ((ResourceCollector)selectedBuilding).RemoveHighlighting();
+        }
+
         highlightedHexagon = newPotentialHexagon;
 
         CreateHighlightBuildingIfNeeded();
         buildingInst.transform.position = highlightedHexagon.transform.position;
+        selectedBuilding.Position = highlightedHexagon.GridPosition;
+
+        if (selectedBuilding is ResourceCollector)
+        {
+            ((ResourceCollector)selectedBuilding).HighlightCollectionHexagons();
+        }
 
         if (highlightedHexagon.IsBuildable)
         {

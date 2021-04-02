@@ -36,7 +36,7 @@ public abstract class Character : MonoBehaviour
     }
     protected virtual void UpdateLoop() { }
 
-    private void Die()
+    protected virtual void Die()
     {
         Destroy(this.gameObject);
     }

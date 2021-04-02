@@ -9,4 +9,5 @@
     LightningTower,
     FireTower,
     EarthTower,
+    StoneMine
 }

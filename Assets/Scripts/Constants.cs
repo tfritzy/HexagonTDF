@@ -81,5 +81,18 @@ public static class Constants
                 return redSeethrough;
             }
         }
+
+        private static Material gold;
+        public static Material Gold
+        {
+            get
+            {
+                if (gold == null)
+                {
+                    gold = Resources.Load<Material>("Materials/Gold");
+                }
+                return gold;
+            }
+        }
     }
 }

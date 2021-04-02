@@ -10,7 +10,8 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.LightningTower,
         BuildingType.FireTower,
         BuildingType.EarthTower,
-        BuildingType.Lumbermill
+        BuildingType.Lumbermill,
+        BuildingType.StoneMine
     };
 
     public override List<BuildingType> BuildingTypes

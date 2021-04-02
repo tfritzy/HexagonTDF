@@ -3,14 +3,13 @@ using UnityEngine;
 
 public abstract class ResourceCollector : Building
 {
-    public override BuildingType Type => BuildingType.Lumbermill;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public abstract HashSet<HexagonType> CollectionTypes { get; }
     public abstract int CollectionRatePerHex { get; }
     public abstract ResourceType CollectionType { get; }
     public abstract int CollectionRange { get; }
-    private const float BASE_TIME_BETWEEN_COLLECTIONS = 10f;
+    private const float BASE_TIME_BETWEEN_COLLECTIONS = 1f;
     private int numResourceHexInRange;
 
     protected override void Setup()
@@ -43,5 +42,26 @@ public abstract class ResourceCollector : Building
     {
         base.UpdateLoop();
         Harvest();
+    }
+
+    public void HighlightCollectionHexagons()
+    {
+        List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
+        foreach (Vector2Int pos in hexesInRange)
+        {
+            if (CollectionTypes.Contains(Managers.BoardManager.Hexagons[pos.x, pos.y].Type))
+            {
+                Managers.BoardManager.Hexagons[pos.x, pos.y].SetMaterial(Constants.Materials.Gold);
+            }
+        }
+    }
+
+    public void RemoveHighlighting()
+    {
+        List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
+        foreach (Vector2Int pos in hexesInRange)
+        {
+            Managers.BoardManager.Hexagons[pos.x, pos.y].SetMaterial(Constants.Materials.Normal);
+        }
     }
 }

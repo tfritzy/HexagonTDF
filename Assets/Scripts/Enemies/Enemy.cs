@@ -9,6 +9,7 @@ public class Enemy : Character
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
     public override int StartingHealth => 10;
+    public virtual int GoldReward => 1;
 
     private List<Vector2Int> path;
     private Rigidbody rb;
@@ -35,6 +36,12 @@ public class Enemy : Character
     {
         FollowPath();
         base.UpdateLoop();
+    }
+
+    protected override void Die()
+    {
+        Managers.ResourceStore.Add(ResourceType.Gold, GoldReward);
+        base.Die();
     }
 
     private void FollowPath()

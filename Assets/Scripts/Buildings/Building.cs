@@ -7,7 +7,7 @@ public abstract class Building : Character
 {
     public Sprite Icon { get => Prefabs.BuildingIcons[Type]; }
     public abstract BuildingType Type { get; }
-    public Vector2Int Position { get; private set; }
+    public Vector2Int Position { get; set; }
     public override int StartingHealth => int.MaxValue;
 
     public void Initialize(Vector2Int position)
