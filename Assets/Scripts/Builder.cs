@@ -66,10 +66,7 @@ public class Builder : MonoBehaviour
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
 
-        if (selectedBuilding is ResourceCollector)
-        {
-            ((ResourceCollector)selectedBuilding).RemoveHighlighting();
-        }
+        RemoveHighlighting();
     }
 
     private void HighlightHexagon()
@@ -100,20 +97,16 @@ public class Builder : MonoBehaviour
             return;
         }
 
-        if (selectedBuilding is ResourceCollector)
-        {
-            ((ResourceCollector)selectedBuilding).RemoveHighlighting();
-        }
-
         highlightedHexagon = newPotentialHexagon;
 
         CreateHighlightBuildingIfNeeded();
         buildingInst.transform.position = highlightedHexagon.transform.position;
         selectedBuilding.Position = highlightedHexagon.GridPosition;
 
-        if (selectedBuilding is ResourceCollector)
+        RemoveHighlighting();
+        if (selectedBuilding.TryGetComponent<ResourceCollector>(out ResourceCollector collector))
         {
-            ((ResourceCollector)selectedBuilding).HighlightCollectionHexagons();
+            HighlightCollectionHexagons(collector.CollectionRange, collector.CollectionTypes);
         }
 
         if (highlightedHexagon.IsBuildable)
@@ -172,5 +165,49 @@ public class Builder : MonoBehaviour
     public void DenyConstructBuilding()
     {
         ExitConfirmBuildMode();
+    }
+
+    private Dictionary<Vector2Int, GameObject> highlightHexes;
+    public void HighlightCollectionHexagons(int collectionRange, HashSet<HexagonType> collectionTypes)
+    {
+        if (highlightHexes == null || highlightHexes.Count == 0)
+        {
+            highlightHexes = new Dictionary<Vector2Int, GameObject>();
+            List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(selectedBuilding.Position, collectionRange);
+            foreach (Vector2Int pos in hexesInRange)
+            {
+                highlightHexes[pos] = Instantiate(Prefabs.HighlightHex,
+                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .1f,
+                    Prefabs.HighlightHex.transform.rotation,
+                    null);
+            }
+        }
+
+        foreach (Vector2Int pos in highlightHexes.Keys)
+        {
+            if (collectionTypes.Contains(Managers.Map.Hexagons[pos.x, pos.y].Type))
+            {
+                highlightHexes[pos].GetComponent<MeshRenderer>().material = Constants.Materials.Gold;
+            }
+            else
+            {
+                highlightHexes[pos].GetComponent<MeshRenderer>().material = Constants.Materials.RedSeethrough;
+            }
+        }
+    }
+
+    public void RemoveHighlighting()
+    {
+        if (highlightHexes == null)
+        {
+            return;
+        }
+
+        foreach (GameObject hex in highlightHexes.Values)
+        {
+            Destroy(hex);
+        }
+
+        highlightHexes = null;
     }
 }

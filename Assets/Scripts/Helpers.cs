@@ -92,7 +92,7 @@ public static class Helpers
         visited.Add(position);
         for (int i = 0; i < 6; i++)
         {
-            Vector2Int neighborPos = Managers.BoardManager.Hexagons[position.x, position.y].GetNeighborPosition(i);
+            Vector2Int neighborPos = Managers.Map.Hexagons[position.x, position.y].GetNeighborPosition(i);
             if (neighborPos == Constants.MinVector2Int)
             {
                 continue;
@@ -138,12 +138,12 @@ public static class Helpers
 
     public static bool IsInBounds(Vector2Int position)
     {
-        if (position.x < 0 || position.x >= Managers.BoardManager.Hexagons.GetLength(0))
+        if (position.x < 0 || position.x >= Managers.Map.Hexagons.GetLength(0))
         {
             return false;
         }
 
-        if (position.y < 0 || position.y >= Managers.BoardManager.Hexagons.GetLength(1))
+        if (position.y < 0 || position.y >= Managers.Map.Hexagons.GetLength(1))
         {
             return false;
         }

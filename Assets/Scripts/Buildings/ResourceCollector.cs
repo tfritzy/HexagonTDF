@@ -17,7 +17,7 @@ public abstract class ResourceCollector : Building
         List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
         foreach (Vector2Int pos in hexesInRange)
         {
-            if (CollectionTypes.Contains(Managers.BoardManager.Hexagons[pos.x, pos.y].Type))
+            if (CollectionTypes.Contains(Managers.Map.Hexagons[pos.x, pos.y].Type))
             {
                 numResourceHexInRange += 1;
             }
@@ -42,26 +42,5 @@ public abstract class ResourceCollector : Building
     {
         base.UpdateLoop();
         Harvest();
-    }
-
-    public void HighlightCollectionHexagons()
-    {
-        List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
-        foreach (Vector2Int pos in hexesInRange)
-        {
-            if (CollectionTypes.Contains(Managers.BoardManager.Hexagons[pos.x, pos.y].Type))
-            {
-                Managers.BoardManager.Hexagons[pos.x, pos.y].SetMaterial(Constants.Materials.Gold);
-            }
-        }
-    }
-
-    public void RemoveHighlighting()
-    {
-        List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
-        foreach (Vector2Int pos in hexesInRange)
-        {
-            Managers.BoardManager.Hexagons[pos.x, pos.y].SetMaterial(Constants.Materials.Normal);
-        }
     }
 }

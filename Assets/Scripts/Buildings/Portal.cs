@@ -28,7 +28,7 @@ public class Portal : Building
             Destroy(dot);
         }
 
-        pathToSource = Helpers.FindPath(Managers.BoardManager.Hexagons, Position, Managers.BoardManager.Source.Position);
+        pathToSource = Helpers.FindPath(Managers.Map.Hexagons, Position, Managers.Map.Source.Position);
 
         if (pathToSource == null)
         {

@@ -13,6 +13,6 @@ public abstract class Building : Character
     public void Initialize(Vector2Int position)
     {
         this.Position = position;
-        Managers.BoardManager.AddBuilding(this);
+        Managers.Map.AddBuilding(this);
     }
 }

@@ -46,7 +46,7 @@ public static class Managers
     }
 
     private static BoardManager boardManager;
-    public static BoardManager BoardManager
+    public static BoardManager Map
     {
         get
         {

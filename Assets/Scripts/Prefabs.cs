@@ -59,6 +59,19 @@ public static class Prefabs
         }
     }
 
+    private static GameObject highlightHex;
+    public static GameObject HighlightHex
+    {
+        get
+        {
+            if (highlightHex == null)
+            {
+                highlightHex = Resources.Load<GameObject>("Prefabs/Hexagons/HighlightHexagon");
+            }
+            return highlightHex;
+        }
+    }
+
     public static Hexagon GetHexagonScript(HexagonType hexagonType)
     {
         switch (hexagonType)

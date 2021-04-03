@@ -48,7 +48,7 @@ public abstract class Hexagon : MonoBehaviour, Interactable
     {
         get
         {
-            return IsBuildable && Managers.BoardManager.IsBlockedByBuilding(this.GridPosition) == false;
+            return IsBuildable && Managers.Map.IsBlockedByBuilding(this.GridPosition) == false;
         }
     }
 
@@ -99,7 +99,7 @@ public abstract class Hexagon : MonoBehaviour, Interactable
     public Hexagon GetNeighbor(int index)
     {
         Vector2Int position = GetNeighborPosition(index);
-        return Managers.BoardManager.Hexagons[position.x, position.y];
+        return Managers.Map.Hexagons[position.x, position.y];
     }
 
     public static Vector3 ToWorldPosition(int x, int y)

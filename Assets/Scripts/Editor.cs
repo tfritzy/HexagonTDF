@@ -11,7 +11,7 @@ public class Editor : MonoBehaviour
     public void Save()
     {
         Map map = new Map();
-        map.Hexagons = Managers.BoardManager.GetTypeMap();
+        map.Hexagons = Managers.Map.GetTypeMap();
 
         string json = JsonConvert.SerializeObject(map);
         string fileName = Application.dataPath + "/Resources/Maps/" + Guid.NewGuid().ToString("N") + ".json";
