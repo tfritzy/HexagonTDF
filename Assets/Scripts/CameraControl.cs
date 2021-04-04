@@ -47,7 +47,7 @@ public class CameraControl : MonoBehaviour
         }
 
         HandleTouchInput();
-        this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.deltaTime;
+        this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.unscaledDeltaTime;
     }
 
     private void HandleTouchInput()
@@ -58,7 +58,7 @@ public class CameraControl : MonoBehaviour
             {
                 touchStartPosition = Input.mousePosition;
                 originalCameraPosition = Managers.Camera.transform.position;
-                touchStartTime = Time.time;
+                touchStartTime = Time.unscaledTime;
             }
 
             ManagePreviousInputBuffer(Input.mousePosition, previousInputBuffer);
@@ -84,12 +84,12 @@ public class CameraControl : MonoBehaviour
         InputBufferEntry newEntry = new InputBufferEntry()
         {
             Position = nextInputPosition,
-            Time = Time.time,
+            Time = Time.unscaledTime,
         };
 
         previousInputBuffer.AddLast(newEntry);
 
-        while (previousInputBuffer.Count > 0 && Time.time - previousInputBuffer.First.Value.Time > INPUT_BUFFER_DURATION)
+        while (previousInputBuffer.Count > 0 && Time.unscaledTime - previousInputBuffer.First.Value.Time > INPUT_BUFFER_DURATION)
         {
             previousInputBuffer.RemoveFirst();
         }

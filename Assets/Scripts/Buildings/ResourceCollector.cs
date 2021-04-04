@@ -7,9 +7,9 @@ public abstract class ResourceCollector : Building
     public override Alliances Enemies => Alliances.Illigons;
     public abstract HashSet<HexagonType> CollectionTypes { get; }
     public abstract int CollectionRatePerHex { get; }
-    public abstract ResourceType CollectionType { get; }
+    public abstract List<ResourceType> ResourceTypes { get; }
     public abstract int CollectionRange { get; }
-    private const float BASE_TIME_BETWEEN_COLLECTIONS = 1f;
+    private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
     private int numResourceHexInRange;
 
     protected override void Setup()
@@ -33,7 +33,11 @@ public abstract class ResourceCollector : Building
     {
         if (Time.time > lastCollectionTime + BASE_TIME_BETWEEN_COLLECTIONS)
         {
-            Managers.ResourceStore.Add(CollectionType, CollectionRatePerHex * numResourceHexInRange);
+            foreach (ResourceType type in ResourceTypes)
+            {
+                Managers.ResourceStore.Add(type, CollectionRatePerHex * numResourceHexInRange);
+            }
+
             lastCollectionTime = Time.time;
         }
     }

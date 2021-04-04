@@ -41,7 +41,7 @@ public abstract class Character : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         this.Health -= amount;
     }

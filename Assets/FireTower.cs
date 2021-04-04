@@ -10,4 +10,5 @@ public class FireTower : AttackTower
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 25, gold: 150, stone: 200);
 }

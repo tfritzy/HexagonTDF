@@ -16,7 +16,7 @@ public class Builder : MonoBehaviour
             ExitConfirmBuildMode();
             if (selectedBuilding != null)
             {
-                selectBuildingTime = Time.time;
+                selectBuildingTime = Time.unscaledTime;
             }
         }
     }
@@ -53,10 +53,12 @@ public class Builder : MonoBehaviour
             UnHighlightHexagon();
             Managers.BuildButton.gameObject.SetActive(true);
             ExitConfirmBuildMode();
+            Time.timeScale = 1f;
         }
         else
         {
             Managers.BuildButton.gameObject.SetActive(false);
+            Time.timeScale = 0f;
         }
     }
 
@@ -78,7 +80,7 @@ public class Builder : MonoBehaviour
 
         HighlightHexagon(Helpers.FindHexByRaycast());
 
-        if (Input.GetMouseButtonUp(0) && Time.time - selectBuildingTime > .25f && highlightedHexagon.IsBuildable)
+        if (Input.GetMouseButtonUp(0) && Time.unscaledTime - selectBuildingTime > .25f && highlightedHexagon.IsBuildable)
         {
             isInConfirmBuild = true;
             InstantiateAcceptAndDenyButtons();
@@ -140,7 +142,7 @@ public class Builder : MonoBehaviour
 
     private void ExitConfirmBuildMode()
     {
-        selectBuildingTime = Time.time;
+        selectBuildingTime = Time.unscaledTime;
         isInConfirmBuild = false;
         Destroy(acceptButton);
         Destroy(denyButton);
@@ -148,18 +150,35 @@ public class Builder : MonoBehaviour
 
     public void AcceptConstructBuilding()
     {
-        Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
-        building.Initialize(highlightedHexagon.GridPosition);
+        if (selectedBuilding.BuildCost.CanFulfill())
+        {
+            selectedBuilding.BuildCost.Deduct();
+            Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
+            building.Initialize(highlightedHexagon.GridPosition);
+        }
+        else
+        {
+            Debug.Log("Not enough resources to construct. Exiting build mode.");
+        }
+
         UnHighlightHexagon();
         ExitConfirmBuildMode();
         this.SelectedBuilding = null;
         responsibleButton.RevertIcon();
     }
 
-    public void SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
+    public bool SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
     {
+        if (building.BuildCost.CanFulfill() == false)
+        {
+            Debug.Log("Not enough resources");
+            Debug.Log(building.BuildCost.ToString());
+            return false;
+        }
+
         this.SelectedBuilding = building;
         this.responsibleButton = responsibleButton;
+        return true;
     }
 
     public void DenyConstructBuilding()
@@ -177,7 +196,7 @@ public class Builder : MonoBehaviour
             foreach (Vector2Int pos in hexesInRange)
             {
                 highlightHexes[pos] = Instantiate(Prefabs.HighlightHex,
-                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .1f,
+                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .05f,
                     Prefabs.HighlightHex.transform.rotation,
                     null);
             }

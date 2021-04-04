@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Enemy : Character
 {
-    public float MovementSpeed;
+    public virtual float MovementSpeed => 1;
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public override int StartingHealth => 10;
+    public override int StartingHealth => 5;
     public virtual int GoldReward => 1;
 
+    private bool isDead;
     private List<Vector2Int> path;
     private Rigidbody rb;
 
@@ -34,6 +35,11 @@ public class Enemy : Character
 
     protected override void UpdateLoop()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         FollowPath();
         base.UpdateLoop();
     }
@@ -48,6 +54,9 @@ public class Enemy : Character
     {
         if (PathProgress >= path.Count)
         {
+            Managers.Map.Source.TakeDamage(1);
+            Destroy(this.gameObject);
+            isDead = true;
             return;
         }
 

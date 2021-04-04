@@ -9,6 +9,7 @@ public abstract class Building : Character
     public abstract BuildingType Type { get; }
     public Vector2Int Position { get; set; }
     public override int StartingHealth => int.MaxValue;
+    public abstract ResourceTransaction BuildCost { get; }
 
     public void Initialize(Vector2Int position)
     {

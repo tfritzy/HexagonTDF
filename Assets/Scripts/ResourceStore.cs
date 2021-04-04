@@ -23,13 +23,18 @@ public class ResourceStore : MonoBehaviour
             Transform container = this.transform.Find(type.ToString());
             TextBoxes[type] = container.Find("Text").GetComponent<Text>();
         }
+
+        Add(ResourceType.Wood, 110);
     }
 
     public void Add(ResourceType type, int amount)
     {
         Resources[type] += amount;
         TextBoxes[type].text = Resources[type].ToString();
+    }
 
-        Debug.Log($"Gained {amount} {type}. Now have {Resources[type]}");
+    public int GetAmount(ResourceType type)
+    {
+        return Resources[type];
     }
 }

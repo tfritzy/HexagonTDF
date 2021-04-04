@@ -17,14 +17,20 @@ public class ButtonFunctions : MonoBehaviour
 
     public void SelectBuilding()
     {
+        bool succeeded = false;
         if (Managers.Builder.SelectedBuilding == null)
         {
-            Managers.Builder.SetSelectedBuilding(this, Building);
+            succeeded = Managers.Builder.SetSelectedBuilding(this, Building);
             icon.sprite = Prefabs.UIIcons[UIIconType.Exit];
         }
         else
         {
-            Managers.Builder.SetSelectedBuilding(this, null);
+            succeeded = Managers.Builder.SetSelectedBuilding(this, null);
+            icon.sprite = originalIcon;
+        }
+
+        if (succeeded == false)
+        {
             icon.sprite = originalIcon;
         }
     }

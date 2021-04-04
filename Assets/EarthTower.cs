@@ -13,6 +13,7 @@ public class EarthTower : AttackTower
     public override BuildingType Type => BuildingType.EarthTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 25, gold: 100, stone: 250);
     private const float ROCK_ROTATION_RADIUS = .5f;
     private const float ROCK_ROTATION_TIME_SECONDS = 20f;
 
