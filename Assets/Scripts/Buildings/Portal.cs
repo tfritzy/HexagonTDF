@@ -96,7 +96,7 @@ public class Portal : Building
 
         if (enemyToSpawn.HasValue)
         {
-            GameObject enemy = Instantiate(Prefabs.Enemies[enemyToSpawn.Value].gameObject, this.transform.position, new Quaternion(), null);
+            GameObject enemy = Instantiate(Prefabs.Enemies[enemyToSpawn.Value].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
             Enemy enemyMono = enemy.GetComponent<Enemy>();
             enemyMono.SetPortal(this);
             Power -= enemyMono.Power;
