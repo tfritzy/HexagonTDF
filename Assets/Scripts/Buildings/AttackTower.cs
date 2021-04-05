@@ -5,6 +5,8 @@ public abstract class AttackTower : Building
     public abstract float Cooldown { get; }
     public abstract int Damage { get; }
     public abstract float Range { get; }
+    public virtual int NumProjectiles => 1;
+    public virtual float ProjectileStartPostionRandomness => 0f;
     public Character Target;
     protected const float projectileSpeed = 10;
     protected Vector3 projectileStartPosition;
@@ -34,10 +36,22 @@ public abstract class AttackTower : Building
 
     protected virtual void Attack()
     {
-        GameObject projectile = Instantiate(Prefabs.Projectiles[Type], this.projectileStartPosition, new Quaternion());
-        projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
-        projectile.transform.LookAt(this.Target.transform, Vector3.up);
-        SetProjectileVelocity(projectile);
+        for (int i = 0; i < NumProjectiles; i++)
+        {
+            GameObject projectile = Instantiate(
+                Prefabs.Projectiles[Type],
+                this.projectileStartPosition,
+                new Quaternion());
+            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
+            projectile.transform.LookAt(this.Target.transform, Vector3.up);
+            SetProjectileVelocity(projectile);
+
+            // Want first projectile to be perfectly accurate.
+            if (i > 0)
+            {
+                projectile.transform.position = projectile.transform.position + Random.insideUnitSphere * ProjectileStartPostionRandomness;
+            }
+        }
     }
 
     protected float timeBetweenTargetChecks = .5f;

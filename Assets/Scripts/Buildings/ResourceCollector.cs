@@ -11,6 +11,7 @@ public abstract class ResourceCollector : Building
     public abstract int CollectionRange { get; }
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
     private int numResourceHexInRange;
+    private float timeBetweenResourceAdds;
 
     protected override void Setup()
     {
@@ -25,17 +26,19 @@ public abstract class ResourceCollector : Building
 
         Debug.Log($"Resource collector created collecting from {numResourceHexInRange} hexes");
 
+        timeBetweenResourceAdds = BASE_TIME_BETWEEN_COLLECTIONS / (CollectionRatePerHex * numResourceHexInRange);
+
         base.Setup();
     }
 
     private float lastCollectionTime;
     public virtual void Harvest()
     {
-        if (Time.time > lastCollectionTime + BASE_TIME_BETWEEN_COLLECTIONS)
+        if (Time.time > lastCollectionTime + timeBetweenResourceAdds)
         {
             foreach (ResourceType type in ResourceTypes)
             {
-                Managers.ResourceStore.Add(type, CollectionRatePerHex * numResourceHexInRange);
+                Managers.ResourceStore.Add(type, 1);
             }
 
             lastCollectionTime = Time.time;

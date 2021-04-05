@@ -26,6 +26,11 @@ public static class Helpers
 
     public static List<Vector2Int> FindPath(Hexagon[,] grid, Vector2Int sourcePos, Vector2Int endPos)
     {
+        return FindPath(grid, sourcePos, new HashSet<Vector2Int>() { endPos });
+    }
+
+    public static List<Vector2Int> FindPath(Hexagon[,] grid, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
+    {
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         Vector2Int[,] predecessorGrid = BuildPredecessorGrid(grid.GetLength(0), grid.GetLength(1));
@@ -53,9 +58,9 @@ public static class Helpers
                     predecessorGrid[testPosition.x, testPosition.y] = current;
                 }
 
-                if (testPosition == endPos)
+                if (endPos.Contains(testPosition))
                 {
-                    return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, endPos);
+                    return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, testPosition);
                 }
 
                 if (visited.Contains(testPosition) || grid[testPosition.x, testPosition.y].IsTraversable == false)
@@ -132,6 +137,7 @@ public static class Helpers
         }
 
         path.Reverse();
+        path.Add(endPosition);
 
         return path;
     }

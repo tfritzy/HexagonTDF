@@ -72,6 +72,23 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<EnemyType, Enemy> enemies;
+    public static Dictionary<EnemyType, Enemy> Enemies
+    {
+        get
+        {
+            if (enemies == null)
+            {
+                enemies = new Dictionary<EnemyType, Enemy>();
+                foreach (EnemyType type in Enum.GetValues(typeof(EnemyType)))
+                {
+                    enemies[type] = Resources.Load<GameObject>("Prefabs/Enemies/" + type).GetComponent<Enemy>();
+                }
+            }
+            return enemies;
+        }
+    }
+
     public static Hexagon GetHexagonScript(HexagonType hexagonType)
     {
         switch (hexagonType)

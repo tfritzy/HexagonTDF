@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Portal : Building
@@ -8,11 +10,11 @@ public class Portal : Building
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
     public GameObject Dot;
-    public GameObject Enemy;
     public override ResourceTransaction BuildCost => null;
     public float Power;
+    public List<Vector2Int> PathToSource;
+    public Guid PathId;
 
-    private List<Vector2Int> pathToSource;
     private float levelStartTime;
     private readonly List<float> powerGainRate30SecondInterval = new List<float>()
     {
@@ -29,6 +31,13 @@ public class Portal : Building
         51.1f
     };
 
+    private readonly List<EnemyType> enemies = new List<EnemyType>()
+    {
+        EnemyType.Wisp,
+        EnemyType.Tetriquiter,
+        EnemyType.Sqorpin
+    };
+
     protected override void Setup()
     {
         dots = new List<GameObject>();
@@ -40,21 +49,42 @@ public class Portal : Building
     private List<GameObject> dots;
     public void RecalculatePath()
     {
-        foreach (GameObject dot in dots)
-        {
-            Destroy(dot);
-        }
+        List<Vector2Int> oldPath = PathToSource;
+        PathToSource = Helpers.FindPath(Managers.Map.Hexagons, Position, Managers.Map.Source.Position);
 
-        pathToSource = Helpers.FindPath(Managers.Map.Hexagons, Position, Managers.Map.Source.Position);
-
-        if (pathToSource == null)
+        if (PathToSource == null)
         {
             throw new System.NullReferenceException($"Portal was unable to find path to source.");
         }
 
-        foreach (Vector2Int position in pathToSource)
+        bool arePathsSame = true;
+        if (oldPath != null && oldPath.Count == PathToSource.Count)
         {
-            dots.Add(Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null));
+            for (int i = 0; i < PathToSource.Count; i++)
+            {
+                if (PathToSource[i] != oldPath[i])
+                {
+                    arePathsSame = false;
+                }
+            }
+        }
+        else
+        {
+            arePathsSame = false;
+        }
+
+        if (arePathsSame == false)
+        {
+            PathId = Guid.NewGuid();
+            foreach (GameObject dot in dots)
+            {
+                Destroy(dot);
+            }
+
+            foreach (Vector2Int position in PathToSource)
+            {
+                dots.Add(Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null));
+            }
         }
     }
 
@@ -62,11 +92,14 @@ public class Portal : Building
     private float lastPowerTime;
     protected override void UpdateLoop()
     {
-        if (Power > 3)
+        EnemyType? enemyToSpawn = GetHighestPurchasableEnemy();
+
+        if (enemyToSpawn.HasValue)
         {
-            GameObject enemy = Instantiate(Enemy, this.transform.position, new Quaternion(), null);
-            enemy.GetComponent<Enemy>().SetPath(pathToSource);
-            Power -= 3;
+            GameObject enemy = Instantiate(Prefabs.Enemies[enemyToSpawn.Value].gameObject, this.transform.position, new Quaternion(), null);
+            Enemy enemyMono = enemy.GetComponent<Enemy>();
+            enemyMono.SetPortal(this);
+            Power -= enemyMono.Power;
             lastEnemyTime = Time.time;
         }
 
@@ -75,5 +108,21 @@ public class Portal : Building
             Power += powerGainRate30SecondInterval[(int)((Time.time - levelStartTime) / 30)];
             lastPowerTime = Time.time;
         }
+    }
+
+    private EnemyType? GetHighestPurchasableEnemy()
+    {
+        int i = enemies.Count - 1;
+        while (i >= 0 && Prefabs.Enemies[enemies[i]].Power > Power)
+        {
+            i -= 1;
+        }
+
+        if (i == -1)
+        {
+            return null;
+        }
+
+        return enemies[i];
     }
 }

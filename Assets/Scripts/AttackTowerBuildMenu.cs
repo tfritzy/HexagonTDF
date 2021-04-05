@@ -6,10 +6,11 @@ public class AttackTowerBuildMenu : BuildMenu
 {
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
-        BuildingType.ArrowTower,
+        BuildingType.ArcherTower,
         BuildingType.LightningTower,
         BuildingType.FireTower,
         BuildingType.EarthTower,
+        BuildingType.ArcherFortress,
         BuildingType.Lumbermill,
         BuildingType.StoneMine
     };

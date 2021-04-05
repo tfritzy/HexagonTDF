@@ -196,7 +196,7 @@ public class Builder : MonoBehaviour
             foreach (Vector2Int pos in hexesInRange)
             {
                 highlightHexes[pos] = Instantiate(Prefabs.HighlightHex,
-                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .05f,
+                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f,
                     Prefabs.HighlightHex.transform.rotation,
                     null);
             }

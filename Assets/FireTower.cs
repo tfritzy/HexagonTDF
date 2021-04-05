@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class FireTower : AttackTower
 {
-    public override float Cooldown => 2;
-    public override int Damage => 3;
-    public override float Range => 5;
+    public override float Cooldown => 3;
+    public override int Damage => 20;
+    public override float Range => 3;
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 25, gold: 150, stone: 200);
+    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 40, gold: 0, stone: 80);
 }

@@ -7,5 +7,10 @@ public class Arrow : Projectile
         base.OnCollision(other);
         Transform body = this.transform.Find("Body");
         body.parent = other.transform;
+
+        if (other.CompareTag(Constants.Tags.Hexagon))
+        {
+            Destroy(body.gameObject, 5f);
+        }
     }
 }

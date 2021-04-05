@@ -19,6 +19,7 @@ public class Projectile : MonoBehaviour
         this.explosionParticles = this.transform.Find("Explosion");
         Helpers.TriggerAllParticleSystems(this.explosionParticles, false);
         StartLogic();
+        Destroy(this.gameObject, 30f);
     }
 
     void Update()

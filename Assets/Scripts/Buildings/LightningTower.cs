@@ -7,10 +7,10 @@ public class LightningTower : AttackTower
     public override BuildingType Type => BuildingType.LightningTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override float Cooldown => 3;
-    public override int Damage => 2;
-    public override float Range => 10;
-    public override ResourceTransaction BuildCost => new ResourceTransaction(stone: 100, wood: 25, gold: 100);
+    public override float Cooldown => 5;
+    public override int Damage => 10;
+    public override float Range => 9f;
+    public override ResourceTransaction BuildCost => new ResourceTransaction(stone: 120, wood: 40, gold: 0);
 
     protected override void Attack()
     {

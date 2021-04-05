@@ -1,29 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class Enemy : Character
+public abstract class Enemy : Character
 {
-    public virtual float MovementSpeed => 1;
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public override int StartingHealth => 5;
-    public virtual int GoldReward => 1;
+    public abstract int GoldReward { get; }
+    public abstract float MovementSpeed { get; }
+    public abstract EnemyType Type { get; }
 
     private bool isDead;
-    private List<Vector2Int> path;
     private Rigidbody rb;
+    private Portal portal;
+    private Guid pathId;
+    private List<Vector2Int> path;
 
-    public void SetPath(List<Vector2Int> path)
+    public float Power
     {
-        this.path = path;
+        get { return ((float)StartingHealth / 2.5f) + (MovementSpeed - 1); }
+    }
 
-        if (this.path == null || this.path.Count == 0)
-        {
-            Destroy(this.gameObject);
-            throw new System.ArgumentException("No path was provided to this enemy. Deleting.");
-        }
+    public void SetPortal(Portal portal)
+    {
+        this.portal = portal;
+        this.pathId = portal.PathId;
+        this.path = portal.PathToSource;
     }
 
     protected override void Setup()
@@ -52,6 +57,11 @@ public class Enemy : Character
 
     private void FollowPath()
     {
+        if (portal.PathId != this.pathId)
+        {
+            RecalculatePath();
+        }
+
         if (PathProgress >= path.Count)
         {
             Managers.Map.Source.TakeDamage(1);
@@ -67,5 +77,13 @@ public class Enemy : Character
         {
             PathProgress += 1;
         }
+    }
+
+    private void RecalculatePath()
+    {
+        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Map.Hexagons, this.path[PathProgress], Managers.Map.Source.Position);
+        this.PathProgress = 0;
+        this.pathId = portal.PathId;
+        this.path = pathToSource;
     }
 }

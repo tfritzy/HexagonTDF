@@ -15,5 +15,10 @@ public abstract class Building : Character
     {
         this.Position = position;
         Managers.Map.AddBuilding(this);
+
+        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.material = Constants.Materials.Normal;
+        }
     }
 }

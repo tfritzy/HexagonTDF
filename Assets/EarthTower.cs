@@ -6,14 +6,14 @@ using UnityEngine;
 public class EarthTower : AttackTower
 {
     public override float Cooldown => .25f;
-    public override int Damage => 2;
-    public override float Range => 4;
+    public override int Damage => 10;
+    public override float Range => 3;
     public float RockGenerationTime => 2f;
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 25, gold: 100, stone: 250);
+    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 20, gold: 0, stone: 60);
     private const float ROCK_ROTATION_RADIUS = .5f;
     private const float ROCK_ROTATION_TIME_SECONDS = 20f;
 

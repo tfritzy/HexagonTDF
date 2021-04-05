@@ -2,12 +2,13 @@
 {
     Source,
     Portal,
-    ArrowTower,
+    ArcherFortress,
     MageTower,
     RockTower,
     Lumbermill,
     LightningTower,
     FireTower,
     EarthTower,
-    StoneMine
+    StoneMine,
+    ArcherTower,
 }
