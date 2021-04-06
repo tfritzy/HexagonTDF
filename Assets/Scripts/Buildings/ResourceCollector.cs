@@ -9,7 +9,10 @@ public abstract class ResourceCollector : Building
     public abstract int CollectionRatePerHex { get; }
     public abstract List<ResourceType> ResourceTypes { get; }
     public abstract int CollectionRange { get; }
+    protected abstract int ExpectedTileCollectionCount { get; }
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
+    private const int EXPECTED_GAME_DURATION_SECONDS = 300;
+    private const float PRODUCTION_STRUCTURE_POWER_RATIO = .2f;
     private int numResourceHexInRange;
     private float timeBetweenResourceAdds;
 
@@ -42,6 +45,23 @@ public abstract class ResourceCollector : Building
             }
 
             lastCollectionTime = Time.time;
+        }
+    }
+
+    public override float Power
+    {
+        get
+        {
+            float power = 0f;
+            foreach (ResourceType type in ResourceTypes)
+            {
+                int amountOfResourcesCollected =
+                    ExpectedTileCollectionCount *
+                    CollectionRatePerHex *
+                    ((int)(EXPECTED_GAME_DURATION_SECONDS / BASE_TIME_BETWEEN_COLLECTIONS));
+                power += (amountOfResourcesCollected / Constants.ResourcePowerMap[type]) * PRODUCTION_STRUCTURE_POWER_RATIO;
+            }
+            return power;
         }
     }
 

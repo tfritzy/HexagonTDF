@@ -154,4 +154,17 @@ public static class Prefabs
             return uiElements;
         }
     }
+
+    private static GameObject rangeCircle;
+    public static GameObject RangeCircle
+    {
+        get
+        {
+            if (rangeCircle == null)
+            {
+                rangeCircle = Resources.Load<GameObject>("Prefabs/Projectiles/RangeCircle");
+            }
+            return rangeCircle;
+        }
+    }
 }

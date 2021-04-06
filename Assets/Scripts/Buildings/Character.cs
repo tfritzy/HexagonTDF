@@ -6,6 +6,8 @@ public abstract class Character : MonoBehaviour
     public abstract Alliances Alliance { get; }
     public abstract Alliances Enemies { get; }
     public abstract int StartingHealth { get; }
+    public abstract float Power { get; }
+    public abstract VerticalRegion Region { get; }
     public int Health
     {
         get { return health; }

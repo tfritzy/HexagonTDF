@@ -4,4 +4,5 @@ public class Sqorpin : Enemy
     public override int GoldReward => 4;
     public override float MovementSpeed => 1;
     public override EnemyType Type => EnemyType.Sqorpin;
+    public override VerticalRegion Region => VerticalRegion.Ground;
 }

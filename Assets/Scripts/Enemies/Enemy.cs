@@ -19,7 +19,7 @@ public abstract class Enemy : Character
     private Guid pathId;
     private List<Vector2Int> path;
 
-    public float Power
+    public override float Power
     {
         get { return ((float)StartingHealth / 2.5f) + (MovementSpeed - 1); }
     }

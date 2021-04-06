@@ -5,8 +5,20 @@ using UnityEngine.UI;
 
 public class ResourceStore : MonoBehaviour
 {
+    public bool InfiniteMonies;
+
     private Dictionary<ResourceType, int> Resources;
     private Dictionary<ResourceType, Text> TextBoxes;
+
+    void Update()
+    {
+        if (InfiniteMonies)
+        {
+            Resources[ResourceType.Wood] = int.MaxValue;
+            Resources[ResourceType.Gold] = int.MaxValue;
+            Resources[ResourceType.Stone] = int.MaxValue;
+        }
+    }
 
     void Start()
     {

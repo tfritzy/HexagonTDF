@@ -68,7 +68,7 @@ public class Builder : MonoBehaviour
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
 
-        RemoveHighlighting();
+        RemoveCollectionHighlighting();
     }
 
     private void HighlightHexagon()
@@ -105,19 +105,10 @@ public class Builder : MonoBehaviour
         buildingInst.transform.position = highlightedHexagon.transform.position;
         selectedBuilding.Position = highlightedHexagon.GridPosition;
 
-        RemoveHighlighting();
         if (selectedBuilding.TryGetComponent<ResourceCollector>(out ResourceCollector collector))
         {
+            RemoveCollectionHighlighting();
             HighlightCollectionHexagons(collector.CollectionRange, collector.CollectionTypes);
-        }
-
-        if (highlightedHexagon.IsBuildable)
-        {
-            buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
-        }
-        else
-        {
-            buildingInst.SetMaterialsRecursively(Constants.Materials.RedSeethrough);
         }
     }
 
@@ -127,6 +118,20 @@ public class Builder : MonoBehaviour
         {
             buildingInst = Instantiate(SelectedBuilding.gameObject);
             Destroy(buildingInst.GetComponent<Building>());
+
+            if (highlightedHexagon.IsBuildable)
+            {
+                buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
+            }
+            else
+            {
+                buildingInst.SetMaterialsRecursively(Constants.Materials.RedSeethrough);
+            }
+
+            if (selectedBuilding is AttackTower)
+            {
+                ((AttackTower)selectedBuilding).CreateRangeCircle(buildingInst.transform);
+            }
         }
     }
 
@@ -215,7 +220,7 @@ public class Builder : MonoBehaviour
         }
     }
 
-    public void RemoveHighlighting()
+    public void RemoveCollectionHighlighting()
     {
         if (highlightHexes == null)
         {

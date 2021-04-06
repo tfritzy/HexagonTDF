@@ -11,6 +11,17 @@ public static class Constants
     public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
     public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
 
+    /// <summary>
+    /// How much of each resource 1 power maps to.
+    /// </summary>
+    public static Dictionary<ResourceType, int> ResourcePowerMap => resourcePowerMap;
+    private static Dictionary<ResourceType, int> resourcePowerMap = new Dictionary<ResourceType, int>
+        {
+            { ResourceType.Wood, 20},
+            { ResourceType.Stone, 10},
+            { ResourceType.Gold, 5}
+        };
+
     public static class FilePaths
     {
         public const string Maps = "Maps/";

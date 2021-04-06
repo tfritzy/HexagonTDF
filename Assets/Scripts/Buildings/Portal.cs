@@ -10,13 +10,18 @@ public class Portal : Building
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
     public GameObject Dot;
-    public override ResourceTransaction BuildCost => null;
-    public float Power;
+    public float SavedPower;
     public List<Vector2Int> PathToSource;
     public Guid PathId;
-
+    public override Dictionary<ResourceType, float> CostRatio => costRatio;
+    public override float Power => 100;
+    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
+    {
+        {ResourceType.Stone, 1f},
+    };
     private float levelStartTime;
-    private readonly List<float> powerGainRate30SecondInterval = new List<float>()
+    private const float MaxSpawnSpeed = .25f;
+    private readonly List<float> SavedPowerGainRate30SecondInterval = new List<float>()
     {
         .2f,
         .2f,
@@ -88,32 +93,32 @@ public class Portal : Building
         }
     }
 
-    private float lastEnemyTime;
-    private float lastPowerTime;
+    private float lastSpawnTime;
+    private float lastSavedPowerTime;
     protected override void UpdateLoop()
     {
         EnemyType? enemyToSpawn = GetHighestPurchasableEnemy();
 
-        if (enemyToSpawn.HasValue)
+        if (enemyToSpawn.HasValue && Time.time > lastSpawnTime + MaxSpawnSpeed)
         {
             GameObject enemy = Instantiate(Prefabs.Enemies[enemyToSpawn.Value].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
             Enemy enemyMono = enemy.GetComponent<Enemy>();
             enemyMono.SetPortal(this);
-            Power -= enemyMono.Power;
-            lastEnemyTime = Time.time;
+            SavedPower -= enemyMono.Power;
+            lastSpawnTime = Time.time;
         }
 
-        if (Time.time > lastPowerTime + 1f)
+        if (Time.time > lastSavedPowerTime + 1f)
         {
-            Power += powerGainRate30SecondInterval[(int)((Time.time - levelStartTime) / 30)];
-            lastPowerTime = Time.time;
+            SavedPower += SavedPowerGainRate30SecondInterval[(int)((Time.time - levelStartTime) / 30)];
+            lastSavedPowerTime = Time.time;
         }
     }
 
     private EnemyType? GetHighestPurchasableEnemy()
     {
         int i = enemies.Count - 1;
-        while (i >= 0 && Prefabs.Enemies[enemies[i]].Power > Power)
+        while (i >= 0 && Prefabs.Enemies[enemies[i]].Power > SavedPower)
         {
             i -= 1;
         }

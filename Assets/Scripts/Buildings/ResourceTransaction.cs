@@ -4,6 +4,15 @@ public class ResourceTransaction
 {
     public Dictionary<ResourceType, int> Costs;
 
+    public ResourceTransaction(float power, Dictionary<ResourceType, float> resourceRatio)
+    {
+        Costs = new Dictionary<ResourceType, int>();
+        foreach (ResourceType type in resourceRatio.Keys)
+        {
+            Costs[type] = (int)(Constants.ResourcePowerMap[type] * (power * resourceRatio[type]));
+        }
+    }
+
     public ResourceTransaction(int wood = 0, int gold = 0, int stone = 0)
     {
         Costs = new Dictionary<ResourceType, int>()

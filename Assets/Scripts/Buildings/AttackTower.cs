@@ -5,11 +5,13 @@ public abstract class AttackTower : Building
     public abstract float Cooldown { get; }
     public abstract int Damage { get; }
     public abstract float Range { get; }
+    public abstract VerticalRegion AttackRegion { get; }
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
     public Character Target;
     protected const float projectileSpeed = 10;
     protected Vector3 projectileStartPosition;
+    protected virtual float ManualPowerAdjustment => 0;
 
     protected override void Setup()
     {
@@ -27,11 +29,16 @@ public abstract class AttackTower : Building
     protected float lastAttackTime;
     private void AttackIfPossible()
     {
-        if (Time.time > lastAttackTime + Cooldown && Target != null)
+        if (CanAttack())
         {
             Attack();
             lastAttackTime = Time.time;
         }
+    }
+
+    protected virtual bool CanAttack()
+    {
+        return Time.time > lastAttackTime + Cooldown && Target != null;
     }
 
     protected virtual void Attack()
@@ -108,5 +115,73 @@ public abstract class AttackTower : Building
         float flightDuration = (Target.transform.position - projectile.transform.position).magnitude / projectileSpeed;
         Vector3 targetPosition = Target.transform.position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
         projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * projectileSpeed;
+    }
+
+    public void CreateRangeCircle(Transform parent)
+    {
+        GameObject circle = Instantiate(Prefabs.RangeCircle, parent.position, Prefabs.RangeCircle.transform.rotation, parent);
+        circle.transform.localScale *= Range;
+    }
+
+    public override float Power
+    {
+        get
+        {
+            return getRangePower() + getDamagePower() + getCooldownPower() + getAttackRegionPower() + ManualPowerAdjustment;
+        }
+    }
+
+    private float getDamagePower()
+    {
+        return (Damage * NumProjectiles) / 5;
+    }
+
+    private float getRangePower()
+    {
+        switch (Range)
+        {
+            case (RangeOptions.Short):
+                return 0;
+            case (RangeOptions.Medium):
+                return 1;
+            case (RangeOptions.Long):
+                return 2;
+            case (RangeOptions.VeryLong):
+                return 3;
+            default:
+                throw new System.ArgumentException($"Range {Range} isn't a prescribed option");
+        }
+    }
+
+    private float getCooldownPower()
+    {
+        switch (Cooldown)
+        {
+            case (AttackSpeed.Slow):
+                return -1;
+            case (AttackSpeed.Medium):
+                return 0;
+            case (AttackSpeed.Fast):
+                return 1;
+            case (AttackSpeed.VeryFast):
+                return 2;
+            default:
+                throw new System.ArgumentException($"Cooldown should be a value in AttackSpeed. {Cooldown} is not.");
+        }
+    }
+
+    private float getAttackRegionPower()
+    {
+        switch (AttackRegion)
+        {
+            case (VerticalRegion.Air):
+                return 0;
+            case (VerticalRegion.Ground):
+                return 0;
+            case (VerticalRegion.GroundAndAir):
+                return 1;
+            default:
+                throw new System.ArgumentException($"Vertical Regions {AttackRegion} not an expected option");
+        }
     }
 }

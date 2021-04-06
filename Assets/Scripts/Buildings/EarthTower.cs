@@ -5,15 +5,22 @@ using UnityEngine;
 
 public class EarthTower : AttackTower
 {
-    public override float Cooldown => .25f;
+    public override float Cooldown => AttackSpeed.Fast;
     public override int Damage => 10;
-    public override float Range => 3;
-    public float RockGenerationTime => 2f;
+    public override float Range => RangeOptions.Medium;
+    public float TimeBetweenRockTrows => .25f;
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override ResourceTransaction BuildCost => new ResourceTransaction(wood: 20, gold: 0, stone: 60);
+    public override Dictionary<ResourceType, float> CostRatio => costRatio;
+    public override VerticalRegion AttackRegion => VerticalRegion.Ground;
+    protected override float ManualPowerAdjustment => .5f; // Can store projectiles.
+    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
+    {
+        {ResourceType.Wood, .25f},
+        {ResourceType.Stone, .75f},
+    };
     private const float ROCK_ROTATION_RADIUS = .5f;
     private const float ROCK_ROTATION_TIME_SECONDS = 20f;
 
@@ -38,11 +45,16 @@ public class EarthTower : AttackTower
             lastRockSpawnTime = Time.time;
         }
 
-        if (Projectiles.Count < MaxRocks && Time.time > lastRockSpawnTime + RockGenerationTime)
+        if (Projectiles.Count < MaxRocks && Time.time > lastRockSpawnTime + Cooldown)
         {
             CreateAndInitRock();
             lastRockSpawnTime = Time.time;
         }
+    }
+
+    protected override bool CanAttack()
+    {
+        return Time.time > lastAttackTime + TimeBetweenRockTrows && Target != null && Projectiles.Count > 0;
     }
 
     protected override void Attack()
