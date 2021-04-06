@@ -9,7 +9,6 @@ public class Portal : Building
     public override BuildingType Type => BuildingType.Portal;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public GameObject Dot;
     public float SavedPower;
     public List<Vector2Int> PathToSource;
     public Guid PathId;
@@ -21,6 +20,7 @@ public class Portal : Building
     };
     private float levelStartTime;
     private const float MaxSpawnSpeed = .25f;
+    private LineRenderer lineRenderer;
     private readonly List<float> SavedPowerGainRate30SecondInterval = new List<float>()
     {
         .2f,
@@ -45,13 +45,12 @@ public class Portal : Building
 
     protected override void Setup()
     {
-        dots = new List<GameObject>();
+        lineRenderer = transform.Find("Path").GetComponent<LineRenderer>();
         RecalculatePath();
         base.Setup();
         levelStartTime = Time.time;
     }
 
-    private List<GameObject> dots;
     public void RecalculatePath()
     {
         List<Vector2Int> oldPath = PathToSource;
@@ -81,14 +80,13 @@ public class Portal : Building
         if (arePathsSame == false)
         {
             PathId = Guid.NewGuid();
-            foreach (GameObject dot in dots)
-            {
-                Destroy(dot);
-            }
 
-            foreach (Vector2Int position in PathToSource)
+            lineRenderer.positionCount = PathToSource.Count + 1;
+            lineRenderer.SetPosition(0, this.transform.position);
+            for (int i = 1; i < lineRenderer.positionCount; i++)
             {
-                dots.Add(Instantiate(Dot, Hexagon.ToWorldPosition(position) + Vector3.up, new Quaternion(), null));
+                Vector2Int pos = PathToSource[i - 1];
+                lineRenderer.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
             }
         }
     }
