@@ -16,7 +16,8 @@ public class LightningTower : AttackTower
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, .25f},
-        {ResourceType.Stone, .75f},
+        {ResourceType.Stone, .5f},
+        {ResourceType.Gold, .25f},
     };
 
     protected override void Attack()

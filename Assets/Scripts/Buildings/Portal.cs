@@ -23,24 +23,26 @@ public class Portal : Building
     private LineRenderer lineRenderer;
     private readonly List<float> SavedPowerGainRate30SecondInterval = new List<float>()
     {
-        .2f,
-        .2f,
-        .7f,
-        1.6f,
-        3.3f,
-        8.2f,
-        15.5f,
-        24.4f,
-        33.3f,
-        42.2f,
-        51.1f
+        0.2f,
+        0.26f,
+        0.838f,
+        1.9894f,
+        4.28622f,
+        10.472086f,
+        20.9137118f,
+        36.08782534f,
+        55.814172942f,
+        81.4584248246f,
+        114.79595227198f,
     };
 
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
-        EnemyType.Wisp,
         EnemyType.Tetriquiter,
-        EnemyType.Sqorpin
+        EnemyType.Sqorpin,
+        EnemyType.Dode,
+        EnemyType.Icid,
+        EnemyType.Octahedor,
     };
 
     protected override void Setup()
@@ -54,7 +56,7 @@ public class Portal : Building
     public void RecalculatePath()
     {
         List<Vector2Int> oldPath = PathToSource;
-        PathToSource = Helpers.FindPath(Managers.Map.Hexagons, Position, Managers.Map.Source.Position);
+        PathToSource = Helpers.FindPath(Managers.Map.Hexagons, Managers.Map.GetBuildingTypeMap(), Position, Managers.Map.Source.Position);
 
         if (PathToSource == null)
         {

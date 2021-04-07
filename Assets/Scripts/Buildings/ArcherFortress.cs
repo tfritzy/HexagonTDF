@@ -20,6 +20,7 @@ public class ArcherFortress : AttackTower
     {
         {ResourceType.Wood, .8f},
         {ResourceType.Stone, .2f},
+        {ResourceType.Gold, .2f},
     };
 
     protected override void Attack()

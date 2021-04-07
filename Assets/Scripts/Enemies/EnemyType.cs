@@ -1,6 +1,8 @@
 public enum EnemyType
 {
-    Wisp,
     Tetriquiter,
-    Sqorpin
+    Sqorpin,
+    Dode,
+    Icid,
+    Octahedor
 }

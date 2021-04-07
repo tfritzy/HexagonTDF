@@ -119,7 +119,9 @@ public abstract class AttackTower : Building
 
     public void CreateRangeCircle(Transform parent)
     {
+        Destroy(parent.Find("Range Circle")?.gameObject);
         GameObject circle = Instantiate(Prefabs.RangeCircle, parent.position, Prefabs.RangeCircle.transform.rotation, parent);
+        circle.name = "Range Circle";
         circle.transform.localScale *= Range;
     }
 

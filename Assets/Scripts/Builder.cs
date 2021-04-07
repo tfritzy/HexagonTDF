@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -67,6 +68,7 @@ public class Builder : MonoBehaviour
         Destroy(buildingInst);
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
+        this.GetComponent<LineRenderer>().enabled = false;
 
         RemoveCollectionHighlighting();
     }
@@ -102,8 +104,6 @@ public class Builder : MonoBehaviour
         highlightedHexagon = newPotentialHexagon;
 
         CreateHighlightBuildingIfNeeded();
-        buildingInst.transform.position = highlightedHexagon.transform.position;
-        selectedBuilding.Position = highlightedHexagon.GridPosition;
 
         if (selectedBuilding.TryGetComponent<ResourceCollector>(out ResourceCollector collector))
         {
@@ -118,20 +118,28 @@ public class Builder : MonoBehaviour
         {
             buildingInst = Instantiate(SelectedBuilding.gameObject);
             Destroy(buildingInst.GetComponent<Building>());
+        }
 
-            if (highlightedHexagon.IsBuildable)
-            {
-                buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
-            }
-            else
-            {
-                buildingInst.SetMaterialsRecursively(Constants.Materials.RedSeethrough);
-            }
+        buildingInst.transform.position = highlightedHexagon.transform.position;
+        selectedBuilding.Position = highlightedHexagon.GridPosition;
 
-            if (selectedBuilding is AttackTower)
-            {
-                ((AttackTower)selectedBuilding).CreateRangeCircle(buildingInst.transform);
-            }
+        if (highlightedHexagon.IsBuildable)
+        {
+            buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
+
+            Dictionary<Vector2Int, BuildingType> buildings = Managers.Map.GetBuildingTypeMap();
+            buildings[selectedBuilding.Position] = selectedBuilding.Type;
+            List<Vector2Int> newPath = Helpers.FindPath(Managers.Map.Hexagons, buildings, Managers.Map.Portals[0].Position, Managers.Map.Source.Position);
+            SetupLineRenderer(newPath);
+        }
+        else
+        {
+            buildingInst.SetMaterialsRecursively(Constants.Materials.RedSeethrough);
+        }
+
+        if (selectedBuilding is AttackTower)
+        {
+            ((AttackTower)selectedBuilding).CreateRangeCircle(buildingInst.transform);
         }
     }
 
@@ -233,5 +241,18 @@ public class Builder : MonoBehaviour
         }
 
         highlightHexes = null;
+    }
+
+    private void SetupLineRenderer(List<Vector2Int> path)
+    {
+        LineRenderer lr = this.GetComponent<LineRenderer>();
+        lr.enabled = true;
+        lr.positionCount = path.Count + 1;
+        lr.SetPosition(0, this.transform.position);
+        for (int i = 1; i < lr.positionCount; i++)
+        {
+            Vector2Int pos = path[i - 1];
+            lr.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+        }
     }
 }

@@ -44,14 +44,6 @@ public abstract class Hexagon : MonoBehaviour, Interactable
         }
     }
 
-    public bool IsTraversable
-    {
-        get
-        {
-            return IsBuildable && Managers.Map.IsBlockedByBuilding(this.GridPosition) == false;
-        }
-    }
-
     private void SetModel()
     {
         Destroy(model);

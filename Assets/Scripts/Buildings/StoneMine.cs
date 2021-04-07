@@ -12,7 +12,8 @@ public class StoneMine : ResourceCollector
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        {ResourceType.Wood, 1f},
+        {ResourceType.Wood, .9f},
+        {ResourceType.Gold, .1f},
     };
     private readonly HashSet<HexagonType> hexagonTypes = new HashSet<HexagonType>() { HexagonType.Stone };
 

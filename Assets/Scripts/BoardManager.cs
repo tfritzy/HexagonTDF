@@ -114,4 +114,15 @@ public class BoardManager : MonoBehaviour
     {
         return Buildings.ContainsKey(gridPosition) && Buildings[gridPosition] != null;
     }
+
+    public Dictionary<Vector2Int, BuildingType> GetBuildingTypeMap()
+    {
+        Dictionary<Vector2Int, BuildingType> typeMap = new Dictionary<Vector2Int, BuildingType>();
+        foreach (Vector2Int key in Buildings.Keys)
+        {
+            typeMap[key] = Buildings[key].Type;
+        }
+
+        return typeMap;
+    }
 }

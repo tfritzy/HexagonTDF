@@ -14,7 +14,8 @@ public class FireTower : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        {ResourceType.Stone, .75f},
-        {ResourceType.Wood, .25f},
+        {ResourceType.Stone, .6f},
+        {ResourceType.Wood, .2f},
+        {ResourceType.Gold, .2f},
     };
 }

@@ -24,12 +24,12 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPath(Hexagon[,] grid, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPath(Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
     {
-        return FindPath(grid, sourcePos, new HashSet<Vector2Int>() { endPos });
+        return FindPath(grid, buildings, sourcePos, new HashSet<Vector2Int>() { endPos });
     }
 
-    public static List<Vector2Int> FindPath(Hexagon[,] grid, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
+    public static List<Vector2Int> FindPath(Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
     {
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -63,7 +63,7 @@ public static class Helpers
                     return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, testPosition);
                 }
 
-                if (visited.Contains(testPosition) || grid[testPosition.x, testPosition.y].IsTraversable == false)
+                if (visited.Contains(testPosition) || IsTraversable(testPosition, grid, buildings) == false)
                 {
                     continue;
                 }
@@ -73,6 +73,11 @@ public static class Helpers
         }
 
         return null;
+    }
+
+    private static bool IsTraversable(Vector2Int position, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
+    {
+        return grid[position.x, position.y].IsBuildable && buildings.ContainsKey(position) == false;
     }
 
     public static List<Vector2Int> GetPointsInRange(Vector2Int startPos, int range)

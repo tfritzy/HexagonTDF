@@ -9,7 +9,6 @@ public abstract class Enemy : Character
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public abstract int GoldReward { get; }
     public abstract float MovementSpeed { get; }
     public abstract EnemyType Type { get; }
 
@@ -18,6 +17,7 @@ public abstract class Enemy : Character
     private Portal portal;
     private Guid pathId;
     private List<Vector2Int> path;
+    private GameObject DeathAnimation;
 
     public override float Power
     {
@@ -35,6 +35,7 @@ public abstract class Enemy : Character
     {
         PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
+        this.DeathAnimation = transform.Find("DeathAnimation").gameObject;
         base.Setup();
     }
 
@@ -51,6 +52,13 @@ public abstract class Enemy : Character
 
     protected override void Die()
     {
+        this.DeathAnimation.transform.parent = null;
+        Destroy(this.DeathAnimation.gameObject, 10f);
+        foreach (ParticleSystem ps in this.DeathAnimation.GetComponentsInChildren<ParticleSystem>())
+        {
+            ps.Play();
+        }
+
         Managers.ResourceStore.Add(ResourceType.Gold, GoldReward);
         base.Die();
     }
@@ -82,9 +90,20 @@ public abstract class Enemy : Character
 
     private void RecalculatePath()
     {
-        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Map.Hexagons, this.path[PathProgress], Managers.Map.Source.Position);
+        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Map.Hexagons, Managers.Map.GetBuildingTypeMap(), this.path[PathProgress], Managers.Map.Source.Position);
         this.PathProgress = 0;
         this.pathId = portal.PathId;
         this.path = pathToSource;
+    }
+
+    public int GoldReward
+    {
+        get
+        {
+            double fullVal = ((float)Power) / 20f;
+            double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
+            double randomPart = fullVal % modulous;
+            return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
+        }
     }
 }
