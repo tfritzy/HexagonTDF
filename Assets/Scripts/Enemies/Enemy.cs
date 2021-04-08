@@ -52,15 +52,20 @@ public abstract class Enemy : Character
 
     protected override void Die()
     {
-        this.DeathAnimation.transform.parent = null;
-        Destroy(this.DeathAnimation.gameObject, 10f);
-        foreach (ParticleSystem ps in this.DeathAnimation.GetComponentsInChildren<ParticleSystem>())
+        base.Die();
+
+        if (this.DeathAnimation != null)
         {
-            ps.Play();
+            this.DeathAnimation.transform.parent = null;
+            Destroy(this.DeathAnimation.gameObject, 10f);
+
+            foreach (ParticleSystem ps in this.DeathAnimation.GetComponentsInChildren<ParticleSystem>())
+            {
+                ps.Play();
+            }
         }
 
         Managers.ResourceStore.Add(ResourceType.Gold, GoldReward);
-        base.Die();
     }
 
     private void FollowPath()

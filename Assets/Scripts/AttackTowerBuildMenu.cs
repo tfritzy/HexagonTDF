@@ -12,7 +12,8 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.EarthTower,
         BuildingType.ArcherFortress,
         BuildingType.Lumbermill,
-        BuildingType.StoneMine
+        BuildingType.StoneMine,
+        BuildingType.CrystalAccelerator
     };
 
     public override List<BuildingType> BuildingTypes
