@@ -11,11 +11,19 @@ public class CrystalAccelerator : AttackTower
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {
         {ResourceType.Stone, .7f},
-        {ResourceType.Gold, .2f}
+        {ResourceType.Gold, .3f}
     };
+    private ParticleSystem projectileGenerationAnimation;
+
+    protected override void Setup()
+    {
+        base.Setup();
+        this.projectileGenerationAnimation = Body.transform.Find("ProjectileGeneration").GetComponent<ParticleSystem>();
+    }
 
     protected override void Attack()
     {
@@ -46,6 +54,9 @@ public class CrystalAccelerator : AttackTower
     {
         GameObject projectile = Instantiate(Prefabs.Projectiles[this.Type], Vector3.zero, new Quaternion(), null);
         GameObject smoke = projectile.transform.Find("Smoke").gameObject;
+        GameObject particles = projectile.transform.Find("ParticlesOutBack").gameObject;
+        particles.transform.rotation = particles.transform.rotation * Turret.transform.rotation;
+        particles.transform.position = Turret.transform.position;
         Vector3 vectorToTarget = Target.transform.position - this.transform.position;
         vectorToTarget.y = 0;
         Vector3 smokePosition = this.transform.position + vectorToTarget.normalized * smoke.transform.position.z;
@@ -55,5 +66,6 @@ public class CrystalAccelerator : AttackTower
         float angle = Vector3.Angle(Vector3.forward, vectorToTarget);
         main.startRotationZ = main.startRotationZ.constant + angle * Mathf.Deg2Rad;
         Destroy(projectile, 5f);
+        this.projectileGenerationAnimation.Play();
     }
 }

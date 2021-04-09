@@ -12,12 +12,15 @@ public abstract class AttackTower : Building
     protected const float projectileSpeed = 10;
     protected Vector3 projectileStartPosition;
     protected virtual float ManualPowerAdjustment => 0;
+    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected GameObject Turret;
+    protected GameObject Body;
 
     protected override void Setup()
     {
         this.projectileStartPosition = this.transform.Find("ProjectileStartPosition")?.transform.position ?? this.transform.position;
         this.Turret = transform.Find("Body")?.Find("Turret")?.gameObject;
+        this.Body = transform.Find("Body")?.gameObject;
         base.Setup();
     }
 
@@ -25,8 +28,8 @@ public abstract class AttackTower : Building
     {
         base.UpdateLoop();
         CheckForTarget();
-        AttackIfPossible();
         LookAtTarget();
+        AttackIfPossible();
     }
 
     protected float lastAttackTime;
@@ -51,10 +54,9 @@ public abstract class AttackTower : Building
             return;
         }
 
-        Vector3 toTarget = Target.transform.position - this.transform.position;
-        toTarget.y = 0;
-        float angle = Vector3.Angle(Vector3.right, toTarget);
-        this.Turret.transform.Rotate(new Vector3(0, 0, -angle));
+        Vector3 targetPos = Target.transform.position;
+        targetPos.y = Turret.transform.position.y;
+        Turret.transform.LookAt(targetPos, Vector3.up);
     }
 
     protected virtual void Attack()
@@ -151,7 +153,7 @@ public abstract class AttackTower : Building
 
     private float getDamagePower()
     {
-        return (Damage * NumProjectiles) / 5;
+        return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / 5;
     }
 
     private float getRangePower()
