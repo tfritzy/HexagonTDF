@@ -11,5 +11,6 @@
     EarthTower,
     StoneMine,
     ArcherTower,
-    CrystalAccelerator
+    CrystalAccelerator,
+    FrigidShard
 }

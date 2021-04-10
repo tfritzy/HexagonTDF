@@ -9,9 +9,11 @@ public abstract class Enemy : Character
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public abstract float MovementSpeed { get; }
+    public abstract float BaseMovementSpeed { get; }
     public abstract EnemyType Type { get; }
 
+    public float MovementSpeedModification;
+    public float MovementSpeed;
     private bool isDead;
     private Rigidbody rb;
     private Portal portal;
@@ -21,7 +23,7 @@ public abstract class Enemy : Character
 
     public override float Power
     {
-        get { return ((float)StartingHealth / 2.5f) + (MovementSpeed - 1); }
+        get { return ((float)StartingHealth / 2.5f) + (BaseMovementSpeed - 1); }
     }
 
     public void SetPortal(Portal portal)
@@ -35,7 +37,8 @@ public abstract class Enemy : Character
     {
         PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
-        this.DeathAnimation = transform.Find("DeathAnimation").gameObject;
+        this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
+        this.MovementSpeed = BaseMovementSpeed;
         base.Setup();
     }
 
@@ -85,7 +88,7 @@ public abstract class Enemy : Character
 
         Vector3 difference = (Hexagon.ToWorldPosition(path[PathProgress]) - this.transform.position);
         difference.y = 0;
-        this.rb.velocity = difference.normalized * MovementSpeed;
+        this.rb.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
 
         if (difference.magnitude < .1f)
         {

@@ -54,6 +54,20 @@ public static class Constants
             }
         }
 
+        private static Material frozen;
+        public static Material Frozen
+        {
+            get
+            {
+                if (frozen == null)
+                {
+                    frozen = Resources.Load<Material>("Materials/FrozenColorPalette");
+                }
+                return frozen;
+            }
+        }
+
+
         private static Material normal;
         public static Material Normal
         {
