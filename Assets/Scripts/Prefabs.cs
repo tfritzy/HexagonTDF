@@ -167,4 +167,17 @@ public static class Prefabs
             return rangeCircle;
         }
     }
+
+    private static GameObject damageNumber;
+    public static GameObject DamageNumber
+    {
+        get
+        {
+            if (damageNumber == null)
+            {
+                damageNumber = Resources.Load<GameObject>("Prefabs/UI/DamageNumber");
+            }
+            return damageNumber;
+        }
+    }
 }

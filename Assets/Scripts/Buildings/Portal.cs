@@ -23,8 +23,8 @@ public class Portal : Building
     private LineRenderer lineRenderer;
     private readonly List<float> SavedPowerGainRate30SecondInterval = new List<float>()
     {
-        0.2f,
-        0.26f,
+        1f,
+        0f,
         0.838f,
         1.9894f,
         4.28622f,

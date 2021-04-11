@@ -54,6 +54,14 @@ public abstract class Character : MonoBehaviour
     public virtual void TakeDamage(int amount)
     {
         this.Health -= amount;
+        DamageNumber damageNumber = Instantiate(
+            Prefabs.DamageNumber,
+            this.transform.position,
+            new Quaternion(),
+            Managers.Canvas)
+            .GetComponent<DamageNumber>();
+        damageNumber.SetValue(amount, this.gameObject);
+        damageNumber.transform.localScale *= ((float)amount / (float)StartingHealth);
     }
 
     private void ApplyEffects()
