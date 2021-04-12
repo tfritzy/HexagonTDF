@@ -35,6 +35,7 @@ public class Portal : Building
         81.4584248246f,
         114.79595227198f,
     };
+    private List<GameObject> pathCorners;
 
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
@@ -48,6 +49,7 @@ public class Portal : Building
     protected override void Setup()
     {
         lineRenderer = transform.Find("Path").GetComponent<LineRenderer>();
+        this.pathCorners = new List<GameObject>();
         RecalculatePath();
         base.Setup();
         levelStartTime = Time.time;
@@ -83,13 +85,36 @@ public class Portal : Building
         {
             PathId = Guid.NewGuid();
 
-            lineRenderer.positionCount = PathToSource.Count + 1;
-            lineRenderer.SetPosition(0, this.transform.position);
-            for (int i = 1; i < lineRenderer.positionCount; i++)
+            ResetLineRenderer();
+        }
+    }
+
+    private void ResetLineRenderer()
+    {
+        lineRenderer.positionCount = PathToSource.Count + 1;
+        lineRenderer.SetPosition(0, this.transform.position);
+        int i = 0;
+        for (i = 1; i < lineRenderer.positionCount; i++)
+        {
+            Vector2Int pos = PathToSource[i - 1];
+            lineRenderer.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+        }
+
+        for (i = 0; i < PathToSource.Count; i++)
+        {
+            if (i >= pathCorners.Count)
             {
-                Vector2Int pos = PathToSource[i - 1];
-                lineRenderer.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+                pathCorners.Add(Instantiate(Prefabs.PathCorner));
             }
+
+            Vector2Int pos = PathToSource[i];
+            pathCorners[i].SetActive(true);
+            pathCorners[i].transform.position = Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f;
+        }
+
+        for (; i < pathCorners.Count; i++)
+        {
+            pathCorners[i].SetActive(false);
         }
     }
 

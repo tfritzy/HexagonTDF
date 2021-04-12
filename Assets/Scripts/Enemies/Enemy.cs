@@ -20,6 +20,7 @@ public abstract class Enemy : Character
     private Guid pathId;
     private List<Vector2Int> path;
     private GameObject DeathAnimation;
+    private Healthbar healthbar;
 
     public override float Power
     {
@@ -35,10 +36,16 @@ public abstract class Enemy : Character
 
     protected override void Setup()
     {
-        PathProgress = 0;
+        this.PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = BaseMovementSpeed;
+        this.healthbar = Instantiate(Prefabs.Healthbar,
+            new Vector3(10000, 10000),
+            new Quaternion(),
+            Managers.Canvas).GetComponent<Healthbar>();
+        this.healthbar.SetOwner(this.transform);
+        this.healthbar.enabled = false;
         base.Setup();
     }
 
@@ -113,5 +120,12 @@ public abstract class Enemy : Character
             double randomPart = fullVal % modulous;
             return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
         }
+    }
+
+    public override void TakeDamage(int amount)
+    {
+        this.healthbar.enabled = true;
+        base.TakeDamage(amount);
+        this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
     }
 }

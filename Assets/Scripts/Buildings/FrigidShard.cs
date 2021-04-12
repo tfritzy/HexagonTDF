@@ -14,11 +14,12 @@ public class FrigidShard : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public float SlowAmount => -.5f;
+    protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 10;
+    protected override float ManualPowerAdjustment => 3;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {
         {ResourceType.Wood, .4f},
         {ResourceType.Stone, .4f},
-        {ResourceType.Gold, .2f}
     };
     private FrozenEffect frozenEffect;
     private FrozenDamageEffect frozenDamageEffect;

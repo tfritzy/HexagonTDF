@@ -180,4 +180,30 @@ public static class Prefabs
             return damageNumber;
         }
     }
+
+    private static GameObject healthbar;
+    public static GameObject Healthbar
+    {
+        get
+        {
+            if (healthbar == null)
+            {
+                healthbar = Resources.Load<GameObject>("Prefabs/UI/Healthbar");
+            }
+            return healthbar;
+        }
+    }
+
+    private static GameObject pathCorner;
+    public static GameObject PathCorner
+    {
+        get
+        {
+            if (pathCorner == null)
+            {
+                pathCorner = Resources.Load<GameObject>("Prefabs/UI/PathCorner");
+            }
+            return pathCorner;
+        }
+    }
 }
