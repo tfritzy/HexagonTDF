@@ -27,6 +27,7 @@ public abstract class OnScreenNumber : MonoBehaviour
     private Vector3 velocity;
     protected abstract Vector3 InitialVelocity { get; }
     protected abstract float GravityForce { get; }
+    protected bool isStatic = false;
 
     private void Start()
     {
@@ -37,6 +38,11 @@ public abstract class OnScreenNumber : MonoBehaviour
 
     private void Update()
     {
+        if (isStatic)
+        {
+            return;
+        }
+
         if (Time.time > birthTime + LifeSpan)
         {
             Delete();
@@ -62,6 +68,7 @@ public abstract class OnScreenNumber : MonoBehaviour
         this.rootPosition = owner.transform.position;
         this.offset = (Vector3)Random.insideUnitCircle / 5;
         this.velocity = InitialVelocity;
+        Move();
     }
 
     private void Move()

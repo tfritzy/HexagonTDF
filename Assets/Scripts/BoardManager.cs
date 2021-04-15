@@ -87,6 +87,7 @@ public class BoardManager : MonoBehaviour
                 Portals.Add((Portal)building);
             }
         }
+        Managers.ResourceStore.RecalculatePopulation();
     }
 
     public HexagonType?[,] GetTypeMap()

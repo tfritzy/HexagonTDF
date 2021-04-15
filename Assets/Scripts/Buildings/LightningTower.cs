@@ -13,6 +13,7 @@ public class LightningTower : AttackTower
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     protected override float ManualPowerAdjustment => 1; // Double damage to air.
+    public override int PopulationCost => 2;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, .25f},

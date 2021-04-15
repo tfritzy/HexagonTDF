@@ -3,14 +3,17 @@ using System.Collections.Generic;
 public class ResourceTransaction
 {
     public Dictionary<ResourceType, int> Costs;
+    public int Population;
 
-    public ResourceTransaction(float power, Dictionary<ResourceType, float> resourceRatio)
+    public ResourceTransaction(float power, Dictionary<ResourceType, float> resourceRatio, int population)
     {
         Costs = new Dictionary<ResourceType, int>();
         foreach (ResourceType type in resourceRatio.Keys)
         {
             Costs[type] = (int)(Constants.ResourcePowerMap[type] * (power * resourceRatio[type]));
         }
+
+        this.Population = population;
     }
 
     public ResourceTransaction(int wood = 0, int gold = 0, int stone = 0)
@@ -41,6 +44,11 @@ public class ResourceTransaction
             }
         }
 
+        if (Managers.ResourceStore.CurrentPopulation + Population > Managers.ResourceStore.MaxPopulation)
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -51,6 +59,7 @@ public class ResourceTransaction
         {
             strRep += $"{type}: {Costs[type]},";
         }
+        strRep += $"population: {this.Population}";
         return strRep;
     }
 }

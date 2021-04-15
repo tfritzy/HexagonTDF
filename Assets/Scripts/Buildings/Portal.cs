@@ -14,6 +14,7 @@ public class Portal : Building
     public Guid PathId;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override float Power => 100;
+    public override int PopulationCost => 0;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Stone, 1f},

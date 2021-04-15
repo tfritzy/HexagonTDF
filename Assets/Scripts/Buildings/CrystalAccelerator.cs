@@ -11,6 +11,7 @@ public class CrystalAccelerator : AttackTower
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    public override int PopulationCost => 2;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {

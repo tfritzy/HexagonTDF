@@ -16,6 +16,7 @@ public class EarthTower : AttackTower
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override float ManualPowerAdjustment => .5f; // Can store projectiles.
+    public override int PopulationCost => 2;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, .25f},

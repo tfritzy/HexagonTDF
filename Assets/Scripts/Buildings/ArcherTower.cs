@@ -12,6 +12,7 @@ public class ArcherTower : AttackTower
     public override float Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
+    public override int PopulationCost => 1;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, 1f},

@@ -80,11 +80,35 @@ public static class Helpers
         return grid[position.x, position.y].IsBuildable && buildings.ContainsKey(position) == false;
     }
 
-    public static List<Vector2Int> GetPointsInRange(Vector2Int startPos, int range)
+    public static List<Vector2Int> GetAllHexInRange(Vector2Int position, int range)
     {
-        HashSet<Vector2Int> pointsInRange = new HashSet<Vector2Int>();
-        DFS(startPos, pointsInRange, 0, range);
-        return pointsInRange.ToList();
+        Dictionary<Vector2Int, int> visited = new Dictionary<Vector2Int, int>();
+        Queue<Vector3Int> q = new Queue<Vector3Int>();
+        q.Enqueue(new Vector3Int(position.x, position.y, 0));
+
+        while (q.Count > 0)
+        {
+            Vector3Int current = q.Dequeue();
+            if (visited.ContainsKey((Vector2Int)current))
+            {
+                continue;
+            }
+
+            if (current.z > range)
+            {
+                continue;
+            }
+
+            visited[(Vector2Int)current] = current.z;
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2Int neighbor = Managers.Map.Hexagons[current.x, current.y].GetNeighbor(i).GridPosition;
+                q.Enqueue(new Vector3Int(neighbor.x, neighbor.y, current.z + 1));
+            }
+        }
+
+        return visited.Keys.ToList();
     }
 
     private static void DFS(Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops)

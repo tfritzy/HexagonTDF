@@ -12,5 +12,8 @@
     StoneMine,
     ArcherTower,
     CrystalAccelerator,
-    FrigidShard
+    FrigidShard,
+    Farm,
+    Forager,
+    House
 }

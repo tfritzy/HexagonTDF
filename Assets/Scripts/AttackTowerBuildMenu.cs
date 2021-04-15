@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class AttackTowerBuildMenu : BuildMenu
 {
+    public override List<BuildingType> BuildingTypes
+    {
+        get { return buildingTypes; }
+    }
+
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
         BuildingType.ArcherTower,
@@ -14,11 +19,8 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.Lumbermill,
         BuildingType.StoneMine,
         BuildingType.CrystalAccelerator,
-        BuildingType.FrigidShard
+        BuildingType.FrigidShard,
+        BuildingType.Farm,
+        BuildingType.Forager,
     };
-
-    public override List<BuildingType> BuildingTypes
-    {
-        get { return buildingTypes; }
-    }
 }

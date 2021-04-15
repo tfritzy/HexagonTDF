@@ -9,6 +9,17 @@ public class ResourceStore : MonoBehaviour
 
     private Dictionary<ResourceType, int> Resources;
     private Dictionary<ResourceType, Text> TextBoxes;
+    public int MaxPopulation
+    {
+        get { return maxPopulation; }
+    }
+    public int CurrentPopulation
+    {
+        get { return currentPopulation; }
+    }
+
+    private int maxPopulation;
+    private int currentPopulation;
 
     void Update()
     {
@@ -17,6 +28,7 @@ public class ResourceStore : MonoBehaviour
             Resources[ResourceType.Wood] = int.MaxValue;
             Resources[ResourceType.Gold] = int.MaxValue;
             Resources[ResourceType.Stone] = int.MaxValue;
+            Resources[ResourceType.Food] = int.MaxValue;
         }
     }
 
@@ -26,7 +38,8 @@ public class ResourceStore : MonoBehaviour
         {
             { ResourceType.Gold, 0},
             { ResourceType.Wood, 0},
-            { ResourceType.Stone, 0}
+            { ResourceType.Stone, 0},
+            { ResourceType.Food, 0}
         };
 
         TextBoxes = new Dictionary<ResourceType, Text>();
@@ -48,5 +61,24 @@ public class ResourceStore : MonoBehaviour
     public int GetAmount(ResourceType type)
     {
         return Resources[type];
+    }
+
+    public void RecalculatePopulation()
+    {
+        currentPopulation = 0;
+        maxPopulation = 0;
+
+        foreach (Building building in Managers.Map.Buildings.Values)
+        {
+            currentPopulation += building.PopulationCost;
+            maxPopulation += building.PopulationIncrease;
+        }
+
+        SetPopulationText();
+    }
+
+    private void SetPopulationText()
+    {
+        TextBoxes[ResourceType.Population].text = $"{CurrentPopulation} / {MaxPopulation}";
     }
 }

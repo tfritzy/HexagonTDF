@@ -91,6 +91,12 @@ public abstract class Hexagon : MonoBehaviour, Interactable
     public Hexagon GetNeighbor(int index)
     {
         Vector2Int position = GetNeighborPosition(index);
+
+        if (position == Constants.MinVector2Int)
+        {
+            return null;
+        }
+
         return Managers.Map.Hexagons[position.x, position.y];
     }
 

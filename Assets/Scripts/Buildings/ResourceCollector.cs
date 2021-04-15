@@ -5,9 +5,9 @@ public abstract class ResourceCollector : Building
 {
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public abstract HashSet<HexagonType> CollectionTypes { get; }
+    public abstract HashSet<HexagonType> HarvestedHexagonTypes { get; }
     public abstract int CollectionRatePerHex { get; }
-    public abstract List<ResourceType> ResourceTypes { get; }
+    public abstract ResourceType CollectedResource { get; }
     public abstract int CollectionRange { get; }
     protected abstract int ExpectedTileCollectionCount { get; }
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
@@ -18,10 +18,10 @@ public abstract class ResourceCollector : Building
 
     protected override void Setup()
     {
-        List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(this.Position, CollectionRange);
+        List<Vector2Int> hexesInRange = Helpers.GetAllHexInRange(this.Position, CollectionRange);
         foreach (Vector2Int pos in hexesInRange)
         {
-            if (CollectionTypes.Contains(Managers.Map.Hexagons[pos.x, pos.y].Type))
+            if (IsHarvestable(pos))
             {
                 numResourceHexInRange += 1;
             }
@@ -34,15 +34,17 @@ public abstract class ResourceCollector : Building
         base.Setup();
     }
 
+    public bool IsHarvestable(Vector2Int hex)
+    {
+        return HarvestedHexagonTypes.Contains(Managers.Map.Hexagons[hex.x, hex.y].Type) && Managers.Map.Buildings.ContainsKey(hex) == false;
+    }
+
     private float lastCollectionTime;
     public virtual void Harvest()
     {
         if (Time.time > lastCollectionTime + timeBetweenResourceAdds)
         {
-            foreach (ResourceType type in ResourceTypes)
-            {
-                Managers.ResourceStore.Add(type, 1);
-            }
+            Managers.ResourceStore.Add(CollectedResource, 1);
 
             lastCollectionTime = Time.time;
         }
@@ -53,14 +55,11 @@ public abstract class ResourceCollector : Building
         get
         {
             float power = 0f;
-            foreach (ResourceType type in ResourceTypes)
-            {
-                int amountOfResourcesCollected =
-                    ExpectedTileCollectionCount *
-                    CollectionRatePerHex *
-                    ((int)(EXPECTED_GAME_DURATION_SECONDS / BASE_TIME_BETWEEN_COLLECTIONS));
-                power += (amountOfResourcesCollected / Constants.ResourcePowerMap[type]) * PRODUCTION_STRUCTURE_POWER_RATIO;
-            }
+            int amountOfResourcesCollected =
+                ExpectedTileCollectionCount *
+                CollectionRatePerHex *
+                ((int)(EXPECTED_GAME_DURATION_SECONDS / BASE_TIME_BETWEEN_COLLECTIONS));
+            power += (amountOfResourcesCollected / Constants.ResourcePowerMap[CollectedResource]) * PRODUCTION_STRUCTURE_POWER_RATIO;
             return power;
         }
     }

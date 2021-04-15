@@ -108,7 +108,7 @@ public class Builder : MonoBehaviour
         if (selectedBuilding.TryGetComponent<ResourceCollector>(out ResourceCollector collector))
         {
             RemoveCollectionHighlighting();
-            HighlightCollectionHexagons(collector.CollectionRange, collector.CollectionTypes);
+            HighlightCollectionHexagons(collector.CollectionRange, collector.HarvestedHexagonTypes);
         }
     }
 
@@ -168,6 +168,7 @@ public class Builder : MonoBehaviour
             selectedBuilding.BuildCost.Deduct();
             Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
             building.Initialize(highlightedHexagon.GridPosition);
+            Managers.ResourceStore.RecalculatePopulation();
         }
         else
         {
@@ -200,12 +201,14 @@ public class Builder : MonoBehaviour
     }
 
     private Dictionary<Vector2Int, GameObject> highlightHexes;
+    private List<ResourceNumber> resourceNumbers = new List<ResourceNumber>();
     public void HighlightCollectionHexagons(int collectionRange, HashSet<HexagonType> collectionTypes)
     {
+        ResourceCollector resourceCollector = (ResourceCollector)selectedBuilding;
         if (highlightHexes == null || highlightHexes.Count == 0)
         {
             highlightHexes = new Dictionary<Vector2Int, GameObject>();
-            List<Vector2Int> hexesInRange = Helpers.GetPointsInRange(selectedBuilding.Position, collectionRange);
+            List<Vector2Int> hexesInRange = Helpers.GetAllHexInRange(selectedBuilding.Position, collectionRange);
             foreach (Vector2Int pos in hexesInRange)
             {
                 highlightHexes[pos] = Instantiate(Prefabs.HighlightHex,
@@ -217,9 +220,17 @@ public class Builder : MonoBehaviour
 
         foreach (Vector2Int pos in highlightHexes.Keys)
         {
-            if (collectionTypes.Contains(Managers.Map.Hexagons[pos.x, pos.y].Type))
+            if (resourceCollector.IsHarvestable(pos))
             {
                 highlightHexes[pos].GetComponent<MeshRenderer>().material = Constants.Materials.Gold;
+                ResourceNumber rn = Instantiate(
+                        Prefabs.ResourceNumber,
+                        Managers.Map.Hexagons[pos.x, pos.y].transform.position,
+                        new Quaternion(),
+                        Managers.Canvas)
+                    .GetComponent<ResourceNumber>();
+                rn.SetValue(resourceCollector.CollectionRatePerHex, Managers.Map.Hexagons[pos.x, pos.y].gameObject, resourceCollector.CollectedResource, true);
+                resourceNumbers.Add(rn);
             }
             else
             {
@@ -239,6 +250,12 @@ public class Builder : MonoBehaviour
         {
             Destroy(hex);
         }
+
+        foreach (ResourceNumber rn in resourceNumbers)
+        {
+            Destroy(rn.gameObject);
+        }
+        resourceNumbers = new List<ResourceNumber>();
 
         highlightHexes = null;
     }
