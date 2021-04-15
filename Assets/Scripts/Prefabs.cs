@@ -123,6 +123,23 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<ResourceType, Sprite> resourceIcons;
+    public static Dictionary<ResourceType, Sprite> ResourceIcons
+    {
+        get
+        {
+            if (resourceIcons == null)
+            {
+                resourceIcons = new Dictionary<ResourceType, Sprite>();
+                foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
+                {
+                    resourceIcons[resourceType] = Resources.Load<Sprite>("Icons/" + resourceType);
+                }
+            }
+            return resourceIcons;
+        }
+    }
+
     private static Dictionary<UIIconType, Sprite> uIIcons;
     public static Dictionary<UIIconType, Sprite> UIIcons
     {
@@ -178,6 +195,19 @@ public static class Prefabs
                 damageNumber = Resources.Load<GameObject>("Prefabs/UI/DamageNumber");
             }
             return damageNumber;
+        }
+    }
+
+    private static GameObject resourceNumber;
+    public static GameObject ResourceNumber
+    {
+        get
+        {
+            if (resourceNumber == null)
+            {
+                resourceNumber = Resources.Load<GameObject>("Prefabs/UI/ResourceNumber");
+            }
+            return resourceNumber;
         }
     }
 

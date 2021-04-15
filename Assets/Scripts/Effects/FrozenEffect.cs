@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +21,8 @@ public class FrozenEffect : Effect
         base.RemoveEffect(character);
         if (character is Enemy)
         {
-            ((Enemy)character).MovementSpeedModification -= SlowAmount;
+            Enemy enemy = (Enemy)character;
+            enemy.MovementSpeedModification = (enemy.MovementSpeed - enemy.MovementSpeedModification);
             character.SetMaterial(Constants.Materials.Normal);
         }
     }
@@ -30,7 +31,7 @@ public class FrozenEffect : Effect
     {
         if (character is Enemy)
         {
-            ((Enemy)character).MovementSpeedModification += SlowAmount;
+            ((Enemy)character).MovementSpeedModification /= SlowAmount;
             character.SetMaterial(Constants.Materials.Frozen);
         }
     }

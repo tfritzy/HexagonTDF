@@ -34,6 +34,14 @@ public static class Constants
         public static int Characters = 1 << 9;
     }
 
+    private static Dictionary<ResourceType, Color> resourceColors = new Dictionary<ResourceType, Color>()
+    {
+        { ResourceType.Gold, ColorExtensions.Create("F8C21C")},
+        { ResourceType.Wood, ColorExtensions.Create("B99C6B")},
+        { ResourceType.Stone, ColorExtensions.Create("BECFCC")},
+    };
+    public static Dictionary<ResourceType, Color> ResourceColors => resourceColors;
+
     public static class Tags
     {
         public const string Hexagon = "Hexagon";

@@ -75,7 +75,14 @@ public abstract class Enemy : Character
             }
         }
 
-        Managers.ResourceStore.Add(ResourceType.Gold, GoldReward);
+        int goldReward = RollGoldReward();
+        Managers.ResourceStore.Add(ResourceType.Gold, goldReward);
+
+        if (goldReward > 0)
+        {
+            ResourceNumber resourceNumber = Instantiate(Prefabs.ResourceNumber, Managers.Canvas).GetComponent<ResourceNumber>();
+            resourceNumber.SetValue(goldReward, this.gameObject, ResourceType.Gold);
+        }
     }
 
     private void FollowPath()
@@ -111,15 +118,12 @@ public abstract class Enemy : Character
         this.path = pathToSource;
     }
 
-    public int GoldReward
+    public int RollGoldReward()
     {
-        get
-        {
-            double fullVal = ((float)Power) / 20f;
-            double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
-            double randomPart = fullVal % modulous;
-            return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
-        }
+        double fullVal = ((float)Power) / 20f;
+        double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
+        double randomPart = fullVal % modulous;
+        return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
     }
 
     public override void TakeDamage(int amount)
