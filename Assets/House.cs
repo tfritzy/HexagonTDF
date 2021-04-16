@@ -8,7 +8,7 @@ public class House : Building
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override float Power => throw new System.NotImplementedException();
+    public override float Power => (float)PopulationIncrease / Constants.ResourcePowerMap[ResourceType.Population];
     public override int PopulationCost => 0;
     public override int PopulationIncrease => 5;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>

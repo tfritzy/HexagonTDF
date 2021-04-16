@@ -10,7 +10,7 @@ public class Forager : ResourceCollector
     private readonly HashSet<HexagonType> hexagonTypes = new HashSet<HexagonType>() { HexagonType.Grass };
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override int ExpectedTileCollectionCount => 9;
-    public override int PopulationCost => 2;
+    public override int PopulationCost => 0;
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {

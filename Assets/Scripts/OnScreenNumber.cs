@@ -38,17 +38,17 @@ public abstract class OnScreenNumber : MonoBehaviour
 
     private void Update()
     {
-        if (isStatic)
-        {
-            return;
-        }
-
-        if (Time.time > birthTime + LifeSpan)
-        {
-            Delete();
-        }
         Move();
-        LessenColorOverTime();
+
+        if (isStatic == false)
+        {
+            if (Time.time > birthTime + LifeSpan)
+            {
+                Delete();
+            }
+
+            LessenColorOverTime();
+        }
     }
 
     private void LessenColorOverTime()
@@ -73,8 +73,12 @@ public abstract class OnScreenNumber : MonoBehaviour
 
     private void Move()
     {
-        this.velocity += Vector3.down * GravityForce * Time.deltaTime;
-        this.offset += this.velocity * Time.deltaTime;
+        if (isStatic == false)
+        {
+            this.velocity += Vector3.down * GravityForce * Time.deltaTime;
+            this.offset += this.velocity * Time.deltaTime;
+        }
+
         this.transform.position = Managers.Camera.WorldToScreenPoint(rootPosition) + offset;
     }
 

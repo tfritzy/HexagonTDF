@@ -36,7 +36,8 @@ public abstract class ResourceCollector : Building
 
     public bool IsHarvestable(Vector2Int hex)
     {
-        return HarvestedHexagonTypes.Contains(Managers.Map.Hexagons[hex.x, hex.y].Type) && Managers.Map.Buildings.ContainsKey(hex) == false;
+        return HarvestedHexagonTypes.Contains(Managers.Map.Hexagons[hex.x, hex.y].Type) &&
+        (Managers.Map.Buildings.ContainsKey(hex) == false || Managers.Map.Buildings[hex] == this);
     }
 
     private float lastCollectionTime;
@@ -60,6 +61,7 @@ public abstract class ResourceCollector : Building
                 CollectionRatePerHex *
                 ((int)(EXPECTED_GAME_DURATION_SECONDS / BASE_TIME_BETWEEN_COLLECTIONS));
             power += (amountOfResourcesCollected / Constants.ResourcePowerMap[CollectedResource]) * PRODUCTION_STRUCTURE_POWER_RATIO;
+            power -= ((float)PopulationCost) / Constants.ResourcePowerMap[ResourceType.Population];
             return power;
         }
     }

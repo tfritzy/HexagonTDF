@@ -4,7 +4,7 @@ public class StoneMine : ResourceCollector
 {
     public override BuildingType Type => BuildingType.StoneMine;
     public override HashSet<HexagonType> HarvestedHexagonTypes => hexagonTypes;
-    public override int CollectionRatePerHex => 6;
+    public override int CollectionRatePerHex => 4;
     public override ResourceType CollectedResource => ResourceType.Stone;
     public override int CollectionRange => 0;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
@@ -13,8 +13,7 @@ public class StoneMine : ResourceCollector
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        { global::ResourceType.Wood, .9f},
-        { global::ResourceType.Gold, .1f},
+        { ResourceType.Wood, 1f},
     };
     private readonly HashSet<HexagonType> hexagonTypes = new HashSet<HexagonType>() { HexagonType.Stone };
 }

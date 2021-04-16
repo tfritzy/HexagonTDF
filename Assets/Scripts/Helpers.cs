@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class Helpers
 {
-    public static Hexagon FindHexByRaycast()
+    public static Hexagon FindHexByRaycast(Vector3 startPos)
     {
-        Ray ray = Managers.Camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Managers.Camera.ScreenPointToRay(startPos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons))
         {
@@ -77,7 +77,7 @@ public static class Helpers
 
     private static bool IsTraversable(Vector2Int position, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
     {
-        return grid[position.x, position.y].IsBuildable && buildings.ContainsKey(position) == false;
+        return Managers.Map.IsBuildable(position);
     }
 
     public static List<Vector2Int> GetAllHexInRange(Vector2Int position, int range)

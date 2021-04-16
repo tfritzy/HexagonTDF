@@ -116,6 +116,11 @@ public class BoardManager : MonoBehaviour
         return Buildings.ContainsKey(gridPosition) && Buildings[gridPosition] != null;
     }
 
+    public bool IsBuildable(Vector2Int pos)
+    {
+        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
+    }
+
     public Dictionary<Vector2Int, BuildingType> GetBuildingTypeMap()
     {
         Dictionary<Vector2Int, BuildingType> typeMap = new Dictionary<Vector2Int, BuildingType>();

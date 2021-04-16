@@ -8,6 +8,6 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        Helpers.FindHexByRaycast()?.Interact();
+        Helpers.FindHexByRaycast(Input.mousePosition)?.Interact();
     }
 }

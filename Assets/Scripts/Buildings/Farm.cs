@@ -4,7 +4,7 @@ public class Farm : ResourceCollector
 {
     public override BuildingType Type => BuildingType.Farm;
     public override HashSet<HexagonType> HarvestedHexagonTypes => hexagonTypes;
-    public override int CollectionRatePerHex => 5;
+    public override int CollectionRatePerHex => 4;
     public override ResourceType CollectedResource => ResourceType.Food;
     public override int CollectionRange => 1;
     public override int PopulationCost => 3;

@@ -16,11 +16,7 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.FireTower,
         BuildingType.EarthTower,
         BuildingType.ArcherFortress,
-        BuildingType.Lumbermill,
-        BuildingType.StoneMine,
         BuildingType.CrystalAccelerator,
         BuildingType.FrigidShard,
-        BuildingType.Farm,
-        BuildingType.Forager,
     };
 }

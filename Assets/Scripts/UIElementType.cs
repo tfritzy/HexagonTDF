@@ -2,5 +2,6 @@
 {
     Accept,
     Deny,
-    AttackTowerBuildMenu
+    AttackTowerBuildMenu,
+    BaseBuilderMenu
 }

@@ -5,17 +5,6 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour
 {
     public const float MOVEMENT_SPEED = 9f;
-    public bool IsFrozen
-    {
-        get { return isFrozen; }
-        set
-        {
-            isFrozen = value;
-            previousInputBuffer = new LinkedList<InputBufferEntry>();
-        }
-    }
-
-    private bool isFrozen;
     private const float INPUT_BUFFER_DURATION = .25f;
     private const float MAX_CAMERA_VELOCITY = 20f;
     private Vector3? touchStartPosition;
@@ -41,11 +30,6 @@ public class CameraControl : MonoBehaviour
 
     void Update()
     {
-        if (IsFrozen)
-        {
-            return;
-        }
-
         HandleTouchInput();
         this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.unscaledDeltaTime;
     }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Builder : MonoBehaviour
 {
@@ -12,17 +13,20 @@ public class Builder : MonoBehaviour
         private set
         {
             selectedBuilding = value;
-            Managers.CameraControl.IsFrozen = value == null ? false : true;
+            SetCostPanels();
             UnHighlightHexagon();
             ExitConfirmBuildMode();
             if (selectedBuilding != null)
             {
-                selectBuildingTime = Time.unscaledTime;
+                buildTargetLines.SetActive(true);
+            }
+            else
+            {
+                buildTargetLines.SetActive(false);
             }
         }
     }
 
-    private float selectBuildingTime;
     private Building selectedBuilding;
     private Hexagon highlightedHexagon;
     private ButtonFunctions responsibleButton;
@@ -30,10 +34,20 @@ public class Builder : MonoBehaviour
     private bool isInConfirmBuild;
     private GameObject acceptButton;
     private GameObject denyButton;
+    private GameObject buildTargetLines;
+    private Dictionary<ResourceType, Text> CostPanels;
 
     void Start()
     {
         this.IsInBuildMode = false;
+        buildTargetLines = Managers.Canvas.Find("BuildTargetLines").gameObject;
+        buildTargetLines.SetActive(false);
+        CostPanels = new Dictionary<ResourceType, Text>();
+        foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
+        {
+            CostPanels[resourceType] = Managers.ResourceStore.transform.Find(resourceType.ToString()).Find("Cost").Find("Text").GetComponent<Text>();
+        }
+        SetCostPanels();
     }
 
     void Update()
@@ -52,14 +66,8 @@ public class Builder : MonoBehaviour
         {
             SelectedBuilding = null;
             UnHighlightHexagon();
-            Managers.BuildButton.gameObject.SetActive(true);
+            buildTargetLines.SetActive(false);
             ExitConfirmBuildMode();
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            Managers.BuildButton.gameObject.SetActive(false);
-            Time.timeScale = 0f;
         }
     }
 
@@ -69,22 +77,20 @@ public class Builder : MonoBehaviour
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;
-
         RemoveCollectionHighlighting();
     }
 
     private void HighlightHexagon()
     {
-        if (SelectedBuilding == null || isInConfirmBuild)
+        if (SelectedBuilding == null)
         {
             return;
         }
 
-        HighlightHexagon(Helpers.FindHexByRaycast());
+        HighlightHexagon(Helpers.FindHexByRaycast(Constants.CenterScreen));
 
-        if (Input.GetMouseButtonUp(0) && Time.unscaledTime - selectBuildingTime > .25f && highlightedHexagon.IsBuildable)
+        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition) && (acceptButton == null || denyButton == null))
         {
-            isInConfirmBuild = true;
             InstantiateAcceptAndDenyButtons();
         }
     }
@@ -123,7 +129,7 @@ public class Builder : MonoBehaviour
         buildingInst.transform.position = highlightedHexagon.transform.position;
         selectedBuilding.Position = highlightedHexagon.GridPosition;
 
-        if (highlightedHexagon.IsBuildable)
+        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition))
         {
             buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
 
@@ -145,17 +151,12 @@ public class Builder : MonoBehaviour
 
     private void InstantiateAcceptAndDenyButtons()
     {
-        float distanceBetweenButtons = 150;
         acceptButton = Instantiate(Prefabs.UIElements[UIElementType.Accept], Managers.Canvas);
-        acceptButton.transform.position = Managers.Camera.WorldToScreenPoint(highlightedHexagon.transform.position) + new Vector3(150, distanceBetweenButtons / 2);
-
         denyButton = Instantiate(Prefabs.UIElements[UIElementType.Deny], Managers.Canvas);
-        denyButton.transform.position = Managers.Camera.WorldToScreenPoint(highlightedHexagon.transform.position) + new Vector3(150, -distanceBetweenButtons / 2);
     }
 
     private void ExitConfirmBuildMode()
     {
-        selectBuildingTime = Time.unscaledTime;
         isInConfirmBuild = false;
         Destroy(acceptButton);
         Destroy(denyButton);
@@ -163,7 +164,8 @@ public class Builder : MonoBehaviour
 
     public void AcceptConstructBuilding()
     {
-        if (selectedBuilding.BuildCost.CanFulfill())
+        Vector2Int pos = highlightedHexagon.GridPosition;
+        if (selectedBuilding.BuildCost.CanFulfill() && Managers.Map.IsBuildable(highlightedHexagon.GridPosition))
         {
             selectedBuilding.BuildCost.Deduct();
             Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
@@ -172,32 +174,21 @@ public class Builder : MonoBehaviour
         }
         else
         {
-            Debug.Log("Not enough resources to construct. Exiting build mode.");
+            Debug.Log("Not enough resources");
         }
-
-        UnHighlightHexagon();
-        ExitConfirmBuildMode();
-        this.SelectedBuilding = null;
-        responsibleButton.RevertIcon();
     }
 
-    public bool SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
+    public void SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
     {
-        if (building.BuildCost.CanFulfill() == false)
-        {
-            Debug.Log("Not enough resources");
-            Debug.Log(building.BuildCost.ToString());
-            return false;
-        }
-
         this.SelectedBuilding = building;
         this.responsibleButton = responsibleButton;
-        return true;
     }
 
     public void DenyConstructBuilding()
     {
+        this.SelectedBuilding = null;
         ExitConfirmBuildMode();
+        responsibleButton = null;
     }
 
     private Dictionary<Vector2Int, GameObject> highlightHexes;
@@ -270,6 +261,25 @@ public class Builder : MonoBehaviour
         {
             Vector2Int pos = path[i - 1];
             lr.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+        }
+    }
+
+    private void SetCostPanels()
+    {
+        if (selectedBuilding == null)
+        {
+            foreach (Text panel in CostPanels.Values)
+            {
+                panel.transform.parent.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            foreach (ResourceType resource in selectedBuilding.BuildCost.Costs.Keys)
+            {
+                CostPanels[resource].transform.parent.gameObject.SetActive(true);
+                CostPanels[resource].text = $"-{selectedBuilding.BuildCost.Costs[resource].ToString()}";
+            }
         }
     }
 }

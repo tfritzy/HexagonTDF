@@ -97,17 +97,4 @@ public static class Managers
             return canvas;
         }
     }
-
-    private static BuildButton buildButton;
-    public static BuildButton BuildButton
-    {
-        get
-        {
-            if (buildButton == null)
-            {
-                buildButton = GameObject.Find("BuildButton").GetComponent<BuildButton>();
-            }
-            return buildButton;
-        }
-    }
 }

@@ -6,38 +6,17 @@ using UnityEngine.UI;
 public class ButtonFunctions : MonoBehaviour
 {
     public Building Building;
-    private Image icon;
-    private Sprite originalIcon;
-
-    void Start()
-    {
-        icon = this.transform.Find("Image")?.GetComponent<Image>();
-        originalIcon = icon?.sprite;
-    }
 
     public void SelectBuilding()
     {
-        bool succeeded = false;
         if (Managers.Builder.SelectedBuilding == null)
         {
-            succeeded = Managers.Builder.SetSelectedBuilding(this, Building);
-            icon.sprite = Prefabs.UIIcons[UIIconType.Exit];
+            Managers.Builder.SetSelectedBuilding(this, Building);
         }
         else
         {
-            succeeded = Managers.Builder.SetSelectedBuilding(this, null);
-            icon.sprite = originalIcon;
+            Managers.Builder.SetSelectedBuilding(this, null);
         }
-
-        if (succeeded == false)
-        {
-            icon.sprite = originalIcon;
-        }
-    }
-
-    public void RevertIcon()
-    {
-        icon.sprite = originalIcon;
     }
 
     public void AcceptBuildingConstruction()
