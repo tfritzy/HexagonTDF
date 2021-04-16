@@ -74,6 +74,7 @@ public class Builder : MonoBehaviour
     private void UnHighlightHexagon()
     {
         Destroy(buildingInst);
+        buildingInst = null;
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;
@@ -176,6 +177,8 @@ public class Builder : MonoBehaviour
         {
             Debug.Log("Not enough resources");
         }
+
+        UnHighlightHexagon();
     }
 
     public void SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)

@@ -9,13 +9,13 @@ public class ButtonFunctions : MonoBehaviour
 
     public void SelectBuilding()
     {
-        if (Managers.Builder.SelectedBuilding == null)
+        if (Managers.Builder.SelectedBuilding?.Type == Building.Type)
         {
-            Managers.Builder.SetSelectedBuilding(this, Building);
+            Managers.Builder.SetSelectedBuilding(this, null);
         }
         else
         {
-            Managers.Builder.SetSelectedBuilding(this, null);
+            Managers.Builder.SetSelectedBuilding(this, Building);
         }
     }
 
