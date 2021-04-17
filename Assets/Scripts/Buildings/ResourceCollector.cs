@@ -11,7 +11,7 @@ public abstract class ResourceCollector : Building
     public abstract int CollectionRange { get; }
     protected abstract int ExpectedTileCollectionCount { get; }
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
-    private const int EXPECTED_GAME_DURATION_SECONDS = 300;
+    private const float EXPECTED_GAME_DURATION_SECONDS = 600f;
     private const float PRODUCTION_STRUCTURE_POWER_RATIO = .2f;
     private int numResourceHexInRange;
     private float timeBetweenResourceAdds;

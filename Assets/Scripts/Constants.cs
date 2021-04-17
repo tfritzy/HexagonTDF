@@ -11,6 +11,8 @@ public static class Constants
     public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
     public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
     public static Vector3 CenterScreen => new Vector3(Screen.width / 2, Screen.height / 2);
+    public const float ENEMY_HEALTH_PER_POWER = 5f;
+    public const float ENEMY_DEFAULT_MOVEMENTSPEED = 1f;
 
     /// <summary>
     /// How much of each resource 1 power maps to.
@@ -18,11 +20,11 @@ public static class Constants
     public static Dictionary<ResourceType, int> ResourcePowerMap => resourcePowerMap;
     private static Dictionary<ResourceType, int> resourcePowerMap = new Dictionary<ResourceType, int>
         {
-            { ResourceType.Food, 50},
+            { ResourceType.Food, 100},
             { ResourceType.Wood, 30},
             { ResourceType.Stone, 20},
             { ResourceType.Gold, 5},
-            { ResourceType.Population, 2}
+            { ResourceType.Population, 5}
         };
 
     public static class FilePaths

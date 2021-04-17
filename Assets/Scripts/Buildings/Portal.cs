@@ -9,35 +9,43 @@ public class Portal : Building
     public override BuildingType Type => BuildingType.Portal;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public float SavedPower;
     public List<Vector2Int> PathToSource;
     public Guid PathId;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override float Power => 100;
     public override int PopulationCost => 0;
+    public int CurrentWave;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Stone, 1f},
     };
+    private const float WAVE_DURATION_SEC = 30f;
+    private const float DEFAULT_SEC_BETWEEN_SPAWN = 1f;
     private float levelStartTime;
+    private float lastWaveStartTime;
     private const float MaxSpawnSpeed = .25f;
     private LineRenderer lineRenderer;
-    private readonly List<float> SavedPowerGainRate30SecondInterval = new List<float>()
+    private List<WaveType> waveTypes = Enum.GetValues(typeof(WaveType)).Cast<WaveType>().ToList();
+    private readonly List<float> PowerPerWave = new List<float>()
     {
         0f,
-        0f,
+        0.26f,
         0.838f,
-        1.9894f,
-        4.28622f,
-        10.472086f,
-        20.9137118f,
-        36.08782534f,
-        55.814172942f,
-        81.4584248246f,
-        114.79595227198f,
+        2.0894f,
+        4.81622f,
+        8.961086f,
+        14.3494118f,
+        21.35423534f,
+        30.460505942f,
+        42.2986577246f,
+        57.68825504198f,
     };
     private List<GameObject> pathCorners;
-
+    private float WaveTypeHealthMultiplier;
+    private float WaveTypeSpawnSpeedMultiplier;
+    private bool HasPeriodicLargeMinions;
+    private float PeriodicLargeHealthModifier;
+    private EnemyType currentWaveEnemy;
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
         EnemyType.Tetriquiter,
@@ -54,6 +62,9 @@ public class Portal : Building
         RecalculatePath();
         base.Setup();
         levelStartTime = Time.time;
+        lastWaveStartTime = Time.time + WAVE_DURATION_SEC * 2;
+        CurrentWave = 1;
+        RollWaveType();
     }
 
     public void RecalculatePath()
@@ -90,6 +101,11 @@ public class Portal : Building
         }
     }
 
+    public void StartWaveEarly()
+    {
+        lastWaveStartTime = Time.time;
+    }
+
     private void ResetLineRenderer()
     {
         lineRenderer.positionCount = PathToSource.Count + 1;
@@ -120,40 +136,57 @@ public class Portal : Building
     }
 
     private float lastSpawnTime;
-    private float lastSavedPowerTime;
     protected override void UpdateLoop()
     {
-        EnemyType? enemyToSpawn = GetHighestPurchasableEnemy();
-
-        if (enemyToSpawn.HasValue && Time.time > lastSpawnTime + MaxSpawnSpeed)
+        if (Time.time - lastWaveStartTime < 0)
         {
-            GameObject enemy = Instantiate(Prefabs.Enemies[enemyToSpawn.Value].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
-            Enemy enemyMono = enemy.GetComponent<Enemy>();
-            enemyMono.SetPortal(this);
-            SavedPower -= enemyMono.Power;
-            lastSpawnTime = Time.time;
+            return;
         }
 
-        if (Time.time > lastSavedPowerTime + 1f)
+        if (Time.time - lastWaveStartTime >= WAVE_DURATION_SEC)
         {
-            SavedPower += SavedPowerGainRate30SecondInterval[(int)((Time.time - levelStartTime) / 30)];
-            lastSavedPowerTime = Time.time;
+            CurrentWave += 1;
+            RollWaveType();
+            lastWaveStartTime = Time.time + WAVE_DURATION_SEC;
+            return;
+        }
+
+        if (Time.time > lastSpawnTime + DEFAULT_SEC_BETWEEN_SPAWN * WaveTypeSpawnSpeedMultiplier)
+        {
+            GameObject enemy = Instantiate(Prefabs.Enemies[currentWaveEnemy].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
+            Enemy enemyMono = enemy.GetComponent<Enemy>();
+            enemyMono.SetPower(PowerPerWave[CurrentWave]);
+            enemyMono.SetPortal(this);
+            lastSpawnTime = Time.time;
         }
     }
 
-    private EnemyType? GetHighestPurchasableEnemy()
+    private void RollWaveType()
     {
-        int i = enemies.Count - 1;
-        while (i >= 0 && Prefabs.Enemies[enemies[i]].Power > SavedPower)
+        currentWaveEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
+        int availableWaves = CurrentWave > 3 ? waveTypes.Count : waveTypes.Count - 2;
+        WaveType waveType = waveTypes[UnityEngine.Random.Range(0, availableWaves)];
+        HasPeriodicLargeMinions = false;
+        switch (waveType)
         {
-            i -= 1;
+            case (WaveType.Clustered):
+                WaveTypeHealthMultiplier = .2f;
+                WaveTypeSpawnSpeedMultiplier = .2f;
+                break;
+            case (WaveType.ClusteredWithBiggies):
+                HasPeriodicLargeMinions = true;
+                PeriodicLargeHealthModifier = .6f;
+                WaveTypeSpawnSpeedMultiplier = .5f;
+                WaveTypeHealthMultiplier = .2f;
+                break;
+            case (WaveType.Normal):
+                WaveTypeSpawnSpeedMultiplier = 1f;
+                WaveTypeHealthMultiplier = 1f;
+                break;
+            case (WaveType.Spread):
+                WaveTypeSpawnSpeedMultiplier = 3f;
+                WaveTypeHealthMultiplier = 3f;
+                break;
         }
-
-        if (i == -1)
-        {
-            return null;
-        }
-
-        return enemies[i];
     }
 }

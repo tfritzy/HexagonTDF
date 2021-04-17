@@ -29,7 +29,8 @@ public class Source : ResourceCollector
     protected override void Setup()
     {
         base.Setup();
-        this.healthText = Managers.Canvas.Find("HealthUI").Find("Text").GetComponent<Text>();
+        this.healthText = Managers.Canvas.Find("HealthUI").Find("Circle").Find("Count Box").Find("Text").GetComponent<Text>();
+        this.healthText.text = this.Health.ToString();
     }
 
     public override void TakeDamage(int amount)

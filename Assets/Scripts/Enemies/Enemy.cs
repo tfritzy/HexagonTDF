@@ -9,9 +9,9 @@ public abstract class Enemy : Character
     public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
-    public abstract float BaseMovementSpeed { get; }
+    public override int StartingHealth => startingHealth;
     public abstract EnemyType Type { get; }
-
+    public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
     public float MovementSpeedModification;
     public float MovementSpeed;
     private bool isDead;
@@ -21,11 +21,14 @@ public abstract class Enemy : Character
     private List<Vector2Int> path;
     private GameObject DeathAnimation;
     private Healthbar healthbar;
+    private float baseMovementSpeed;
+    private int startingHealth;
 
     public override float Power
     {
-        get { return ((float)StartingHealth / 2.5f) + (BaseMovementSpeed - 1); }
+        get { return power; }
     }
+    private float power;
 
     public void SetPortal(Portal portal)
     {
@@ -34,12 +37,24 @@ public abstract class Enemy : Character
         this.path = portal.PathToSource;
     }
 
+    public void SetPower(float power)
+    {
+        this.power = power;
+        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER);
+        if (startingHealth == 0)
+        {
+            this.startingHealth = 1;
+        }
+        float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed) ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
+        this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
+    }
+
     protected override void Setup()
     {
         this.PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
-        this.MovementSpeed = BaseMovementSpeed;
+        this.MovementSpeed = baseMovementSpeed;
         this.healthbar = Instantiate(Prefabs.Healthbar,
             new Vector3(10000, 10000),
             new Quaternion(),
@@ -128,6 +143,11 @@ public abstract class Enemy : Character
 
     public override void TakeDamage(int amount)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         this.healthbar.enabled = true;
         base.TakeDamage(amount);
         this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);

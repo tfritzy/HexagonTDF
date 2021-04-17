@@ -10,7 +10,7 @@ public class House : Building
     public override Alliances Enemies => Alliances.Illigons;
     public override float Power => (float)PopulationIncrease / Constants.ResourcePowerMap[ResourceType.Population];
     public override int PopulationCost => 0;
-    public override int PopulationIncrease => 5;
+    public override int PopulationIncrease => 10;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Food, 1f},

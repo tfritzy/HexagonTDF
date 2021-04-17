@@ -15,8 +15,7 @@ public class FireTower : AttackTower
     public override int PopulationCost => 2;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        {ResourceType.Stone, .6f},
+        {ResourceType.Stone, .8f},
         {ResourceType.Wood, .2f},
-        {ResourceType.Gold, .2f},
     };
 }

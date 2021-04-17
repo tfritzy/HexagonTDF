@@ -269,14 +269,12 @@ public class Builder : MonoBehaviour
 
     private void SetCostPanels()
     {
-        if (selectedBuilding == null)
+        foreach (Text panel in CostPanels.Values)
         {
-            foreach (Text panel in CostPanels.Values)
-            {
-                panel.transform.parent.gameObject.SetActive(false);
-            }
+            panel.transform.parent.gameObject.SetActive(false);
         }
-        else
+
+        if (selectedBuilding != null)
         {
             foreach (ResourceType resource in selectedBuilding.BuildCost.Costs.Keys)
             {

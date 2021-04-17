@@ -107,6 +107,19 @@ public class BoardManager : MonoBehaviour
     private Map LoadMap()
     {
         TextAsset text = Resources.Load<TextAsset>(Constants.FilePaths.Maps + ActiveMapName);
+        if (text == null)
+        {
+            Map newMap = new Map();
+            newMap.Hexagons = new HexagonType?[BoardSideLength, BoardSideLength];
+            for (int i = 0; i < newMap.Hexagons.GetLength(0); i++)
+            {
+                for (int j = 0; j < newMap.Hexagons.GetLength(1); j++)
+                {
+                    newMap.Hexagons[i, j] = HexagonType.Grass;
+                }
+            }
+            return newMap;
+        }
         Map map = JsonConvert.DeserializeObject<Map>(text.text);
         return map;
     }

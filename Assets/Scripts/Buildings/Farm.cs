@@ -4,7 +4,7 @@ public class Farm : ResourceCollector
 {
     public override BuildingType Type => BuildingType.Farm;
     public override HashSet<HexagonType> HarvestedHexagonTypes => hexagonTypes;
-    public override int CollectionRatePerHex => 4;
+    public override int CollectionRatePerHex => 10;
     public override ResourceType CollectedResource => ResourceType.Food;
     public override int CollectionRange => 1;
     public override int PopulationCost => 3;
@@ -14,6 +14,6 @@ public class Farm : ResourceCollector
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        { global::ResourceType.Wood, 1f},
+        { ResourceType.Wood, 1f},
     };
 }

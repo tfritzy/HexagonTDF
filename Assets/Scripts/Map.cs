@@ -10,6 +10,11 @@ public class Map
 
     [JsonProperty]
     public Dictionary<string, BuildingType> Buildings;
+
+    public Map()
+    {
+        Buildings = new Dictionary<string, BuildingType>();
+    }
 }
 
 

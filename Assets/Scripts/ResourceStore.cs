@@ -46,10 +46,13 @@ public class ResourceStore : MonoBehaviour
         foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
             Transform container = this.transform.Find(type.ToString());
-            TextBoxes[type] = container.Find("Text").GetComponent<Text>();
+            TextBoxes[type] = container.Find("Circle").Find("Count Box").Find("Text").GetComponent<Text>();
         }
 
         Add(ResourceType.Wood, 110);
+        Add(ResourceType.Gold, 0);
+        Add(ResourceType.Stone, 0);
+        Add(ResourceType.Food, 0);
     }
 
     public void Add(ResourceType type, int amount)
