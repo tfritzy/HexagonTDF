@@ -1088,15 +1088,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114411284811892656, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_Color.r
-      value: 0.8666667
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114411284811892656, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_Color.g
-      value: 0.7372549
+      value: 0.7254902
       objectReference: {fileID: 0}
     - target: {fileID: 114411284811892656, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_Color.b
-      value: 0.07058824
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114489230747003390, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_Text
@@ -9130,6 +9130,10 @@ PrefabInstance:
     - target: {fileID: 1377905578954607403, guid: c03dbbc83cca9bd41a8ac811542b2abc, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1377905578970853141, guid: c03dbbc83cca9bd41a8ac811542b2abc, type: 3}
+      propertyPath: m_Name
+      value: WaveCounter
       objectReference: {fileID: 0}
     - target: {fileID: 1377905578996021427, guid: c03dbbc83cca9bd41a8ac811542b2abc, type: 3}
       propertyPath: m_AnchorMin.y

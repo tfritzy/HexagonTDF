@@ -37,10 +37,10 @@ public abstract class Enemy : Character
         this.path = portal.PathToSource;
     }
 
-    public void SetPower(float power)
+    public void SetPower(float power, float healthModifier)
     {
         this.power = power;
-        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER);
+        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER * healthModifier);
         if (startingHealth == 0)
         {
             this.startingHealth = 1;

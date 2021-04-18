@@ -7,7 +7,7 @@ public class Octahedor : Enemy
     public override Dictionary<AttributeType, float> PowerToAttributeRatio => powerToAttributeRatio;
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {
-        {AttributeType.Health, 2f},
+        {AttributeType.Health, 1.5f},
         {AttributeType.MovementSpeed, -.5f},
     };
 }

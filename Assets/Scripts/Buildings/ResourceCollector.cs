@@ -16,6 +16,11 @@ public abstract class ResourceCollector : Building
     private int numResourceHexInRange;
     private float timeBetweenResourceAdds;
 
+    public int CollectionRate
+    {
+        get { return numResourceHexInRange * CollectionRatePerHex; }
+    }
+
     protected override void Setup()
     {
         List<Vector2Int> hexesInRange = Helpers.GetAllHexInRange(this.Position, CollectionRange);
@@ -27,9 +32,7 @@ public abstract class ResourceCollector : Building
             }
         }
 
-        Debug.Log($"Resource collector created collecting from {numResourceHexInRange} hexes");
-
-        timeBetweenResourceAdds = BASE_TIME_BETWEEN_COLLECTIONS / (CollectionRatePerHex * numResourceHexInRange);
+        Managers.ResourceStore.RecalculateResourceCollectionRates();
 
         base.Setup();
     }
@@ -38,17 +41,6 @@ public abstract class ResourceCollector : Building
     {
         return HarvestedHexagonTypes.Contains(Managers.Map.Hexagons[hex.x, hex.y].Type) &&
         (Managers.Map.Buildings.ContainsKey(hex) == false || Managers.Map.Buildings[hex] == this);
-    }
-
-    private float lastCollectionTime;
-    public virtual void Harvest()
-    {
-        if (Time.time > lastCollectionTime + timeBetweenResourceAdds)
-        {
-            Managers.ResourceStore.Add(CollectedResource, 1);
-
-            lastCollectionTime = Time.time;
-        }
     }
 
     public override float Power
@@ -64,11 +56,5 @@ public abstract class ResourceCollector : Building
             power -= ((float)PopulationCost) / Constants.ResourcePowerMap[ResourceType.Population];
             return power;
         }
-    }
-
-    protected override void UpdateLoop()
-    {
-        base.UpdateLoop();
-        Harvest();
     }
 }

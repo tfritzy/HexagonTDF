@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Portal : Building
 {
@@ -14,7 +15,16 @@ public class Portal : Building
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override float Power => 100;
     public override int PopulationCost => 0;
-    public int CurrentWave;
+    private int _currentWave;
+    public int CurrentWave
+    {
+        get { return _currentWave; }
+        set
+        {
+            _currentWave = value;
+            startWaveCounter.text = _currentWave.ToString();
+        }
+    }
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Stone, 1f},
@@ -46,6 +56,9 @@ public class Portal : Building
     private bool HasPeriodicLargeMinions;
     private float PeriodicLargeHealthModifier;
     private EnemyType currentWaveEnemy;
+    private GameObject startWaveDialog;
+    private Text startWaveTimer;
+    private Text startWaveCounter;
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
         EnemyType.Tetriquiter,
@@ -58,6 +71,10 @@ public class Portal : Building
     protected override void Setup()
     {
         lineRenderer = transform.Find("Path").GetComponent<LineRenderer>();
+        startWaveDialog = Managers.Canvas.Find("StartWaveDialog").gameObject;
+        startWaveTimer = startWaveDialog.transform.Find("Content Group").Find("Time").GetComponent<Text>();
+        startWaveCounter = startWaveDialog.transform.Find("Avatar Frame").Find("Mask").Find("WaveCounter").GetComponent<Text>();
+        startWaveDialog.SetActive(false);
         this.pathCorners = new List<GameObject>();
         RecalculatePath();
         base.Setup();
@@ -104,6 +121,7 @@ public class Portal : Building
     public void StartWaveEarly()
     {
         lastWaveStartTime = Time.time;
+        startWaveDialog.SetActive(false);
     }
 
     private void ResetLineRenderer()
@@ -140,6 +158,8 @@ public class Portal : Building
     {
         if (Time.time - lastWaveStartTime < 0)
         {
+            startWaveTimer.text = $"{(int)(lastWaveStartTime - Time.time)}s";
+            startWaveDialog.SetActive(true);
             return;
         }
 
@@ -151,11 +171,12 @@ public class Portal : Building
             return;
         }
 
+        startWaveDialog.SetActive(false);
         if (Time.time > lastSpawnTime + DEFAULT_SEC_BETWEEN_SPAWN * WaveTypeSpawnSpeedMultiplier)
         {
             GameObject enemy = Instantiate(Prefabs.Enemies[currentWaveEnemy].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
             Enemy enemyMono = enemy.GetComponent<Enemy>();
-            enemyMono.SetPower(PowerPerWave[CurrentWave]);
+            enemyMono.SetPower(PowerPerWave[CurrentWave], WaveTypeHealthMultiplier);
             enemyMono.SetPortal(this);
             lastSpawnTime = Time.time;
         }

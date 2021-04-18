@@ -9,6 +9,7 @@ public class FrozenEffect : Effect
     private const float duration = 3f;
     public override bool Stacks => false;
     public override EffectType Type => EffectType.Frozen;
+    private float modificationAmount;
 
     public FrozenEffect(float slowAmount, Guid id)
         : base(duration, duration, id)
@@ -22,7 +23,7 @@ public class FrozenEffect : Effect
         if (character is Enemy)
         {
             Enemy enemy = (Enemy)character;
-            enemy.MovementSpeedModification = (enemy.MovementSpeed - enemy.MovementSpeedModification);
+            enemy.MovementSpeedModification += modificationAmount;
             character.SetMaterial(Constants.Materials.Normal);
         }
     }
@@ -31,7 +32,9 @@ public class FrozenEffect : Effect
     {
         if (character is Enemy)
         {
-            ((Enemy)character).MovementSpeedModification /= SlowAmount;
+            Enemy enemy = (Enemy)character;
+            modificationAmount = (enemy.MovementSpeed - enemy.MovementSpeedModification) * SlowAmount;
+            ((Enemy)character).MovementSpeedModification -= modificationAmount;
             character.SetMaterial(Constants.Materials.Frozen);
         }
     }
