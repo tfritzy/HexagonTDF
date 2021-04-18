@@ -61,11 +61,12 @@ public class Portal : Building
     private Text startWaveCounter;
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
-        EnemyType.Tetriquiter,
-        EnemyType.Sqorpin,
-        EnemyType.Dode,
-        EnemyType.Icid,
-        EnemyType.Octahedor,
+        EnemyType.StickGuy,
+        // EnemyType.Tetriquiter,
+        // EnemyType.Sqorpin,
+        // EnemyType.Dode,
+        // EnemyType.Icid,
+        // EnemyType.Octahedor,
     };
 
     protected override void Setup()
@@ -174,7 +175,7 @@ public class Portal : Building
         startWaveDialog.SetActive(false);
         if (Time.time > lastSpawnTime + DEFAULT_SEC_BETWEEN_SPAWN * WaveTypeSpawnSpeedMultiplier)
         {
-            GameObject enemy = Instantiate(Prefabs.Enemies[currentWaveEnemy].gameObject, this.transform.position + Vector3.up, new Quaternion(), null);
+            GameObject enemy = Instantiate(Prefabs.Enemies[currentWaveEnemy].gameObject, this.transform.position, new Quaternion(), null);
             Enemy enemyMono = enemy.GetComponent<Enemy>();
             enemyMono.SetPower(PowerPerWave[CurrentWave], WaveTypeHealthMultiplier);
             enemyMono.SetPortal(this);

@@ -118,6 +118,7 @@ public abstract class Enemy : Character
         Vector3 difference = (Hexagon.ToWorldPosition(path[PathProgress]) - this.transform.position);
         difference.y = 0;
         this.rb.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
+        this.transform.rotation = Quaternion.LookRotation(this.rb.velocity, Vector3.up);
 
         if (difference.magnitude < .1f)
         {
