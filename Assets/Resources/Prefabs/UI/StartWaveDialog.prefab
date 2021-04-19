@@ -2774,7 +2774,7 @@ GameObject:
   - component: {fileID: 1377905578996021429}
   - component: {fileID: 1377905578996021426}
   m_Layer: 5
-  m_Name: Wheat
+  m_Name: Food
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

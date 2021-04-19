@@ -34,9 +34,10 @@ public class CrystalAccelerator : AttackTower
 
     private void HurtEnemies()
     {
+        Vector3 targetsPos = Target.GetComponent<Collider>().bounds.center;
         Vector3 source = this.transform.position;
-        source.y = Target.transform.position.y;
-        Vector3 direction = Target.transform.position - this.transform.position;
+        source.y = targetsPos.y;
+        Vector3 direction = targetsPos - this.transform.position;
         direction.y = 0;
         RaycastHit[] hits = Physics.RaycastAll(source, direction, 100f, Constants.Layers.Characters);
         foreach (RaycastHit hit in hits)
@@ -58,10 +59,11 @@ public class CrystalAccelerator : AttackTower
         GameObject particles = projectile.transform.Find("ParticlesOutBack").gameObject;
         particles.transform.rotation = particles.transform.rotation * Turret.transform.rotation;
         particles.transform.position = Turret.transform.position;
-        Vector3 vectorToTarget = Target.transform.position - this.transform.position;
+        Vector3 targetsPos = Target.GetComponent<Collider>().bounds.center;
+        Vector3 vectorToTarget = targetsPos - this.transform.position;
         vectorToTarget.y = 0;
         Vector3 smokePosition = this.transform.position + vectorToTarget.normalized * smoke.transform.position.z;
-        smokePosition.y = Target.transform.position.y;
+        smokePosition.y = targetsPos.y;
         smoke.transform.position = smokePosition;
         var main = smoke.GetComponent<ParticleSystem>().main;
         float angle = Vector3.Angle(Vector3.forward, vectorToTarget);

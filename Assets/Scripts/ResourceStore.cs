@@ -38,7 +38,12 @@ public class ResourceStore : MonoBehaviour
         }
     }
 
-    void Start()
+    public float GetResourceCollectionRate(ResourceType resourceType)
+    {
+        return resourceCollectionRates.ContainsKey(resourceType) ? (float)resourceCollectionRates[resourceType] / BASE_TIME_BETWEEN_COLLECTIONS : 0;
+    }
+
+    void Awake()
     {
         Resources = new Dictionary<ResourceType, int>()
         {

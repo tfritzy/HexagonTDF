@@ -14,6 +14,7 @@ public abstract class Enemy : Character
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
     public float MovementSpeedModification;
     public float MovementSpeed;
+    protected GameObject Body;
     private bool isDead;
     private Rigidbody rb;
     private Portal portal;
@@ -45,6 +46,8 @@ public abstract class Enemy : Character
         {
             this.startingHealth = 1;
         }
+        this.Body = transform.Find("Body").gameObject;
+        // this.Body.transform.localScale *= healthModifier;
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed) ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
         this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
     }
@@ -61,6 +64,8 @@ public abstract class Enemy : Character
             Managers.Canvas).GetComponent<Healthbar>();
         this.healthbar.SetOwner(this.transform);
         this.healthbar.enabled = false;
+        this.Body = transform.Find("Body").gameObject;
+        SetRagdollState(false);
         base.Setup();
     }
 
@@ -98,6 +103,9 @@ public abstract class Enemy : Character
             ResourceNumber resourceNumber = Instantiate(Prefabs.ResourceNumber, Managers.Canvas).GetComponent<ResourceNumber>();
             resourceNumber.SetValue(goldReward, this.gameObject, ResourceType.Gold);
         }
+
+        SetRagdollState(true);
+        DetachBody();
     }
 
     private void FollowPath()
@@ -152,5 +160,24 @@ public abstract class Enemy : Character
         this.healthbar.enabled = true;
         base.TakeDamage(amount);
         this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
+    }
+
+    private void SetRagdollState(bool value)
+    {
+        foreach (Collider collider in this.Body.GetComponentsInChildren<Collider>())
+        {
+            collider.enabled = value;
+        }
+
+        foreach (Rigidbody rb in this.Body.GetComponentsInChildren<Rigidbody>())
+        {
+            rb.isKinematic = !value;
+        }
+    }
+
+    private void DetachBody()
+    {
+        this.Body.transform.parent = null;
+        Destroy(this.Body, 5f);
     }
 }

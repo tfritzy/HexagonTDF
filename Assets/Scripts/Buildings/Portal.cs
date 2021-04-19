@@ -59,6 +59,7 @@ public class Portal : Building
     private GameObject startWaveDialog;
     private Text startWaveTimer;
     private Text startWaveCounter;
+    private Dictionary<ResourceType, Text> startWaveResourceBonusTexts;
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
         EnemyType.StickGuy,
@@ -68,6 +69,13 @@ public class Portal : Building
         // EnemyType.Icid,
         // EnemyType.Octahedor,
     };
+    private readonly List<ResourceType> bonusResourceTypes = new List<ResourceType>()
+    {
+        ResourceType.Wood,
+        ResourceType.Stone,
+        ResourceType.Food,
+        ResourceType.Gold
+    };
 
     protected override void Setup()
     {
@@ -75,6 +83,12 @@ public class Portal : Building
         startWaveDialog = Managers.Canvas.Find("StartWaveDialog").gameObject;
         startWaveTimer = startWaveDialog.transform.Find("Content Group").Find("Time").GetComponent<Text>();
         startWaveCounter = startWaveDialog.transform.Find("Avatar Frame").Find("Mask").Find("WaveCounter").GetComponent<Text>();
+        startWaveResourceBonusTexts = new Dictionary<ResourceType, Text>();
+        Transform resources = startWaveDialog.transform.Find("Content Group").Find("Resources");
+        startWaveResourceBonusTexts[ResourceType.Gold] = resources.Find("Gold").Find("Text").GetComponent<Text>();
+        startWaveResourceBonusTexts[ResourceType.Stone] = resources.Find("Stone").Find("Text").GetComponent<Text>();
+        startWaveResourceBonusTexts[ResourceType.Wood] = resources.Find("Wood").Find("Text").GetComponent<Text>();
+        startWaveResourceBonusTexts[ResourceType.Food] = resources.Find("Food").Find("Text").GetComponent<Text>();
         startWaveDialog.SetActive(false);
         this.pathCorners = new List<GameObject>();
         RecalculatePath();
@@ -121,6 +135,10 @@ public class Portal : Building
 
     public void StartWaveEarly()
     {
+        foreach (ResourceType type in bonusResourceTypes)
+        {
+            Managers.ResourceStore.Add(type, GetStartEarlyBonus(type));
+        }
         lastWaveStartTime = Time.time;
         startWaveDialog.SetActive(false);
     }
@@ -159,6 +177,7 @@ public class Portal : Building
     {
         if (Time.time - lastWaveStartTime < 0)
         {
+            UpdateStartWaveDialog();
             startWaveTimer.text = $"{(int)(lastWaveStartTime - Time.time)}s";
             startWaveDialog.SetActive(true);
             return;
@@ -210,5 +229,18 @@ public class Portal : Building
                 WaveTypeHealthMultiplier = 3f;
                 break;
         }
+    }
+
+    private void UpdateStartWaveDialog()
+    {
+        foreach (ResourceType type in bonusResourceTypes)
+        {
+            startWaveResourceBonusTexts[type].text = GetStartEarlyBonus(type).ToString();
+        }
+    }
+
+    private int GetStartEarlyBonus(ResourceType type)
+    {
+        return (int)(((lastWaveStartTime - Time.time) * 1.25f * Managers.ResourceStore.GetResourceCollectionRate(type)));
     }
 }

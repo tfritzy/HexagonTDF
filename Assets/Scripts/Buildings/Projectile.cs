@@ -58,11 +58,25 @@ public class Projectile : MonoBehaviour
         {
             hasAlreadyTriggered = true;
             OnCollision(other.gameObject);
-            dealDamageToEnemy(attacker, other.transform.GetComponent<Character>(), this.gameObject);
+            Transform body = other.transform.Find("Body");
+            Character character = other.GetComponent<Character>();
+            dealDamageToEnemy(attacker, other.GetComponent<Character>(), this.gameObject);
+            if (character != null && character.Health <= 0)
+            {
+                AddForces(body);
+            }
             Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
             DetachParticles(this.explosionParticles);
             DetachParticles(this.trailParticles);
             GameObject.Destroy(this.gameObject);
+        }
+    }
+
+    private void AddForces(Transform body)
+    {
+        foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>())
+        {
+            rb.AddForce(this.Rigidbody.velocity / UnityEngine.Random.Range(2, 4) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
         }
     }
 
