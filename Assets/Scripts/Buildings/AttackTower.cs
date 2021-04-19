@@ -8,11 +8,12 @@ public abstract class AttackTower : Building
     public abstract VerticalRegion AttackRegion { get; }
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
+    protected virtual float ManualPowerAdjustment => 0;
+    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
+    protected virtual float ExplosionRadius => 0;
     public Character Target;
     protected const float projectileSpeed = 10;
     protected Vector3 projectileStartPosition;
-    protected virtual float ManualPowerAdjustment => 0;
-    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected GameObject Turret;
     protected GameObject Body;
 
@@ -125,7 +126,14 @@ public abstract class AttackTower : Building
             return;
         }
 
-        target.TakeDamage(Damage);
+        if (ExplosionRadius == 0)
+        {
+            target.TakeDamage(Damage);
+        }
+        else
+        {
+            Explode(attacker, target, projectile);
+        }
     }
 
     protected void SetProjectileVelocity(GameObject projectile)
@@ -159,6 +167,24 @@ public abstract class AttackTower : Building
     private float getDamagePower()
     {
         return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / 10;
+    }
+
+    private void Explode(Character attacker, Character target, GameObject projectile)
+    {
+        Collider[] nearby = Physics.OverlapSphere(projectile.transform.position, this.ExplosionRadius, Constants.Layers.Characters, QueryTriggerInteraction.Collide);
+        foreach (Collider collider in nearby)
+        {
+            Character character = collider.transform?.GetComponent<Character>();
+            if (character == null)
+            {
+                continue;
+            }
+
+            if (attacker.Enemies == target.Alliance)
+            {
+                character.TakeDamage(Damage);
+            }
+        }
     }
 
     private float getRangePower()

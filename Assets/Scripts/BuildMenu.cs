@@ -7,7 +7,7 @@ public abstract class BuildMenu : MonoBehaviour
 {
     public abstract List<BuildingType> BuildingTypes { get; }
 
-    private const int NumButtons = 12;
+    private const int NumButtons = 9;
     private List<Building> buildings;
 
     void Start()
@@ -28,7 +28,7 @@ public abstract class BuildMenu : MonoBehaviour
         for (i = 0; i < BuildingTypes.Count; i++)
         {
             Button button = this.transform.GetChild(i).GetComponent<Button>();
-            button.transform.Find("Image").GetComponent<Image>().sprite = buildings[i].Icon;
+            button.transform.Find("Icon").GetComponent<Image>().sprite = buildings[i].Icon;
             button.GetComponent<ButtonFunctions>().Building = buildings[i];
         }
 
