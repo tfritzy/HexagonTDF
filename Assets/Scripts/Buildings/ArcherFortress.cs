@@ -16,7 +16,6 @@ public class ArcherFortress : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override float ManualPowerAdjustment => -0.5f; // Making the arrows spread out means some can miss small targets.
-    public override int PopulationCost => 3;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, .8f},

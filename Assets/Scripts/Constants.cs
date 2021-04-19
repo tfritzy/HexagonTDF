@@ -24,7 +24,6 @@ public static class Constants
             { ResourceType.Wood, 30},
             { ResourceType.Stone, 20},
             { ResourceType.Gold, 5},
-            { ResourceType.Population, 5}
         };
 
     public static class FilePaths

@@ -14,7 +14,6 @@ public class Portal : Building
     public Guid PathId;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override float Power => 100;
-    public override int PopulationCost => 0;
     private int _currentWave;
     public int CurrentWave
     {

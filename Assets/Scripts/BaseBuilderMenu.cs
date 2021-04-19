@@ -10,7 +10,6 @@ public class BaseBuilderMenu : BuildMenu
 
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
-        BuildingType.House,
         BuildingType.Forager,
         BuildingType.Farm,
         BuildingType.Lumbermill,

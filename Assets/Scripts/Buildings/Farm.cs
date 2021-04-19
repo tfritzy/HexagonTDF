@@ -7,7 +7,6 @@ public class Farm : ResourceCollector
     public override int CollectionRatePerHex => 10;
     public override ResourceType CollectedResource => ResourceType.Food;
     public override int CollectionRange => 1;
-    public override int PopulationCost => 3;
     private readonly HashSet<HexagonType> hexagonTypes = new HashSet<HexagonType>() { HexagonType.Grass };
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override int ExpectedTileCollectionCount => 6;

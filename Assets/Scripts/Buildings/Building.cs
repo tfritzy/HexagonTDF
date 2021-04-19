@@ -9,11 +9,9 @@ public abstract class Building : Character
     public abstract BuildingType Type { get; }
     public Vector2Int Position { get; set; }
     public override int StartingHealth => int.MaxValue;
-    public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, this.CostRatio, PopulationCost);
+    public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, this.CostRatio);
     public abstract Dictionary<ResourceType, float> CostRatio { get; }
     public override VerticalRegion Region => VerticalRegion.Ground;
-    public abstract int PopulationCost { get; }
-    public virtual int PopulationIncrease => 0;
 
     public void Initialize(Vector2Int position)
     {

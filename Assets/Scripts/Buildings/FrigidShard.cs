@@ -16,7 +16,6 @@ public class FrigidShard : AttackTower
     public float SlowAmount => .5f;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 10;
     protected override float ManualPowerAdjustment => 8;
-    public override int PopulationCost => 1;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {
         {ResourceType.Wood, .4f},

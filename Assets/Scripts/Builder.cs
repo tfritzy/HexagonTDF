@@ -171,7 +171,6 @@ public class Builder : MonoBehaviour
             selectedBuilding.BuildCost.Deduct();
             Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
             building.Initialize(highlightedHexagon.GridPosition);
-            Managers.ResourceStore.RecalculatePopulation();
         }
         else
         {

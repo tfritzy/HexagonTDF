@@ -15,5 +15,4 @@
     FrigidShard,
     Farm,
     Forager,
-    House
 }

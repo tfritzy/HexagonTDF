@@ -9,17 +9,7 @@ public class ResourceStore : MonoBehaviour
 
     private Dictionary<ResourceType, int> Resources;
     private Dictionary<ResourceType, Text> TextBoxes;
-    public int MaxPopulation
-    {
-        get { return maxPopulation; }
-    }
-    public int CurrentPopulation
-    {
-        get { return currentPopulation; }
-    }
 
-    private int maxPopulation;
-    private int currentPopulation;
     private Dictionary<ResourceType, int> resourceCollectionRates;
     private Dictionary<ResourceType, float> timeBetweenResourceAdds;
     private Dictionary<ResourceType, float> lastCollectionTimes;
@@ -77,25 +67,6 @@ public class ResourceStore : MonoBehaviour
     public int GetAmount(ResourceType type)
     {
         return Resources[type];
-    }
-
-    public void RecalculatePopulation()
-    {
-        currentPopulation = 0;
-        maxPopulation = 0;
-
-        foreach (Building building in Managers.Map.Buildings.Values)
-        {
-            currentPopulation += building.PopulationCost;
-            maxPopulation += building.PopulationIncrease;
-        }
-
-        SetPopulationText();
-    }
-
-    private void SetPopulationText()
-    {
-        TextBoxes[ResourceType.Population].text = $"{CurrentPopulation} / {MaxPopulation}";
     }
 
     public void RecalculateResourceCollectionRates()

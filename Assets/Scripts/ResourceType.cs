@@ -4,5 +4,4 @@ public enum ResourceType
     Stone,
     Gold,
     Food,
-    Population
 }

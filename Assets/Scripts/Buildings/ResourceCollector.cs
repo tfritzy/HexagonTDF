@@ -53,7 +53,6 @@ public abstract class ResourceCollector : Building
                 CollectionRatePerHex *
                 ((int)(EXPECTED_GAME_DURATION_SECONDS / BASE_TIME_BETWEEN_COLLECTIONS));
             power += (amountOfResourcesCollected / Constants.ResourcePowerMap[CollectedResource]) * PRODUCTION_STRUCTURE_POWER_RATIO;
-            power -= ((float)PopulationCost) / Constants.ResourcePowerMap[ResourceType.Population];
             return power;
         }
     }

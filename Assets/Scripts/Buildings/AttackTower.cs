@@ -155,13 +155,8 @@ public abstract class AttackTower : Building
     {
         get
         {
-            return getRangePower() + getDamagePower() + getCooldownPower() + getAttackRegionPower() + ManualPowerAdjustment + getPopulationPower();
+            return getRangePower() + getDamagePower() + getCooldownPower() + getAttackRegionPower() + ManualPowerAdjustment;
         }
-    }
-
-    private float getPopulationPower()
-    {
-        return -((float)PopulationCost) / Constants.ResourcePowerMap[ResourceType.Population];
     }
 
     private float getDamagePower()

@@ -10,7 +10,6 @@ public class Lumbermill : ResourceCollector
     private readonly HashSet<HexagonType> hexagonTypes = new HashSet<HexagonType>() { HexagonType.Forrest };
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override int ExpectedTileCollectionCount => 2;
-    public override int PopulationCost => 1;
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {

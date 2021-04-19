@@ -13,10 +13,8 @@ public class Source : ResourceCollector
     public override ResourceType CollectedResource => ResourceType.Wood;
     public override int CollectionRange => 0;
     public override int StartingHealth => 50;
-    public override int PopulationIncrease => 10;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override int ExpectedTileCollectionCount => 1;
-    public override int PopulationCost => 1;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         { global::ResourceType.Stone, 1f},
