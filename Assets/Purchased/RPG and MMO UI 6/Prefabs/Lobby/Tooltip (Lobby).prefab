@@ -202,7 +202,6 @@ GameObject:
   - component: {fileID: 114705960693741040}
   - component: {fileID: 114466603273511082}
   - component: {fileID: 225359688587920300}
-  - component: {fileID: 114627195867648046}
   m_Layer: 5
   m_Name: Tooltip (Lobby)
   m_TagString: Untagged
@@ -229,7 +228,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 378, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114792277608536636
 MonoBehaviour:
@@ -346,18 +345,6 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!114 &114627195867648046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1366595544071204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2e1ce3fe4b4851478e36a2f9a4db54b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1819339036074266
 GameObject:
   m_ObjectHideFlags: 0
