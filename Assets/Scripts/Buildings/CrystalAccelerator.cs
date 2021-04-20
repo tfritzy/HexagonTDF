@@ -14,8 +14,8 @@ public class CrystalAccelerator : AttackTower
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {
-        {ResourceType.Stone, .8f},
-        {ResourceType.Wood, .2f},
+        {ResourceType.Stone, .9f},
+        {ResourceType.Food, .1f},
     };
     private ParticleSystem projectileGenerationAnimation;
 

@@ -19,7 +19,8 @@ public class FrigidShard : AttackTower
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
     {
         {ResourceType.Wood, .4f},
-        {ResourceType.Stone, .4f},
+        {ResourceType.Stone, .5f},
+        {ResourceType.Food, .1f},
     };
     private FrozenEffect frozenEffect;
     private FrozenDamageEffect frozenDamageEffect;

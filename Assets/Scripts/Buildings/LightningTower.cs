@@ -15,8 +15,9 @@ public class LightningTower : AttackTower
     protected override float ManualPowerAdjustment => 1; // Double damage to air.
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        {ResourceType.Wood, .25f},
+        {ResourceType.Wood, .15f},
         {ResourceType.Stone, .75f},
+        {ResourceType.Food, .1f},
     };
 
     protected override void Attack()

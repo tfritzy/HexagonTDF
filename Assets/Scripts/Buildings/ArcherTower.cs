@@ -15,5 +15,6 @@ public class ArcherTower : AttackTower
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, 1f},
+        {ResourceType.Food, .1f},
     };
 }

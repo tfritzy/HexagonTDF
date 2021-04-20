@@ -18,8 +18,8 @@ public class EarthTower : AttackTower
     protected override float ManualPowerAdjustment => .5f; // Can store projectiles.
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        {ResourceType.Wood, .25f},
-        {ResourceType.Stone, .75f},
+        {ResourceType.Stone, .9f},
+        {ResourceType.Food, .1f},
     };
     private const float ROCK_ROTATION_RADIUS = .5f;
     private const float ROCK_ROTATION_TIME_SECONDS = 20f;

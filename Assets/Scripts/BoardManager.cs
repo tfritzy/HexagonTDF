@@ -13,7 +13,7 @@ public class BoardManager : MonoBehaviour
     public Building Source;
     public string ActiveMapName;
 
-    void Start()
+    void Awake()
     {
         SpawnMap();
     }

@@ -13,6 +13,7 @@ public class Lumbermill : ResourceCollector
 
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        { global::ResourceType.Wood, 1f},
+        { ResourceType.Wood, .9f },
+        { ResourceType.Food, .1f },
     };
 }

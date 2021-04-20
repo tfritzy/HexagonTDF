@@ -32,8 +32,6 @@ public abstract class ResourceCollector : Building
             }
         }
 
-        Managers.ResourceStore.RecalculateResourceCollectionRates();
-
         base.Setup();
     }
 
@@ -47,6 +45,13 @@ public abstract class ResourceCollector : Building
     {
         get
         {
+            if (CollectedResource == ResourceType.Food)
+            {
+                float collectionRate = CollectionRatePerHex * ExpectedTileCollectionCount;
+                float powerFoodCost = Constants.ResourcePowerMap[ResourceType.Food];
+                return collectionRate / powerFoodCost;
+            }
+
             float power = 0f;
             int amountOfResourcesCollected =
                 ExpectedTileCollectionCount *

@@ -23,4 +23,10 @@ public abstract class Building : Character
             renderer.material = Constants.Materials.Normal;
         }
     }
+
+    protected override void Setup()
+    {
+        Managers.ResourceStore.RecalculateResourceCollectionRates();
+        base.Setup();
+    }
 }

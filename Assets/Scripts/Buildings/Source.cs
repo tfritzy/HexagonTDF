@@ -9,15 +9,15 @@ public class Source : ResourceCollector
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override HashSet<HexagonType> HarvestedHexagonTypes => collectionTypes;
-    public override int CollectionRatePerHex => 2;
-    public override ResourceType CollectedResource => ResourceType.Wood;
+    public override int CollectionRatePerHex => 20;
+    public override ResourceType CollectedResource => ResourceType.Food;
     public override int CollectionRange => 0;
     public override int StartingHealth => 50;
     public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override int ExpectedTileCollectionCount => 1;
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
-        { global::ResourceType.Stone, 1f},
+        { ResourceType.Stone, 1f},
     };
 
     private HashSet<HexagonType> collectionTypes = new HashSet<HexagonType>() { HexagonType.Grass, HexagonType.Stone };

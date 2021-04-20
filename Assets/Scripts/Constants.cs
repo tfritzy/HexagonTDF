@@ -20,7 +20,7 @@ public static class Constants
     public static Dictionary<ResourceType, int> ResourcePowerMap => resourcePowerMap;
     private static Dictionary<ResourceType, int> resourcePowerMap = new Dictionary<ResourceType, int>
         {
-            { ResourceType.Food, 100},
+            { ResourceType.Food, 10},
             { ResourceType.Wood, 30},
             { ResourceType.Stone, 20},
             { ResourceType.Gold, 5},

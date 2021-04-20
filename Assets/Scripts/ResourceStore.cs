@@ -14,6 +14,7 @@ public class ResourceStore : MonoBehaviour
     private Dictionary<ResourceType, float> timeBetweenResourceAdds;
     private Dictionary<ResourceType, float> lastCollectionTimes;
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
+    private int TotalFoodCost;
 
     void Update()
     {
@@ -30,7 +31,14 @@ public class ResourceStore : MonoBehaviour
 
     public float GetResourceCollectionRate(ResourceType resourceType)
     {
-        return resourceCollectionRates.ContainsKey(resourceType) ? (float)resourceCollectionRates[resourceType] / BASE_TIME_BETWEEN_COLLECTIONS : 0;
+        if (resourceType == ResourceType.Food)
+        {
+            return resourceCollectionRates.ContainsKey(ResourceType.Food) ? resourceCollectionRates[ResourceType.Food] : 0;
+        }
+        else
+        {
+            return resourceCollectionRates.ContainsKey(resourceType) ? (float)resourceCollectionRates[resourceType] / BASE_TIME_BETWEEN_COLLECTIONS : 0;
+        }
     }
 
     void Awake()
@@ -71,6 +79,7 @@ public class ResourceStore : MonoBehaviour
 
     public void RecalculateResourceCollectionRates()
     {
+        TotalFoodCost = 0;
         resourceCollectionRates = new Dictionary<ResourceType, int>();
         foreach (Building building in Managers.Map.Buildings.Values)
         {
@@ -85,6 +94,11 @@ public class ResourceStore : MonoBehaviour
 
                 resourceCollectionRates[collector.CollectedResource] += collector.CollectionRate;
             }
+
+            if (building.Alliance == Alliances.Player)
+            {
+                TotalFoodCost += building.BuildCost.Costs.ContainsKey(ResourceType.Food) ? building.BuildCost.Costs[ResourceType.Food] : 0;
+            }
         }
 
         timeBetweenResourceAdds = new Dictionary<ResourceType, float>();
@@ -92,12 +106,22 @@ public class ResourceStore : MonoBehaviour
         {
             timeBetweenResourceAdds[type] = BASE_TIME_BETWEEN_COLLECTIONS / (float)resourceCollectionRates[type];
         }
+
+        int foodCollectionRate = resourceCollectionRates.ContainsKey(ResourceType.Food) ? resourceCollectionRates[ResourceType.Food] : 0;
+        Resources[ResourceType.Food] = foodCollectionRate - TotalFoodCost;
+        SetFoodCounter();
     }
 
     public virtual void Harvest()
     {
         foreach (ResourceType resource in resourceCollectionRates.Keys)
         {
+            if (resource == ResourceType.Food)
+            {
+                // Food works differently.
+                continue;
+            }
+
             if (lastCollectionTimes.ContainsKey(resource) == false)
             {
                 lastCollectionTimes[resource] = Time.time;
@@ -109,6 +133,11 @@ public class ResourceStore : MonoBehaviour
                 lastCollectionTimes[resource] = Time.time;
             }
         }
+    }
+
+    private void SetFoodCounter()
+    {
+        TextBoxes[ResourceType.Food].text = $"{TotalFoodCost} / {GetResourceCollectionRate(ResourceType.Food)}";
     }
 
 }

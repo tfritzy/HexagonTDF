@@ -19,7 +19,8 @@ public class ArcherFortress : AttackTower
     private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
     {
         {ResourceType.Wood, .8f},
-        {ResourceType.Stone, .4f},
+        {ResourceType.Stone, .1f},
+        {ResourceType.Food, .1f},
     };
 
     protected override void Attack()

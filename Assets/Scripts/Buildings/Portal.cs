@@ -72,7 +72,6 @@ public class Portal : Building
     {
         ResourceType.Wood,
         ResourceType.Stone,
-        ResourceType.Food,
         ResourceType.Gold
     };
 
@@ -87,7 +86,6 @@ public class Portal : Building
         startWaveResourceBonusTexts[ResourceType.Gold] = resources.Find("Gold").Find("Text").GetComponent<Text>();
         startWaveResourceBonusTexts[ResourceType.Stone] = resources.Find("Stone").Find("Text").GetComponent<Text>();
         startWaveResourceBonusTexts[ResourceType.Wood] = resources.Find("Wood").Find("Text").GetComponent<Text>();
-        startWaveResourceBonusTexts[ResourceType.Food] = resources.Find("Food").Find("Text").GetComponent<Text>();
         startWaveDialog.SetActive(false);
         this.pathCorners = new List<GameObject>();
         RecalculatePath();
