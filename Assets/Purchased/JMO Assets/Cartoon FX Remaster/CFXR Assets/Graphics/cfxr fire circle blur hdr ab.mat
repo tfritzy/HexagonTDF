@@ -29,7 +29,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DistortTex:
-        m_Texture: {fileID: 2800000, guid: 74db0952acdd7ba488d3d0b114954504, type: 3}
+        m_Texture: {fileID: 2800000, guid: 325d48ff66bae3245b768b66049c7718, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DitherCustom:
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 5e0f8dcfc1b16c849ac880e3cd107176, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0c1a09a40334bc843813eff765b8c5a8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
@@ -59,11 +59,11 @@ Material:
     - _CFXR_DITHERED_SHADOWS: 0
     - _CFXR_OVERLAYBLEND: 0
     - _CFXR_OVERLAYTEX: 0
-    - _Cutoff: 0.1
+    - _Cutoff: 0.023
     - _DirLightScreenAtten: 1
     - _DirectLightingRamp: 1
     - _DissolveSmooth: 0.1
-    - _Distort: 0.9
+    - _Distort: 0.68
     - _DstBlend: 10
     - _EdgeFadePow: 1
     - _FadeAlongU: 1
@@ -99,7 +99,8 @@ Material:
     - _UseUVDistortion: 1
     - _ZWrite: 0
     m_Colors:
-    - _DistortScrolling: {r: 0, g: -1, b: 1, a: 1}
+    - _DistortScrolling: {r: 0, g: -0.5, b: 0.5, a: 0.5}
     - _OverlayTex_Scroll: {r: 0.1, g: 0.1, b: 1, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticlesFadeDistance: {r: 0, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []

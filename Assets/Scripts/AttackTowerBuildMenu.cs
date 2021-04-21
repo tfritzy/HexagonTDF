@@ -18,5 +18,6 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.ArcherFortress,
         BuildingType.CrystalAccelerator,
         BuildingType.FrigidShard,
+        BuildingType.SparkTower
     };
 }

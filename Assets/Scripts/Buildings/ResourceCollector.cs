@@ -10,6 +10,7 @@ public abstract class ResourceCollector : Building
     public abstract ResourceType CollectedResource { get; }
     public abstract int CollectionRange { get; }
     protected abstract int ExpectedTileCollectionCount { get; }
+    protected List<Vector2Int> HexesBeingHarvested;
     private const float BASE_TIME_BETWEEN_COLLECTIONS = 5f;
     private const float EXPECTED_GAME_DURATION_SECONDS = 600f;
     private const float PRODUCTION_STRUCTURE_POWER_RATIO = .2f;
@@ -24,11 +25,13 @@ public abstract class ResourceCollector : Building
     protected override void Setup()
     {
         List<Vector2Int> hexesInRange = Helpers.GetAllHexInRange(this.Position, CollectionRange);
+        HexesBeingHarvested = new List<Vector2Int>();
         foreach (Vector2Int pos in hexesInRange)
         {
             if (IsHarvestable(pos))
             {
                 numResourceHexInRange += 1;
+                HexesBeingHarvested.Add(pos);
             }
         }
 

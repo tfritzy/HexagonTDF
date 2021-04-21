@@ -15,4 +15,6 @@
     FrigidShard,
     Farm,
     Forager,
+    GrainField,
+    SparkTower,
 }
