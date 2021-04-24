@@ -22,7 +22,7 @@ public static class Constants
         {
             { ResourceType.Food, 10},
             { ResourceType.Wood, 30},
-            { ResourceType.Stone, 20},
+            { ResourceType.Stone, 30},
             { ResourceType.Gold, 5},
         };
 

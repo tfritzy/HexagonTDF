@@ -31,7 +31,7 @@ public class SparkTower : AttackTower
     protected override void Attack()
     {
         List<Vector3> points = new List<Vector3>();
-        Vector3 difference = Target.transform.position - projectileStartPosition;
+        Vector3 difference = Target.Position - projectileStartPosition;
         int numPoints = (int)(difference.magnitude / DIST_BETWEEN_LIGHTNING_SEGMENTS);
         lr.enabled = true;
         difference = difference.normalized;

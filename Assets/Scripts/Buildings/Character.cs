@@ -22,7 +22,15 @@ public abstract class Character : MonoBehaviour
             }
         }
     }
+    public Vector3 Position
+    {
+        get
+        {
+            return Collider != null ? Collider.bounds.center : this.transform.position;
+        }
+    }
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
+    protected Collider Collider;
     private int health;
 
     void Start()
@@ -32,6 +40,7 @@ public abstract class Character : MonoBehaviour
 
     protected virtual void Setup()
     {
+        this.Collider = this.GetComponent<Collider>();
         this.Health = StartingHealth;
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
     }

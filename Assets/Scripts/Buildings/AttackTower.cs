@@ -55,7 +55,7 @@ public abstract class AttackTower : Building
             return;
         }
 
-        Vector3 targetPos = Target.transform.position;
+        Vector3 targetPos = Target.Position;
         targetPos.y = Turret.transform.position.y;
         Turret.transform.LookAt(targetPos, Vector3.up);
     }
@@ -138,8 +138,8 @@ public abstract class AttackTower : Building
 
     protected void SetProjectileVelocity(GameObject projectile)
     {
-        float flightDuration = (Target.transform.position - projectile.transform.position).magnitude / projectileSpeed;
-        Vector3 targetPosition = Target.transform.position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
+        float flightDuration = (Target.Position - projectile.transform.position).magnitude / projectileSpeed;
+        Vector3 targetPosition = Target.Position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
         projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * projectileSpeed;
     }
 

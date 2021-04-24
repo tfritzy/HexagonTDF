@@ -22,7 +22,7 @@ public class LightningTower : AttackTower
 
     protected override void Attack()
     {
-        GameObject projectile = Instantiate(Prefabs.Projectiles[Type], Target.transform.position, Prefabs.Projectiles[Type].transform.rotation);
+        GameObject projectile = Instantiate(Prefabs.Projectiles[Type], Target.Position, Prefabs.Projectiles[Type].transform.rotation);
 
         if (Target.Region == VerticalRegion.Air || Target.Region == VerticalRegion.GroundAndAir)
         {

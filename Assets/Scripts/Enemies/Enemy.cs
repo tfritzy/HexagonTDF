@@ -14,6 +14,7 @@ public abstract class Enemy : Character
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
     public float MovementSpeedModification;
     public float MovementSpeed;
+    public override float Power { get { return power; } }
     protected GameObject Body;
     private bool isDead;
     private Rigidbody rb;
@@ -24,11 +25,6 @@ public abstract class Enemy : Character
     private Healthbar healthbar;
     private float baseMovementSpeed;
     private int startingHealth;
-
-    public override float Power
-    {
-        get { return power; }
-    }
     private float power;
 
     public void SetPortal(Portal portal)
