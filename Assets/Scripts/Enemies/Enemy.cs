@@ -15,7 +15,6 @@ public abstract class Enemy : Character
     public float MovementSpeedModification;
     public float MovementSpeed;
     public override float Power { get { return power; } }
-    protected GameObject Body;
     private bool isDead;
     private Rigidbody rb;
     private Portal portal;
@@ -42,7 +41,6 @@ public abstract class Enemy : Character
         {
             this.startingHealth = 1;
         }
-        this.Body = transform.Find("Body").gameObject;
         // this.Body.transform.localScale *= healthModifier;
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed) ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
         this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
@@ -50,6 +48,7 @@ public abstract class Enemy : Character
 
     protected override void Setup()
     {
+        base.Setup();
         this.PathProgress = 0;
         this.rb = GetComponent<Rigidbody>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
@@ -60,9 +59,7 @@ public abstract class Enemy : Character
             Managers.Canvas).GetComponent<Healthbar>();
         this.healthbar.SetOwner(this.transform);
         this.healthbar.enabled = false;
-        this.Body = transform.Find("Body").gameObject;
         SetRagdollState(false);
-        base.Setup();
     }
 
     protected override void UpdateLoop()
@@ -174,6 +171,6 @@ public abstract class Enemy : Character
     private void DetachBody()
     {
         this.Body.transform.parent = null;
-        Destroy(this.Body, 5f);
+        Destroy(this.Body.gameObject, 5f);
     }
 }

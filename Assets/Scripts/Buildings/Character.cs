@@ -10,6 +10,7 @@ public abstract class Character : MonoBehaviour
     public abstract int StartingHealth { get; }
     public abstract float Power { get; }
     public abstract VerticalRegion Region { get; }
+    public Transform Body;
     public int Health
     {
         get { return health; }
@@ -43,6 +44,7 @@ public abstract class Character : MonoBehaviour
         this.Collider = this.GetComponent<Collider>();
         this.Health = StartingHealth;
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
+        this.Body = this.transform.Find("Body");
     }
 
     void Update()

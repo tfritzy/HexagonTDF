@@ -79,7 +79,7 @@ public class EarthTower : AttackTower
             projectileStartPosition + Vector3.right * ROCK_ROTATION_RADIUS,
             new Quaternion(),
             this.transform);
-        rock.GetComponent<Projectile>().Initialize(this.DealDamageToEnemy, this);
+        rock.GetComponent<Projectile>().Initialize(this.DealDamageToEnemy, this.IsCollisionTarget, this);
         rock.GetComponent<Projectile>().enabled = false;
         Orbit orbit = rock.GetComponent<Orbit>();
         orbit.Setup(new Vector3(.5f, .5f, .5f), ROCK_ROTATION_TIME_SECONDS, .2f, centerRock, angle);

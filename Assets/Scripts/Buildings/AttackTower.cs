@@ -12,7 +12,7 @@ public abstract class AttackTower : Building
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ExplosionRadius => 0;
     public Character Target;
-    protected const float projectileSpeed = 10;
+    protected virtual float ProjectileSpeed => 10;
     protected Vector3 projectileStartPosition;
     protected GameObject Turret;
     protected GameObject Body;
@@ -68,7 +68,7 @@ public abstract class AttackTower : Building
                 Prefabs.Projectiles[Type],
                 this.projectileStartPosition,
                 new Quaternion());
-            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, this);
+            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, IsCollisionTarget, this);
             projectile.transform.LookAt(this.Target.transform, Vector3.up);
             SetProjectileVelocity(projectile);
 
@@ -120,15 +120,15 @@ public abstract class AttackTower : Building
 
     protected void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
     {
-        // For cases where the projectile hits the ground and such.
-        if (target == null)
-        {
-            return;
-        }
-
-        if (ExplosionRadius == 0)
+        // target can be null on contact with ground.
+        if (ExplosionRadius == 0 && target != null)
         {
             target.TakeDamage(Damage);
+
+            if (target.Body != null && target.Health <= 0 && projectile.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
+            {
+                ThrowKilledEnemy(rigidbody.velocity, target.Body);
+            }
         }
         else
         {
@@ -138,9 +138,9 @@ public abstract class AttackTower : Building
 
     protected void SetProjectileVelocity(GameObject projectile)
     {
-        float flightDuration = (Target.Position - projectile.transform.position).magnitude / projectileSpeed;
+        float flightDuration = (Target.Position - projectile.transform.position).magnitude / ProjectileSpeed;
         Vector3 targetPosition = Target.Position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
-        projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * projectileSpeed;
+        projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
     }
 
     public void CreateRangeCircle(Transform parent)
@@ -159,6 +159,21 @@ public abstract class AttackTower : Building
         }
     }
 
+    protected virtual bool IsCollisionTarget(Character attacker, GameObject other)
+    {
+        if (other.TryGetComponent<Character>(out Character targetCharacter))
+        {
+            return attacker.Enemies == targetCharacter.Alliance;
+        }
+
+        if (other.CompareTag(Constants.Tags.Hexagon))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private float getDamagePower()
     {
         return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / 10;
@@ -175,10 +190,23 @@ public abstract class AttackTower : Building
                 continue;
             }
 
-            if (attacker.Enemies == target.Alliance)
+            if (attacker.Enemies == character.Alliance)
             {
                 character.TakeDamage(Damage);
+
+                if (character.Body != null && character.Health <= 0)
+                {
+                    ThrowKilledEnemy((character.Position - projectile.transform.position).normalized * 10f, character.Body);
+                }
             }
+        }
+    }
+
+    protected void ThrowKilledEnemy(Vector3 velocity, Transform body)
+    {
+        foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>())
+        {
+            rb.AddForce(velocity / UnityEngine.Random.Range(2, 3) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
         }
     }
 
@@ -203,6 +231,8 @@ public abstract class AttackTower : Building
     {
         switch (Cooldown)
         {
+            case (AttackSpeed.VerySlow):
+                return -2;
             case (AttackSpeed.Slow):
                 return -1;
             case (AttackSpeed.Medium):

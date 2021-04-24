@@ -12,13 +12,16 @@ public class AttackTowerBuildMenu : BuildMenu
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
         BuildingType.ArcherTower,
-        BuildingType.LightningTower,
-        BuildingType.FireTower,
-        BuildingType.EarthTower,
         BuildingType.ArcherFortress,
+        BuildingType.ArcherFortress,
+        BuildingType.SparkTower,
+        BuildingType.LightningTower,
+        BuildingType.ChainLightningTower,
+        BuildingType.FireTower,
+        BuildingType.FireTower,
+        BuildingType.MeteorTower,
+        BuildingType.EarthTower,
         BuildingType.CrystalAccelerator,
         BuildingType.FrigidShard,
-        BuildingType.SparkTower,
-        BuildingType.ChainLightningTower
     };
 }

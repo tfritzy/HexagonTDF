@@ -5,6 +5,8 @@ public class Projectile : MonoBehaviour
 {
     public delegate void DealDamageToEnemy(Character attacker, Character target, GameObject projectile);
     private DealDamageToEnemy dealDamageToEnemy;
+    public delegate bool IsCollisionTarget(Character attacker, GameObject collision);
+    private IsCollisionTarget isCollisionTarget;
     protected Rigidbody Rigidbody;
     protected Character target;
     protected float birthTime;
@@ -12,6 +14,7 @@ public class Projectile : MonoBehaviour
     private bool hasAlreadyTriggered;
     private Transform trailParticles;
     private Transform explosionParticles;
+    private bool upForceOnDeath;
 
     void Start()
     {
@@ -29,13 +32,17 @@ public class Projectile : MonoBehaviour
 
     public void Initialize(
         DealDamageToEnemy damageEnemyHandler,
+        IsCollisionTarget isCollisionTarget,
         Character attacker,
-        Character target = null)
+        Character target = null,
+        bool upForceOnDeath = false)
     {
         this.dealDamageToEnemy = damageEnemyHandler;
+        this.isCollisionTarget = isCollisionTarget;
         this.attacker = attacker;
         this.target = target;
         this.birthTime = Time.time;
+        this.upForceOnDeath = upForceOnDeath;
         SetupRigidbody();
     }
 
@@ -58,41 +65,13 @@ public class Projectile : MonoBehaviour
         {
             hasAlreadyTriggered = true;
             OnCollision(other.gameObject);
-            Transform body = other.transform.Find("Body");
             Character character = other.GetComponent<Character>();
             dealDamageToEnemy(attacker, other.GetComponent<Character>(), this.gameObject);
-            if (character != null && character.Health <= 0)
-            {
-                AddForces(body);
-            }
             Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
             DetachParticles(this.explosionParticles);
             DetachParticles(this.trailParticles);
             GameObject.Destroy(this.gameObject);
         }
-    }
-
-    private void AddForces(Transform body)
-    {
-        foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>())
-        {
-            rb.AddForce(this.Rigidbody.velocity / UnityEngine.Random.Range(2, 4) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
-        }
-    }
-
-    private bool isCollisionTarget(Character attacker, GameObject other)
-    {
-        if (other.TryGetComponent<Character>(out Character targetCharacter))
-        {
-            return attacker.Enemies == targetCharacter.Alliance;
-        }
-
-        if (other.CompareTag(Constants.Tags.Hexagon))
-        {
-            return true;
-        }
-
-        return false;
     }
 
     private void SetupRigidbody()

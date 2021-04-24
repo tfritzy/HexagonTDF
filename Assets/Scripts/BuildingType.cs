@@ -17,5 +17,6 @@
     Forager,
     GrainField,
     SparkTower,
-    ChainLightningTower
+    ChainLightningTower,
+    MeteorTower,
 }
