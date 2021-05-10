@@ -10,13 +10,6 @@ public class FireTower : AttackTower
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override float ExplosionRadius => 0.5f;
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Stone, .8f},
-        {ResourceType.Wood, .1f},
-        {ResourceType.Food, .1f},
-    };
 }

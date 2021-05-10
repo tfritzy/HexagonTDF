@@ -20,10 +20,7 @@ public static class Constants
     public static Dictionary<ResourceType, int> ResourcePowerMap => resourcePowerMap;
     private static Dictionary<ResourceType, int> resourcePowerMap = new Dictionary<ResourceType, int>
         {
-            { ResourceType.Food, 10},
-            { ResourceType.Wood, 30},
-            { ResourceType.Stone, 30},
-            { ResourceType.Gold, 5},
+            { ResourceType.Gold, 10},
         };
 
     public static class FilePaths
@@ -41,9 +38,6 @@ public static class Constants
     private static Dictionary<ResourceType, Color> resourceColors = new Dictionary<ResourceType, Color>()
     {
         { ResourceType.Gold, ColorExtensions.Create("F8C21C")},
-        { ResourceType.Wood, ColorExtensions.Create("B99C6B")},
-        { ResourceType.Stone, ColorExtensions.Create("BECFCC")},
-        { ResourceType.Food, ColorExtensions.Create("FFBF00")},
     };
     public static Dictionary<ResourceType, Color> ResourceColors => resourceColors;
 

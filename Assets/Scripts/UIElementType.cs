@@ -1,7 +1,6 @@
 ﻿public enum UIElementType
 {
-    Accept,
-    Deny,
+    AcceptAndDeny,
     AttackTowerBuildMenu,
     BaseBuilderMenu
 }

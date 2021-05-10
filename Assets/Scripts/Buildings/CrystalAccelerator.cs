@@ -8,15 +8,9 @@ public class CrystalAccelerator : AttackTower
     public override float Range => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.CrystalAccelerator;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
-    private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>()
-    {
-        {ResourceType.Stone, .9f},
-        {ResourceType.Food, .1f},
-    };
     private ParticleSystem projectileGenerationAnimation;
 
     protected override void Setup()

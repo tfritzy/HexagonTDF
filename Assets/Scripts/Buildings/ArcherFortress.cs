@@ -14,15 +14,7 @@ public class ArcherFortress : AttackTower
     public override int NumProjectiles => 5;
     public override float ProjectileStartPostionRandomness => .3f;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     protected override float ManualPowerAdjustment => -0.5f; // Making the arrows spread out means some can miss small targets.
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Wood, .8f},
-        {ResourceType.Stone, .1f},
-        {ResourceType.Food, .1f},
-    };
-
     protected override void Attack()
     {
         base.Attack();

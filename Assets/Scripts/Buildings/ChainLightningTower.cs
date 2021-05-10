@@ -8,16 +8,9 @@ public class ChainLightningTower : AttackTower
     public override float Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override BuildingType Type => BuildingType.ChainLightningTower;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 5;
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Wood, .4f},
-        {ResourceType.Stone, .5f},
-        {ResourceType.Food, .1f},
-    };
     private const float LIGHTNING_HOP_RANGE = 1f;
     private const float LIGHTNING_FLASH_DURATION = .075f;
     private List<GameObject> alreadyHitEnemies;

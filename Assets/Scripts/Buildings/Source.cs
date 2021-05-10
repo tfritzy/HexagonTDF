@@ -3,25 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Source : ResourceCollector
+public class Source : AttackTower
 {
     public override BuildingType Type => BuildingType.Source;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override HashSet<HexagonType> HarvestedHexagonTypes => collectionTypes;
-    public override int CollectionRatePerHex => 20;
-    public override ResourceType CollectedResource => ResourceType.Food;
-    public override int CollectionRange => 0;
     public override int StartingHealth => 50;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
-    protected override int ExpectedTileCollectionCount => 1;
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        { ResourceType.Stone, 1f},
-    };
+    public override float Cooldown => AttackSpeed.Slow;
+    public override int Damage => 5;
+    public override float Range => RangeOptions.Medium;
+    public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
 
-    private HashSet<HexagonType> collectionTypes = new HashSet<HexagonType>() { HexagonType.Grass, HexagonType.Stone };
-    private List<ResourceType> resourceTypes = new List<ResourceType>() { global::ResourceType.Wood };
     private Text healthText;
 
     protected override void Setup()

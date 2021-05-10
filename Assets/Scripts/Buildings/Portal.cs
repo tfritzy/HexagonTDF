@@ -12,7 +12,6 @@ public class Portal : Building
     public override Alliances Enemies => Alliances.Player;
     public List<Vector2Int> PathToSource;
     public Guid PathId;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override float Power => 100;
     private int _currentWave;
     public int CurrentWave
@@ -24,10 +23,6 @@ public class Portal : Building
             startWaveCounter.text = _currentWave.ToString();
         }
     }
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Stone, 1f},
-    };
     private const float WAVE_DURATION_SEC = 30f;
     private const float DEFAULT_SEC_BETWEEN_SPAWN = 1f;
     private float levelStartTime;
@@ -62,16 +57,9 @@ public class Portal : Building
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
         EnemyType.StickGuy,
-        // EnemyType.Tetriquiter,
-        // EnemyType.Sqorpin,
-        // EnemyType.Dode,
-        // EnemyType.Icid,
-        // EnemyType.Octahedor,
     };
     private readonly List<ResourceType> bonusResourceTypes = new List<ResourceType>()
     {
-        ResourceType.Wood,
-        ResourceType.Stone,
         ResourceType.Gold
     };
 
@@ -84,8 +72,6 @@ public class Portal : Building
         startWaveResourceBonusTexts = new Dictionary<ResourceType, Text>();
         Transform resources = startWaveDialog.transform.Find("Content Group").Find("Resources");
         startWaveResourceBonusTexts[ResourceType.Gold] = resources.Find("Gold").Find("Text").GetComponent<Text>();
-        startWaveResourceBonusTexts[ResourceType.Stone] = resources.Find("Stone").Find("Text").GetComponent<Text>();
-        startWaveResourceBonusTexts[ResourceType.Wood] = resources.Find("Wood").Find("Text").GetComponent<Text>();
         startWaveDialog.SetActive(false);
         this.pathCorners = new List<GameObject>();
         RecalculatePath();
@@ -238,6 +224,6 @@ public class Portal : Building
 
     private int GetStartEarlyBonus(ResourceType type)
     {
-        return (int)(((lastWaveStartTime - Time.time) * 1.25f * Managers.ResourceStore.GetResourceCollectionRate(type)));
+        return (int)(((lastWaveStartTime - Time.time) * 1.25f * PowerPerWave[CurrentWave]));
     }
 }

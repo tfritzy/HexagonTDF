@@ -32,8 +32,7 @@ public class Builder : MonoBehaviour
     private ButtonFunctions responsibleButton;
     private GameObject buildingInst;
     private bool isInConfirmBuild;
-    private GameObject acceptButton;
-    private GameObject denyButton;
+    private GameObject confirmButtons;
     private GameObject buildTargetLines;
     private Dictionary<ResourceType, Text> CostPanels;
 
@@ -78,7 +77,6 @@ public class Builder : MonoBehaviour
         highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;
-        RemoveCollectionHighlighting();
     }
 
     private void HighlightHexagon()
@@ -90,7 +88,7 @@ public class Builder : MonoBehaviour
 
         HighlightHexagon(Helpers.FindHexByRaycast(Constants.CenterScreen));
 
-        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition) && (acceptButton == null || denyButton == null))
+        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition) && (confirmButtons == null))
         {
             InstantiateAcceptAndDenyButtons();
         }
@@ -111,12 +109,6 @@ public class Builder : MonoBehaviour
         highlightedHexagon = newPotentialHexagon;
 
         CreateHighlightBuildingIfNeeded();
-
-        if (selectedBuilding.TryGetComponent<ResourceCollector>(out ResourceCollector collector))
-        {
-            RemoveCollectionHighlighting();
-            HighlightCollectionHexagons(collector.CollectionRange, collector.HarvestedHexagonTypes);
-        }
     }
 
     private void CreateHighlightBuildingIfNeeded()
@@ -152,15 +144,13 @@ public class Builder : MonoBehaviour
 
     private void InstantiateAcceptAndDenyButtons()
     {
-        acceptButton = Instantiate(Prefabs.UIElements[UIElementType.Accept], Managers.Canvas);
-        denyButton = Instantiate(Prefabs.UIElements[UIElementType.Deny], Managers.Canvas);
+        confirmButtons = Instantiate(Prefabs.UIElements[UIElementType.AcceptAndDeny], Managers.Canvas);
     }
 
     private void ExitConfirmBuildMode()
     {
         isInConfirmBuild = false;
-        Destroy(acceptButton);
-        Destroy(denyButton);
+        Destroy(confirmButtons);
     }
 
     public void AcceptConstructBuilding()
@@ -191,66 +181,6 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
         responsibleButton = null;
-    }
-
-    private Dictionary<Vector2Int, GameObject> highlightHexes;
-    private List<ResourceNumber> resourceNumbers = new List<ResourceNumber>();
-    public void HighlightCollectionHexagons(int collectionRange, HashSet<HexagonType> collectionTypes)
-    {
-        ResourceCollector resourceCollector = (ResourceCollector)selectedBuilding;
-        if (highlightHexes == null || highlightHexes.Count == 0)
-        {
-            highlightHexes = new Dictionary<Vector2Int, GameObject>();
-            List<Vector2Int> hexesInRange = Helpers.GetAllHexInRange(selectedBuilding.Position, collectionRange);
-            foreach (Vector2Int pos in hexesInRange)
-            {
-                highlightHexes[pos] = Instantiate(Prefabs.HighlightHex,
-                    Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f,
-                    Prefabs.HighlightHex.transform.rotation,
-                    null);
-            }
-        }
-
-        foreach (Vector2Int pos in highlightHexes.Keys)
-        {
-            if (resourceCollector.IsHarvestable(pos))
-            {
-                highlightHexes[pos].GetComponent<MeshRenderer>().material = Constants.Materials.Gold;
-                ResourceNumber rn = Instantiate(
-                        Prefabs.ResourceNumber,
-                        Managers.Map.Hexagons[pos.x, pos.y].transform.position,
-                        new Quaternion(),
-                        Managers.Canvas)
-                    .GetComponent<ResourceNumber>();
-                rn.SetValue(resourceCollector.CollectionRatePerHex, Managers.Map.Hexagons[pos.x, pos.y].gameObject, resourceCollector.CollectedResource, true);
-                resourceNumbers.Add(rn);
-            }
-            else
-            {
-                highlightHexes[pos].GetComponent<MeshRenderer>().material = Constants.Materials.RedSeethrough;
-            }
-        }
-    }
-
-    public void RemoveCollectionHighlighting()
-    {
-        if (highlightHexes == null)
-        {
-            return;
-        }
-
-        foreach (GameObject hex in highlightHexes.Values)
-        {
-            Destroy(hex);
-        }
-
-        foreach (ResourceNumber rn in resourceNumbers)
-        {
-            Destroy(rn.gameObject);
-        }
-        resourceNumbers = new List<ResourceNumber>();
-
-        highlightHexes = null;
     }
 
     private void SetupLineRenderer(List<Vector2Int> path)

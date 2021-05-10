@@ -13,13 +13,11 @@ public class ResourceTransaction
         }
     }
 
-    public ResourceTransaction(int wood = 0, int gold = 0, int stone = 0)
+    public ResourceTransaction(int gold)
     {
         Costs = new Dictionary<ResourceType, int>()
         {
-            {ResourceType.Wood, wood},
             {ResourceType.Gold, gold},
-            {ResourceType.Stone, stone}
         };
     }
 

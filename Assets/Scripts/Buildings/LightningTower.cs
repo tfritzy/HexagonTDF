@@ -10,16 +10,8 @@ public class LightningTower : AttackTower
     public override float Cooldown => AttackSpeed.Slow;
     public override int Damage => 30;
     public override float Range => RangeOptions.VeryLong;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     protected override float ManualPowerAdjustment => 1; // Double damage to air.
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Wood, .15f},
-        {ResourceType.Stone, .75f},
-        {ResourceType.Food, .1f},
-    };
-
     protected override void Attack()
     {
         GameObject projectile = Instantiate(Prefabs.Projectiles[Type], Target.Position, Prefabs.Projectiles[Type].transform.rotation);

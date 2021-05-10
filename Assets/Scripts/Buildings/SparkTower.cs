@@ -10,14 +10,7 @@ public class SparkTower : AttackTower
     public override BuildingType Type => BuildingType.SparkTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override Dictionary<ResourceType, float> CostRatio => costRatio;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
-    private Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float>
-    {
-        {ResourceType.Wood, .6f},
-        {ResourceType.Stone, .3f},
-        {ResourceType.Food, .1f},
-    };
     private const float DIST_BETWEEN_LIGHTNING_SEGMENTS = .5f;
     private LineRenderer lr;
 
