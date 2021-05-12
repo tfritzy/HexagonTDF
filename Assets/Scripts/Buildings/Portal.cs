@@ -32,17 +32,17 @@ public class Portal : Building
     private List<WaveType> waveTypes = Enum.GetValues(typeof(WaveType)).Cast<WaveType>().ToList();
     private readonly List<float> PowerPerWave = new List<float>()
     {
-        0f,
-        0.26f,
-        0.838f,
-        2.0894f,
-        4.81622f,
-        8.961086f,
-        14.3494118f,
-        21.35423534f,
-        30.460505942f,
-        42.2986577246f,
-        57.68825504198f,
+        0.3f,
+        0.48f,
+        0.768f,
+        1.2288f,
+        1.96608f,
+        3.145728f,
+        5.0331648f,
+        8.05306368f,
+        12.884901888f,
+        20.6158430208f,
+        32.98534883328f,
     };
     private List<GameObject> pathCorners;
     private float WaveTypeHealthMultiplier;
@@ -224,6 +224,6 @@ public class Portal : Building
 
     private int GetStartEarlyBonus(ResourceType type)
     {
-        return (int)(((lastWaveStartTime - Time.time) * 1.25f * PowerPerWave[CurrentWave]));
+        return (int)(((lastWaveStartTime - Time.time) * PowerPerWave[CurrentWave]) / Constants.ResourcePowerMap[type]);
     }
 }

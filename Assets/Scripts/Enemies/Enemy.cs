@@ -137,7 +137,7 @@ public abstract class Enemy : Character
 
     public int RollGoldReward()
     {
-        double fullVal = ((float)Power) / 20f;
+        double fullVal = ((float)Power) / Constants.ResourcePowerMap[ResourceType.Gold];
         double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
         double randomPart = fullVal % modulous;
         return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);

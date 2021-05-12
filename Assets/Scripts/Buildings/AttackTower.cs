@@ -155,7 +155,7 @@ public abstract class AttackTower : Building
     {
         get
         {
-            return getRangePower() + getDamagePower() + getCooldownPower() + getAttackRegionPower() + ManualPowerAdjustment;
+            return (getRangePower() + getDamagePower() + getCooldownPower() + ManualPowerAdjustment) * getAttackRegionMultiplier();
         }
     }
 
@@ -176,7 +176,7 @@ public abstract class AttackTower : Building
 
     private float getDamagePower()
     {
-        return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / 10;
+        return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / Constants.ENEMY_HEALTH_PER_POWER;
     }
 
     private void Explode(Character attacker, Character target, GameObject projectile)
@@ -212,21 +212,7 @@ public abstract class AttackTower : Building
 
     private float getRangePower()
     {
-        switch (Range)
-        {
-            case (RangeOptions.VeryVeryShort):
-                return -1;
-            case (RangeOptions.Short):
-                return 0;
-            case (RangeOptions.Medium):
-                return 1;
-            case (RangeOptions.Long):
-                return 2;
-            case (RangeOptions.VeryLong):
-                return 3;
-            default:
-                throw new System.ArgumentException($"Range {Range} isn't a prescribed option");
-        }
+        return 0.2f * Range;
     }
 
     private float getCooldownPower()
@@ -248,7 +234,7 @@ public abstract class AttackTower : Building
         }
     }
 
-    private float getAttackRegionPower()
+    private float getAttackRegionMultiplier()
     {
         switch (AttackRegion)
         {
@@ -257,7 +243,7 @@ public abstract class AttackTower : Building
             case (VerticalRegion.Ground):
                 return 0;
             case (VerticalRegion.GroundAndAir):
-                return 1;
+                return 1.2f;
             default:
                 throw new System.ArgumentException($"Vertical Regions {AttackRegion} not an expected option");
         }

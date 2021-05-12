@@ -6,6 +6,7 @@ public abstract class Hexagon : MonoBehaviour, Interactable
 {
     public abstract HexagonType Type { get; }
     public abstract bool IsBuildable { get; }
+    public virtual bool IsWalkable => IsBuildable;
     public Vector2Int GridPosition;
 
     private GameObject model;

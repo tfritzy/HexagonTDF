@@ -17,8 +17,8 @@ public static class Constants
     /// <summary>
     /// How much of each resource 1 power maps to.
     /// </summary>
-    public static Dictionary<ResourceType, int> ResourcePowerMap => resourcePowerMap;
-    private static Dictionary<ResourceType, int> resourcePowerMap = new Dictionary<ResourceType, int>
+    public static Dictionary<ResourceType, float> ResourcePowerMap => resourcePowerMap;
+    private static Dictionary<ResourceType, float> resourcePowerMap = new Dictionary<ResourceType, float>
         {
             { ResourceType.Gold, 10},
         };
