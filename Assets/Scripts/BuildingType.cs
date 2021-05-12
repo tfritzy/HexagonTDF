@@ -19,4 +19,5 @@
     SparkTower,
     ChainLightningTower,
     MeteorTower,
+    Spikes
 }

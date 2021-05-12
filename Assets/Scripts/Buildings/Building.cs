@@ -11,6 +11,7 @@ public abstract class Building : Character
     public override int StartingHealth => int.MaxValue;
     public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, costRatio);
     public override VerticalRegion Region => VerticalRegion.Ground;
+    public virtual bool CanBeWalkedOn => false;
     private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float> {{ResourceType.Gold, 1f}};
 
     public void Initialize(Vector2Int position)

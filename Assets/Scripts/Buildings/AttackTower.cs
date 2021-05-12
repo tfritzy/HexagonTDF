@@ -214,6 +214,8 @@ public abstract class AttackTower : Building
     {
         switch (Range)
         {
+            case (RangeOptions.VeryVeryShort):
+                return -1;
             case (RangeOptions.Short):
                 return 0;
             case (RangeOptions.Medium):
@@ -232,15 +234,15 @@ public abstract class AttackTower : Building
         switch (Cooldown)
         {
             case (AttackSpeed.VerySlow):
-                return -2;
-            case (AttackSpeed.Slow):
                 return -1;
+            case (AttackSpeed.Slow):
+                return -0;
             case (AttackSpeed.Medium):
-                return 0;
-            case (AttackSpeed.Fast):
                 return 1;
-            case (AttackSpeed.VeryFast):
+            case (AttackSpeed.Fast):
                 return 2;
+            case (AttackSpeed.VeryFast):
+                return 3;
             default:
                 throw new System.ArgumentException($"Cooldown should be a value in AttackSpeed. {Cooldown} is not.");
         }

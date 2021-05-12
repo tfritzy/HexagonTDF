@@ -12,7 +12,7 @@ public class AttackTowerBuildMenu : BuildMenu
     private readonly List<BuildingType> buildingTypes = new List<BuildingType>()
     {
         BuildingType.ArcherTower,
-        BuildingType.ArcherFortress,
+        BuildingType.Spikes,
         BuildingType.ArcherFortress,
         BuildingType.SparkTower,
         BuildingType.LightningTower,

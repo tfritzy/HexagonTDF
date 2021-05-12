@@ -77,7 +77,7 @@ public static class Helpers
 
     private static bool IsTraversable(Vector2Int position, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
     {
-        return Managers.Map.IsBuildable(position);
+        return Managers.Map.Buildings.ContainsKey(position) == false || Managers.Map.Buildings[position].CanBeWalkedOn;
     }
 
     public static List<Vector2Int> GetAllHexInRange(Vector2Int position, int range)
