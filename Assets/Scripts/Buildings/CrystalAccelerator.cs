@@ -4,13 +4,14 @@ using UnityEngine;
 public class CrystalAccelerator : AttackTower
 {
     public override float Cooldown => AttackSpeed.Slow;
-    public override int Damage => 5;
+    public override int Damage => 10;
     public override float Range => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.CrystalAccelerator;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
+    protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 12;
+
     private ParticleSystem projectileGenerationAnimation;
 
     protected override void Setup()

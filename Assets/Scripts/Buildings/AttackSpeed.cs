@@ -1,8 +1,10 @@
 public static class AttackSpeed
 {
-    public const float VerySlow = 5f;
-    public const float Slow = 3f;
+    public const float VerySlow = 8f;
+    public const float Slow = 4f;
     public const float Medium = 2f;
-    public const float Fast = 1.5f;
-    public const float VeryFast = .75f;
+    public const float Fast = 1f;
+    public const float VeryFast = .5f;
+    public const float VeryVeryFast = .25f;
+    public const float VeryVeryVeryFast = .125f;
 }

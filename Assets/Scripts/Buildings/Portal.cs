@@ -32,17 +32,17 @@ public class Portal : Building
     private List<WaveType> waveTypes = Enum.GetValues(typeof(WaveType)).Cast<WaveType>().ToList();
     private readonly List<float> PowerPerWave = new List<float>()
     {
-        0.3f,
-        0.48f,
-        0.768f,
-        1.2288f,
-        1.96608f,
-        3.145728f,
-        5.0331648f,
-        8.05306368f,
-        12.884901888f,
-        20.6158430208f,
-        32.98534883328f,
+        0.1f,
+        0.42f,
+        0.924f,
+        2.0328f,
+        4.47216f,
+        9.838752f,
+        21.6452544f,
+        47.61955968f,
+        104.763031296f,
+        230.4786688512f,
+        507.05307147264f,
     };
     private List<GameObject> pathCorners;
     private float WaveTypeHealthMultiplier;
@@ -188,11 +188,19 @@ public class Portal : Building
     private void RollWaveType()
     {
         currentWaveEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
-        int availableWaves = CurrentWave > 3 ? waveTypes.Count : waveTypes.Count - 2;
+        int availableWaves = CurrentWave > 3 ? waveTypes.Count : waveTypes.Count - 3;
         WaveType waveType = waveTypes[UnityEngine.Random.Range(0, availableWaves)];
         HasPeriodicLargeMinions = false;
         switch (waveType)
         {
+            case (WaveType.Normal):
+                WaveTypeSpawnSpeedMultiplier = 1f;
+                WaveTypeHealthMultiplier = 1f;
+                break;
+            case (WaveType.Spread):
+                WaveTypeSpawnSpeedMultiplier = 3f;
+                WaveTypeHealthMultiplier = 3f;
+                break;
             case (WaveType.Clustered):
                 WaveTypeHealthMultiplier = .2f;
                 WaveTypeSpawnSpeedMultiplier = .2f;
@@ -202,14 +210,6 @@ public class Portal : Building
                 PeriodicLargeHealthModifier = .6f;
                 WaveTypeSpawnSpeedMultiplier = .5f;
                 WaveTypeHealthMultiplier = .2f;
-                break;
-            case (WaveType.Normal):
-                WaveTypeSpawnSpeedMultiplier = 1f;
-                WaveTypeHealthMultiplier = 1f;
-                break;
-            case (WaveType.Spread):
-                WaveTypeSpawnSpeedMultiplier = 3f;
-                WaveTypeHealthMultiplier = 3f;
                 break;
         }
     }

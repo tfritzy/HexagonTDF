@@ -39,7 +39,7 @@ public abstract class Enemy : Character
         this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER * healthModifier);
         if (startingHealth == 0)
         {
-            this.startingHealth = 1;
+            throw new Exception("Tried to spawn an enemy with 0 health");
         }
         // this.Body.transform.localScale *= healthModifier;
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed) ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
@@ -137,7 +137,7 @@ public abstract class Enemy : Character
 
     public int RollGoldReward()
     {
-        double fullVal = ((float)Power) / Constants.ResourcePowerMap[ResourceType.Gold];
+        double fullVal = ((float)Power) / (Constants.ResourcePowerMap[ResourceType.Gold] / 4); // Divide by 4 so player can build more stuff.
         double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
         double randomPart = fullVal % modulous;
         return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);

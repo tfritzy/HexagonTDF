@@ -18,7 +18,7 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.LightningTower,
         BuildingType.ChainLightningTower,
         BuildingType.FireTower,
-        BuildingType.FireTower,
+        BuildingType.FlamethrowerTower,
         BuildingType.MeteorTower,
         BuildingType.EarthTower,
         BuildingType.CrystalAccelerator,

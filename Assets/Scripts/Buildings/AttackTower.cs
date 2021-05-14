@@ -20,7 +20,7 @@ public abstract class AttackTower : Building
     protected override void Setup()
     {
         this.projectileStartPosition = this.transform.Find("ProjectileStartPosition")?.transform.position ?? this.transform.position;
-        this.Turret = transform.Find("Body")?.Find("Turret")?.gameObject;
+        this.Turret = transform.Find("Turret")?.gameObject;
         this.Body = transform.Find("Body")?.gameObject;
         base.Setup();
     }
@@ -155,7 +155,9 @@ public abstract class AttackTower : Building
     {
         get
         {
-            return (getRangePower() + getDamagePower() + getCooldownPower() + ManualPowerAdjustment) * getAttackRegionMultiplier();
+            float power = getDamagePower() * getAttackRegionMultiplier() * getRangePowerMultiplier() + ManualPowerAdjustment;
+            Debug.Log($"{this.Type} Power\n {getDamagePower()} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier()} range + {ManualPowerAdjustment} manual == {power}");
+            return power;
         }
     }
 
@@ -176,7 +178,7 @@ public abstract class AttackTower : Building
 
     private float getDamagePower()
     {
-        return (Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / Constants.ENEMY_HEALTH_PER_POWER;
+        return (((float)(Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile)) / Cooldown) / Constants.ENEMY_HEALTH_PER_POWER;
     }
 
     private void Explode(Character attacker, Character target, GameObject projectile)
@@ -210,28 +212,9 @@ public abstract class AttackTower : Building
         }
     }
 
-    private float getRangePower()
+    private float getRangePowerMultiplier()
     {
-        return 0.2f * Range;
-    }
-
-    private float getCooldownPower()
-    {
-        switch (Cooldown)
-        {
-            case (AttackSpeed.VerySlow):
-                return -1;
-            case (AttackSpeed.Slow):
-                return -0;
-            case (AttackSpeed.Medium):
-                return 1;
-            case (AttackSpeed.Fast):
-                return 2;
-            case (AttackSpeed.VeryFast):
-                return 3;
-            default:
-                throw new System.ArgumentException($"Cooldown should be a value in AttackSpeed. {Cooldown} is not.");
-        }
+        return Range / 3;
     }
 
     private float getAttackRegionMultiplier()
@@ -239,9 +222,9 @@ public abstract class AttackTower : Building
         switch (AttackRegion)
         {
             case (VerticalRegion.Air):
-                return 0;
+                return 1;
             case (VerticalRegion.Ground):
-                return 0;
+                return 1;
             case (VerticalRegion.GroundAndAir):
                 return 1.2f;
             default:
