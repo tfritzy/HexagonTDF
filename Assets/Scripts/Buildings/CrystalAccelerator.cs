@@ -28,13 +28,7 @@ public class CrystalAccelerator : AttackTower
 
     private void HurtEnemies()
     {
-        Vector3 targetsPos = Target.GetComponent<Collider>().bounds.center;
-        Vector3 source = this.transform.position;
-        source.y = targetsPos.y;
-        Vector3 direction = targetsPos - this.transform.position;
-        direction.y = 0;
-        RaycastHit[] hits = Physics.RaycastAll(source, direction, 100f, Constants.Layers.Characters);
-        foreach (RaycastHit hit in hits)
+        foreach (RaycastHit hit in ShootRaycastFromTurret(100f))
         {
             if (hit.collider.gameObject.TryGetComponent<Character>(out Character character))
             {

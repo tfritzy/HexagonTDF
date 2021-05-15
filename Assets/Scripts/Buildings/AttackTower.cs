@@ -91,7 +91,7 @@ public abstract class AttackTower : Building
         }
     }
 
-    protected Character FindTarget()
+    protected virtual Character FindTarget()
     {
         Collider[] nearby = Physics.OverlapSphere(this.transform.position, Range, Constants.Layers.Characters, QueryTriggerInteraction.Collide);
         Character closest = null;
@@ -230,5 +230,15 @@ public abstract class AttackTower : Building
             default:
                 throw new System.ArgumentException($"Vertical Regions {AttackRegion} not an expected option");
         }
+    }
+
+    protected RaycastHit[] ShootRaycastFromTurret(float maxDistance)
+    {
+        Vector3 targetsPos = Target.GetComponent<Collider>().bounds.center;
+        Vector3 source = this.transform.position;
+        source.y = targetsPos.y;
+        Vector3 direction = targetsPos - this.transform.position;
+        direction.y = 0;
+        return Physics.RaycastAll(source, direction, maxDistance, Constants.Layers.Characters);
     }
 }

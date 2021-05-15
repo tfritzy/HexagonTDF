@@ -33,6 +33,11 @@ public abstract class Hexagon : MonoBehaviour, Interactable
 
     void Start()
     {
+        Setup();
+    }
+
+    protected virtual void Setup()
+    {
         SetModel();
         FindMeshRenderers();
     }

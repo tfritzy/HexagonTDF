@@ -11,7 +11,7 @@ public class SparkTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
-    private const float DIST_BETWEEN_LIGHTNING_SEGMENTS = .5f;
+    private const float DIST_BETWEEN_LIGHTNING_SEGMENTS = .25f;
     private LineRenderer lr;
 
     protected override void Setup()
@@ -23,16 +23,16 @@ public class SparkTower : AttackTower
 
     protected override void Attack()
     {
-        List<Vector3> points = new List<Vector3>();
         Vector3 difference = Target.Position - projectileStartPosition;
         int numPoints = (int)(difference.magnitude / DIST_BETWEEN_LIGHTNING_SEGMENTS);
         lr.enabled = true;
         difference = difference.normalized;
-        lr.positionCount = numPoints;
+        lr.positionCount = numPoints + 1;
         for (int i = 0; i < numPoints; i++)
         {
             lr.SetPosition(i, projectileStartPosition + (difference * i * DIST_BETWEEN_LIGHTNING_SEGMENTS + Random.insideUnitSphere * DIST_BETWEEN_LIGHTNING_SEGMENTS));
         }
+        lr.SetPosition(numPoints, Target.transform.position);
 
         Target.TakeDamage(Damage);
         GameObject projectile = Instantiate(
@@ -49,10 +49,5 @@ public class SparkTower : AttackTower
         {
             lr.enabled = false;
         }
-    }
-
-    private void SetLineRendererEnabledStatus()
-    {
-
     }
 }
