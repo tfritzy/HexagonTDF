@@ -5,13 +5,13 @@ using UnityEngine;
 
 public static class Helpers
 {
-    public static Hexagon FindHexByRaycast(Vector3 startPos)
+    public static HexagonMono FindHexByRaycast(Vector3 startPos)
     {
         Ray ray = Managers.Camera.ScreenPointToRay(startPos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons))
         {
-            return hit.collider.transform?.parent?.GetComponent<Hexagon>();
+            return hit.collider.transform?.parent?.GetComponent<HexagonMono>();
         }
 
         return null;
@@ -25,12 +25,12 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPath(Map map, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPath(Map map, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
     {
         return FindPath(map, grid, buildings, sourcePos, new HashSet<Vector2Int>() { endPos });
     }
 
-    public static List<Vector2Int> FindPath(Map map, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
+    public static List<Vector2Int> FindPath(Map map, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
     {
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -76,7 +76,7 @@ public static class Helpers
         return null;
     }
 
-    private static bool IsTraversable(Vector2Int position, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
+    private static bool IsTraversable(Vector2Int position, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
     {
         return (Managers.Board.Buildings.ContainsKey(position) == false || Managers.Board.Buildings[position].CanBeWalkedOn) && Managers.Board.Hexagons[position.x, position.y].IsWalkable;
     }
@@ -110,6 +110,31 @@ public static class Helpers
         }
 
         return visited.Keys.ToList();
+    }
+
+    public static List<HashSet<Vector2Int>> FindCongruentGroups(Map map, HashSet<Vector2Int> allPositions, Func<Vector2Int, bool> shouldInclude)
+    {
+        List<HashSet<Vector2Int>> groups = new List<HashSet<Vector2Int>>();
+        Queue<Vector2Int> toTraverse = new Queue<Vector2Int>(allPositions);
+
+        while (toTraverse.Count > 0)
+        {
+            HashSet<Vector2Int> group = new HashSet<Vector2Int>();
+            Vector2Int position = toTraverse.Dequeue();
+            if (allPositions.Contains(position) == false)
+            {
+                continue;
+            }
+
+            DFS(map, position, group, 0, int.MaxValue, shouldInclude);
+            foreach (Vector2Int pos in group)
+            {
+                allPositions.Remove(pos);
+            }
+            groups.Add(group);
+        }
+
+        return groups;
     }
 
     public static HashSet<Vector2Int> GetCongruentHexes(Map map, Vector2Int startingPos, Func<Vector2Int, bool> shouldInclude)

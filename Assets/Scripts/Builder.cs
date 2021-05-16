@@ -28,7 +28,7 @@ public class Builder : MonoBehaviour
     }
 
     private Building selectedBuilding;
-    private Hexagon highlightedHexagon;
+    private HexagonMono highlightedHexagon;
     private ButtonFunctions responsibleButton;
     private GameObject buildingInst;
     private bool isInConfirmBuild;
@@ -94,7 +94,7 @@ public class Builder : MonoBehaviour
         }
     }
 
-    private void HighlightHexagon(Hexagon newPotentialHexagon)
+    private void HighlightHexagon(HexagonMono newPotentialHexagon)
     {
         if (newPotentialHexagon == null)
         {

@@ -10,6 +10,7 @@ public class Map
 
     public HashSet<Vector2Int> LandableShores;
     public HashSet<Vector2Int> OceanHex;
+    public HashSet<Vector2Int> MainLandmass;
     public int Width { get { return hexes.GetLength(0); } }
     public int Height { get { return hexes.GetLength(1); } }
     public bool IsInvalid;
@@ -26,6 +27,7 @@ public class Map
     {
         this.hexes = hexes;
         FindOceanHexes();
+        FindMainLandmass();
     }
 
     public HexagonType? GetHex(int x, int y)
@@ -64,6 +66,33 @@ public class Map
         }
 
         this.OceanHex = Helpers.GetCongruentHexes(this, startingHex, (Vector2Int pos) => { return GetHex(pos.x, pos.y).Value == HexagonType.Water; });
+    }
+
+    private void FindMainLandmass()
+    {
+        HashSet<Vector2Int> allTraversableHexes = new HashSet<Vector2Int>();
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                if (Prefabs.GetHexagonScript(hexes[x, y].Value).IsWalkable)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+                    allTraversableHexes.Add(pos);
+                }
+            }
+        }
+
+        List<HashSet<Vector2Int>> groups = Helpers.FindCongruentGroups(this, allTraversableHexes, (Vector2Int pos) => { return Prefabs.GetHexagonScript(hexes[pos.x, pos.y].Value).IsWalkable; });
+        foreach (HashSet<Vector2Int> group in groups)
+        {
+            foreach (Vector2Int pos in group)
+            {
+                GameObject.Instantiate(Prefabs.PathCorner, Map.ToWorldPosition(pos), new Quaternion());
+            }
+
+            Debug.Log(group.Count);
+        }
     }
 
     public static Vector3 ToWorldPosition(int x, int y)

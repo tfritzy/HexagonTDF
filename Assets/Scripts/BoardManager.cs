@@ -9,7 +9,7 @@ public class BoardManager : MonoBehaviour
     public const int BoardWidth = 16;
     public const int BoardHeight = 15;
     public const int IslandRadius = 6;
-    public Hexagon[,] Hexagons;
+    public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public List<Portal> Portals;
     public Building Source;
@@ -42,7 +42,7 @@ public class BoardManager : MonoBehaviour
 
     private void CleanupMap()
     {
-        foreach (Hexagon hexagon in this.Hexagons)
+        foreach (HexagonMono hexagon in this.Hexagons)
         {
             Destroy(hexagon?.gameObject);
         }
@@ -50,7 +50,7 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnHexagons(Map map)
     {
-        this.Hexagons = new Hexagon[map.Width, map.Height];
+        this.Hexagons = new HexagonMono[map.Width, map.Height];
 
         for (int y = 0; y < map.Width; y++)
         {
@@ -212,9 +212,9 @@ public class BoardManager : MonoBehaviour
     private void BuildHexagon(HexagonType type, int x, int y)
     {
         GameObject go = Instantiate(HexagonPrefab, Map.ToWorldPosition(x, y), new Quaternion(), this.transform);
-        Hexagon hexagonScript = Prefabs.GetHexagonScript(type);
-        go.AddComponent(hexagonScript.GetType());
-        this.Hexagons[x, y] = go.GetComponent<Hexagon>();
+        HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
+        hexagonScript.SetType(Prefabs.GetHexagonScript(type));
+        this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
     }
 }

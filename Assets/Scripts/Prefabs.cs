@@ -89,21 +89,22 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<HexagonType, Hexagon> hexagonScripts;
+
     public static Hexagon GetHexagonScript(HexagonType hexagonType)
     {
-        switch (hexagonType)
+        if (hexagonScripts == null)
         {
-            case (HexagonType.Forrest):
-                return new Forrest();
-            case (HexagonType.Grass):
-                return new Grass();
-            case (HexagonType.Stone):
-                return new Stone();
-            case (HexagonType.Water):
-                return new Water();
-            default:
-                throw new ArgumentException($"Unknown hexagon type: {hexagonType}");
+            hexagonScripts = new Dictionary<HexagonType, Hexagon>()
+            {
+                {HexagonType.Forrest, new Forrest()},
+                {HexagonType.Grass, new Grass()},
+                {HexagonType.Stone, new Stone()},
+                {HexagonType.Water, new Water()},
+            };
         }
+
+        return hexagonScripts[hexagonType];
     }
 
     private static Dictionary<BuildingType, Sprite> buildingIcons;

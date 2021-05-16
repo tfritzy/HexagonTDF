@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PassCommandUp : MonoBehaviour, Interactable
 {
-    private Hexagon hexagon;
+    private HexagonMono hexagon;
 
     void Start()
     {
-        this.hexagon = this.transform.parent.GetComponent<Hexagon>();
+        this.hexagon = this.transform.parent.GetComponent<HexagonMono>();
     }
 
     public void Interact()
