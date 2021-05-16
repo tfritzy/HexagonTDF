@@ -134,6 +134,8 @@ public static class Helpers
             groups.Add(group);
         }
 
+        groups.Sort((HashSet<Vector2Int> s1, HashSet<Vector2Int> s2) => { return s2.Count - s1.Count; });
+
         return groups;
     }
 

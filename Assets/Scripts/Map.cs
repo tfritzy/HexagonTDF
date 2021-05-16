@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Map
@@ -8,7 +9,7 @@ public class Map
     [JsonProperty]
     public Dictionary<string, BuildingType> Buildings;
 
-    public HashSet<Vector2Int> LandableShores;
+    public List<Vector2Int> LandableShores;
     public HashSet<Vector2Int> OceanHex;
     public HashSet<Vector2Int> MainLandmass;
     public int Width { get { return hexes.GetLength(0); } }
@@ -20,7 +21,6 @@ public class Map
     public Map()
     {
         Buildings = new Dictionary<string, BuildingType>();
-        LandableShores = new HashSet<Vector2Int>();
     }
 
     public void SetHexes(HexagonType?[,] hexes)
@@ -28,6 +28,7 @@ public class Map
         this.hexes = hexes;
         FindOceanHexes();
         FindMainLandmass();
+        FindLandableShores();
     }
 
     public HexagonType? GetHex(int x, int y)
@@ -84,14 +85,43 @@ public class Map
         }
 
         List<HashSet<Vector2Int>> groups = Helpers.FindCongruentGroups(this, allTraversableHexes, (Vector2Int pos) => { return Prefabs.GetHexagonScript(hexes[pos.x, pos.y].Value).IsWalkable; });
-        foreach (HashSet<Vector2Int> group in groups)
-        {
-            foreach (Vector2Int pos in group)
-            {
-                GameObject.Instantiate(Prefabs.PathCorner, Map.ToWorldPosition(pos), new Quaternion());
-            }
 
-            Debug.Log(group.Count);
+        // Groups are sorted by size descending.
+        MainLandmass = groups[0];
+    }
+
+    private void FindLandableShores()
+    {
+        HashSet<Vector2Int> landableShoreSet = new HashSet<Vector2Int>();
+        foreach (Vector2Int pos in MainLandmass)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                if (OceanHex.Contains(Helpers.GetNeighborPosition(this, pos, i)))
+                {
+                    landableShoreSet.Add(pos);
+                }
+            }
+        }
+
+        if (landableShoreSet.Count < 5)
+        {
+            IsInvalid = true;
+            return;
+        }
+
+        List<Vector2Int> landableShores = landableShoreSet.ToList();
+        List<Vector2Int> selectedShores = new List<Vector2Int>();
+        for (int i = 0; i < Mathf.Min(10, landableShoreSet.Count); i++)
+        {
+            selectedShores.Add(landableShores[Random.Range(0, landableShores.Count)]);
+        }
+
+        this.LandableShores = selectedShores;
+
+        foreach (Vector2Int shore in this.LandableShores)
+        {
+            GameObject.Instantiate(Prefabs.PathCorner, Map.ToWorldPosition(shore), new Quaternion());
         }
     }
 
