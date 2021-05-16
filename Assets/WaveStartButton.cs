@@ -6,7 +6,7 @@ public class WaveStartButton : MonoBehaviour
 {
     public void StartWaveNow()
     {
-        foreach (Portal portal in Managers.Map.Portals)
+        foreach (Portal portal in Managers.Board.Portals)
         {
             portal.StartWaveEarly();
         }

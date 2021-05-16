@@ -85,7 +85,7 @@ public class Portal : Building
     public void RecalculatePath()
     {
         List<Vector2Int> oldPath = PathToSource;
-        PathToSource = Helpers.FindPath(Managers.Map.Hexagons, Managers.Map.GetBuildingTypeMap(), Position, Managers.Map.Source.Position);
+        PathToSource = Helpers.FindPath(Managers.Board.Map, Managers.Board.Hexagons, Managers.Board.GetBuildingTypeMap(), Position, Managers.Board.Source.Position);
 
         if (PathToSource == null)
         {
@@ -134,7 +134,7 @@ public class Portal : Building
         for (i = 1; i < lineRenderer.positionCount; i++)
         {
             Vector2Int pos = PathToSource[i - 1];
-            lineRenderer.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+            lineRenderer.SetPosition(i, Managers.Board.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
         }
 
         for (i = 0; i < PathToSource.Count; i++)
@@ -146,7 +146,7 @@ public class Portal : Building
 
             Vector2Int pos = PathToSource[i];
             pathCorners[i].SetActive(true);
-            pathCorners[i].transform.position = Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f;
+            pathCorners[i].transform.position = Managers.Board.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f;
         }
 
         for (; i < pathCorners.Count; i++)

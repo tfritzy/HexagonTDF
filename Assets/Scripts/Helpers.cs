@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,12 +25,12 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPath(Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPath(Map map, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
     {
-        return FindPath(grid, buildings, sourcePos, new HashSet<Vector2Int>() { endPos });
+        return FindPath(map, grid, buildings, sourcePos, new HashSet<Vector2Int>() { endPos });
     }
 
-    public static List<Vector2Int> FindPath(Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
+    public static List<Vector2Int> FindPath(Map map, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
     {
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -47,7 +48,7 @@ public static class Helpers
             visited.Add(current);
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int testPosition = grid[current.x, current.y].GetNeighborPosition(i);
+                Vector2Int testPosition = GetNeighborPosition(map, current, i);
                 if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
@@ -77,14 +78,14 @@ public static class Helpers
 
     private static bool IsTraversable(Vector2Int position, Hexagon[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
     {
-        return (Managers.Map.Buildings.ContainsKey(position) == false || Managers.Map.Buildings[position].CanBeWalkedOn) && Managers.Map.Hexagons[position.x, position.y].IsWalkable;
+        return (Managers.Board.Buildings.ContainsKey(position) == false || Managers.Board.Buildings[position].CanBeWalkedOn) && Managers.Board.Hexagons[position.x, position.y].IsWalkable;
     }
 
-    public static List<Vector2Int> GetAllHexInRange(Vector2Int position, int range)
+    public static List<Vector2Int> GetAllHexInRange(Map map, Vector2Int position, int range)
     {
         Dictionary<Vector2Int, int> visited = new Dictionary<Vector2Int, int>();
         Queue<Vector3Int> q = new Queue<Vector3Int>();
-        q.Enqueue(new Vector3Int(position.x, position.y, 0));
+        q.Enqueue(new Vector3Int(position.x, position.y, 0)); // z == number of hops.
 
         while (q.Count > 0)
         {
@@ -103,7 +104,7 @@ public static class Helpers
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int neighbor = Managers.Map.Hexagons[current.x, current.y].GetNeighbor(i).GridPosition;
+                Vector2Int neighbor = GetNeighborPosition(map, (Vector2Int)current, i);
                 q.Enqueue(new Vector3Int(neighbor.x, neighbor.y, current.z + 1));
             }
         }
@@ -111,7 +112,14 @@ public static class Helpers
         return visited.Keys.ToList();
     }
 
-    private static void DFS(Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops)
+    public static HashSet<Vector2Int> GetCongruentHexes(Map map, Vector2Int startingPos, Func<Vector2Int, bool> shouldInclude)
+    {
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+        DFS(map, startingPos, visited, 0, int.MaxValue, shouldInclude);
+        return visited;
+    }
+
+    private static void DFS(Map map, Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops, Func<Vector2Int, bool> shouldInclude)
     {
         if (currentHops > maxHops)
         {
@@ -123,16 +131,21 @@ public static class Helpers
             return;
         }
 
+        if (shouldInclude != null && shouldInclude(position) == false)
+        {
+            return;
+        }
+
         visited.Add(position);
         for (int i = 0; i < 6; i++)
         {
-            Vector2Int neighborPos = Managers.Map.Hexagons[position.x, position.y].GetNeighborPosition(i);
+            Vector2Int neighborPos = GetNeighborPosition(map, position, i);
             if (neighborPos == Constants.MinVector2Int)
             {
                 continue;
             }
 
-            DFS(neighborPos, visited, currentHops + 1, maxHops);
+            DFS(map, neighborPos, visited, currentHops + 1, maxHops, shouldInclude);
         }
     }
 
@@ -171,14 +184,14 @@ public static class Helpers
         return path;
     }
 
-    public static bool IsInBounds(Vector2Int position)
+    public static bool IsInBounds(Map map, Vector2Int position)
     {
-        if (position.x < 0 || position.x >= Managers.Map.Hexagons.GetLength(0))
+        if (position.x < 0 || position.x >= map.Width)
         {
             return false;
         }
 
-        if (position.y < 0 || position.y >= Managers.Map.Hexagons.GetLength(1))
+        if (position.y < 0 || position.y >= map.Height)
         {
             return false;
         }
@@ -205,6 +218,49 @@ public static class Helpers
             {
                 ps.Stop();
             }
+        }
+    }
+
+    private static readonly List<Vector2Int> oddNeighborPattern = new List<Vector2Int>()
+    {
+        new Vector2Int(-1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(1, 1),
+        new Vector2Int(0, 1),
+        new Vector2Int(-1, 1)
+    };
+
+    private static readonly List<Vector2Int> evenNeighborPattern = new List<Vector2Int>()
+    {
+        new Vector2Int(-1,-1),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, 1),
+        new Vector2Int(-1, 0)
+    };
+
+    public static Vector2Int GetNeighborPosition(Map map, Vector2Int pos, int index)
+    {
+        Vector2Int position;
+
+        if (pos.x % 2 == 0)
+        {
+            position = pos + evenNeighborPattern[index];
+        }
+        else
+        {
+            position = pos + oddNeighborPattern[index];
+        }
+
+        if (Helpers.IsInBounds(map, position))
+        {
+            return position;
+        }
+        else
+        {
+            return Constants.MinVector2Int;
         }
     }
 }

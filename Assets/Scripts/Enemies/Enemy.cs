@@ -110,13 +110,13 @@ public abstract class Enemy : Character
 
         if (PathProgress >= path.Count)
         {
-            Managers.Map.Source.TakeDamage(1);
+            Managers.Board.Source.TakeDamage(1);
             Destroy(this.gameObject);
             isDead = true;
             return;
         }
 
-        Vector3 difference = (Hexagon.ToWorldPosition(path[PathProgress]) - this.transform.position);
+        Vector3 difference = (Map.ToWorldPosition(path[PathProgress]) - this.transform.position);
         difference.y = 0;
         this.rb.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
         this.transform.rotation = Quaternion.LookRotation(this.rb.velocity, Vector3.up);
@@ -129,7 +129,7 @@ public abstract class Enemy : Character
 
     private void RecalculatePath()
     {
-        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Map.Hexagons, Managers.Map.GetBuildingTypeMap(), this.path[PathProgress], Managers.Map.Source.Position);
+        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, Managers.Board.Hexagons, Managers.Board.GetBuildingTypeMap(), this.path[PathProgress], Managers.Board.Source.Position);
         this.PathProgress = 0;
         this.pathId = portal.PathId;
         this.path = pathToSource;

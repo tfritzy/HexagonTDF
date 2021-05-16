@@ -88,7 +88,7 @@ public class Builder : MonoBehaviour
 
         HighlightHexagon(Helpers.FindHexByRaycast(Constants.CenterScreen));
 
-        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition) && (confirmButtons == null))
+        if (Managers.Board.IsBuildable(highlightedHexagon.GridPosition) && (confirmButtons == null))
         {
             InstantiateAcceptAndDenyButtons();
         }
@@ -122,13 +122,13 @@ public class Builder : MonoBehaviour
         buildingInst.transform.position = highlightedHexagon.transform.position;
         selectedBuilding.Position = highlightedHexagon.GridPosition;
 
-        if (Managers.Map.IsBuildable(highlightedHexagon.GridPosition))
+        if (Managers.Board.IsBuildable(highlightedHexagon.GridPosition))
         {
             buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
 
-            Dictionary<Vector2Int, BuildingType> buildings = Managers.Map.GetBuildingTypeMap();
+            Dictionary<Vector2Int, BuildingType> buildings = Managers.Board.GetBuildingTypeMap();
             buildings[selectedBuilding.Position] = selectedBuilding.Type;
-            List<Vector2Int> newPath = Helpers.FindPath(Managers.Map.Hexagons, buildings, Managers.Map.Portals[0].Position, Managers.Map.Source.Position);
+            List<Vector2Int> newPath = Helpers.FindPath(Managers.Board.Map, Managers.Board.Hexagons, buildings, Managers.Board.Portals[0].Position, Managers.Board.Source.Position);
             SetupLineRenderer(newPath);
         }
         else
@@ -156,7 +156,7 @@ public class Builder : MonoBehaviour
     public void AcceptConstructBuilding()
     {
         Vector2Int pos = highlightedHexagon.GridPosition;
-        if (selectedBuilding.BuildCost.CanFulfill() && Managers.Map.IsBuildable(highlightedHexagon.GridPosition))
+        if (selectedBuilding.BuildCost.CanFulfill() && Managers.Board.IsBuildable(highlightedHexagon.GridPosition))
         {
             selectedBuilding.BuildCost.Deduct();
             Building building = Instantiate(selectedBuilding, highlightedHexagon.transform.position, new Quaternion()).GetComponent<Building>();
@@ -192,7 +192,7 @@ public class Builder : MonoBehaviour
         for (int i = 1; i < lr.positionCount; i++)
         {
             Vector2Int pos = path[i - 1];
-            lr.SetPosition(i, Managers.Map.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
+            lr.SetPosition(i, Managers.Board.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
         }
     }
 

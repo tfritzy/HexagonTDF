@@ -11,25 +11,6 @@ public abstract class Hexagon : MonoBehaviour, Interactable
 
     private GameObject model;
     private List<MeshRenderer> meshRenderers;
-    private readonly List<Vector2Int> oddNeighborPattern = new List<Vector2Int>()
-    {
-        new Vector2Int(-1, 0),
-        new Vector2Int(0, -1),
-        new Vector2Int(1, 0),
-        new Vector2Int(1, 1),
-        new Vector2Int(0, 1),
-        new Vector2Int(-1, 1)
-    };
-
-    private readonly List<Vector2Int> evenNeighborPattern = new List<Vector2Int>()
-    {
-        new Vector2Int(-1,-1),
-        new Vector2Int(0, -1),
-        new Vector2Int(1, -1),
-        new Vector2Int(1, 0),
-        new Vector2Int(0, 1),
-        new Vector2Int(-1, 0)
-    };
 
     void Start()
     {
@@ -69,52 +50,5 @@ public abstract class Hexagon : MonoBehaviour, Interactable
         {
             meshRenderers.Add(renderer);
         }
-    }
-
-    public Vector2Int GetNeighborPosition(int index)
-    {
-        Vector2Int position;
-
-        if (GridPosition.x % 2 == 0)
-        {
-            position = GridPosition + evenNeighborPattern[index];
-        }
-        else
-        {
-            position = GridPosition + oddNeighborPattern[index];
-        }
-
-        if (Helpers.IsInBounds(position))
-        {
-            return position;
-        }
-        else
-        {
-            return Constants.MinVector2Int;
-        }
-    }
-
-    public Hexagon GetNeighbor(int index)
-    {
-        Vector2Int position = GetNeighborPosition(index);
-
-        if (position == Constants.MinVector2Int)
-        {
-            return null;
-        }
-
-        return Managers.Map.Hexagons[position.x, position.y];
-    }
-
-    public static Vector3 ToWorldPosition(int x, int y)
-    {
-        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
-        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        return new Vector3(xF, 0f, zF);
-    }
-
-    public static Vector3 ToWorldPosition(Vector2Int position)
-    {
-        return ToWorldPosition(position.x, position.y);
     }
 }

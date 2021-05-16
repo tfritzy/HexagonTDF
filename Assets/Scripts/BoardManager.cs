@@ -15,6 +15,7 @@ public class BoardManager : MonoBehaviour
     public Building Source;
     public string ActiveMapName;
     public bool RegenerateMap;
+    public Map Map;
 
     void Awake()
     {
@@ -34,33 +35,33 @@ public class BoardManager : MonoBehaviour
     private void SpawnMap()
     {
         // Map map = LoadMap();
-        Map map = GenerateMap(BoardWidth, BoardHeight);
-        SpawnHexagons(map.Hexagons);
-        SpawnBuildings(map.Buildings);
+        Map = GenerateMap(BoardWidth, BoardHeight);
+        SpawnHexagons(Map);
+        SpawnBuildings(Map.Buildings);
     }
 
     private void CleanupMap()
     {
         foreach (Hexagon hexagon in this.Hexagons)
         {
-            Destroy(hexagon.gameObject);
+            Destroy(hexagon?.gameObject);
         }
     }
 
-    private void SpawnHexagons(HexagonType?[,] hexagonMap)
+    private void SpawnHexagons(Map map)
     {
-        this.Hexagons = new Hexagon[hexagonMap.GetLength(0), hexagonMap.GetLength(1)];
+        this.Hexagons = new Hexagon[map.Width, map.Height];
 
-        for (int y = 0; y < hexagonMap.GetLength(1); y++)
+        for (int y = 0; y < map.Width; y++)
         {
-            for (int x = 0; x < hexagonMap.GetLength(0); x++)
+            for (int x = 0; x < map.Height; x++)
             {
-                if (hexagonMap[x, y].HasValue == false)
+                if (map.GetHex(x, y) == null)
                 {
                     continue;
                 }
 
-                BuildHexagon(hexagonMap[x, y].Value, x, y);
+                BuildHexagon(map.GetHex(x, y).Value, x, y);
             }
         }
     }
@@ -89,7 +90,7 @@ public class BoardManager : MonoBehaviour
             Vector2Int position = new Vector2Int(int.Parse(posSplits[0]), int.Parse(posSplits[1]));
             Building building = Instantiate(
                     Prefabs.Buildings[buildingMap[strPosition]],
-                    Hexagon.ToWorldPosition(position),
+                    Map.ToWorldPosition(position),
                     new Quaternion(),
                     this.transform)
                     .GetComponent<Building>();
@@ -127,16 +128,19 @@ public class BoardManager : MonoBehaviour
         if (text == null)
         {
             Map newMap = new Map();
-            newMap.Hexagons = new HexagonType?[BoardWidth, BoardHeight];
-            for (int i = 0; i < newMap.Hexagons.GetLength(0); i++)
+            HexagonType?[,] hexes = new HexagonType?[BoardWidth, BoardHeight];
+            for (int i = 0; i < hexes.GetLength(0); i++)
             {
-                for (int j = 0; j < newMap.Hexagons.GetLength(1); j++)
+                for (int j = 0; j < hexes.GetLength(1); j++)
                 {
-                    newMap.Hexagons[i, j] = HexagonType.Grass;
+                    hexes[i, j] = HexagonType.Grass;
                 }
             }
+
+            newMap.SetHexes(hexes);
             return newMap;
         }
+
         Map map = JsonConvert.DeserializeObject<Map>(text.text);
         return map;
     }
@@ -148,7 +152,7 @@ public class BoardManager : MonoBehaviour
     public Map GenerateMap(int width, int height)
     {
         Map newMap = new Map();
-        newMap.Hexagons = new HexagonType?[width, height];
+        HexagonType?[,] hexes = new HexagonType?[width, height];
         int seed = Random.Range(0, 100000);
         int forrestSeed = Random.Range(0, 100000);
         for (int y = 0; y < height; y++)
@@ -157,23 +161,24 @@ public class BoardManager : MonoBehaviour
             {
                 if (DistFromCenter(x, y) > IslandRadius)
                 {
-                    newMap.Hexagons[x, y] = HexagonType.Water;
+                    hexes[x, y] = HexagonType.Water;
                     continue;
                 }
 
                 float sampleX = x / LAND_PERLIN_SCALE;
                 float sampleY = y / LAND_PERLIN_SCALE;
                 float perlinValue = Mathf.PerlinNoise(sampleX + seed, sampleY + seed);
-                newMap.Hexagons[x, y] = perlinValue < LandPerlinCutoff ? HexagonType.Grass : HexagonType.Water;
+                hexes[x, y] = perlinValue < LandPerlinCutoff ? HexagonType.Grass : HexagonType.Water;
 
                 float treePerlinValue = Mathf.PerlinNoise(x / FORREST_PERLIN_SCALE + forrestSeed, y / FORREST_PERLIN_SCALE + forrestSeed);
                 if (treePerlinValue > TreePerlinCutoff)
                 {
-                    newMap.Hexagons[x, y] = HexagonType.Forrest;
+                    hexes[x, y] = HexagonType.Forrest;
                 }
             }
         }
 
+        newMap.SetHexes(hexes);
         return newMap;
     }
 
@@ -206,7 +211,7 @@ public class BoardManager : MonoBehaviour
 
     private void BuildHexagon(HexagonType type, int x, int y)
     {
-        GameObject go = Instantiate(HexagonPrefab, Hexagon.ToWorldPosition(x, y), new Quaternion(), this.transform);
+        GameObject go = Instantiate(HexagonPrefab, Map.ToWorldPosition(x, y), new Quaternion(), this.transform);
         Hexagon hexagonScript = Prefabs.GetHexagonScript(type);
         go.AddComponent(hexagonScript.GetType());
         this.Hexagons[x, y] = go.GetComponent<Hexagon>();

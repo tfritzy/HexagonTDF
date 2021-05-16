@@ -17,7 +17,7 @@ public abstract class Building : Character
     public void Initialize(Vector2Int position)
     {
         this.Position = position;
-        Managers.Map.AddBuilding(this);
+        Managers.Board.AddBuilding(this);
 
         foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
         {
