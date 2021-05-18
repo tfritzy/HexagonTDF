@@ -139,7 +139,7 @@ public abstract class AttackTower : Building
     protected void SetProjectileVelocity(GameObject projectile)
     {
         float flightDuration = (Target.Position - projectile.transform.position).magnitude / ProjectileSpeed;
-        Vector3 targetPosition = Target.Position + Target.GetComponent<Rigidbody>().velocity * flightDuration;
+        Vector3 targetPosition = Target.Position + Target.Velocity * flightDuration;
         projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
     }
 

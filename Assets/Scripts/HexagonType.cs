@@ -3,5 +3,6 @@
     Grass,
     Water,
     Stone,
-    Forrest
+    Forrest,
+    Shore
 }

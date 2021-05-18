@@ -6,9 +6,7 @@ using UnityEngine;
 
 public class Map
 {
-    [JsonProperty]
-    public Dictionary<string, BuildingType> Buildings;
-
+    public Dictionary<Vector2Int, BuildingType> Buildings;
     public List<Vector2Int> LandableShores;
     public HashSet<Vector2Int> OceanHex;
     public HashSet<Vector2Int> MainLandmass;
@@ -17,10 +15,11 @@ public class Map
     public bool IsInvalid;
 
     private HexagonType?[,] hexes;
+    private List<HashSet<Vector2Int>> landGroups;
 
     public Map()
     {
-        Buildings = new Dictionary<string, BuildingType>();
+        Buildings = new Dictionary<Vector2Int, BuildingType>();
     }
 
     public void SetHexes(HexagonType?[,] hexes)
@@ -28,6 +27,7 @@ public class Map
         this.hexes = hexes;
         FindOceanHexes();
         FindMainLandmass();
+        ConnectOrphanedLandMasses();
         FindLandableShores();
     }
 
@@ -44,6 +44,11 @@ public class Map
         }
 
         return hexes[x, y];
+    }
+
+    public HexagonType? GetHex(Vector2Int pos)
+    {
+        return GetHex(pos.x, pos.y);
     }
 
     private void FindOceanHexes()
@@ -84,10 +89,36 @@ public class Map
             }
         }
 
-        List<HashSet<Vector2Int>> groups = Helpers.FindCongruentGroups(this, allTraversableHexes, (Vector2Int pos) => { return Prefabs.GetHexagonScript(hexes[pos.x, pos.y].Value).IsWalkable; });
+        landGroups = Helpers.FindCongruentGroups(this, allTraversableHexes, (Vector2Int pos) => { return Prefabs.GetHexagonScript(hexes[pos.x, pos.y].Value).IsWalkable; });
 
         // Groups are sorted by size descending.
-        MainLandmass = groups[0];
+        MainLandmass = landGroups[0];
+    }
+
+    private void ConnectOrphanedLandMasses()
+    {
+        for (int i = 1; i < landGroups.Count; i++)
+        {
+            if (landGroups[i].Count < 5)
+            {
+                continue;
+            }
+            List<Vector2Int> path = Helpers.FindPath(this, landGroups[i].First(), MainLandmass, (Vector2Int pos) => { return GetHex(pos).Value != HexagonType.Water; });
+
+            foreach (Vector2Int point in path)
+            {
+                if (GetHex(point).Value != HexagonType.Grass)
+                {
+                    hexes[point.x, point.y] = HexagonType.Grass;
+                    MainLandmass.Add(point);
+                }
+            }
+
+            foreach (Vector2Int point in landGroups[i])
+            {
+                MainLandmass.Add(point);
+            }
+        }
     }
 
     private void FindLandableShores()
@@ -110,18 +141,11 @@ public class Map
             return;
         }
 
-        List<Vector2Int> landableShores = landableShoreSet.ToList();
-        List<Vector2Int> selectedShores = new List<Vector2Int>();
-        for (int i = 0; i < Mathf.Min(10, landableShoreSet.Count); i++)
-        {
-            selectedShores.Add(landableShores[Random.Range(0, landableShores.Count)]);
-        }
-
-        this.LandableShores = selectedShores;
+        LandableShores = landableShoreSet.ToList();
 
         foreach (Vector2Int shore in this.LandableShores)
         {
-            GameObject.Instantiate(Prefabs.PathCorner, Map.ToWorldPosition(shore), new Quaternion());
+            hexes[shore.x, shore.y] = HexagonType.Shore;
         }
     }
 

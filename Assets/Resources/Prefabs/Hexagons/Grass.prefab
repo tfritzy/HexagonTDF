@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 787624459895364345}
   - component: {fileID: 3872373048929311033}
-  m_Layer: 0
+  - component: {fileID: 4145938294550974190}
+  m_Layer: 8
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +49,33 @@ MonoBehaviour:
   - {fileID: 8903058273634794869, guid: f1fc5bb90ac285e4486771552d63bcb8, type: 3}
   - {fileID: 3356751432538110193, guid: ffbddc4ef9676cc419e81e06aaa836d8, type: 3}
   NumDecorations: 0
+--- !u!114 &4145938294550974190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118752656432332867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271a5faa82e427c458688b4ca494bc7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GridPosition: {x: 0, y: 0}
+--- !u!64 &1212462204265209706
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6086531651103852860}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2534964839176971238, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
 --- !u!1001 &6392540366376711277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -107,8 +135,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hex
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
+--- !u!1 &6086531651103852860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
+  m_PrefabInstance: {fileID: 6392540366376711277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6862470868669813638 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}

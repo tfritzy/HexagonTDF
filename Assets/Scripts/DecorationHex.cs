@@ -15,7 +15,6 @@ public class DecorationHex : MonoBehaviour
         }
 
         Vector3 centerGround = this.transform.position;
-        centerGround.y += this.transform.Find("Hex").GetComponent<MeshRenderer>().bounds.extents.y;
         for (int i = 0; i < NumDecorations; i++)
         {
             Vector3 wiggle = Random.insideUnitSphere * .5f;

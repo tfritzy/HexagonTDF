@@ -1,17 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public GameObject HexagonPrefab;
     public const int BoardWidth = 16;
     public const int BoardHeight = 15;
     public const int IslandRadius = 6;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
-    public List<Portal> Portals;
     public Building Source;
     public string ActiveMapName;
     public bool RegenerateMap;
@@ -34,10 +33,10 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        // Map map = LoadMap();
         Map = GenerateMap(BoardWidth, BoardHeight);
         SpawnHexagons(Map);
         SpawnBuildings(Map.Buildings);
+        SetupShores();
     }
 
     private void CleanupMap()
@@ -52,9 +51,9 @@ public class BoardManager : MonoBehaviour
     {
         this.Hexagons = new HexagonMono[map.Width, map.Height];
 
-        for (int y = 0; y < map.Width; y++)
+        for (int y = 0; y < map.Height; y++)
         {
-            for (int x = 0; x < map.Height; x++)
+            for (int x = 0; x < map.Width; x++)
             {
                 if (map.GetHex(x, y) == null)
                 {
@@ -64,6 +63,8 @@ public class BoardManager : MonoBehaviour
                 BuildHexagon(map.GetHex(x, y).Value, x, y);
             }
         }
+
+        Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
     }
 
     public void AddBuilding(Building building)
@@ -75,36 +76,43 @@ public class BoardManager : MonoBehaviour
 
         Buildings[building.Position] = building;
 
-        foreach (Portal portal in Portals)
+        foreach (Vector2Int pos in Map.LandableShores)
         {
-            portal.RecalculatePath();
+            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().RecalculatePath();
         }
     }
 
-    private void SpawnBuildings(Dictionary<string, BuildingType> buildingMap)
+    private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
-        foreach (string strPosition in buildingMap.Keys)
+
+        // TODO: Remove hack and let player choose source position.
+        Vector2Int sourcePos = this.Map.MainLandmass.ToList().First();
+        buildingMap[sourcePos] = BuildingType.Source;
+
+        foreach (Vector2Int pos in buildingMap.Keys)
         {
-            string[] posSplits = strPosition.Split(',');
-            Vector2Int position = new Vector2Int(int.Parse(posSplits[0]), int.Parse(posSplits[1]));
             Building building = Instantiate(
-                    Prefabs.Buildings[buildingMap[strPosition]],
-                    Map.ToWorldPosition(position),
+                    Prefabs.Buildings[buildingMap[pos]],
+                    Map.ToWorldPosition(pos),
                     new Quaternion(),
                     this.transform)
                     .GetComponent<Building>();
-            building.Initialize(position);
+            building.Initialize(pos);
+            Buildings[pos] = building;
 
-            if (buildingMap[strPosition] == BuildingType.Source)
+            if (buildingMap[pos] == BuildingType.Source)
             {
-                Source = this.Buildings[position];
+                Source = this.Buildings[pos];
             }
+        }
+    }
 
-            if (buildingMap[strPosition] == BuildingType.Portal)
-            {
-                Portals.Add((Portal)building);
-            }
+    private void SetupShores()
+    {
+        foreach (Vector2Int pos in Map.LandableShores)
+        {
+            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().RecalculatePath();
         }
     }
 
@@ -120,29 +128,6 @@ public class BoardManager : MonoBehaviour
         }
 
         return typeMap;
-    }
-
-    private Map LoadMap()
-    {
-        TextAsset text = Resources.Load<TextAsset>(Constants.FilePaths.Maps + ActiveMapName);
-        if (text == null)
-        {
-            Map newMap = new Map();
-            HexagonType?[,] hexes = new HexagonType?[BoardWidth, BoardHeight];
-            for (int i = 0; i < hexes.GetLength(0); i++)
-            {
-                for (int j = 0; j < hexes.GetLength(1); j++)
-                {
-                    hexes[i, j] = HexagonType.Grass;
-                }
-            }
-
-            newMap.SetHexes(hexes);
-            return newMap;
-        }
-
-        Map map = JsonConvert.DeserializeObject<Map>(text.text);
-        return map;
     }
 
     public const float LAND_PERLIN_SCALE = 5f;
@@ -211,7 +196,7 @@ public class BoardManager : MonoBehaviour
 
     private void BuildHexagon(HexagonType type, int x, int y)
     {
-        GameObject go = Instantiate(HexagonPrefab, Map.ToWorldPosition(x, y), new Quaternion(), this.transform);
+        GameObject go = Instantiate(Prefabs.Hexagons[type], Map.ToWorldPosition(x, y), new Quaternion(), this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         hexagonScript.SetType(Prefabs.GetHexagonScript(type));
         this.Hexagons[x, y] = go.GetComponent<HexagonMono>();

@@ -30,6 +30,19 @@ public abstract class Character : MonoBehaviour
             return Collider != null ? Collider.bounds.center : this.transform.position;
         }
     }
+    public virtual Vector3 Velocity { get { return Vector3.zero; } }
+    private Rigidbody rb;
+    protected Rigidbody Rigidbody
+    {
+        get
+        {
+            if (rb == null)
+            {
+                rb = this.GetComponent<Rigidbody>();
+            }
+            return rb;
+        }
+    }
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
     private int health;

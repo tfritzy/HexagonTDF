@@ -15,23 +15,27 @@ public abstract class Enemy : Character
     public float MovementSpeedModification;
     public float MovementSpeed;
     public override float Power { get { return power; } }
-    private bool isDead;
-    private Rigidbody rb;
-    private Portal portal;
+    public bool IsOnBoat;
+    public Boat Boat;
+    protected bool IsDead;
+    protected List<Vector2Int> path;
+    private ShoreMono shore;
     private Guid pathId;
-    private List<Vector2Int> path;
     private GameObject DeathAnimation;
     private Healthbar healthbar;
-    private float baseMovementSpeed;
+    private float baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
     private int startingHealth;
     private float power;
+    protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
 
-    public void SetPortal(Portal portal)
+    public void SetShore(ShoreMono shore)
     {
-        this.portal = portal;
-        this.pathId = portal.PathId;
-        this.path = portal.PathToSource;
+        this.shore = shore;
+        this.pathId = shore.PathId;
+        this.path = shore.PathToSource;
     }
+
+    public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
 
     public void SetPower(float power, float healthModifier)
     {
@@ -50,7 +54,6 @@ public abstract class Enemy : Character
     {
         base.Setup();
         this.PathProgress = 0;
-        this.rb = GetComponent<Rigidbody>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
         this.healthbar = Instantiate(Prefabs.Healthbar,
@@ -64,13 +67,19 @@ public abstract class Enemy : Character
 
     protected override void UpdateLoop()
     {
-        if (isDead)
+        if (IsDead)
+        {
+            return;
+        }
+
+        base.UpdateLoop();
+
+        if (IsOnBoat)
         {
             return;
         }
 
         FollowPath();
-        base.UpdateLoop();
     }
 
     protected override void Die()
@@ -103,35 +112,56 @@ public abstract class Enemy : Character
 
     private void FollowPath()
     {
-        if (portal.PathId != this.pathId)
-        {
-            RecalculatePath();
-        }
+        RecalculatePathIfNeeded();
 
         if (PathProgress >= path.Count)
         {
-            Managers.Board.Source.TakeDamage(1);
-            Destroy(this.gameObject);
-            isDead = true;
+            OnReachPathEnd();
             return;
         }
 
         Vector3 difference = (Map.ToWorldPosition(path[PathProgress]) - this.transform.position);
         difference.y = 0;
-        this.rb.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
-        this.transform.rotation = Quaternion.LookRotation(this.rb.velocity, Vector3.up);
+        this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
+        this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
 
-        if (difference.magnitude < .1f)
+        if (PathProgress == path.Count - 1)
         {
-            PathProgress += 1;
+            if (difference.magnitude < DistanceFromFinalDestinationBeforeEnd)
+            {
+                PathProgress += 1;
+            }
         }
+        else
+        {
+            if (difference.magnitude < .1f)
+            {
+                PathProgress += 1;
+            }
+        }
+    }
+
+    protected virtual void RecalculatePathIfNeeded()
+    {
+        if (shore.PathId != this.pathId)
+        {
+            RecalculatePath();
+        }
+    }
+
+    protected virtual void OnReachPathEnd()
+    {
+        this.Rigidbody.velocity = Vector3.zero;
+        Managers.Board.Source.TakeDamage(1);
+        Destroy(this.gameObject);
+        IsDead = true;
     }
 
     private void RecalculatePath()
     {
-        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, Managers.Board.Hexagons, Managers.Board.GetBuildingTypeMap(), this.path[PathProgress], Managers.Board.Source.Position);
+        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, this.path[PathProgress], Managers.Board.Source.Position, Helpers.IsTraversable);
         this.PathProgress = 0;
-        this.pathId = portal.PathId;
+        this.pathId = shore.PathId;
         this.path = pathToSource;
     }
 
@@ -145,7 +175,7 @@ public abstract class Enemy : Character
 
     public override void TakeDamage(int amount)
     {
-        if (isDead)
+        if (IsDead)
         {
             return;
         }
@@ -153,6 +183,12 @@ public abstract class Enemy : Character
         this.healthbar.enabled = true;
         base.TakeDamage(amount);
         this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
+    }
+
+    public void AddRigidbody()
+    {
+        this.gameObject.AddComponent<Rigidbody>();
+        this.Rigidbody.useGravity = false;
     }
 
     private void SetRagdollState(bool value)

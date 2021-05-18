@@ -6,22 +6,22 @@ using UnityEngine.UI;
 
 public static class Prefabs
 {
-    private static Dictionary<HexagonType, GameObject> hexagonModels;
-    public static Dictionary<HexagonType, GameObject> HexagonModels
+    private static Dictionary<HexagonType, GameObject> hexagons;
+    public static Dictionary<HexagonType, GameObject> Hexagons
     {
         get
         {
-            if (hexagonModels == null)
+            if (hexagons == null)
             {
-                hexagonModels = new Dictionary<HexagonType, GameObject>();
+                hexagons = new Dictionary<HexagonType, GameObject>();
 
                 foreach (HexagonType type in Enum.GetValues(typeof(HexagonType)))
                 {
-                    hexagonModels[type] = Resources.Load<GameObject>("Prefabs/Hexagons/" + type.ToString());
+                    hexagons[type] = Resources.Load<GameObject>("Prefabs/Hexagons/" + type.ToString());
                 }
             }
 
-            return hexagonModels;
+            return hexagons;
         }
     }
 
@@ -101,6 +101,7 @@ public static class Prefabs
                 {HexagonType.Grass, new Grass()},
                 {HexagonType.Stone, new Stone()},
                 {HexagonType.Water, new Water()},
+                {HexagonType.Shore, new Shore()},
             };
         }
 

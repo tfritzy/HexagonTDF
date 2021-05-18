@@ -25,16 +25,16 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPath(Map map, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, bool> shouldInclude)
     {
-        return FindPath(map, grid, buildings, sourcePos, new HashSet<Vector2Int>() { endPos });
+        return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude);
     }
 
-    public static List<Vector2Int> FindPath(Map map, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings, Vector2Int sourcePos, HashSet<Vector2Int> endPos)
+    public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude)
     {
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-        Vector2Int[,] predecessorGrid = BuildPredecessorGrid(grid.GetLength(0), grid.GetLength(1));
+        Vector2Int[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
         q.Enqueue(sourcePos);
 
         while (q.Count > 0)
@@ -64,7 +64,7 @@ public static class Helpers
                     return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, testPosition);
                 }
 
-                if (visited.Contains(testPosition) || IsTraversable(testPosition, grid, buildings) == false)
+                if (visited.Contains(testPosition) || shouldInclude(testPosition) == false)
                 {
                     continue;
                 }
@@ -76,9 +76,27 @@ public static class Helpers
         return null;
     }
 
-    private static bool IsTraversable(Vector2Int position, HexagonMono[,] grid, Dictionary<Vector2Int, BuildingType> buildings)
+    public static bool IsTraversable(Vector2Int position, HexagonMono[,] grid, Dictionary<Vector2Int, Building> buildings)
     {
-        return (Managers.Board.Buildings.ContainsKey(position) == false || Managers.Board.Buildings[position].CanBeWalkedOn) && Managers.Board.Hexagons[position.x, position.y].IsWalkable;
+        try
+        {
+            if ((buildings.ContainsKey(position) == false || buildings[position].IsWalkable) && Managers.Board.Hexagons[position.x, position.y].IsWalkable)
+            {
+            }
+        }
+        catch
+        {
+            Debug.Log(position);
+            Debug.Log(buildings.ContainsKey(position));
+            Debug.Log(Managers.Board.Hexagons[position.x, position.y].IsWalkable);
+            Debug.Log(buildings[position].IsWalkable);
+        }
+        return (buildings.ContainsKey(position) == false || buildings[position].IsWalkable) && Managers.Board.Hexagons[position.x, position.y].IsWalkable;
+    }
+
+    public static bool IsTraversable(Vector2Int position)
+    {
+        return IsTraversable(position, Managers.Board.Hexagons, Managers.Board.Buildings);
     }
 
     public static List<Vector2Int> GetAllHexInRange(Map map, Vector2Int position, int range)
@@ -205,6 +223,7 @@ public static class Helpers
             }
         }
 
+        path.Add(startPosition);
         path.Reverse();
         path.Add(endPosition);
 

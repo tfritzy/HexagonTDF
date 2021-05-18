@@ -97,4 +97,17 @@ public static class Managers
             return canvas;
         }
     }
+
+    private static EnemySpawner enemySpawner;
+    public static EnemySpawner EnemySpawner
+    {
+        get
+        {
+            if (enemySpawner == null)
+            {
+                enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+            }
+            return enemySpawner;
+        }
+    }
 }

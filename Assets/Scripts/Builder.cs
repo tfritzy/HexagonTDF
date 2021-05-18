@@ -74,7 +74,6 @@ public class Builder : MonoBehaviour
     {
         Destroy(buildingInst);
         buildingInst = null;
-        highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;
     }
@@ -126,10 +125,10 @@ public class Builder : MonoBehaviour
         {
             buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
 
-            Dictionary<Vector2Int, BuildingType> buildings = Managers.Board.GetBuildingTypeMap();
-            buildings[selectedBuilding.Position] = selectedBuilding.Type;
-            List<Vector2Int> newPath = Helpers.FindPath(Managers.Board.Map, Managers.Board.Hexagons, buildings, Managers.Board.Portals[0].Position, Managers.Board.Source.Position);
-            SetupLineRenderer(newPath);
+            // Dictionary<Vector2Int, BuildingType> buildings = Managers.Board.GetBuildingTypeMap();
+            // buildings[selectedBuilding.Position] = selectedBuilding.Type;
+            // List<Vector2Int> newPath = Helpers.FindPath(Managers.Board.Map, Managers.Board.Portals[0].Position, Managers.Board.Source.Position, Helpers.IsTraversable);
+            // SetupLineRenderer(newPath);
         }
         else
         {
