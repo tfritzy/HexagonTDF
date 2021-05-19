@@ -18,14 +18,15 @@ public class Boat : Enemy
     public override int StartingHealth => int.MaxValue;
     protected override float DistanceFromFinalDestinationBeforeEnd => 1.8f;
 
-    public void SetTargetShore(Vector2Int startGridPos, ShoreMono targetShore)
+    public void SetInitialPos(Vector2Int startGridPos)
     {
-        this.targetShore = targetShore;
-        this.path = Helpers.FindPath(Managers.Board.Map, startGridPos, targetShore.GridPosition, (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; });
-    }
-
-    protected override void RecalculatePathIfNeeded()
-    {
+        this.path = Helpers.FindPath(
+            Managers.Board.Map,
+            startGridPos,
+            new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
+            (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; });
+        Vector2Int targetShorePos = this.path[this.path.Count - 1];
+        this.targetShore = Managers.Board.Hexagons[targetShorePos.x, targetShorePos.y].GetComponent<ShoreMono>();
     }
 
     protected override void OnReachPathEnd()
@@ -33,6 +34,24 @@ public class Boat : Enemy
         this.Rigidbody.velocity = Vector3.zero;
         KickPassangersOffBoat();
         Die();
+    }
+
+    protected override void RecalculatePathIfNeeded()
+    {
+        if (Helpers.IsTraversable(targetShore.GridPosition) == false)
+        {
+            RecalculatePath();
+        }
+    }
+
+    protected override void RecalculatePath()
+    {
+        this.path = Helpers.FindPath(
+            Managers.Board.Map,
+            this.path[PathProgress],
+            new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
+            (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; });
+        this.PathProgress = 0;
     }
 
     protected override void Die()
@@ -78,6 +97,7 @@ public class Boat : Enemy
             passanger.transform.parent = null;
             passanger.IsOnBoat = false;
             passanger.AddRigidbody();
+            passanger.SetShore(this.targetShore);
         }
     }
 }

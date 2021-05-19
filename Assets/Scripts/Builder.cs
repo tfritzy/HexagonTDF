@@ -119,7 +119,7 @@ public class Builder : MonoBehaviour
         }
 
         buildingInst.transform.position = highlightedHexagon.transform.position;
-        selectedBuilding.Position = highlightedHexagon.GridPosition;
+        selectedBuilding.GridPosition = highlightedHexagon.GridPosition;
 
         if (Managers.Board.IsBuildable(highlightedHexagon.GridPosition))
         {

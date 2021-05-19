@@ -114,7 +114,7 @@ public class EnemySpawner : MonoBehaviour
                 Prefabs.Enemies[EnemyType.Boat],
                 Map.ToWorldPosition(0, 0),
                 new Quaternion()).GetComponent<Boat>();
-            boat.SetTargetShore(boatPos, shore);
+            boat.SetInitialPos(boatPos);
             float boatPower = PowerPerSecondByWave[CurrentWave] * DEFAULT_SEC_BETWEEN_SPAWN;
             for (int i = 0; i < boat.Capacity; i++)
             {
@@ -122,7 +122,6 @@ public class EnemySpawner : MonoBehaviour
                 Enemy enemyMono = enemy.GetComponent<Enemy>();
                 boat.AddPassanger(enemyMono);
                 enemyMono.SetPower(boatPower / boat.Capacity, 1f);
-                enemyMono.SetShore(shore);
             }
             shore.SetIconColor(shoreIncomingAttackerColor);
             lastSpawnTime = Time.time;

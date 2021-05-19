@@ -36,7 +36,6 @@ public class BoardManager : MonoBehaviour
         Map = GenerateMap(BoardWidth, BoardHeight);
         SpawnHexagons(Map);
         SpawnBuildings(Map.Buildings);
-        SetupShores();
     }
 
     private void CleanupMap()
@@ -69,17 +68,14 @@ public class BoardManager : MonoBehaviour
 
     public void AddBuilding(Building building)
     {
-        if (Buildings.ContainsKey(building.Position) && Buildings[building.Position] != null)
+        if (Buildings.ContainsKey(building.GridPosition) && Buildings[building.GridPosition] != null)
         {
             throw new System.ArgumentException("Cannot build a building on an occupied spot.");
         }
 
-        Buildings[building.Position] = building;
+        Buildings[building.GridPosition] = building;
 
-        foreach (Vector2Int pos in Map.LandableShores)
-        {
-            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().RecalculatePath();
-        }
+        GiveShoresPaths();
     }
 
     private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
@@ -98,21 +94,24 @@ public class BoardManager : MonoBehaviour
                     new Quaternion(),
                     this.transform)
                     .GetComponent<Building>();
-            building.Initialize(pos);
-            Buildings[pos] = building;
 
-            if (buildingMap[pos] == BuildingType.Source)
+            if (building.Type == BuildingType.Source)
             {
-                Source = this.Buildings[pos];
+                Source = building;
             }
+
+            building.Initialize(pos);
         }
     }
 
-    private void SetupShores()
+    private void GiveShoresPaths()
     {
+        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(this.Map, this.Source.GridPosition, Helpers.IsTraversable);
+
         foreach (Vector2Int pos in Map.LandableShores)
         {
-            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().RecalculatePath();
+            List<Vector2Int> newPath = Helpers.FindPath(predGrid, this.Source.GridPosition, pos);
+            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(newPath);
         }
     }
 

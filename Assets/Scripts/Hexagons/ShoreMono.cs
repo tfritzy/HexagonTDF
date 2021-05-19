@@ -15,24 +15,17 @@ public class ShoreMono : HexagonMono
         this.lineRenderer = this.GetComponent<LineRenderer>();
     }
 
-    public void RecalculatePath()
+    public void SetPath(List<Vector2Int> path)
     {
-        List<Vector2Int> oldPath = PathToSource;
-        PathToSource = Helpers.FindPath(Managers.Board.Map, GridPosition, Managers.Board.Source.Position, Helpers.IsTraversable);
-        Debug.Log("Shore calculated path of length: " + PathToSource.Count);
-        if (PathToSource == null)
-        {
-            throw new System.NullReferenceException($"Shore was unable to find path to source.");
-        }
-
         bool arePathsSame = true;
-        if (oldPath != null && oldPath.Count == PathToSource.Count)
+        if (this.PathToSource != null && this.PathToSource.Count == path.Count)
         {
-            for (int i = 0; i < PathToSource.Count; i++)
+            for (int i = 0; i < path.Count; i++)
             {
-                if (PathToSource[i] != oldPath[i])
+                if (this.PathToSource[i] != path[i])
                 {
                     arePathsSame = false;
+                    break;
                 }
             }
         }
@@ -43,10 +36,11 @@ public class ShoreMono : HexagonMono
 
         if (arePathsSame == false)
         {
-
             PathId = Guid.NewGuid();
             ResetLineRenderer();
         }
+
+        this.PathToSource = path;
     }
 
     public void SetIconColor(Color color)

@@ -157,9 +157,9 @@ public abstract class Enemy : Character
         IsDead = true;
     }
 
-    private void RecalculatePath()
+    protected virtual void RecalculatePath()
     {
-        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, this.path[PathProgress], Managers.Board.Source.Position, Helpers.IsTraversable);
+        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, this.path[PathProgress], Managers.Board.Source.GridPosition, Helpers.IsTraversable);
         this.PathProgress = 0;
         this.pathId = shore.PathId;
         this.path = pathToSource;

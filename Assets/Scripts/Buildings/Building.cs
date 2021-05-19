@@ -7,7 +7,7 @@ public abstract class Building : Character
 {
     public Sprite Icon { get => Prefabs.BuildingIcons[Type]; }
     public abstract BuildingType Type { get; }
-    public Vector2Int Position { get; set; }
+    public Vector2Int GridPosition { get; set; }
     public override int StartingHealth => int.MaxValue;
     public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, costRatio);
     public override VerticalRegion Region => VerticalRegion.Ground;
@@ -16,12 +16,14 @@ public abstract class Building : Character
 
     public void Initialize(Vector2Int position)
     {
-        this.Position = position;
+        this.GridPosition = position;
 
         foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
         {
             renderer.material = Constants.Materials.Normal;
         }
+
+        Managers.Board.AddBuilding(this);
     }
 
     protected override void Setup()
