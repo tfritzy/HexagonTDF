@@ -111,8 +111,22 @@ public class BoardManager : MonoBehaviour
         foreach (Vector2Int pos in Map.LandableShores)
         {
             List<Vector2Int> newPath = Helpers.FindPath(predGrid, this.Source.GridPosition, pos);
-            Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(newPath);
+            newPath.Reverse(); // Because we searched from source out.
+
+            if (isValidPath(newPath, pos, this.Source.GridPosition))
+            {
+                Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(newPath);
+            }
+            else
+            {
+                Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(null);
+            }
         }
+    }
+
+    private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
+    {
+        return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
     public HexagonType?[,] GetTypeMap()
@@ -172,25 +186,33 @@ public class BoardManager : MonoBehaviour
         return vector.magnitude;
     }
 
-    public bool IsBlockedByBuilding(Vector2Int gridPosition)
-    {
-        return Buildings.ContainsKey(gridPosition) && Buildings[gridPosition] != null;
-    }
-
     public bool IsBuildable(Vector2Int pos)
     {
-        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
+        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false && ifBlockedWouldNoPathsRemain(pos) == false;
     }
 
-    public Dictionary<Vector2Int, BuildingType> GetBuildingTypeMap()
+    private bool ifBlockedWouldNoPathsRemain(Vector2Int blockedPos)
     {
-        Dictionary<Vector2Int, BuildingType> typeMap = new Dictionary<Vector2Int, BuildingType>();
-        foreach (Vector2Int key in Buildings.Keys)
+        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(
+            this.Map,
+            this.Source.GridPosition,
+            (Vector2Int testPos) =>
+            {
+                return testPos != blockedPos && Helpers.IsTraversable(testPos);
+            });
+
+        foreach (Vector2Int pos in Map.LandableShores)
         {
-            typeMap[key] = Buildings[key].Type;
+            List<Vector2Int> newPath = Helpers.FindPath(predGrid, this.Source.GridPosition, pos);
+            newPath.Reverse(); // Because we searched from source out.
+
+            if (newPath[0] != newPath.Last() && newPath[0] == pos && newPath.Last() == this.Source.GridPosition)
+            {
+                return false;
+            }
         }
 
-        return typeMap;
+        return true;
     }
 
     private void BuildHexagon(HexagonType type, int x, int y)

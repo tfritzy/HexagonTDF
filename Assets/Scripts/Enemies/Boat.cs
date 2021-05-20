@@ -20,13 +20,7 @@ public class Boat : Enemy
 
     public void SetInitialPos(Vector2Int startGridPos)
     {
-        this.path = Helpers.FindPath(
-            Managers.Board.Map,
-            startGridPos,
-            new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
-            (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; });
-        Vector2Int targetShorePos = this.path[this.path.Count - 1];
-        this.targetShore = Managers.Board.Hexagons[targetShorePos.x, targetShorePos.y].GetComponent<ShoreMono>();
+        FindNewPath(startGridPos);
     }
 
     protected override void OnReachPathEnd()
@@ -46,12 +40,20 @@ public class Boat : Enemy
 
     protected override void RecalculatePath()
     {
+        FindNewPath(this.path[this.PathProgress]);
+    }
+
+    private void FindNewPath(Vector2Int startPos)
+    {
         this.path = Helpers.FindPath(
             Managers.Board.Map,
-            this.path[PathProgress],
+            startPos,
             new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
-            (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; });
+            (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; },
+            Helpers.IsTraversable);
         this.PathProgress = 0;
+        Vector2Int targetShorePos = this.path[this.path.Count - 1];
+        this.targetShore = Managers.Board.Hexagons[targetShorePos.x, targetShorePos.y].GetComponent<ShoreMono>();
     }
 
     protected override void Die()

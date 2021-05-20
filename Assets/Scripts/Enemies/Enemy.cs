@@ -159,7 +159,17 @@ public abstract class Enemy : Character
 
     protected virtual void RecalculatePath()
     {
-        List<Vector2Int> pathToSource = Helpers.FindPath(Managers.Board.Map, this.path[PathProgress], Managers.Board.Source.GridPosition, Helpers.IsTraversable);
+        if (this.path?.Count == 0)
+        {
+            return; // TODO: Have enemy start attacking surrounding buildings.
+        }
+
+        List<Vector2Int> pathToSource = Helpers.FindPath(
+            Managers.Board.Map,
+            this.path[PathProgress],
+            Managers.Board.Source.GridPosition,
+            Helpers.IsTraversable);
+
         this.PathProgress = 0;
         this.pathId = shore.PathId;
         this.path = pathToSource;

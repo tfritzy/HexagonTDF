@@ -53,7 +53,7 @@ public class Builder : MonoBehaviour
     {
         if (IsInBuildMode)
         {
-            HighlightHexagon();
+            BuildBuildingLoop();
         }
     }
 
@@ -78,22 +78,17 @@ public class Builder : MonoBehaviour
         this.GetComponent<LineRenderer>().enabled = false;
     }
 
-    private void HighlightHexagon()
+    private void BuildBuildingLoop()
     {
         if (SelectedBuilding == null)
         {
             return;
         }
 
-        HighlightHexagon(Helpers.FindHexByRaycast(Constants.CenterScreen));
-
-        if (Managers.Board.IsBuildable(highlightedHexagon.GridPosition) && (confirmButtons == null))
-        {
-            InstantiateAcceptAndDenyButtons();
-        }
+        SetBuildTargetHex(Helpers.FindHexByRaycast(Constants.CenterScreen));
     }
 
-    private void HighlightHexagon(HexagonMono newPotentialHexagon)
+    private void SetBuildTargetHex(HexagonMono newPotentialHexagon)
     {
         if (newPotentialHexagon == null)
         {
@@ -107,10 +102,17 @@ public class Builder : MonoBehaviour
 
         highlightedHexagon = newPotentialHexagon;
 
-        CreateHighlightBuildingIfNeeded();
+        bool isBuildable = Managers.Board.IsBuildable(highlightedHexagon.GridPosition);
+
+        if (isBuildable)
+        {
+            InstantiateAcceptAndDenyButtons();
+        }
+
+        CreateHighlightBuilding(isBuildable);
     }
 
-    private void CreateHighlightBuildingIfNeeded()
+    private void CreateHighlightBuilding(bool isBuildable)
     {
         if (buildingInst == null)
         {
@@ -121,14 +123,9 @@ public class Builder : MonoBehaviour
         buildingInst.transform.position = highlightedHexagon.transform.position;
         selectedBuilding.GridPosition = highlightedHexagon.GridPosition;
 
-        if (Managers.Board.IsBuildable(highlightedHexagon.GridPosition))
+        if (isBuildable)
         {
             buildingInst.SetMaterialsRecursively(Constants.Materials.BlueSeethrough);
-
-            // Dictionary<Vector2Int, BuildingType> buildings = Managers.Board.GetBuildingTypeMap();
-            // buildings[selectedBuilding.Position] = selectedBuilding.Type;
-            // List<Vector2Int> newPath = Helpers.FindPath(Managers.Board.Map, Managers.Board.Portals[0].Position, Managers.Board.Source.Position, Helpers.IsTraversable);
-            // SetupLineRenderer(newPath);
         }
         else
         {
@@ -163,7 +160,7 @@ public class Builder : MonoBehaviour
         }
         else
         {
-            Debug.Log("Not enough resources");
+            Debug.Log("Not enough resources, or invalid position");
         }
 
         UnHighlightHexagon();

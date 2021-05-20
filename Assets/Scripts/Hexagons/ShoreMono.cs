@@ -18,9 +18,9 @@ public class ShoreMono : HexagonMono
     public void SetPath(List<Vector2Int> path)
     {
         bool arePathsSame = true;
-        if (this.PathToSource != null && this.PathToSource.Count == path.Count)
+        if (this.PathToSource != null && this.PathToSource.Count == path?.Count)
         {
-            for (int i = 0; i < path.Count; i++)
+            for (int i = 0; i < path?.Count; i++)
             {
                 if (this.PathToSource[i] != path[i])
                 {
