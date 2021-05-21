@@ -13,14 +13,16 @@ public class Boat : Enemy
     {
         {AttributeType.Health, 1f},
     };
-    private ShoreMono targetShore;
     private const string SEAT_NAME = "Seat";
     public override int StartingHealth => int.MaxValue;
     protected override float DistanceFromFinalDestinationBeforeEnd => 1.8f;
+    protected List<Vector2Int> pathToShore;
+    protected int pathProgress;
 
     public void SetInitialPos(Vector2Int startGridPos)
     {
         FindNewPath(startGridPos);
+        CalculatePathingPositions(startGridPos);
     }
 
     protected override void OnReachPathEnd()
@@ -30,35 +32,38 @@ public class Boat : Enemy
         Die();
     }
 
-    protected override void RecalculatePathIfNeeded()
+    public override void CalculatePathingPositions(Vector2Int currentPosition)
     {
-        if (Helpers.IsTraversable(targetShore.GridPosition) == false)
+        if (this.pathProgress + 1 < this.pathToShore.Count)
         {
-            RecalculatePath();
+            this.currentPathPos = this.nextPathPos;
+            this.nextPathPos = this.pathToShore[this.pathProgress + 1];
+            this.destinationPathPos = this.pathToShore[this.pathToShore.Count - 1];
         }
     }
 
     protected override void RecalculatePath()
     {
-        FindNewPath(this.path[this.PathProgress]);
+        FindNewPath(this.pathToShore[this.pathProgress]);
+        CalculatePathingPositions(currentPathPos);
     }
 
     private void FindNewPath(Vector2Int startPos)
     {
-        this.path = Helpers.FindPath(
+        this.pathToShore = Helpers.FindPath(
             Managers.Board.Map,
             startPos,
             new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
             (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; },
             isValidShore);
-        this.PathProgress = 0;
-        Vector2Int targetShorePos = this.path[this.path.Count - 1];
-        this.targetShore = Managers.Board.Hexagons[targetShorePos.x, targetShorePos.y].GetComponent<ShoreMono>();
+        this.pathProgress = 0;
+        Vector2Int targetShorePos = this.pathToShore[this.pathToShore.Count - 1];
     }
 
     private bool isValidShore(Vector2Int pos)
     {
-        return Helpers.IsTraversable(pos) && Managers.Board.Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().PathToSource != null;
+        return Helpers.IsTraversable(pos) &&
+                Managers.Board.GetNextStepInPathToSource(pos) != Constants.MaxVector2Int;
     }
 
     protected override void Die()
@@ -104,7 +109,7 @@ public class Boat : Enemy
             passanger.transform.parent = null;
             passanger.IsOnBoat = false;
             passanger.AddRigidbody();
-            passanger.SetShore(this.targetShore);
+            passanger.CalculatePathingPositions(this.destinationPathPos);
         }
     }
 }

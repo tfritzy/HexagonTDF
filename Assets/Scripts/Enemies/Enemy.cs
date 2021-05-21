@@ -6,7 +6,6 @@ using UnityEngine;
 
 public abstract class Enemy : Character
 {
-    public int PathProgress;
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
     public override int StartingHealth => startingHealth;
@@ -18,8 +17,6 @@ public abstract class Enemy : Character
     public bool IsOnBoat;
     public Boat Boat;
     protected bool IsDead;
-    protected List<Vector2Int> path;
-    private ShoreMono shore;
     private Guid pathId;
     private GameObject DeathAnimation;
     private Healthbar healthbar;
@@ -27,18 +24,9 @@ public abstract class Enemy : Character
     private int startingHealth;
     private float power;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
-
-    public void SetShore(ShoreMono shore)
-    {
-        this.shore = shore;
-        this.pathId = shore.PathId;
-        this.path = shore.PathToSource;
-
-        if (this.path?.Count == 0)
-        {
-            Debug.LogWarning("Received an empty path from shore.");
-        }
-    }
+    protected Vector2Int nextPathPos;
+    protected Vector2Int currentPathPos;
+    protected Vector2Int destinationPathPos;
 
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
 
@@ -58,7 +46,6 @@ public abstract class Enemy : Character
     protected override void Setup()
     {
         base.Setup();
-        this.PathProgress = 0;
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
         this.healthbar = Instantiate(Prefabs.Healthbar,
@@ -115,49 +102,55 @@ public abstract class Enemy : Character
         DetachBody();
     }
 
+    public virtual void CalculatePathingPositions(Vector2Int currentPosition)
+    {
+        this.currentPathPos = currentPosition;
+        this.nextPathPos = Managers.Board.GetNextStepInPathToSource(currentPathPos);
+        this.destinationPathPos = Managers.Board.Source.GridPosition;
+    }
+
     private void FollowPath()
     {
-        RecalculatePathIfNeeded();
+        if (shouldRecalculatePath())
+        {
+            RecalculatePath();
+        }
 
-        if (path == null)
+        if (nextPathPos == Constants.MaxVector2Int)
         {
             // TODO: Attack the surroundings.
             return;
         }
 
-        if (PathProgress >= path.Count)
-        {
-            OnReachPathEnd();
-            return;
-        }
-
-        Vector3 difference = (Map.ToWorldPosition(path[PathProgress]) - this.transform.position);
+        Vector3 difference = (Map.ToWorldPosition(nextPathPos) - this.transform.position);
         difference.y = 0;
         this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
         this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
 
-        if (PathProgress == path.Count - 1)
+        if (nextPathPos == destinationPathPos)
         {
             if (difference.magnitude < DistanceFromFinalDestinationBeforeEnd)
             {
-                PathProgress += 1;
+                OnReachPathEnd();
             }
         }
         else
         {
             if (difference.magnitude < .1f)
             {
-                PathProgress += 1;
+                CalculatePathingPositions(nextPathPos);
             }
         }
     }
 
-    protected virtual void RecalculatePathIfNeeded()
+    private bool shouldRecalculatePath()
     {
-        if (shore.PathId != this.pathId)
-        {
-            RecalculatePath();
-        }
+        return Managers.Board.PathingId != this.pathId;
+    }
+
+    protected virtual void RecalculatePath()
+    {
+        CalculatePathingPositions(currentPathPos);
     }
 
     protected virtual void OnReachPathEnd()
@@ -166,24 +159,6 @@ public abstract class Enemy : Character
         Managers.Board.Source.TakeDamage(1);
         Destroy(this.gameObject);
         IsDead = true;
-    }
-
-    protected virtual void RecalculatePath()
-    {
-        if (this.path == null || this.path.Count == 0)
-        {
-            return; // TODO: Have enemy start attacking surrounding buildings.
-        }
-
-        List<Vector2Int> pathToSource = Helpers.FindPath(
-            Managers.Board.Map,
-            this.path[PathProgress],
-            Managers.Board.Source.GridPosition,
-            Helpers.IsTraversable);
-
-        this.PathProgress = 0;
-        this.pathId = shore.PathId;
-        this.path = pathToSource;
     }
 
     public int RollGoldReward()

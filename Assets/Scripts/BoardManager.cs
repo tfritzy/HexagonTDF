@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ public class BoardManager : MonoBehaviour
     public string ActiveMapName;
     public bool RegenerateMap;
     public Map Map;
+    public Guid PathingId { get; private set; }
 
     void Awake()
     {
@@ -75,7 +77,7 @@ public class BoardManager : MonoBehaviour
 
         Buildings[building.GridPosition] = building;
 
-        GiveShoresPaths();
+        RecalculatePredGrid();
     }
 
     private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
@@ -104,32 +106,6 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void GiveShoresPaths()
-    {
-        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(
-            this.Map,
-            this.Source.GridPosition,
-            (Vector2Int pos) =>
-            {
-                return Helpers.IsTraversable(pos) || Managers.Board.Source.GridPosition == pos;
-            });
-
-        foreach (Vector2Int pos in Map.LandableShores)
-        {
-            List<Vector2Int> newPath = Helpers.FindPath(predGrid, this.Source.GridPosition, pos);
-            newPath.Reverse(); // Because we searched from source out.
-
-            if (isValidPath(newPath, pos, this.Source.GridPosition))
-            {
-                Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(newPath);
-            }
-            else
-            {
-                Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().SetPath(null);
-            }
-        }
-    }
-
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
     {
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
@@ -147,6 +123,23 @@ public class BoardManager : MonoBehaviour
         }
 
         return typeMap;
+    }
+
+    Vector2Int[,] predGrid;
+    public Vector2Int GetNextStepInPathToSource(Vector2Int currentPos)
+    {
+        return predGrid[currentPos.x, currentPos.y];
+    }
+
+    private void RecalculatePredGrid()
+    {
+        predGrid = Helpers.GetPredecessorGrid(
+            this.Map,
+            Source.GridPosition,
+            (Vector2Int pos) =>
+            {
+                return Helpers.IsTraversable(pos) || pos == Source.GridPosition;
+            });
     }
 
     public bool IsBuildable(Vector2Int pos)
