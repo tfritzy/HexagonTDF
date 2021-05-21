@@ -92,6 +92,12 @@ public static class Helpers
         Queue<Vector2Int> q = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         Vector2Int[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
+
+        if (shouldInclude(sourcePos) == false)
+        {
+            return predecessorGrid;
+        }
+
         q.Enqueue(sourcePos);
 
         while (q.Count > 0)
@@ -250,7 +256,7 @@ public static class Helpers
     private static List<Vector2Int> GetPathFromPredecessorGrid(Vector2Int[,] grid, Vector2Int startPosition, Vector2Int endPosition)
     {
         List<Vector2Int> path = new List<Vector2Int>();
-        Vector2Int current = grid[endPosition.x, endPosition.y];
+        Vector2Int current = endPosition;
         while (current != Constants.MaxVector2Int)
         {
             path.Add(current);
@@ -258,13 +264,12 @@ public static class Helpers
 
             if (current == startPosition)
             {
+                path.Add(current);
                 break;
             }
         }
 
         path.Reverse();
-        path.Add(endPosition);
-
         return path;
     }
 

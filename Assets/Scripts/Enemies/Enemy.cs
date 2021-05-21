@@ -33,6 +33,11 @@ public abstract class Enemy : Character
         this.shore = shore;
         this.pathId = shore.PathId;
         this.path = shore.PathToSource;
+
+        if (this.path?.Count == 0)
+        {
+            Debug.LogWarning("Received an empty path from shore.");
+        }
     }
 
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
@@ -114,6 +119,12 @@ public abstract class Enemy : Character
     {
         RecalculatePathIfNeeded();
 
+        if (path == null)
+        {
+            // TODO: Attack the surroundings.
+            return;
+        }
+
         if (PathProgress >= path.Count)
         {
             OnReachPathEnd();
@@ -159,7 +170,7 @@ public abstract class Enemy : Character
 
     protected virtual void RecalculatePath()
     {
-        if (this.path?.Count == 0)
+        if (this.path == null || this.path.Count == 0)
         {
             return; // TODO: Have enemy start attacking surrounding buildings.
         }

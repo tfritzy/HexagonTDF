@@ -74,7 +74,6 @@ public class EnemySpawner : MonoBehaviour
         foreach (Vector2Int pos in shoreHex)
         {
             shores.Add(Managers.Board.Hexagons[pos.x, pos.y].GetComponent<ShoreMono>());
-            shores.Last().SetIconColor(shoreInactiveColor);
         }
     }
 
@@ -108,11 +107,11 @@ public class EnemySpawner : MonoBehaviour
         startWaveDialog.SetActive(false);
         if (Time.time > lastSpawnTime + DEFAULT_SEC_BETWEEN_SPAWN)
         {
-            Vector2Int boatPos = Vector2Int.zero; // TODO: find appropriate start pos;
+            Vector2Int boatPos = getBoatSpawnPos();
             ShoreMono shore = this.shores[Random.Range(0, this.shores.Count)];
             Boat boat = Instantiate(
                 Prefabs.Enemies[EnemyType.Boat],
-                Map.ToWorldPosition(0, 0),
+                Map.ToWorldPosition(boatPos),
                 new Quaternion()).GetComponent<Boat>();
             boat.SetInitialPos(boatPos);
             float boatPower = PowerPerSecondByWave[CurrentWave] * DEFAULT_SEC_BETWEEN_SPAWN;
@@ -123,8 +122,24 @@ public class EnemySpawner : MonoBehaviour
                 boat.AddPassanger(enemyMono);
                 enemyMono.SetPower(boatPower / boat.Capacity, 1f);
             }
-            shore.SetIconColor(shoreIncomingAttackerColor);
             lastSpawnTime = Time.time;
+        }
+    }
+
+    private Vector2Int getBoatSpawnPos()
+    {
+        switch (Random.Range(0, 4))
+        {
+            case (0):
+                return new Vector2Int(0, Random.Range(0, Managers.Board.Map.Height));
+            case (1):
+                return new Vector2Int(Random.Range(0, Managers.Board.Map.Width), Managers.Board.Map.Height - 1);
+            case (2):
+                return new Vector2Int(Managers.Board.Map.Width - 1, Random.Range(0, Managers.Board.Map.Height));
+            case (3):
+                return new Vector2Int(Random.Range(0, Managers.Board.Map.Width), 0);
+            default:
+                throw new System.Exception("Invalid boat spawn pos logic.");
         }
     }
 

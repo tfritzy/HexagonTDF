@@ -106,7 +106,13 @@ public class BoardManager : MonoBehaviour
 
     private void GiveShoresPaths()
     {
-        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(this.Map, this.Source.GridPosition, Helpers.IsTraversable);
+        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(
+            this.Map,
+            this.Source.GridPosition,
+            (Vector2Int pos) =>
+            {
+                return Helpers.IsTraversable(pos) || Managers.Board.Source.GridPosition == pos;
+            });
 
         foreach (Vector2Int pos in Map.LandableShores)
         {
@@ -198,7 +204,7 @@ public class BoardManager : MonoBehaviour
             this.Source.GridPosition,
             (Vector2Int testPos) =>
             {
-                return testPos != blockedPos && Helpers.IsTraversable(testPos);
+                return testPos != blockedPos && (Helpers.IsTraversable(testPos) || Source.GridPosition == testPos);
             });
 
         foreach (Vector2Int pos in Map.LandableShores)

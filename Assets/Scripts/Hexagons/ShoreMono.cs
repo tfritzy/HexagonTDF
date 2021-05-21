@@ -7,7 +7,6 @@ public class ShoreMono : HexagonMono
     public Guid PathId;
     public List<Vector2Int> PathToSource;
     private LineRenderer lineRenderer;
-    private GameObject icon;
 
     protected override void Setup()
     {
@@ -41,16 +40,6 @@ public class ShoreMono : HexagonMono
         }
 
         this.PathToSource = path;
-    }
-
-    public void SetIconColor(Color color)
-    {
-        if (this.icon == null)
-        {
-            this.icon = transform.Find("Icon").gameObject;
-        }
-
-        this.icon.GetComponent<MeshRenderer>().material.SetColor("_Color", color);
     }
 
     private void ResetLineRenderer()

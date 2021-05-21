@@ -50,10 +50,15 @@ public class Boat : Enemy
             startPos,
             new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
             (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; },
-            Helpers.IsTraversable);
+            isValidShore);
         this.PathProgress = 0;
         Vector2Int targetShorePos = this.path[this.path.Count - 1];
         this.targetShore = Managers.Board.Hexagons[targetShorePos.x, targetShorePos.y].GetComponent<ShoreMono>();
+    }
+
+    private bool isValidShore(Vector2Int pos)
+    {
+        return Helpers.IsTraversable(pos) && Managers.Board.Hexagons[pos.x, pos.y].GetComponent<ShoreMono>().PathToSource != null;
     }
 
     protected override void Die()
