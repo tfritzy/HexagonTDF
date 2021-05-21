@@ -17,9 +17,53 @@ public class Map
     private HexagonType?[,] hexes;
     private List<HashSet<Vector2Int>> landGroups;
 
-    public Map()
+    public const float LAND_PERLIN_SCALE = 5f;
+    public const float FORREST_PERLIN_SCALE = 3f;
+    public const float LandPerlinCutoff = .65f;
+    public const float TreePerlinCutoff = .55f;
+
+
+    public Map(int width, int height, int islandRadius)
     {
+        GenerateMap(width, height, islandRadius);
         Buildings = new Dictionary<Vector2Int, BuildingType>();
+    }
+
+    public void GenerateMap(int width, int height, float islandRadius)
+    {
+        HexagonType?[,] hexes = new HexagonType?[width, height];
+        int seed = Random.Range(0, 100000);
+        int forrestSeed = Random.Range(0, 100000);
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (DistFromCenter(width, height, x, y) > islandRadius)
+                {
+                    hexes[x, y] = HexagonType.Water;
+                    continue;
+                }
+
+                float sampleX = x / LAND_PERLIN_SCALE;
+                float sampleY = y / LAND_PERLIN_SCALE;
+                float perlinValue = Mathf.PerlinNoise(sampleX + seed, sampleY + seed);
+                hexes[x, y] = perlinValue < LandPerlinCutoff ? HexagonType.Grass : HexagonType.Water;
+
+                float treePerlinValue = Mathf.PerlinNoise(x / FORREST_PERLIN_SCALE + forrestSeed, y / FORREST_PERLIN_SCALE + forrestSeed);
+                if (treePerlinValue > TreePerlinCutoff)
+                {
+                    hexes[x, y] = HexagonType.Forrest;
+                }
+            }
+        }
+
+        SetHexes(hexes);
+    }
+
+    private static float DistFromCenter(int width, int height, int x, int y)
+    {
+        Vector2 vector = new Vector2(x - width / 2, y - height / 2);
+        return vector.magnitude;
     }
 
     public void SetHexes(HexagonType?[,] hexes)

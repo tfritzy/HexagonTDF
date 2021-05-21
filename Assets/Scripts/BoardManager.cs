@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public const int BoardWidth = 16;
-    public const int BoardHeight = 15;
-    public const int IslandRadius = 6;
+    public const int BoardWidth = 20;
+    public const int BoardHeight = 22;
+    public const int IslandRadius = 5;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Building Source;
@@ -33,7 +33,7 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        Map = GenerateMap(BoardWidth, BoardHeight);
+        Map = new Map(BoardWidth, BoardHeight, IslandRadius);
         SpawnHexagons(Map);
         SpawnBuildings(Map.Buildings);
     }
@@ -147,49 +147,6 @@ public class BoardManager : MonoBehaviour
         }
 
         return typeMap;
-    }
-
-    public const float LAND_PERLIN_SCALE = 5f;
-    public const float FORREST_PERLIN_SCALE = 3f;
-    public const float LandPerlinCutoff = .65f;
-    public const float TreePerlinCutoff = .55f;
-    public Map GenerateMap(int width, int height)
-    {
-        Map newMap = new Map();
-        HexagonType?[,] hexes = new HexagonType?[width, height];
-        int seed = Random.Range(0, 100000);
-        int forrestSeed = Random.Range(0, 100000);
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if (DistFromCenter(x, y) > IslandRadius)
-                {
-                    hexes[x, y] = HexagonType.Water;
-                    continue;
-                }
-
-                float sampleX = x / LAND_PERLIN_SCALE;
-                float sampleY = y / LAND_PERLIN_SCALE;
-                float perlinValue = Mathf.PerlinNoise(sampleX + seed, sampleY + seed);
-                hexes[x, y] = perlinValue < LandPerlinCutoff ? HexagonType.Grass : HexagonType.Water;
-
-                float treePerlinValue = Mathf.PerlinNoise(x / FORREST_PERLIN_SCALE + forrestSeed, y / FORREST_PERLIN_SCALE + forrestSeed);
-                if (treePerlinValue > TreePerlinCutoff)
-                {
-                    hexes[x, y] = HexagonType.Forrest;
-                }
-            }
-        }
-
-        newMap.SetHexes(hexes);
-        return newMap;
-    }
-
-    private static float DistFromCenter(int x, int y)
-    {
-        Vector2 vector = new Vector2(x - BoardWidth / 2, y - BoardHeight / 2);
-        return vector.magnitude;
     }
 
     public bool IsBuildable(Vector2Int pos)

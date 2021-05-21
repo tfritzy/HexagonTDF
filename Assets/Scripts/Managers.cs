@@ -4,20 +4,6 @@ using UnityEngine;
 
 public static class Managers
 {
-    private static Editor editor;
-    public static Editor Editor
-    {
-        get
-        {
-            if (editor == null)
-            {
-                editor = GameObject.Find("Editor").GetComponent<Editor>();
-            }
-
-            return editor;
-        }
-    }
-
     private static Camera camera;
     public static Camera Camera
     {
