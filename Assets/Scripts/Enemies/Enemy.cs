@@ -119,6 +119,8 @@ public abstract class Enemy : Character
         if (nextPathPos == Constants.MaxVector2Int)
         {
             // TODO: Attack the surroundings.
+            this.Rigidbody.velocity = Vector3.zero;
+            this.SetMaterial(Constants.Materials.RedSeethrough);
             return;
         }
 

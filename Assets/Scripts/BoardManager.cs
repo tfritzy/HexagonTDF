@@ -85,7 +85,8 @@ public class BoardManager : MonoBehaviour
         this.Buildings = new Dictionary<Vector2Int, Building>();
 
         // TODO: Remove hack and let player choose source position.
-        Vector2Int sourcePos = this.Map.MainLandmass.ToList().First();
+        List<Vector2Int> mainLandmass = this.Map.MainLandmass.ToList();
+        Vector2Int sourcePos = mainLandmass[UnityEngine.Random.Range(0, mainLandmass.Count)];
         buildingMap[sourcePos] = BuildingType.Source;
 
         foreach (Vector2Int pos in buildingMap.Keys)

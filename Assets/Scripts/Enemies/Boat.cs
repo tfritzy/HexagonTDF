@@ -39,6 +39,7 @@ public class Boat : Enemy
             this.currentPathPos = this.nextPathPos;
             this.nextPathPos = this.pathToShore[this.pathProgress + 1];
             this.destinationPathPos = this.pathToShore[this.pathToShore.Count - 1];
+            this.pathProgress += 1;
         }
     }
 
