@@ -13,6 +13,7 @@ public class Map
     public int Width { get { return hexes.GetLength(0); } }
     public int Height { get { return hexes.GetLength(1); } }
     public bool IsInvalid;
+    public float[,] HexHeightMap;
 
     private HexagonType?[,] hexes;
     private List<HashSet<Vector2Int>> landGroups;
@@ -32,13 +33,15 @@ public class Map
     public void GenerateMap(int width, int height, float islandRadius)
     {
         HexagonType?[,] hexes = new HexagonType?[width, height];
+        HexHeightMap = new float[width, height];
         int seed = Random.Range(0, 100000);
         int forrestSeed = Random.Range(0, 100000);
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                if (DistFromCenter(width, height, x, y) > islandRadius)
+                float distFromCenter = DistFromCenter(width, height, x, y);
+                if (distFromCenter > islandRadius)
                 {
                     hexes[x, y] = HexagonType.Water;
                     continue;
@@ -54,6 +57,11 @@ public class Map
                 {
                     hexes[x, y] = HexagonType.Forrest;
                 }
+
+
+                float heightBias = (-3 / islandRadius) * distFromCenter + 3;
+                float heightNoise = perlinValue * 3;
+                HexHeightMap[x, y] = (int)(heightBias + heightNoise) / 2;
             }
         }
 
