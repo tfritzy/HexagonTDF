@@ -24,4 +24,10 @@ public static class ColorExtensions
         color.a = a;
         return color;
     }
+
+    public static Color WithAlpha(Color color, float alpha)
+    {
+        color.a = alpha;
+        return color;
+    }
 }

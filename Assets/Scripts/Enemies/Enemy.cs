@@ -30,6 +30,8 @@ public abstract class Enemy : Character
 
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
 
+    private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
+
     public void SetPower(float power, float healthModifier)
     {
         this.power = power;
@@ -124,10 +126,19 @@ public abstract class Enemy : Character
             return;
         }
 
-        Vector3 difference = (Map.ToWorldPosition(nextPathPos) - this.transform.position);
+        Vector3 difference = (Managers.Board.GetHex(nextPathPos).transform.position - this.transform.position);
+        float verticalDifference = difference.y;
         difference.y = 0;
-        this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
-        this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
+
+        if (ShouldClimbOrDescendCliff(verticalDifference, difference))
+        {
+            this.Rigidbody.velocity = Math.Sign(verticalDifference) * (MovementSpeed * VERTICAL_MOVEMENT_MODIFIER) * Vector3.up;
+        }
+        else
+        {
+            this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
+            this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
+        }
 
         if (nextPathPos == destinationPathPos)
         {
@@ -143,6 +154,11 @@ public abstract class Enemy : Character
                 CalculatePathingPositions(nextPathPos);
             }
         }
+    }
+
+    private bool ShouldClimbOrDescendCliff(float verticalDifference, Vector3 difference)
+    {
+        return Math.Abs(verticalDifference) > .01f && difference.magnitude < Constants.HEXAGON_r;
     }
 
     private bool shouldRecalculatePath()
@@ -177,6 +193,14 @@ public abstract class Enemy : Character
         {
             return;
         }
+
+        DamageNumber num = Instantiate(
+            Prefabs.DamageNumber,
+            Vector3.zero,
+            new Quaternion(),
+            Managers.Canvas)
+                .GetComponent<DamageNumber>();
+        num.SetValue(amount, this.gameObject);
 
         this.healthbar.enabled = true;
         base.TakeDamage(amount);

@@ -9,7 +9,7 @@ public class BoardManager : MonoBehaviour
 {
     public const int BoardWidth = 20;
     public const int BoardHeight = 22;
-    public const int IslandRadius = 5;
+    public const int IslandRadius = 6;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Building Source;
@@ -181,6 +181,10 @@ public class BoardManager : MonoBehaviour
         hexagonScript.SetType(Prefabs.GetHexagonScript(type));
         this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
+    }
 
+    public HexagonMono GetHex(Vector2Int pos)
+    {
+        return Hexagons[pos.x, pos.y];
     }
 }

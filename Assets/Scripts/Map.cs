@@ -58,9 +58,8 @@ public class Map
                     hexes[x, y] = HexagonType.Forrest;
                 }
 
-
-                float heightBias = (-3 / islandRadius) * distFromCenter + 3;
-                float heightNoise = perlinValue * 3;
+                float heightBias = (-4 / islandRadius) * distFromCenter + 4;
+                float heightNoise = perlinValue * 4;
                 HexHeightMap[x, y] = (int)(heightBias + heightNoise) / 2;
             }
         }

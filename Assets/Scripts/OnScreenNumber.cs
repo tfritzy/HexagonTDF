@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public abstract class OnScreenNumber : MonoBehaviour
 {
     public int Value;
-    private const float LifeSpan = .75f;
+    private const float LifeSpan = 1f;
     private Text _text;
     private Rigidbody rb;
     private Text text
@@ -21,6 +21,18 @@ public abstract class OnScreenNumber : MonoBehaviour
             return _text;
         }
     }
+    private Outline _outline;
+    private Outline outline
+    {
+        get
+        {
+            if (_outline == null)
+            {
+                _outline = transform.Find("Text").GetComponent<Outline>();
+            }
+            return _outline;
+        }
+    }
     private float birthTime;
     private Vector3 rootPosition;
     private Vector3 offset;
@@ -32,7 +44,6 @@ public abstract class OnScreenNumber : MonoBehaviour
     private void Start()
     {
         birthTime = Time.time;
-        this.transform.position += (Vector3)(Random.insideUnitCircle / 2);
         this.rb = this.GetComponent<Rigidbody>();
     }
 
@@ -54,11 +65,8 @@ public abstract class OnScreenNumber : MonoBehaviour
     private void LessenColorOverTime()
     {
         float alpha = (LifeSpan - (Time.time - birthTime)) / LifeSpan;
-
-        // Set text alpha
-        Color currentTextColor = text.color;
-        currentTextColor.a = alpha;
-        text.color = currentTextColor;
+        text.color = ColorExtensions.WithAlpha(text.color, alpha);
+        outline.effectColor = ColorExtensions.WithAlpha(outline.effectColor, alpha);
     }
 
     public void SetValue(int value, GameObject owner)
