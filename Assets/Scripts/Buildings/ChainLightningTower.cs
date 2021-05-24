@@ -4,7 +4,7 @@ using UnityEngine;
 public class ChainLightningTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Slow;
-    public override int Damage => 5;
+    public override int Damage => 10;
     public override float Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override BuildingType Type => BuildingType.ChainLightningTower;

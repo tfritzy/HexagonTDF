@@ -4,9 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Steps:
+///  1. Select a hex by clicking. Highlight hex.
+///     1.a click on other hex
+///       1. Unhighlight hex goto 1.
+///  2. Build menu flies in.
+///  3. Select a building. Create highlight building.
+///     3.a Click on other hex.
+///       1. Unhighlight hex, destroy highlight building. goto 1.
+///     3.b Select different building.
+///       1. Destroy highlight building. goto 3.
+///  4. Create confirm or deny buttons, and building stats page.
+///     4.a Deny
+///       1. Close menu, unselect hex, unhighlight hex.
+///     4.b Accept
+///       1. Create real building, unighlight hex, unselect hex, close menu.
+/// </summary>
 public class Builder : MonoBehaviour
 {
-    public bool IsInBuildMode { get; private set; }
     public Building SelectedBuilding
     {
         get { return selectedBuilding; }
@@ -14,16 +30,6 @@ public class Builder : MonoBehaviour
         {
             selectedBuilding = value;
             SetCostPanels();
-            UnHighlightHexagon();
-            ExitConfirmBuildMode();
-            if (selectedBuilding != null)
-            {
-                buildTargetLines.SetActive(true);
-            }
-            else
-            {
-                buildTargetLines.SetActive(false);
-            }
         }
     }
 
@@ -33,14 +39,11 @@ public class Builder : MonoBehaviour
     private GameObject buildingInst;
     private bool isInConfirmBuild;
     private GameObject confirmButtons;
-    private GameObject buildTargetLines;
     private Dictionary<ResourceType, Text> CostPanels;
+    private GameObject menu;
 
     void Start()
     {
-        this.IsInBuildMode = false;
-        buildTargetLines = Managers.Canvas.Find("BuildTargetLines").gameObject;
-        buildTargetLines.SetActive(false);
         CostPanels = new Dictionary<ResourceType, Text>();
         foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
         {
@@ -51,28 +54,13 @@ public class Builder : MonoBehaviour
 
     void Update()
     {
-        if (IsInBuildMode)
-        {
-            BuildBuildingLoop();
-        }
-    }
-
-    public void ToggleBuildMode()
-    {
-        IsInBuildMode = !IsInBuildMode;
-
-        if (IsInBuildMode == false)
-        {
-            SelectedBuilding = null;
-            UnHighlightHexagon();
-            buildTargetLines.SetActive(false);
-            ExitConfirmBuildMode();
-        }
+        BuildBuildingLoop();
     }
 
     private void UnHighlightHexagon()
     {
         Destroy(buildingInst);
+        highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
         buildingInst = null;
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;
@@ -80,12 +68,10 @@ public class Builder : MonoBehaviour
 
     private void BuildBuildingLoop()
     {
-        if (SelectedBuilding == null)
+        if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
         {
-            return;
+            SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
         }
-
-        SetBuildTargetHex(Helpers.FindHexByRaycast(Constants.CenterScreen));
     }
 
     private void SetBuildTargetHex(HexagonMono newPotentialHexagon)
@@ -100,16 +86,12 @@ public class Builder : MonoBehaviour
             return;
         }
 
+        this.SelectedBuilding = null;
+        UnHighlightHexagon();
+
+        CreateMenu(Prefabs.UIElements[UIElementType.AttackTowerBuildMenu]);
         highlightedHexagon = newPotentialHexagon;
-
-        bool isBuildable = Managers.Board.IsBuildable(highlightedHexagon.GridPosition);
-
-        if (isBuildable)
-        {
-            InstantiateAcceptAndDenyButtons();
-        }
-
-        CreateHighlightBuilding(isBuildable);
+        highlightedHexagon.SetMaterial(Constants.Materials.Gold);
     }
 
     private void CreateHighlightBuilding(bool isBuildable)
@@ -138,11 +120,6 @@ public class Builder : MonoBehaviour
         }
     }
 
-    private void InstantiateAcceptAndDenyButtons()
-    {
-        confirmButtons = Instantiate(Prefabs.UIElements[UIElementType.AcceptAndDeny], Managers.Canvas);
-    }
-
     private void ExitConfirmBuildMode()
     {
         isInConfirmBuild = false;
@@ -163,20 +140,28 @@ public class Builder : MonoBehaviour
             Debug.Log("Not enough resources, or invalid position");
         }
 
-        UnHighlightHexagon();
+        ExitBuildDialog();
     }
 
     public void SetSelectedBuilding(ButtonFunctions responsibleButton, Building building)
     {
+        if (this.SelectedBuilding != building)
+        {
+            Destroy(buildingInst);
+            buildingInst = null;
+        }
+
         this.SelectedBuilding = building;
         this.responsibleButton = responsibleButton;
-    }
 
-    public void DenyConstructBuilding()
-    {
-        this.SelectedBuilding = null;
-        ExitConfirmBuildMode();
-        responsibleButton = null;
+        bool isBuildable = Managers.Board.IsBuildable(highlightedHexagon.GridPosition);
+
+        if (isBuildable)
+        {
+            // TODO: open building stats page.
+        }
+
+        CreateHighlightBuilding(isBuildable);
     }
 
     private void SetupLineRenderer(List<Vector2Int> path)
@@ -207,5 +192,23 @@ public class Builder : MonoBehaviour
                 CostPanels[resource].text = $"-{selectedBuilding.BuildCost.Costs[resource].ToString()}";
             }
         }
+    }
+
+    private void CreateMenu(GameObject menuPrefab)
+    {
+        if (menu != null)
+        {
+            menu.GetComponent<BuildMenu>().Close();
+        }
+
+        menu = Instantiate(menuPrefab, Managers.Canvas);
+    }
+
+    public void ExitBuildDialog()
+    {
+        UnHighlightHexagon();
+        this.SelectedBuilding = null;
+        ExitConfirmBuildMode();
+        Destroy(this.menu);
     }
 }

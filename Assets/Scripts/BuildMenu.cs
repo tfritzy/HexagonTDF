@@ -27,7 +27,7 @@ public abstract class BuildMenu : MonoBehaviour
         int i = 0;
         for (i = 0; i < BuildingTypes.Count; i++)
         {
-            Button button = this.transform.GetChild(i).GetComponent<Button>();
+            Button button = this.transform.Find("Button" + i).GetComponent<Button>();
             button.transform.Find("Icon").GetComponent<Image>().sprite = buildings[i].Icon;
             button.GetComponent<ButtonFunctions>().Building = buildings[i];
         }
@@ -41,7 +41,7 @@ public abstract class BuildMenu : MonoBehaviour
 
     public void Close()
     {
-        Managers.Builder.ToggleBuildMode();
+        Managers.Builder.ExitBuildDialog();
         Destroy(this.gameObject);
     }
 }

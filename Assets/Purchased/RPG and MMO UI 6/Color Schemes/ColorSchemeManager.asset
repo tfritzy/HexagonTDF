@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82da585942723ae4997eeabe1ac5eabf, type: 3}
-  m_Name: Red Color Scheme
+  m_Name: ColorSchemeManager
   m_EditorClassIdentifier: 
   m_ImageLight: {r: 1, g: 0.37254903, b: 0.37254903, a: 1}
   m_ImageLightest: {r: 1, g: 0.44705883, b: 0.44705883, a: 1}
