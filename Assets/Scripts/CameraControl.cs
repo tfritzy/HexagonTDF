@@ -34,6 +34,21 @@ public class CameraControl : MonoBehaviour
         this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.unscaledDeltaTime;
     }
 
+    public bool IsDragging()
+    {
+        if (touchStartPosition.HasValue && (Input.mousePosition - touchStartPosition.Value).magnitude > 25)
+        {
+            return true;
+        }
+
+        if (rb.velocity.magnitude > .2f)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void HandleTouchInput()
     {
         if (Input.GetMouseButton(0))

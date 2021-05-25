@@ -11,7 +11,6 @@ public class ResourceNumber : OnScreenNumber
     public void SetValue(int value, GameObject owner, ResourceType resourceType, bool isStatic = false)
     {
         SetValue(value, owner);
-        this.transform.Find("Icon").GetComponent<Image>().sprite = Prefabs.ResourceIcons[resourceType];
         this.transform.Find("Text").GetComponent<Text>().color = Constants.ResourceColors[resourceType];
         this.isStatic = isStatic;
     }

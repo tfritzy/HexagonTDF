@@ -20,8 +20,8 @@ public class Map
 
     public const float LAND_PERLIN_SCALE = 5f;
     public const float FORREST_PERLIN_SCALE = 3f;
-    public const float LandPerlinCutoff = .65f;
-    public const float TreePerlinCutoff = .55f;
+    public const float LandPerlinCutoff = .60f;
+    public const float TreePerlinCutoff = .60f;
 
 
     public Map(int width, int height, int islandRadius)
@@ -53,14 +53,15 @@ public class Map
                 hexes[x, y] = perlinValue < LandPerlinCutoff ? HexagonType.Grass : HexagonType.Water;
 
                 float treePerlinValue = Mathf.PerlinNoise(x / FORREST_PERLIN_SCALE + forrestSeed, y / FORREST_PERLIN_SCALE + forrestSeed);
-                if (treePerlinValue > TreePerlinCutoff)
+
+                if (treePerlinValue > TreePerlinCutoff && distFromCenter < islandRadius * .8f)
                 {
                     hexes[x, y] = HexagonType.Forrest;
                 }
 
                 float heightBias = (-4 / islandRadius) * distFromCenter + 4;
                 float heightNoise = (perlinValue - .5f) * 4;
-                float finalValue = ((int)(heightBias + heightNoise)) / 4f;
+                float finalValue = ((int)(heightBias + heightNoise)) / 3f;
                 HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
             }
         }
@@ -197,6 +198,11 @@ public class Map
 
         foreach (Vector2Int shore in this.LandableShores)
         {
+            if (Random.Range(0, 2) == 1)
+            {
+                continue;
+            }
+
             hexes[shore.x, shore.y] = HexagonType.Shore;
             HexHeightMap[shore.x, shore.y] = 0;
         }

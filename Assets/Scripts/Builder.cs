@@ -68,7 +68,12 @@ public class Builder : MonoBehaviour
 
     private void BuildBuildingLoop()
     {
-        if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
+        if (Managers.CameraControl.IsDragging())
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
         {
             SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
         }

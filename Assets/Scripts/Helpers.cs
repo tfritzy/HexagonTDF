@@ -2,12 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public static class Helpers
 {
     public static HexagonMono FindHexByRaycast(Vector3 startPos)
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // UI was clicked, and we don't want to go through it.
+            return null;
+        }
+
         Ray ray = Managers.Camera.ScreenPointToRay(startPos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons))
