@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 787624459895364345}
   - component: {fileID: 3872373048929311033}
-  - component: {fileID: 4145938294550974190}
+  - component: {fileID: 524514319904566116}
   m_Layer: 8
   m_Name: Grass
   m_TagString: Untagged
@@ -55,7 +55,7 @@ MonoBehaviour:
   - {fileID: 8903058273634794869, guid: f1fc5bb90ac285e4486771552d63bcb8, type: 3}
   - {fileID: 3356751432538110193, guid: ffbddc4ef9676cc419e81e06aaa836d8, type: 3}
   NumDecorations: 0
---- !u!114 &4145938294550974190
+--- !u!114 &524514319904566116
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,7 +64,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 118752656432332867}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 271a5faa82e427c458688b4ca494bc7c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ba1ab9ea8e8b8e4fac5d708d03d0992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   GridPosition: {x: 0, y: 0}
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 9166445620267584094}
   - component: {fileID: 5037241425132514378}
   m_Layer: 0
-  m_Name: GrassEdge (5)
+  m_Name: GrassEdge5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 683685628317834412}
   - component: {fileID: 1028893690858334653}
   m_Layer: 0
-  m_Name: GrassEdge (3)
+  m_Name: GrassEdge3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 4644703043413432302}
   - component: {fileID: 1524958252884535124}
   m_Layer: 0
-  m_Name: GrassEdge (1)
+  m_Name: GrassEdge1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 2891508566586804822}
   - component: {fileID: 5385660295946052091}
   m_Layer: 0
-  m_Name: GrassEdge (2)
+  m_Name: GrassEdge2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 4135829390235439915}
   - component: {fileID: 815949406918367757}
   m_Layer: 0
-  m_Name: GrassEdge
+  m_Name: GrassEdge0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 9208369165304332749}
   - component: {fileID: 7118236760984112776}
   m_Layer: 0
-  m_Name: GrassEdge (4)
+  m_Name: GrassEdge4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -712,7 +712,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1563dfb0b06414f468a15ae906bebd34, type: 2}
+      objectReference: {fileID: 2100000, guid: 5ef00f18e404e7a4f950e62cd6a08665, type: 2}
     - target: {fileID: 919132149155446097, guid: 543bf5c45eb62a54f9ccd8294ccb35bb, type: 3}
       propertyPath: m_Name
       value: Hex

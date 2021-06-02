@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Water : Hexagon
 {
     public override HexagonType Type => HexagonType.Water;
     public override bool IsBuildable => false;
+    public override Color BaseColor => ColorExtensions.Create("6798c7");
 }

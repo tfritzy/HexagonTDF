@@ -30,4 +30,10 @@ public static class ColorExtensions
         color.a = alpha;
         return color;
     }
+
+    public static Color RandomlyVary(Color color, float maxVariance)
+    {
+        Color.RGBToHSV(color, out float h, out float s, out float v);
+        return Color.HSVToRGB(h, s, v + UnityEngine.Random.Range(-maxVariance, maxVariance));
+    }
 }
