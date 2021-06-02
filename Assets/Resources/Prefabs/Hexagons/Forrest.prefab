@@ -60,8 +60,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecorationOptions:
-  - {fileID: 7818883673552861376, guid: a1db0d457da88e94a932410192b66751, type: 3}
-  NumDecorations: 1
+  - {fileID: 919132149155446097, guid: c4130861d00bbcf42a7bcef89b65c7fa, type: 3}
+  - {fileID: 919132149155446097, guid: c580d62b7e9cb8143b126f2ac47077ef, type: 3}
+  - {fileID: 919132149155446097, guid: ad9a11a855ffd144b8cd9a84f38b82e3, type: 3}
+  - {fileID: 919132149155446097, guid: ccb1c316ba2eb1f4b8e9be439f1f452d, type: 3}
+  - {fileID: 919132149155446097, guid: 582c036ed873a55478c7c3598647945a, type: 3}
+  NumDecorations: 2
 --- !u!114 &1409736385486290940
 MonoBehaviour:
   m_ObjectHideFlags: 0

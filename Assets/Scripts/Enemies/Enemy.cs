@@ -27,8 +27,27 @@ public abstract class Enemy : Character
     protected Vector2Int nextPathPos;
     protected Vector2Int currentPathPos;
     protected Vector2Int destinationPathPos;
-
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
+    public EnemyAnimationState _animationState;
+    public EnemyAnimationState CurrentAnimation
+    {
+        get
+        {
+            return _animationState;
+        }
+        set
+        {
+            _animationState = value;
+
+            if (this.animator == null)
+            {
+                return;
+            }
+
+            this.animator.SetInteger("Animation_State", (int)_animationState);
+        }
+    }
+    private Animator animator;
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
 
@@ -48,6 +67,7 @@ public abstract class Enemy : Character
     protected override void Setup()
     {
         base.Setup();
+        this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
         this.healthbar = Instantiate(Prefabs.Healthbar,
@@ -133,11 +153,13 @@ public abstract class Enemy : Character
         if (ShouldClimbOrDescendCliff(verticalDifference, difference))
         {
             this.Rigidbody.velocity = Math.Sign(verticalDifference) * (MovementSpeed * VERTICAL_MOVEMENT_MODIFIER) * Vector3.up;
+            this.CurrentAnimation = EnemyAnimationState.ClimbingUp;
         }
         else
         {
             this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
             this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
+            this.CurrentAnimation = EnemyAnimationState.Walking;
         }
 
         if (nextPathPos == destinationPathPos)

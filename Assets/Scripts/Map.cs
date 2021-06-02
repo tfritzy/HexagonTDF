@@ -158,6 +158,11 @@ public class Map
             }
             List<Vector2Int> path = Helpers.FindPath(this, landGroups[i].First(), MainLandmass, (Vector2Int pos) => { return GetHex(pos).Value != HexagonType.Water; });
 
+            if (path == null)
+            {
+                continue;
+            }
+
             foreach (Vector2Int point in path)
             {
                 if (GetHex(point).Value != HexagonType.Grass)
