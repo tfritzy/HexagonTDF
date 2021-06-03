@@ -33,7 +33,14 @@ public static class ColorExtensions
 
     public static Color RandomlyVary(Color color, float maxVariance)
     {
+        float value = UnityEngine.Random.Range(-maxVariance, maxVariance);
         Color.RGBToHSV(color, out float h, out float s, out float v);
-        return Color.HSVToRGB(h, s, v + UnityEngine.Random.Range(-maxVariance, maxVariance));
+        return Color.HSVToRGB(h + value, s, v + value);
+    }
+
+    public static Color VaryBy(Color color, float amount)
+    {
+        Color.RGBToHSV(color, out float h, out float s, out float v);
+        return Color.HSVToRGB(h, s, v + amount);
     }
 }

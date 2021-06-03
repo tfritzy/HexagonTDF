@@ -13,7 +13,9 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
 
-    private const float MAX_COLOR_VARIANCE = .05f;
+    private const float MAX_COLOR_VARIANCE = .02f;
+    private static float ColorVarianceM => (MAX_COLOR_VARIANCE * 2f) / ((float)Managers.Board.Map.Width);
+    private MeshRenderer hex;
 
     public void SetType(Hexagon hexagon)
     {
@@ -27,6 +29,8 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     protected virtual void Setup()
     {
+        this.ColorAfterVariance = ColorExtensions.RandomlyVary(this.hexagon.BaseColor, MAX_COLOR_VARIANCE);
+        this.hex = transform.Find("Hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
     }
@@ -38,7 +42,12 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void SetMaterial(Material material)
     {
-        this.gameObject.SetMaterialsRecursively(material);
+        this.hex.material = material;
+    }
+
+    public void ResetMaterial()
+    {
+        SetHexBodyColor();
     }
 
     private void FindMeshRenderers()
@@ -52,16 +61,15 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     protected virtual void SetHexBodyColor()
     {
-        MeshRenderer hexModel = this.transform.Find("Hex")?.GetComponent<MeshRenderer>();
-        if (hexModel == null)
+        if (this.hex == null)
         {
             return;
         }
 
+        this.hex.material = Constants.Materials.TintableHex;
         Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-        this.ColorAfterVariance = ColorExtensions.RandomlyVary(this.hexagon.BaseColor, MAX_COLOR_VARIANCE);
         newTexture.SetPixel(0, 0, this.ColorAfterVariance);
         newTexture.Apply();
-        hexModel.material.mainTexture = newTexture;
+        this.hex.material.mainTexture = newTexture;
     }
 }

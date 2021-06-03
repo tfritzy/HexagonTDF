@@ -60,7 +60,7 @@ public class Builder : MonoBehaviour
     private void UnHighlightHexagon()
     {
         Destroy(buildingInst);
-        highlightedHexagon?.SetMaterial(Constants.Materials.Normal);
+        highlightedHexagon?.ResetMaterial();
         buildingInst = null;
         highlightedHexagon = null;
         this.GetComponent<LineRenderer>().enabled = false;

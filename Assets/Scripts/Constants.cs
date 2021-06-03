@@ -75,6 +75,18 @@ public static class Constants
             }
         }
 
+        private static Material tintableHex;
+        public static Material TintableHex
+        {
+            get
+            {
+                if (tintableHex == null)
+                {
+                    tintableHex = Resources.Load<Material>("Materials/TintableHex");
+                }
+                return tintableHex;
+            }
+        }
 
         private static Material normal;
         public static Material Normal

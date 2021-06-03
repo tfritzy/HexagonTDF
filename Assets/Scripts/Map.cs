@@ -62,7 +62,8 @@ public class Map
                 float heightBias = (-4 / islandRadius) * distFromCenter + 4;
                 float heightNoise = (perlinValue - .5f) * 4;
                 float finalValue = ((int)(heightBias + heightNoise)) / 3f;
-                HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
+                // HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
+                HexHeightMap[x, y] = 0; // Removing height for now.
             }
         }
 

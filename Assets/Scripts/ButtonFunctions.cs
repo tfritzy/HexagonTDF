@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +23,11 @@ public class ButtonFunctions : MonoBehaviour
         {
             this.icon.sprite = this.originalIcon;
             thinksAmActiveButton = false;
+        }
+
+        if (Building.BuildCost.CanFulfill())
+        {
+            this.icon.color = Color.green;
         }
     }
 
