@@ -26,13 +26,13 @@ public class Map
 
     public Map(int width, int height, int islandRadius)
     {
-        GenerateMap(width, height, islandRadius);
         Buildings = new Dictionary<Vector2Int, BuildingType>();
+        GenerateMap(width, height, islandRadius);
     }
 
     public void GenerateMap(int width, int height, float islandRadius)
     {
-        HexagonType?[,] hexes = new HexagonType?[width, height];
+        this.hexes = new HexagonType?[width, height];
         HexHeightMap = new float[width, height];
         int seed = Random.Range(0, 100000);
         int forrestSeed = Random.Range(0, 100000);
@@ -40,7 +40,7 @@ public class Map
         {
             for (int x = 0; x < width; x++)
             {
-                float distFromCenter = DistFromCenter(width, height, x, y);
+                float distFromCenter = DistFromCenter(x, y);
                 if (distFromCenter > islandRadius)
                 {
                     hexes[x, y] = HexagonType.Water;
@@ -66,22 +66,22 @@ public class Map
             }
         }
 
-        SetHexes(hexes);
+        ConfigureMap();
     }
 
-    private static float DistFromCenter(int width, int height, int x, int y)
+    private float DistFromCenter(int x, int y)
     {
-        Vector2 vector = new Vector2(x - width / 2, y - height / 2);
+        Vector2 vector = new Vector2(x - Width / 2, y - Height / 2);
         return vector.magnitude;
     }
 
-    public void SetHexes(HexagonType?[,] hexes)
+    public void ConfigureMap()
     {
-        this.hexes = hexes;
         FindOceanHexes();
         FindMainLandmass();
         ConnectOrphanedLandMasses();
         FindLandableShores();
+        PlaceVillageBuildings();
     }
 
     public HexagonType? GetHex(int x, int y)
@@ -210,6 +210,27 @@ public class Map
 
             hexes[shore.x, shore.y] = HexagonType.Shore;
             HexHeightMap[shore.x, shore.y] = 0;
+        }
+    }
+
+    private void PlaceVillageBuildings()
+    {
+        int numHouses = MainLandmass.Count / 20;
+        List<Vector2Int> centerLandmass = new List<Vector2Int>();
+        foreach (Vector2Int pos in MainLandmass)
+        {
+            if (hexes[pos.x, pos.y] == HexagonType.Grass && DistFromCenter(pos.x, pos.y) < 5)
+            {
+                centerLandmass.Add(pos);
+            }
+        }
+
+        for (int i = 0; i < numHouses; i++)
+        {
+            int index = Random.Range(0, centerLandmass.Count);
+            Vector2Int pos = centerLandmass[index];
+            Buildings[pos] = BuildingType.House;
+            centerLandmass.RemoveAt(index);
         }
     }
 

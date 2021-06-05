@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour
     public const int IslandRadius = 6;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
-    public Building Source;
+    public List<Building> VillageBuildings;
     public string ActiveMapName;
     public bool RegenerateMap;
     public Map Map;
@@ -84,23 +84,18 @@ public class BoardManager : MonoBehaviour
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
 
-        // TODO: Remove hack and let player choose source position.
-        List<Vector2Int> mainLandmass = this.Map.MainLandmass.ToList();
-        Vector2Int sourcePos = mainLandmass[UnityEngine.Random.Range(0, mainLandmass.Count)];
-        buildingMap[sourcePos] = BuildingType.Source;
-
         foreach (Vector2Int pos in buildingMap.Keys)
         {
             Building building = Instantiate(
                     Prefabs.Buildings[buildingMap[pos]],
-                    Map.ToWorldPosition(pos),
+                    Hexagons[pos.x, pos.y].transform.position,
                     new Quaternion(),
                     this.transform)
                     .GetComponent<Building>();
 
-            if (building.Type == BuildingType.Source)
+            if (building.Type == BuildingType.House)
             {
-                Source = building;
+                VillageBuildings.Add(building);
             }
 
             building.Initialize(pos);
@@ -126,50 +121,32 @@ public class BoardManager : MonoBehaviour
         return typeMap;
     }
 
-    Vector2Int[,] predGrid;
-    public Vector2Int GetNextStepInPathToSource(Vector2Int currentPos)
+    Dictionary<Vector2Int, Vector2Int[,]> predGridMap;
+    public Vector2Int GetNextStepInPathToSource(Vector2Int sourceHouse, Vector2Int currentPos)
     {
-        return predGrid[currentPos.x, currentPos.y];
+        return predGridMap[sourceHouse][currentPos.x, currentPos.y];
     }
 
     private void RecalculatePredGrid()
     {
-        predGrid = Helpers.GetPredecessorGrid(
-            this.Map,
-            Source.GridPosition,
-            (Vector2Int pos) =>
-            {
-                return Helpers.IsTraversable(pos) || pos == Source.GridPosition;
-            });
+        predGridMap = new Dictionary<Vector2Int, Vector2Int[,]>();
+
+        foreach (Building building in VillageBuildings)
+        {
+            predGridMap[building.GridPosition] = Helpers.GetPredecessorGrid(
+                this.Map,
+                building.GridPosition,
+                (Vector2Int pos) =>
+                {
+                    return Helpers.IsTraversable(pos) || pos == building.GridPosition;
+                });
+        }
+
     }
 
     public bool IsBuildable(Vector2Int pos)
     {
-        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false && ifBlockedWouldNoPathsRemain(pos) == false;
-    }
-
-    private bool ifBlockedWouldNoPathsRemain(Vector2Int blockedPos)
-    {
-        Vector2Int[,] predGrid = Helpers.GetPredecessorGrid(
-            this.Map,
-            this.Source.GridPosition,
-            (Vector2Int testPos) =>
-            {
-                return testPos != blockedPos && (Helpers.IsTraversable(testPos) || Source.GridPosition == testPos);
-            });
-
-        foreach (Vector2Int pos in Map.LandableShores)
-        {
-            List<Vector2Int> newPath = Helpers.FindPath(predGrid, this.Source.GridPosition, pos);
-            newPath.Reverse(); // Because we searched from source out.
-
-            if (newPath[0] != newPath.Last() && newPath[0] == pos && newPath.Last() == this.Source.GridPosition)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
     }
 
     private void BuildHexagon(HexagonType type, int x, int y)

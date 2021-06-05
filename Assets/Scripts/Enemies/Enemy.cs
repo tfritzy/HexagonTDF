@@ -26,7 +26,6 @@ public abstract class Enemy : Character
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
     protected Vector2Int nextPathPos;
     protected Vector2Int currentPathPos;
-    protected Vector2Int destinationPathPos;
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
     public EnemyAnimationState _animationState;
     public EnemyAnimationState CurrentAnimation
@@ -47,7 +46,9 @@ public abstract class Enemy : Character
             this.animator.SetInteger("Animation_State", (int)_animationState);
         }
     }
+    public Building TargetBuilding;
     private Animator animator;
+    protected Vector2Int destinationPos;
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
 
@@ -76,6 +77,8 @@ public abstract class Enemy : Character
             Managers.Canvas).GetComponent<Healthbar>();
         this.healthbar.SetOwner(this.transform);
         this.healthbar.enabled = false;
+        this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
+        this.destinationPos = TargetBuilding.GridPosition;
         SetRagdollState(false);
     }
 
@@ -127,12 +130,17 @@ public abstract class Enemy : Character
     public virtual void CalculatePathingPositions(Vector2Int currentPosition)
     {
         this.currentPathPos = currentPosition;
-        this.nextPathPos = Managers.Board.GetNextStepInPathToSource(currentPathPos);
-        this.destinationPathPos = Managers.Board.Source.GridPosition;
+        this.nextPathPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPathPos);
     }
 
     private void FollowPath()
     {
+        if (this.TargetBuilding == null)
+        {
+            this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
+            RecalculatePath();
+        }
+
         if (shouldRecalculatePath())
         {
             RecalculatePath();
@@ -162,7 +170,7 @@ public abstract class Enemy : Character
             this.CurrentAnimation = EnemyAnimationState.Walking;
         }
 
-        if (nextPathPos == destinationPathPos)
+        if (nextPathPos == this.destinationPos)
         {
             if (difference.magnitude < DistanceFromFinalDestinationBeforeEnd)
             {
@@ -196,7 +204,7 @@ public abstract class Enemy : Character
     protected virtual void OnReachPathEnd()
     {
         this.Rigidbody.velocity = Vector3.zero;
-        Managers.Board.Source.TakeDamage(1);
+        this.TargetBuilding.TakeDamage(1);
         Destroy(this.gameObject);
         IsDead = true;
     }

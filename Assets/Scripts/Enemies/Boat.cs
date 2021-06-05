@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Boat : Enemy
@@ -25,6 +26,12 @@ public class Boat : Enemy
         CalculatePathingPositions(startGridPos);
     }
 
+    protected override void Setup()
+    {
+        base.Setup();
+        this.destinationPos = pathToShore.Last();
+    }
+
     protected override void OnReachPathEnd()
     {
         this.Rigidbody.velocity = Vector3.zero;
@@ -38,7 +45,6 @@ public class Boat : Enemy
         {
             this.currentPathPos = this.nextPathPos;
             this.nextPathPos = this.pathToShore[this.pathProgress + 1];
-            this.destinationPathPos = this.pathToShore[this.pathToShore.Count - 1];
             this.pathProgress += 1;
         }
     }
@@ -58,13 +64,12 @@ public class Boat : Enemy
             (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; },
             isValidShore);
         this.pathProgress = 0;
-        Vector2Int targetShorePos = this.pathToShore[this.pathToShore.Count - 1];
+        this.destinationPos = this.pathToShore.Last();
     }
 
     private bool isValidShore(Vector2Int pos)
     {
-        return Helpers.IsTraversable(pos) &&
-                Managers.Board.GetNextStepInPathToSource(pos) != Constants.MaxVector2Int;
+        return Helpers.IsTraversable(pos);
     }
 
     protected override void Die()
@@ -110,7 +115,7 @@ public class Boat : Enemy
             passanger.transform.parent = null;
             passanger.IsOnBoat = false;
             passanger.AddRigidbody();
-            passanger.CalculatePathingPositions(this.destinationPathPos);
+            passanger.CalculatePathingPositions(this.pathToShore.Last());
         }
     }
 }

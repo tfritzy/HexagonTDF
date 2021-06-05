@@ -18,17 +18,18 @@ public abstract class Building : Character
     {
         this.GridPosition = position;
 
-        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.material = Constants.Materials.Normal;
-        }
-
         Managers.Board.AddBuilding(this);
     }
 
     protected override void Setup()
     {
         base.Setup();
+    }
+
+    protected override void Die()
+    {
+        Managers.Board.Buildings.Remove(GridPosition);
+        base.Die();
     }
 
     public virtual void TriggerParticleCollision(GameObject collidedWith) { }

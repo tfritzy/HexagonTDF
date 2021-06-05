@@ -21,4 +21,5 @@
     MeteorTower,
     Spikes,
     FlamethrowerTower,
+    House
 }
