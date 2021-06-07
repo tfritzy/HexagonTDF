@@ -203,11 +203,6 @@ public class Map
 
         foreach (Vector2Int shore in this.LandableShores)
         {
-            if (Random.Range(0, 2) == 1)
-            {
-                continue;
-            }
-
             hexes[shore.x, shore.y] = HexagonType.Shore;
             HexHeightMap[shore.x, shore.y] = 0;
         }
@@ -215,7 +210,6 @@ public class Map
 
     private void PlaceVillageBuildings()
     {
-        int numHouses = MainLandmass.Count / 20;
         List<Vector2Int> centerLandmass = new List<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
         {
@@ -225,12 +219,21 @@ public class Map
             }
         }
 
+        int numHouses = MainLandmass.Count / 20;
         for (int i = 0; i < numHouses; i++)
         {
             int index = Random.Range(0, centerLandmass.Count);
             Vector2Int pos = centerLandmass[index];
             Buildings[pos] = BuildingType.House;
             centerLandmass.RemoveAt(index);
+        }
+
+        int numTowers = LandableShores.Count / 10;
+        int hexesBetweenTowers = LandableShores.Count / numTowers;
+        for (int i = hexesBetweenTowers / 2; i < LandableShores.Count; i += hexesBetweenTowers)
+        {
+            Vector2Int pos = LandableShores[i];
+            Buildings[pos] = BuildingType.GuardTower;
         }
     }
 

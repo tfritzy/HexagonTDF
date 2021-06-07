@@ -8,10 +8,10 @@ public abstract class AttackTower : Building
     public abstract VerticalRegion AttackRegion { get; }
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
+    public Character Target;
     protected virtual float ManualPowerAdjustment => 0;
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ExplosionRadius => 0;
-    public Character Target;
     protected virtual float ProjectileSpeed => 10;
     protected Vector3 projectileStartPosition;
     protected GameObject Turret;

@@ -11,4 +11,5 @@ public class ArcherTower : AttackTower
     public override Alliances Enemies => Alliances.Illigons;
     public override float Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
+    public override bool IsVillageBuilding => false;
 }

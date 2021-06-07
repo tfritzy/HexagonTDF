@@ -10,6 +10,7 @@ public class CrystalAccelerator : AttackTower
     public override BuildingType Type => BuildingType.CrystalAccelerator;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    public override bool IsVillageBuilding => false;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 12;
 
     private ParticleSystem projectileGenerationAnimation;

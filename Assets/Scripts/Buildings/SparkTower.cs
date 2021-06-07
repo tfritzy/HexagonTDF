@@ -11,6 +11,7 @@ public class SparkTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
+    public override bool IsVillageBuilding => false;
     private const float DIST_BETWEEN_LIGHTNING_SEGMENTS = .25f;
     private LineRenderer lr;
 

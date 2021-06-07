@@ -11,6 +11,7 @@ public class FlamethrowerTower : AttackTower
     public override BuildingType Type => BuildingType.FlamethrowerTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
+    public override bool IsVillageBuilding => false;
 
     private FireDamageEffect effect;
     private ParticleSystem flamethrowerPS;

@@ -9,6 +9,7 @@ public class House : Building
     public override Alliances Enemies => Alliances.Player;
     public override float Power => float.MaxValue;
     public override int StartingHealth => 10;
+    public override bool IsVillageBuilding => true;
 
     protected override void Die()
     {
