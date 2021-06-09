@@ -47,10 +47,15 @@ public abstract class Enemy : Character
         }
     }
     public Building TargetBuilding;
+    public bool IsAttacking;
     private Animator animator;
     protected Vector2Int destinationPos;
+    protected abstract float Cooldown { get; }
+    protected abstract int AttackDamage { get; }
+    protected abstract float AttackRange { get; }
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
+    private float lastAttackTime;
 
     public void SetPower(float power, float healthModifier)
     {
@@ -96,7 +101,11 @@ public abstract class Enemy : Character
             return;
         }
 
-        FollowPath();
+        AttackTarget();
+        if (IsAttacking == false)
+        {
+            FollowPath();
+        }
     }
 
     protected override void Die()
@@ -131,6 +140,11 @@ public abstract class Enemy : Character
     {
         this.currentPathPos = currentPosition;
         this.nextPathPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPathPos);
+
+        if (this.nextPathPos == Constants.MaxVector2Int)
+        {
+            this.nextPathPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPathPos, ignoreBuildings: true);
+        }
     }
 
     private void FollowPath()
@@ -144,14 +158,6 @@ public abstract class Enemy : Character
         if (shouldRecalculatePath())
         {
             RecalculatePath();
-        }
-
-        if (nextPathPos == Constants.MaxVector2Int)
-        {
-            // TODO: Attack the surroundings.
-            this.Rigidbody.velocity = Vector3.zero;
-            this.SetMaterial(Constants.Materials.RedSeethrough);
-            return;
         }
 
         Vector3 difference = (Managers.Board.GetHex(nextPathPos).transform.position - this.transform.position);
@@ -184,6 +190,41 @@ public abstract class Enemy : Character
                 CalculatePathingPositions(nextPathPos);
             }
         }
+    }
+
+    private void AttackTarget()
+    {
+        if (Time.time < lastAttackTime + Cooldown)
+        {
+            return;
+        }
+
+        if (Managers.Board.Buildings.ContainsKey(this.nextPathPos) == false)
+        {
+            this.IsAttacking = false;
+        }
+
+        if (IsInRangeOfTarget())
+        {
+            IsAttacking = true;
+            this.Rigidbody.velocity = Vector3.zero;
+            Managers.Board.Buildings[this.nextPathPos].TakeDamage(this.AttackDamage);
+            lastAttackTime = Time.time;
+        }
+    }
+
+    private bool IsInRangeOfTarget()
+    {
+        if (Managers.Board.Buildings.ContainsKey(this.nextPathPos))
+        {
+            Vector3 diffToTarget = this.transform.position - Managers.Board.Buildings[this.nextPathPos].transform.position;
+            if (diffToTarget.magnitude < this.AttackRange)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool ShouldClimbOrDescendCliff(float verticalDifference, Vector3 difference)

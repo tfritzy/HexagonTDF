@@ -452,7 +452,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!64 &4152679856434281422
+--- !u!64 &3171187297644486903
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -465,7 +465,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 2534964839176971238, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
+  m_Mesh: {fileID: 3083383039361824580, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
 --- !u!1 &8444168005963152088
 GameObject:
   m_ObjectHideFlags: 0

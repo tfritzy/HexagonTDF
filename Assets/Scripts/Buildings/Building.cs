@@ -8,7 +8,6 @@ public abstract class Building : Character
     public Sprite Icon { get => Prefabs.BuildingIcons[Type]; }
     public abstract BuildingType Type { get; }
     public Vector2Int GridPosition { get; set; }
-    public override int StartingHealth => int.MaxValue;
     public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, costRatio);
     public override VerticalRegion Region => VerticalRegion.Ground;
     public virtual bool IsWalkable => false;

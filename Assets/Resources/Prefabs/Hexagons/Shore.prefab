@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GridPosition: {x: 0, y: 0}
---- !u!64 &1321631700446619103
+--- !u!64 &3207520923127684868
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,7 +58,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 2534964839176971238, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
+  m_Mesh: {fileID: 3083383039361824580, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
 --- !u!1001 &7649754385330901518
 PrefabInstance:
   m_ObjectHideFlags: 0

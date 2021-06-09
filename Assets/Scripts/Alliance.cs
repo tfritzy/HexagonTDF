@@ -1,5 +1,6 @@
 public enum Alliances
 {
     Player,
-    Illigons
+    Illigons,
+    Neutral
 }

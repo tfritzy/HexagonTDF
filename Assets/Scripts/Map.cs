@@ -8,6 +8,7 @@ public class Map
 {
     public Dictionary<Vector2Int, BuildingType> Buildings;
     public List<Vector2Int> LandableShores;
+    public List<Vector2Int> Docks;
     public HashSet<Vector2Int> OceanHex;
     public HashSet<Vector2Int> MainLandmass;
     public int Width { get { return hexes.GetLength(0); } }
@@ -125,6 +126,11 @@ public class Map
         }
 
         this.OceanHex = Helpers.GetCongruentHexes(this, startingHex, (Vector2Int pos) => { return GetHex(pos.x, pos.y).Value == HexagonType.Water; });
+
+        foreach (Vector2Int hex in this.OceanHex)
+        {
+            HexHeightMap[hex.x, hex.y] = 0;
+        }
     }
 
     private void FindMainLandmass()
@@ -201,10 +207,31 @@ public class Map
 
         LandableShores = landableShoreSet.ToList();
 
-        foreach (Vector2Int shore in this.LandableShores)
+        for (int i = 0; i < LandableShores.Count; i++)
         {
-            hexes[shore.x, shore.y] = HexagonType.Shore;
-            HexHeightMap[shore.x, shore.y] = 0;
+            Vector2Int shorePos = LandableShores[i];
+            hexes[shorePos.x, shorePos.y] = HexagonType.Shore;
+            HexHeightMap[shorePos.x, shorePos.y] = 0;
+        }
+
+        Docks = new List<Vector2Int>();
+        for (int i = 0; i < LandableShores.Count; i += 5)
+        {
+            if (Buildings.ContainsKey(LandableShores[i]))
+            {
+                continue;
+            }
+
+            for (int j = 0; j < 6; j++)
+            {
+                Vector2Int pos = Helpers.GetNeighborPosition(this, LandableShores[i], j);
+                if (hexes[pos.x, pos.y] == HexagonType.Water)
+                {
+                    Buildings[pos] = BuildingType.Dock;
+                    Docks.Add(pos);
+                    break;
+                }
+            }
         }
     }
 
@@ -228,11 +255,11 @@ public class Map
             centerLandmass.RemoveAt(index);
         }
 
-        int numTowers = LandableShores.Count / 10;
-        int hexesBetweenTowers = LandableShores.Count / numTowers;
-        for (int i = hexesBetweenTowers / 2; i < LandableShores.Count; i += hexesBetweenTowers)
+        float numTowers = 5;
+        float hexesBetweenTowers = LandableShores.Count / numTowers;
+        for (float i = 0; i < LandableShores.Count; i += hexesBetweenTowers)
         {
-            Vector2Int pos = LandableShores[i];
+            Vector2Int pos = LandableShores[(int)i];
             Buildings[pos] = BuildingType.GuardTower;
         }
     }

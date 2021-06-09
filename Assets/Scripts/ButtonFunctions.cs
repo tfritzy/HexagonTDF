@@ -24,11 +24,6 @@ public class ButtonFunctions : MonoBehaviour
             this.icon.sprite = this.originalIcon;
             thinksAmActiveButton = false;
         }
-
-        if (Building.BuildCost.CanFulfill())
-        {
-            this.icon.color = Color.green;
-        }
     }
 
     public void SelectBuilding()

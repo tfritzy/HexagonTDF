@@ -9,7 +9,7 @@ public static class Helpers
 {
     public static HexagonMono FindHexByRaycast(Vector3 startPos)
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (IsPointerOverUIObject())
         {
             // UI was clicked, and we don't want to go through it.
             return null;
@@ -23,6 +23,15 @@ public static class Helpers
         }
 
         return null;
+    }
+
+    private static bool IsPointerOverUIObject()
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 
     public static void SetMaterialsRecursively(this GameObject gameobject, Material material)

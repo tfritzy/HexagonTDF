@@ -1,26 +1,18 @@
 ﻿public enum BuildingType
 {
-    Source,
-    Portal,
     ArcherFortress,
-    MageTower,
-    RockTower,
-    Lumbermill,
     LightningTower,
     FireTower,
     EarthTower,
-    StoneMine,
     ArcherTower,
     CrystalAccelerator,
     FrigidShard,
-    Farm,
-    Forager,
-    GrainField,
     SparkTower,
     ChainLightningTower,
     MeteorTower,
     Spikes,
     FlamethrowerTower,
     House,
-    GuardTower
+    GuardTower,
+    Dock
 }

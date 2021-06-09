@@ -4,5 +4,5 @@
     Water,
     Stone,
     Forrest,
-    Shore
+    Shore,
 }

@@ -17,6 +17,9 @@ public class Boat : Enemy
     private const string SEAT_NAME = "Seat";
     public override int StartingHealth => int.MaxValue;
     protected override float DistanceFromFinalDestinationBeforeEnd => 1.8f;
+    protected override float Cooldown => float.MaxValue / 2; // Divide by 2 because cooldown gets added to time, which would overflow.
+    protected override int AttackDamage => 0;
+    protected override float AttackRange => 0;
     protected List<Vector2Int> pathToShore;
     protected int pathProgress;
 
@@ -60,16 +63,16 @@ public class Boat : Enemy
         this.pathToShore = Helpers.FindPath(
             Managers.Board.Map,
             startPos,
-            new HashSet<Vector2Int>(Managers.Board.Map.LandableShores),
+            new HashSet<Vector2Int>(Managers.Board.Map.Docks),
             (Vector2Int pos) => { return Managers.Board.Map.GetHex(pos).Value == HexagonType.Water; },
-            isValidShore);
+            isValidDock);
         this.pathProgress = 0;
         this.destinationPos = this.pathToShore.Last();
     }
 
-    private bool isValidShore(Vector2Int pos)
+    private bool isValidDock(Vector2Int pos)
     {
-        return Helpers.IsTraversable(pos);
+        return Managers.Board.Buildings.ContainsKey(pos) && Managers.Board.Buildings[pos].Type == BuildingType.Dock;
     }
 
     protected override void Die()

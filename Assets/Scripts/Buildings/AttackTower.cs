@@ -16,6 +16,7 @@ public abstract class AttackTower : Building
     protected Vector3 projectileStartPosition;
     protected GameObject Turret;
     protected GameObject Body;
+    public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
 
     protected override void Setup()
     {

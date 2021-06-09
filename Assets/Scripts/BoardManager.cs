@@ -17,6 +17,8 @@ public class BoardManager : MonoBehaviour
     public bool RegenerateMap;
     public Map Map;
     public Guid PathingId { get; private set; }
+    private Dictionary<Vector2Int, Vector2Int[,]> predGridMap;
+    private Dictionary<Vector2Int, Vector2Int[,]> predGridIgnoringBuildings;
 
     void Awake()
     {
@@ -38,6 +40,7 @@ public class BoardManager : MonoBehaviour
         Map = new Map(BoardWidth, BoardHeight, IslandRadius);
         SpawnHexagons(Map);
         SpawnBuildings(Map.Buildings);
+        CalculatePredGridIgnoringBuildings();
     }
 
     private void CleanupMap()
@@ -93,7 +96,7 @@ public class BoardManager : MonoBehaviour
                     this.transform)
                     .GetComponent<Building>();
 
-            if (building.Type == BuildingType.House)
+            if (building.IsVillageBuilding)
             {
                 VillageBuildings.Add(building);
             }
@@ -121,10 +124,14 @@ public class BoardManager : MonoBehaviour
         return typeMap;
     }
 
-    Dictionary<Vector2Int, Vector2Int[,]> predGridMap;
-    public Vector2Int GetNextStepInPathToSource(Vector2Int sourceHouse, Vector2Int currentPos)
+    public Vector2Int GetNextStepInPathToSource(Vector2Int sourceBuilding, Vector2Int currentPos, bool ignoreBuildings = false)
     {
-        return predGridMap[sourceHouse][currentPos.x, currentPos.y];
+        if (ignoreBuildings)
+        {
+            return predGridIgnoringBuildings[sourceBuilding][currentPos.x, currentPos.y];
+        }
+
+        return predGridMap[sourceBuilding][currentPos.x, currentPos.y];
     }
 
     private void RecalculatePredGrid()
@@ -141,7 +148,22 @@ public class BoardManager : MonoBehaviour
                     return Helpers.IsTraversable(pos) || pos == building.GridPosition;
                 });
         }
+    }
 
+    private void CalculatePredGridIgnoringBuildings()
+    {
+        predGridIgnoringBuildings = new Dictionary<Vector2Int, Vector2Int[,]>();
+
+        foreach (Building building in VillageBuildings)
+        {
+            predGridIgnoringBuildings[building.GridPosition] = Helpers.GetPredecessorGrid(
+                this.Map,
+                building.GridPosition,
+                (Vector2Int pos) =>
+                {
+                    return Managers.Board.Hexagons[pos.x, pos.y].IsWalkable;
+                });
+        }
     }
 
     public bool IsBuildable(Vector2Int pos)
@@ -162,6 +184,11 @@ public class BoardManager : MonoBehaviour
 
     public HexagonMono GetHex(Vector2Int pos)
     {
+        if (Helpers.IsInBounds(this.Map, pos) == false)
+        {
+            return null;
+        }
+
         return Hexagons[pos.x, pos.y];
     }
 }
