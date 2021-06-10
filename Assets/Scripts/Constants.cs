@@ -139,5 +139,18 @@ public static class Constants
                 return gold;
             }
         }
+
+        private static Material tintableUnlit;
+        public static Material TintableUnlit
+        {
+            get
+            {
+                if (tintableUnlit == null)
+                {
+                    tintableUnlit = Resources.Load<Material>("Materials/TintableUnlit");
+                }
+                return tintableUnlit;
+            }
+        }
     }
 }

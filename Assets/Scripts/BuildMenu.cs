@@ -42,6 +42,6 @@ public abstract class BuildMenu : MonoBehaviour
     public void Close()
     {
         Managers.Builder.ExitBuildDialog();
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
     }
 }

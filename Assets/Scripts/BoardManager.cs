@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +21,16 @@ public class BoardManager : MonoBehaviour
 
     void Awake()
     {
+        GameObject asdf = Prefabs.Healthbar;
+        asdf = Prefabs.Hexagons[0];
+        asdf = Prefabs.HighlightHex;
+        asdf = Prefabs.Projectiles[0];
+        asdf = Prefabs.RangeCircle;
+        var sprite = Prefabs.ResourceIcons[ResourceType.Gold];
+        asdf = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
+        asdf = Prefabs.ResourceNumber;
+        sprite = Prefabs.UIIcons[UIIconType.Accept];
+
         SpawnMap();
     }
 
@@ -66,6 +75,11 @@ public class BoardManager : MonoBehaviour
 
                 BuildHexagon(map.GetHex(x, y).Value, x, y);
             }
+        }
+
+        foreach (Vector2Int pos in map.OceanHex)
+        {
+            this.Hexagons[pos.x, pos.y].transform.Find("Hex").gameObject.SetActive(false);
         }
 
         Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
@@ -146,6 +160,7 @@ public class BoardManager : MonoBehaviour
                 (Vector2Int pos) =>
                 {
                     return Helpers.IsTraversable(pos) || pos == building.GridPosition;
+                    // || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock && ((Dock)Buildings[pos]).shor);
                 });
         }
     }

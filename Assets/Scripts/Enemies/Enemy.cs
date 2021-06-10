@@ -24,8 +24,7 @@ public abstract class Enemy : Character
     private int startingHealth;
     private float power;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
-    protected Vector2Int nextPathPos;
-    protected Vector2Int currentPathPos;
+    protected Waypoint Waypoint;
     public override Vector3 Velocity => IsOnBoat ? Boat.Velocity : this.Rigidbody.velocity;
     public EnemyAnimationState _animationState;
     public EnemyAnimationState CurrentAnimation
@@ -138,13 +137,19 @@ public abstract class Enemy : Character
 
     public virtual void CalculatePathingPositions(Vector2Int currentPosition)
     {
-        this.currentPathPos = currentPosition;
-        this.nextPathPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPathPos);
+        this.Waypoint = new Waypoint();
+        this.Waypoint.StartPos = currentPosition;
+        this.Waypoint.EndPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, this.Waypoint.StartPos);
 
-        if (this.nextPathPos == Constants.MaxVector2Int)
+        if (this.Waypoint.EndPos == Constants.MaxVector2Int)
         {
-            this.nextPathPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPathPos, ignoreBuildings: true);
+            this.Waypoint.EndPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, this.Waypoint.StartPos, ignoreBuildings: true);
         }
+    }
+
+    public void SetPathingPositions(Vector2Int startPos, Vector2Int endPos, bool isRecalculable)
+    {
+        this.Waypoint = new Waypoint(startPos, endPos, isRecalculable);
     }
 
     private void FollowPath()
@@ -152,7 +157,10 @@ public abstract class Enemy : Character
         if (this.TargetBuilding == null)
         {
             this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
-            RecalculatePath();
+            if (shouldRecalculatePath())
+            {
+                RecalculatePath();
+            }
         }
 
         if (shouldRecalculatePath())
@@ -160,7 +168,7 @@ public abstract class Enemy : Character
             RecalculatePath();
         }
 
-        Vector3 difference = (Managers.Board.GetHex(nextPathPos).transform.position - this.transform.position);
+        Vector3 difference = (Managers.Board.GetHex(this.Waypoint.EndPos).transform.position - this.transform.position);
         float verticalDifference = difference.y;
         difference.y = 0;
 
@@ -176,7 +184,7 @@ public abstract class Enemy : Character
             this.CurrentAnimation = EnemyAnimationState.Walking;
         }
 
-        if (nextPathPos == this.destinationPos)
+        if (this.Waypoint.EndPos == this.destinationPos)
         {
             if (difference.magnitude < DistanceFromFinalDestinationBeforeEnd)
             {
@@ -187,7 +195,7 @@ public abstract class Enemy : Character
         {
             if (difference.magnitude < .1f)
             {
-                CalculatePathingPositions(nextPathPos);
+                CalculatePathingPositions(this.Waypoint.EndPos);
             }
         }
     }
@@ -199,7 +207,7 @@ public abstract class Enemy : Character
             return;
         }
 
-        if (Managers.Board.Buildings.ContainsKey(this.nextPathPos) == false)
+        if (Managers.Board.Buildings.ContainsKey(this.Waypoint.EndPos) == false)
         {
             this.IsAttacking = false;
         }
@@ -208,16 +216,18 @@ public abstract class Enemy : Character
         {
             IsAttacking = true;
             this.Rigidbody.velocity = Vector3.zero;
-            Managers.Board.Buildings[this.nextPathPos].TakeDamage(this.AttackDamage);
+            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage);
             lastAttackTime = Time.time;
         }
     }
 
     private bool IsInRangeOfTarget()
     {
-        if (Managers.Board.Buildings.ContainsKey(this.nextPathPos))
+        if (Managers.Board.Buildings.ContainsKey(this.Waypoint.EndPos) &&
+            Managers.Board.Buildings[this.Waypoint.EndPos].Alliance == this.Enemies &&
+            Managers.Board.Buildings[this.Waypoint.EndPos].IsWalkable == false)
         {
-            Vector3 diffToTarget = this.transform.position - Managers.Board.Buildings[this.nextPathPos].transform.position;
+            Vector3 diffToTarget = this.transform.position - Managers.Board.Buildings[this.Waypoint.EndPos].transform.position;
             if (diffToTarget.magnitude < this.AttackRange)
             {
                 return true;
@@ -234,12 +244,22 @@ public abstract class Enemy : Character
 
     private bool shouldRecalculatePath()
     {
-        return Managers.Board.PathingId != this.pathId;
+        if (this.Waypoint.IsRecalculable)
+        {
+            return false;
+        }
+
+        if (Managers.Board.PathingId != this.pathId)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     protected virtual void RecalculatePath()
     {
-        CalculatePathingPositions(currentPathPos);
+        CalculatePathingPositions(this.Waypoint.StartPos);
     }
 
     protected virtual void OnReachPathEnd()

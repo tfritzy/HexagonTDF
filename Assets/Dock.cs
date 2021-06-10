@@ -10,6 +10,7 @@ public class Dock : Building
     public override Alliances Enemies => Alliances.Neutral;
     public override int StartingHealth => int.MaxValue / 2;
     public override float Power => float.MaxValue / 2;
+    public override bool IsWalkable => true;
 
     private HexagonMono shore;
 

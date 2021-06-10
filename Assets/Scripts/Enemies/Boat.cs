@@ -46,8 +46,7 @@ public class Boat : Enemy
     {
         if (this.pathProgress + 1 < this.pathToShore.Count)
         {
-            this.currentPathPos = this.nextPathPos;
-            this.nextPathPos = this.pathToShore[this.pathProgress + 1];
+            this.Waypoint = new Waypoint(currentPosition, this.pathToShore[this.pathProgress + 1]);
             this.pathProgress += 1;
         }
     }
@@ -55,7 +54,7 @@ public class Boat : Enemy
     protected override void RecalculatePath()
     {
         FindNewPath(this.pathToShore[this.pathProgress]);
-        CalculatePathingPositions(currentPathPos);
+        CalculatePathingPositions(this.Waypoint.StartPos);
     }
 
     private void FindNewPath(Vector2Int startPos)
@@ -118,7 +117,7 @@ public class Boat : Enemy
             passanger.transform.parent = null;
             passanger.IsOnBoat = false;
             passanger.AddRigidbody();
-            passanger.CalculatePathingPositions(this.pathToShore.Last());
+            passanger.SetPathingPositions(this.Waypoint.EndPos, destinationPos, false);
         }
     }
 }

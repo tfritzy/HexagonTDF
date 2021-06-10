@@ -166,7 +166,8 @@ public static class Prefabs
                 uiElements = new Dictionary<UIElementType, GameObject>();
                 foreach (UIElementType uiElementType in Enum.GetValues(typeof(UIElementType)))
                 {
-                    uiElements[uiElementType] = Resources.Load<GameObject>("Prefabs/UI/" + uiElementType);
+                    uiElements[uiElementType] = Managers.Canvas.Find(uiElementType.ToString()).gameObject;
+                    uiElements[uiElementType].SetActive(false);
                 }
             }
 

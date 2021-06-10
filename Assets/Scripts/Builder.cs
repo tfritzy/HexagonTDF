@@ -94,7 +94,8 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         UnHighlightHexagon();
 
-        CreateMenu(Prefabs.UIElements[UIElementType.AttackTowerBuildMenu]);
+        menu = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
+        menu.SetActive(true);
         highlightedHexagon = newPotentialHexagon;
         highlightedHexagon.SetMaterial(Constants.Materials.Gold);
     }
@@ -128,7 +129,6 @@ public class Builder : MonoBehaviour
     private void ExitConfirmBuildMode()
     {
         isInConfirmBuild = false;
-        Destroy(confirmButtons);
     }
 
     public void AcceptConstructBuilding()
@@ -199,21 +199,11 @@ public class Builder : MonoBehaviour
         }
     }
 
-    private void CreateMenu(GameObject menuPrefab)
-    {
-        if (menu != null)
-        {
-            menu.GetComponent<BuildMenu>().Close();
-        }
-
-        menu = Instantiate(menuPrefab, Managers.Canvas);
-    }
-
     public void ExitBuildDialog()
     {
         UnHighlightHexagon();
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
-        Destroy(this.menu);
+        this.menu?.SetActive(false);
     }
 }

@@ -69,13 +69,16 @@ public class HexagonMono : MonoBehaviour, Interactable
         Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         newTexture.SetPixel(0, 0, this.ColorAfterVariance);
         newTexture.Apply();
-        this.hex.material = Constants.Materials.TintableHex;
+        this.hex.material = this.hexagon.Material;
         this.hex.material.mainTexture = newTexture;
 
-        Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-        darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.1f));
-        darkerTexture.Apply();
-        this.hex.materials[1] = Constants.Materials.TintableHex;
-        this.hex.materials[1].mainTexture = darkerTexture;
+        if (this.hex.materials.Length > 1)
+        {
+            Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.1f));
+            darkerTexture.Apply();
+            this.hex.materials[1] = this.hexagon.Material;
+            this.hex.materials[1].mainTexture = darkerTexture;
+        }
     }
 }
