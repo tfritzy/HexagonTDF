@@ -159,8 +159,7 @@ public class BoardManager : MonoBehaviour
                 building.GridPosition,
                 (Vector2Int pos) =>
                 {
-                    return Helpers.IsTraversable(pos) || pos == building.GridPosition;
-                    // || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock && ((Dock)Buildings[pos]).shor);
+                    return Helpers.IsTraversable(pos) || pos == building.GridPosition || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
                 });
         }
     }
@@ -176,7 +175,7 @@ public class BoardManager : MonoBehaviour
                 building.GridPosition,
                 (Vector2Int pos) =>
                 {
-                    return Managers.Board.Hexagons[pos.x, pos.y].IsWalkable;
+                    return Managers.Board.Hexagons[pos.x, pos.y].IsWalkable || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
                 });
         }
     }
