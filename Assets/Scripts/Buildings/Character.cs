@@ -46,6 +46,7 @@ public abstract class Character : MonoBehaviour
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
     private int health;
+    private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
 
     void Start()
     {
@@ -75,17 +76,11 @@ public abstract class Character : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public virtual void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount, Character source)
     {
-        this.Health -= amount;
-        // DamageNumber damageNumber = Instantiate(
-        //     Prefabs.DamageNumber,
-        //     this.transform.position,
-        //     new Quaternion(),
-        //     Managers.Canvas)
-        //     .GetComponent<DamageNumber>();
-        // damageNumber.SetValue(amount, this.gameObject);
-        // damageNumber.transform.localScale *= ((float)amount / (float)StartingHealth);
+        float heightDifference = source.transform.position.y - this.transform.position.y;
+        float damageMultiplier = 1 + (heightDifference > 0 ? heightDifference * PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT : 0);
+        this.Health -= (int)((float)amount * damageMultiplier);
     }
 
     private void ApplyEffects()

@@ -35,7 +35,7 @@ public class SparkTower : AttackTower
         }
         lr.SetPosition(numPoints, Target.transform.position);
 
-        Target.TakeDamage(Damage);
+        Target.TakeDamage(Damage, this);
         GameObject projectile = Instantiate(
                 Prefabs.Projectiles[Type],
                 Target.GetComponent<Collider>().bounds.center,

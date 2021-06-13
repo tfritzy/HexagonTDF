@@ -22,6 +22,8 @@ public class Map
     public const float FORREST_PERLIN_SCALE = 3f;
     public const float LandPerlinCutoff = .60f;
     public const float TreePerlinCutoff = .60f;
+    public const int MaxDocks = 6;
+    public const int MinDocks = 3;
 
 
     public Map(int width, int height, int islandRadius)
@@ -214,23 +216,48 @@ public class Map
         }
 
         Docks = new List<Vector2Int>();
-        for (int i = 0; i < LandableShores.Count; i += 5)
+        List<Vector2Int> possibleDocks = new List<Vector2Int>();
+        for (int i = 0; i < LandableShores.Count; i += 1)
         {
             if (Buildings.ContainsKey(LandableShores[i]))
             {
                 continue;
             }
 
+            int waterCount = 0;
             for (int j = 0; j < 6; j++)
             {
                 Vector2Int pos = Helpers.GetNeighborPosition(this, LandableShores[i], j);
                 if (hexes[pos.x, pos.y] == HexagonType.Water)
                 {
-                    Buildings[pos] = BuildingType.Dock;
-                    Docks.Add(pos);
-                    break;
+                    waterCount += 1;
+                    if (waterCount == 3)
+                    {
+                        possibleDocks.Add(Helpers.GetNeighborPosition(this, LandableShores[i], j - 1));
+                        break;
+                    }
+                }
+                else
+                {
+                    waterCount = 0;
                 }
             }
+        }
+
+        if (possibleDocks.Count < MinDocks)
+        {
+            this.IsInvalid = true;
+            return;
+        }
+
+        int numDocks = Random.Range(MinDocks, Mathf.Min(MaxDocks + 1, possibleDocks.Count));
+        while (numDocks > 0)
+        {
+            int selectedIndex = Random.Range(0, possibleDocks.Count);
+            Docks.Add(possibleDocks[selectedIndex]);
+            Buildings[possibleDocks[selectedIndex]] = BuildingType.Dock;
+            possibleDocks.RemoveAt(selectedIndex);
+            numDocks -= 1;
         }
     }
 

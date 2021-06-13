@@ -55,7 +55,7 @@ public class Spikes : AttackTower
 
         foreach (Enemy enemy in enemiesInRange)
         {
-            enemy.TakeDamage(this.Damage);
+            enemy.TakeDamage(this.Damage, this);
         }
     }
 

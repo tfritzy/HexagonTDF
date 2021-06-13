@@ -35,7 +35,7 @@ public class CrystalAccelerator : AttackTower
             {
                 if (character.Alliance == this.Enemies)
                 {
-                    character.TakeDamage(Damage);
+                    character.TakeDamage(Damage, this);
                 }
             }
         }

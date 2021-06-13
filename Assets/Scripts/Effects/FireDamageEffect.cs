@@ -10,14 +10,14 @@ public class FireDamageEffect : Effect
     public override EffectType Type => EffectType.FireDamage;
     private int Damage;
 
-    public FireDamageEffect(int damage, float timeBetweenTicks, Guid id)
-        : base(timeBetweenTicks, duration, id)
+    public FireDamageEffect(int damage, float timeBetweenTicks, Guid id, Character owner)
+        : base(timeBetweenTicks, duration, id, owner)
     {
         this.Damage = damage;
     }
 
     protected override void ApplyEffect(Character character)
     {
-        character.TakeDamage(this.Damage);
+        character.TakeDamage(this.Damage, this.Owner);
     }
 }

@@ -124,7 +124,7 @@ public abstract class AttackTower : Building
         // target can be null on contact with ground.
         if (ExplosionRadius == 0 && target != null)
         {
-            target.TakeDamage(Damage);
+            target.TakeDamage(Damage, this);
 
             if (target.Body != null && target.Health <= 0 && projectile.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
             {
@@ -195,7 +195,7 @@ public abstract class AttackTower : Building
 
             if (attacker.Enemies == character.Alliance)
             {
-                character.TakeDamage(Damage);
+                character.TakeDamage(Damage, this);
 
                 if (character.Body != null && character.Health <= 0)
                 {

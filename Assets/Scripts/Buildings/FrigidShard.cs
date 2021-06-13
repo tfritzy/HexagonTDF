@@ -22,8 +22,8 @@ public class FrigidShard : AttackTower
     protected override void Setup()
     {
         this.GetComponent<SphereCollider>().radius = this.Range;
-        this.frozenEffect = new FrozenEffect(this.SlowAmount, Guid.NewGuid());
-        this.frozenDamageEffect = new FrozenDamageEffect(this.Damage, this.Cooldown, Guid.NewGuid());
+        this.frozenEffect = new FrozenEffect(this.SlowAmount, Guid.NewGuid(), this);
+        this.frozenDamageEffect = new FrozenDamageEffect(this.Damage, this.Cooldown, Guid.NewGuid(), this);
         base.Setup();
     }
 

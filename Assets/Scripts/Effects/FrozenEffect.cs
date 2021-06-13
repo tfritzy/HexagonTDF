@@ -11,8 +11,8 @@ public class FrozenEffect : Effect
     public override EffectType Type => EffectType.Frozen;
     private float modificationAmount;
 
-    public FrozenEffect(float slowAmount, Guid id)
-        : base(duration, duration, id)
+    public FrozenEffect(float slowAmount, Guid id, Character owner)
+        : base(duration, duration, id, owner)
     {
         this.SlowAmount = slowAmount;
     }

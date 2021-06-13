@@ -216,7 +216,7 @@ public abstract class Enemy : Character
         {
             IsAttacking = true;
             this.Rigidbody.velocity = Vector3.zero;
-            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage);
+            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage, this);
             lastAttackTime = Time.time;
         }
     }
@@ -265,7 +265,7 @@ public abstract class Enemy : Character
     protected virtual void OnReachPathEnd()
     {
         this.Rigidbody.velocity = Vector3.zero;
-        this.TargetBuilding.TakeDamage(1);
+        this.TargetBuilding.TakeDamage(1, this);
         Destroy(this.gameObject);
         IsDead = true;
     }
@@ -278,23 +278,15 @@ public abstract class Enemy : Character
         return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
     }
 
-    public override void TakeDamage(int amount)
+    public override void TakeDamage(int amount, Character source)
     {
         if (IsDead)
         {
             return;
         }
 
-        DamageNumber num = Instantiate(
-            Prefabs.DamageNumber,
-            Vector3.zero,
-            new Quaternion(),
-            Managers.Canvas)
-                .GetComponent<DamageNumber>();
-        num.SetValue(amount, this.gameObject);
-
         this.healthbar.enabled = true;
-        base.TakeDamage(amount);
+        base.TakeDamage(amount, source);
         this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
     }
 

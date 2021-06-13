@@ -39,7 +39,7 @@ public class FlamethrowerTower : AttackTower
     protected override void Attack()
     {
         flamethrowerPS.Play();
-        effect = new FireDamageEffect(this.Damage, this.Cooldown, Guid.NewGuid());
+        effect = new FireDamageEffect(this.Damage, this.Cooldown, Guid.NewGuid(), this);
     }
 
     public override void TriggerParticleCollision(GameObject collidedWith)

@@ -32,7 +32,7 @@ public class ChainLightningTower : AttackTower
         hitPositions.Add(projectileStartPosition);
         while (current != null)
         {
-            current.TakeDamage(this.Damage);
+            current.TakeDamage(this.Damage, this);
             hitPositions.Add(current.Position);
             alreadyHitEnemies.Add(current.gameObject);
             current = findNextHop(current);

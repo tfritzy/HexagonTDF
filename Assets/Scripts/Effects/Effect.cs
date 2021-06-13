@@ -10,16 +10,18 @@ public abstract class Effect
     public Guid Id;
     public abstract bool Stacks { get; }
     public abstract EffectType Type { get; }
+    protected Character Owner;
     private float lastApplyTime;
     private float birthTime;
     private bool complete;
 
-    public Effect(float timeBetweenTicks, float duration, Guid id)
+    public Effect(float timeBetweenTicks, float duration, Guid id, Character owner)
     {
         this.Duration = duration;
         this.TimeBetweenTicks = timeBetweenTicks;
         birthTime = Time.time;
         this.Id = id;
+        this.Owner = owner;
     }
 
     public void Update(Character character)

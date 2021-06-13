@@ -19,11 +19,11 @@ public class LightningTower : AttackTower
 
         if (Target.Region == VerticalRegion.Air || Target.Region == VerticalRegion.GroundAndAir)
         {
-            Target.TakeDamage(this.Damage * 2);
+            Target.TakeDamage(this.Damage * 2, this);
         }
         else
         {
-            Target.TakeDamage(this.Damage);
+            Target.TakeDamage(this.Damage, this);
         }
     }
 }

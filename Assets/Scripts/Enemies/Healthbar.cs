@@ -19,7 +19,7 @@ public class Healthbar : MonoBehaviour
         }
 
         ScaleDamageBar();
-        transform.position = Managers.Camera.WorldToScreenPoint(Owner.position) + new Vector3(0, 150 * scale);
+        transform.position = Managers.Camera.WorldToScreenPoint(Owner.position) + new Vector3(0, 25 * scale);
     }
 
     public void SetOwner(Transform owner)
