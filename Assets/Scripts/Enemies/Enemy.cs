@@ -52,6 +52,7 @@ public abstract class Enemy : Character
     protected abstract float Cooldown { get; }
     protected abstract int AttackDamage { get; }
     protected abstract float AttackRange { get; }
+    public bool IsJumping;
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
     private float lastAttackTime;
@@ -172,10 +173,9 @@ public abstract class Enemy : Character
         float verticalDifference = difference.y;
         difference.y = 0;
 
-        if (ShouldClimbOrDescendCliff(verticalDifference, difference))
+        if (ShouldBeJumping(verticalDifference, difference))
         {
-            this.Rigidbody.velocity = Math.Sign(verticalDifference) * (MovementSpeed * VERTICAL_MOVEMENT_MODIFIER) * Vector3.up;
-            this.CurrentAnimation = EnemyAnimationState.ClimbingUp;
+            JumpUpCliffMovement(Managers.Board.GetHex(this.Waypoint.EndPos).transform.position);
         }
         else
         {
@@ -237,9 +237,76 @@ public abstract class Enemy : Character
         return false;
     }
 
-    private bool ShouldClimbOrDescendCliff(float verticalDifference, Vector3 difference)
+    private bool ShouldBeJumping(float verticalDifference, Vector3 difference)
     {
-        return Math.Abs(verticalDifference) > .01f && difference.magnitude < Constants.HEXAGON_r;
+        if (IsJumping)
+        {
+            return true;
+        }
+
+        difference.y = 0;
+
+        return Math.Abs(verticalDifference) > .4f && difference.magnitude < Constants.HEXAGON_r * 1.6f;
+    }
+
+    private float jumpStartTime;
+    private Vector3 targetJumpPosition;
+    private Vector3 lastTargetJumpHexPosition;
+    private float jumpUpSpeed;
+    private float jumpLateralSpeed;
+    private float jumpFallSpeed;
+    private Vector3 jumpLateralDirection;
+    private const float JUMP_MOVEMENT_DELAY_END_TIME = 0.166f;
+    private const float JUMP_MOVEMENT_UP_END_TIME = 0.33f;
+    private const float JUMP_PEAK_FLOAT_END_TIME = .5f;
+    private const float JUMP_TOUCH_GROUND_TIME = 0.666f;
+    private const float JUMP_END_TIME = 1f;
+    private const float JUMP_OVERSHOOT_PERCENT = 1.2f;
+    private void JumpUpCliffMovement(Vector3 targetHexPosition)
+    {
+        if (lastTargetJumpHexPosition != targetHexPosition)
+        {
+            this.CurrentAnimation = EnemyAnimationState.Jumping;
+            lastTargetJumpHexPosition = targetHexPosition;
+            jumpStartTime = Time.time;
+            Vector3 directionVector = targetHexPosition - this.transform.position;
+            directionVector.y = 0;
+            targetJumpPosition = targetHexPosition + -directionVector.normalized * Constants.HEXAGON_r * .8f;
+            float jumpEndHeight = targetHexPosition.y - this.transform.position.y;
+            float jumpHeight = jumpEndHeight * JUMP_OVERSHOOT_PERCENT;
+            jumpUpSpeed = jumpHeight / (JUMP_MOVEMENT_UP_END_TIME - JUMP_MOVEMENT_DELAY_END_TIME);
+            Vector3 distToTargetPos = targetJumpPosition - this.transform.position;
+            distToTargetPos.y = 0;
+            jumpLateralDirection = directionVector.normalized;
+            jumpLateralSpeed = distToTargetPos.magnitude / (JUMP_TOUCH_GROUND_TIME - JUMP_MOVEMENT_DELAY_END_TIME);
+            jumpFallSpeed = (jumpHeight - jumpEndHeight) / (JUMP_TOUCH_GROUND_TIME - JUMP_PEAK_FLOAT_END_TIME);
+            IsJumping = true;
+        }
+
+        if (Time.time < jumpStartTime + JUMP_MOVEMENT_DELAY_END_TIME)
+        {
+            this.Rigidbody.velocity = Vector3.zero;
+        }
+        else if (Time.time < jumpStartTime + JUMP_MOVEMENT_UP_END_TIME)
+        {
+            this.Rigidbody.velocity = Vector3.up * jumpUpSpeed + jumpLateralDirection * jumpLateralSpeed;
+        }
+        else if (Time.time < jumpStartTime + JUMP_PEAK_FLOAT_END_TIME)
+        {
+            this.Rigidbody.velocity = jumpLateralDirection * jumpLateralSpeed;
+        }
+        else if (Time.time < jumpStartTime + JUMP_TOUCH_GROUND_TIME)
+        {
+            this.Rigidbody.velocity = Vector3.down * jumpFallSpeed + jumpLateralDirection * jumpLateralSpeed;
+        }
+        else if (Time.time < jumpStartTime + JUMP_END_TIME)
+        {
+            this.Rigidbody.velocity = Vector3.zero;
+        }
+        else
+        {
+            IsJumping = false;
+        }
     }
 
     private bool shouldRecalculatePath()

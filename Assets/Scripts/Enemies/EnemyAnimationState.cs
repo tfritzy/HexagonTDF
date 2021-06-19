@@ -2,6 +2,6 @@ public enum EnemyAnimationState
 {
     Idle,
     Walking,
-    ClimbingUp,
+    Jumping,
     ClimbingDown
 }

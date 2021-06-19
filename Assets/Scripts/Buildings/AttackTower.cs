@@ -209,7 +209,7 @@ public abstract class AttackTower : Building
     {
         foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>())
         {
-            rb.AddForce(velocity / UnityEngine.Random.Range(2, 3) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
+            rb.AddForce(velocity / UnityEngine.Random.Range(5, 10) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
         }
     }
 

@@ -44,6 +44,7 @@ public class EnemySpawner : MonoBehaviour
     private readonly List<EnemyType> enemies = new List<EnemyType>()
     {
         EnemyType.StickGuy,
+        EnemyType.Spellcaster
     };
     private readonly List<ResourceType> bonusResourceTypes = new List<ResourceType>()
     {
@@ -117,7 +118,7 @@ public class EnemySpawner : MonoBehaviour
             float boatPower = PowerPerSecondByWave[CurrentWave] * DEFAULT_SEC_BETWEEN_SPAWN;
             for (int i = 0; i < boat.Capacity; i++)
             {
-                GameObject enemy = Instantiate(Prefabs.Enemies[enemies[0]].gameObject, Vector3.zero, new Quaternion(), boat.transform);
+                GameObject enemy = Instantiate(Prefabs.Enemies[enemies[Random.Range(0, enemies.Count)]].gameObject, Vector3.zero, new Quaternion(), boat.transform);
                 Enemy enemyMono = enemy.GetComponent<Enemy>();
                 boat.AddPassanger(enemyMono);
                 enemyMono.SetPower(boatPower / boat.Capacity, 1f);

@@ -14,5 +14,6 @@
     FlamethrowerTower,
     House,
     GuardTower,
-    Dock
+    Dock,
+    GreatHall
 }

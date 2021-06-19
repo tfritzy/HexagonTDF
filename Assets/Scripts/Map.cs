@@ -272,14 +272,8 @@ public class Map
             }
         }
 
-        int numHouses = MainLandmass.Count / 20;
-        for (int i = 0; i < numHouses; i++)
-        {
-            int index = Random.Range(0, centerLandmass.Count);
-            Vector2Int pos = centerLandmass[index];
-            Buildings[pos] = BuildingType.House;
-            centerLandmass.RemoveAt(index);
-        }
+        int index = Random.Range(0, centerLandmass.Count);
+        Buildings[centerLandmass[index]] = BuildingType.GreatHall;
 
         float numTowers = 5;
         float hexesBetweenTowers = LandableShores.Count / numTowers;
