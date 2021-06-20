@@ -20,6 +20,8 @@ public class Boat : Enemy
     protected override float Cooldown => float.MaxValue / 2; // Divide by 2 because cooldown gets added to time, which would overflow.
     protected override int AttackDamage => 0;
     protected override float AttackRange => 0;
+    protected override EnemyAnimationState AttackAnimation => throw new System.Exception("Boat should not be trying to use an attack animation.");
+
     protected List<Vector2Int> pathToShore;
     protected int pathProgress;
 

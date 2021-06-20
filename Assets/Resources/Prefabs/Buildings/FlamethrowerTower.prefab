@@ -19199,7 +19199,8 @@ GameObject:
   - component: {fileID: 4901000002130581001}
   - component: {fileID: 2555700105093227117}
   - component: {fileID: 7140777773791536313}
-  m_Layer: 0
+  - component: {fileID: -2618047258538617647}
+  m_Layer: 9
   m_Name: FlamethrowerTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19258,6 +19259,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &-2618047258538617647
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4901000002130580796}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.643385, z: 1}
+  m_Center: {x: 0, y: 1.1286564, z: 0}
 --- !u!1 &4901000002130580797
 GameObject:
   m_ObjectHideFlags: 0
@@ -43062,7 +43076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba8d690ab7326544688b4b4a8e65fe18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameObjectToRelayTo: {fileID: 2555700105093227117}
+  GameObjectToRelayTo: {fileID: 0}
 --- !u!1 &6052226575573099525
 GameObject:
   m_ObjectHideFlags: 0

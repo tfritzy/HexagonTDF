@@ -8,13 +8,13 @@ public class Projectile : MonoBehaviour
     public delegate bool IsCollisionTarget(Character attacker, GameObject collision);
     private IsCollisionTarget isCollisionTarget;
     protected Rigidbody Rigidbody;
-    protected Character target;
     protected float birthTime;
     private Character attacker;
     private bool hasAlreadyTriggered;
     private Transform trailParticles;
     private Transform explosionParticles;
     private bool upForceOnDeath;
+    private bool isTracking;
 
     void Start()
     {
@@ -34,19 +34,37 @@ public class Projectile : MonoBehaviour
         DealDamageToEnemy damageEnemyHandler,
         IsCollisionTarget isCollisionTarget,
         Character attacker,
-        Character target = null,
         bool upForceOnDeath = false)
     {
         this.dealDamageToEnemy = damageEnemyHandler;
         this.isCollisionTarget = isCollisionTarget;
         this.attacker = attacker;
-        this.target = target;
         this.birthTime = Time.time;
         this.upForceOnDeath = upForceOnDeath;
         SetupRigidbody();
     }
 
-    protected virtual void UpdateLoop() { }
+    private GameObject trackingTarget;
+    private float trackingMovementSpeed;
+    public void SetTracking(GameObject target, float movementSpeed)
+    {
+        isTracking = true;
+        this.trackingTarget = target;
+        this.trackingMovementSpeed = movementSpeed;
+    }
+
+    protected virtual void UpdateLoop()
+    {
+        if (this.isTracking)
+        {
+            if (this.trackingTarget == null)
+            {
+                ExplodeAnimation();
+            }
+
+            this.Rigidbody.velocity = (this.trackingTarget.transform.position - this.transform.position).normalized * this.trackingMovementSpeed;
+        }
+    }
     protected virtual void StartLogic() { }
 
     private void OnTriggerEnter(Collider other)
@@ -67,11 +85,16 @@ public class Projectile : MonoBehaviour
             OnCollision(other.gameObject);
             Character character = other.GetComponent<Character>();
             dealDamageToEnemy(attacker, other.GetComponent<Character>(), this.gameObject);
-            Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
-            DetachParticles(this.explosionParticles);
-            DetachParticles(this.trailParticles);
-            GameObject.Destroy(this.gameObject);
+            ExplodeAnimation();
         }
+    }
+
+    private void ExplodeAnimation()
+    {
+        Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
+        DetachParticles(this.explosionParticles);
+        DetachParticles(this.trailParticles);
+        GameObject.Destroy(this.gameObject);
     }
 
     private void SetupRigidbody()

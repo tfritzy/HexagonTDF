@@ -50,11 +50,14 @@ public abstract class Enemy : Character
     protected Vector2Int destinationPos;
     protected abstract float Cooldown { get; }
     protected abstract int AttackDamage { get; }
-    protected abstract float AttackRange { get; }
+    protected virtual float AttackRange => MELEE_ATTACK_RANGE;
+    protected abstract EnemyAnimationState AttackAnimation { get; }
     public bool IsJumping;
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
+    private const float MELEE_ATTACK_RANGE = .8f;
     private float lastAttackTime;
+    private Transform projectileStartPosition;
 
     public void SetPower(float power, float healthModifier)
     {
@@ -77,6 +80,7 @@ public abstract class Enemy : Character
         this.MovementSpeed = baseMovementSpeed;
         this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
         this.destinationPos = TargetBuilding.GridPosition;
+        this.projectileStartPosition = Helpers.RecursiveFindChild(this.transform, "ProjectileStartPosition") ?? this.transform;
         SetRagdollState(false);
     }
 
@@ -202,7 +206,7 @@ public abstract class Enemy : Character
 
         if (IsInRangeOfTarget())
         {
-            this.CurrentAnimation = EnemyAnimationState.SlashingSword;
+            this.CurrentAnimation = this.AttackAnimation;
             IsAttacking = true;
             this.Rigidbody.velocity = Vector3.zero;
             Vector3 diffVector = TargetBuilding.transform.position - this.transform.position;
@@ -215,7 +219,34 @@ public abstract class Enemy : Character
 
     public void DealDamage()
     {
-        Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage, this);
+        if (this.AttackRange == MELEE_ATTACK_RANGE)
+        {
+            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage, this);
+        }
+        else
+        {
+            Projectile projectile = Instantiate(Prefabs.EnemyProjectiles[this.Type], this.projectileStartPosition.position, new Quaternion()).GetComponent<Projectile>();
+            projectile.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+            projectile.SetTracking(Managers.Board.Buildings[this.Waypoint.EndPos].gameObject, 5f);
+        }
+    }
+
+    private bool IsCollisionTarget(Character attacker, GameObject collision)
+    {
+        if (collision.TryGetComponent<Building>(out Building building))
+        {
+            if (building == Managers.Board.Buildings[this.Waypoint.EndPos])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    {
+        target.TakeDamage(this.AttackDamage, this);
     }
 
     private bool IsInRangeOfTarget()

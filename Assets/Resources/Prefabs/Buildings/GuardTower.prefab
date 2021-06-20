@@ -40,7 +40,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8100716736069935894}
   - component: {fileID: 2341717396962314488}
-  m_Layer: 0
+  - component: {fileID: 2206380660003543358}
+  m_Layer: 9
   m_Name: GuardTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,6 +90,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
   Target: {fileID: 0}
+--- !u!65 &2206380660003543358
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8100716736069935889}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.04408, y: 12.639484, z: 3.7326765}
+  m_Center: {x: -0.062984526, y: 5.8197403, z: -0.02910912}
 --- !u!1001 &3804754914572297281
 PrefabInstance:
   m_ObjectHideFlags: 0

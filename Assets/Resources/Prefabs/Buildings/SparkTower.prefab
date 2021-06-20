@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 8133861054636993530}
   - component: {fileID: 552636406133053217}
   - component: {fileID: 8390687563039008098}
-  m_Layer: 0
+  - component: {fileID: -3905658362379893330}
+  m_Layer: 9
   m_Name: SparkTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,6 +151,19 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!65 &-3905658362379893330
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25777116717826007}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2404397, y: 2.2104626, z: 1.9046936}
+  m_Center: {x: -0.015231729, y: 1.0517399, z: -0.34264445}
 --- !u!1 &671361523863513889
 GameObject:
   m_ObjectHideFlags: 0

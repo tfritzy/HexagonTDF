@@ -9,7 +9,7 @@ public class StickGuy : Enemy
     public override VerticalRegion Region => VerticalRegion.Ground;
     protected override float Cooldown => AttackSpeed.Medium;
     protected override int AttackDamage => 1;
-    protected override float AttackRange => .5f;
+    protected override EnemyAnimationState AttackAnimation => EnemyAnimationState.SlashingSword;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

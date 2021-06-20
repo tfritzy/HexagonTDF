@@ -85,8 +85,13 @@ public abstract class Character : MonoBehaviour
 
     public virtual void TakeDamage(int amount, Character source)
     {
-        float heightDifference = source.transform.position.y - this.transform.position.y;
-        float damageMultiplier = 1 + (heightDifference > 0 ? heightDifference * PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT : 0);
+        float damageMultiplier = 1;
+        if (source != null)
+        {
+            float heightDifference = source.transform.position.y - this.transform.position.y;
+            damageMultiplier = 1 + (heightDifference > 0 ? heightDifference * PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT : 0);
+        }
+
         this.Health -= (int)((float)amount * damageMultiplier);
 
         this.healthbar.enabled = true;

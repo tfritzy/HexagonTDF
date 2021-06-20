@@ -40,7 +40,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3848616178806195376}
   - component: {fileID: 1161736234487790294}
-  m_Layer: 0
+  - component: {fileID: 8377814470641316392}
+  m_Layer: 9
   m_Name: ArcherFortress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +76,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2675cad2923f0204e9edfdc9d2bd8529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Body: {fileID: 0}
   Target: {fileID: 0}
+--- !u!65 &8377814470641316392
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4477379206566698506}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.6849363, z: 1}
+  m_Center: {x: 0, y: 1.6434463, z: 0}
 --- !u!1001 &1346614815863695743
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -4,5 +4,6 @@ public enum EnemyAnimationState
     Walking,
     Jumping,
     ClimbingDown,
-    SlashingSword
+    SlashingSword,
+    CastingSpell,
 }

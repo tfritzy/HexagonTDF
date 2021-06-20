@@ -10,6 +10,7 @@ public class Spellcaster : Enemy
     protected override float Cooldown => AttackSpeed.Slow;
     protected override int AttackDamage => 3;
     protected override float AttackRange => RangeOptions.Long;
+    protected override EnemyAnimationState AttackAnimation => EnemyAnimationState.CastingSpell;
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {
         {AttributeType.Health, 1f}, // Reducing total power because 

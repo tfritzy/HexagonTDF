@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1527775510565812584}
   - component: {fileID: 1270945083212904432}
   - component: {fileID: 1284334921737886150}
-  m_Layer: 0
+  - component: {fileID: -6342631325454125683}
+  m_Layer: 9
   m_Name: ChainLightningTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,7 +149,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fcb29b88f8435e4b904600844b911e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Body: {fileID: 0}
   Target: {fileID: 0}
+--- !u!65 &-6342631325454125683
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7316497908845112645}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2101134, y: 1.7796285, z: 1.2704132}
+  m_Center: {x: 0.029326975, y: 0.8855859, z: 0.0070563555}
 --- !u!1 &7576648831377147485
 GameObject:
   m_ObjectHideFlags: 0
