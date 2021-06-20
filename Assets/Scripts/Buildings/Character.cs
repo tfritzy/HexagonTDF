@@ -47,6 +47,7 @@ public abstract class Character : MonoBehaviour
     protected Collider Collider;
     private int health;
     private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
+    private Healthbar healthbar;
 
     void Start()
     {
@@ -59,6 +60,12 @@ public abstract class Character : MonoBehaviour
         this.Health = StartingHealth;
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
+        this.healthbar = Instantiate(Prefabs.Healthbar,
+            new Vector3(10000, 10000),
+            new Quaternion(),
+            Managers.Canvas).GetComponent<Healthbar>();
+        this.healthbar.SetOwner(this.transform);
+        this.healthbar.enabled = false;
     }
 
     void Update()
@@ -81,6 +88,9 @@ public abstract class Character : MonoBehaviour
         float heightDifference = source.transform.position.y - this.transform.position.y;
         float damageMultiplier = 1 + (heightDifference > 0 ? heightDifference * PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT : 0);
         this.Health -= (int)((float)amount * damageMultiplier);
+
+        this.healthbar.enabled = true;
+        this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
     }
 
     private void ApplyEffects()

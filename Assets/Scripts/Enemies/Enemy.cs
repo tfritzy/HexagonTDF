@@ -19,7 +19,6 @@ public abstract class Enemy : Character
     protected bool IsDead;
     private Guid pathId;
     private GameObject DeathAnimation;
-    private Healthbar healthbar;
     private float baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
     private int startingHealth;
     private float power;
@@ -76,12 +75,6 @@ public abstract class Enemy : Character
         this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
-        this.healthbar = Instantiate(Prefabs.Healthbar,
-            new Vector3(10000, 10000),
-            new Quaternion(),
-            Managers.Canvas).GetComponent<Healthbar>();
-        this.healthbar.SetOwner(this.transform);
-        this.healthbar.enabled = false;
         this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
         this.destinationPos = TargetBuilding.GridPosition;
         SetRagdollState(false);
@@ -202,11 +195,6 @@ public abstract class Enemy : Character
 
     private void AttackTarget()
     {
-        if (Time.time < lastAttackTime + Cooldown)
-        {
-            return;
-        }
-
         if (Managers.Board.Buildings.ContainsKey(this.Waypoint.EndPos) == false)
         {
             this.IsAttacking = false;
@@ -214,11 +202,20 @@ public abstract class Enemy : Character
 
         if (IsInRangeOfTarget())
         {
+            this.CurrentAnimation = EnemyAnimationState.SlashingSword;
             IsAttacking = true;
             this.Rigidbody.velocity = Vector3.zero;
-            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage, this);
+            Vector3 diffVector = TargetBuilding.transform.position - this.transform.position;
+            diffVector.y = 0;
+            this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
+
             lastAttackTime = Time.time;
         }
+    }
+
+    public void DealDamage()
+    {
+        Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.AttackDamage, this);
     }
 
     private bool IsInRangeOfTarget()
@@ -343,18 +340,6 @@ public abstract class Enemy : Character
         double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
         double randomPart = fullVal % modulous;
         return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
-    }
-
-    public override void TakeDamage(int amount, Character source)
-    {
-        if (IsDead)
-        {
-            return;
-        }
-
-        this.healthbar.enabled = true;
-        base.TakeDamage(amount, source);
-        this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
     }
 
     public void AddRigidbody()

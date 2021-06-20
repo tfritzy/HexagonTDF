@@ -12,6 +12,6 @@ public class Spellcaster : Enemy
     protected override float AttackRange => RangeOptions.Long;
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {
-        {AttributeType.Health, .8f}, // Reducing total power because 
+        {AttributeType.Health, 1f}, // Reducing total power because 
     };
 }
