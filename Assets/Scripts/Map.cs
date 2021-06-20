@@ -20,8 +20,10 @@ public class Map
 
     public const float LAND_PERLIN_SCALE = 5f;
     public const float FORREST_PERLIN_SCALE = 3f;
+    public const float SHORE_PERLIN_SCALE = 2f;
     public const float LandPerlinCutoff = .60f;
     public const float TreePerlinCutoff = .60f;
+    public const float ShorePerlinCutoff = .3f;
     public const int MaxDocks = 6;
     public const int MinDocks = 3;
 
@@ -61,9 +63,9 @@ public class Map
                     hexes[x, y] = HexagonType.Forrest;
                 }
 
-                float heightBias = (-4 / islandRadius) * distFromCenter + 4;
-                float heightNoise = -(treePerlinValue - 1) * 2;
-                float finalValue = (int)((heightBias + heightNoise) / 2f);
+                // float heightBias = (-4 / islandRadius) * distFromCenter + 4;
+                float heightNoise = (perlinValue) * 10;
+                float finalValue = (int)(heightNoise / 2f);
                 HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
             }
         }
@@ -191,6 +193,11 @@ public class Map
         HashSet<Vector2Int> landableShoreSet = new HashSet<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
         {
+            if (shorePerlinNoise(pos.x, pos.y) < ShorePerlinCutoff)
+            {
+                continue;
+            }
+
             for (int i = 0; i < 6; i++)
             {
                 if (OceanHex.Contains(Helpers.GetNeighborPosition(this, pos, i)))
@@ -259,6 +266,14 @@ public class Map
             possibleDocks.RemoveAt(selectedIndex);
             numDocks -= 1;
         }
+    }
+
+    private float shorePerlinNoise(int x, int y)
+    {
+        int seed = Random.Range(0, 100000);
+        float sampleX = x / SHORE_PERLIN_SCALE;
+        float sampleY = y / SHORE_PERLIN_SCALE;
+        return Mathf.PerlinNoise(sampleX + seed, sampleY + seed);
     }
 
     private void PlaceVillageBuildings()

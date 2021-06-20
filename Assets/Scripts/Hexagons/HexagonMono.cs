@@ -12,8 +12,8 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected Color ColorAfterVariance;
     protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
+    protected const float MAX_COLOR_VARIANCE = .02f;
 
-    private const float MAX_COLOR_VARIANCE = .02f;
     private static float ColorVarianceM => (MAX_COLOR_VARIANCE * 2f) / ((float)Managers.Board.Map.Width);
     private MeshRenderer hex;
 
@@ -75,7 +75,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         if (this.hex.materials.Length > 1)
         {
             Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.15f));
+            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.05f));
             darkerTexture.Apply();
             this.hex.materials[1] = this.hexagon.Material;
             this.hex.materials[1].mainTexture = darkerTexture;
