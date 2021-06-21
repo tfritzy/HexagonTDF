@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/*
+Biomes: Desert, Dense Pine Forest, Light birch Forest, Island, Lake, Mountain (low, rocky), Mountain (high, snowy), Grasslands.
+    Perlin Map:
+        Lake - 30%
+        Rest - 10%
+*/
+
 public class Map
 {
     public Dictionary<Vector2Int, BuildingType> Buildings;

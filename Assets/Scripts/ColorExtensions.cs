@@ -6,6 +6,11 @@ public static class ColorExtensions
 {
     public static Color Create(string colorHexCode, int a = 255)
     {
+        if (colorHexCode.StartsWith("#"))
+        {
+            colorHexCode = colorHexCode.Split('#')[1];
+        }
+
         int r = Convert.ToInt32("0x" + colorHexCode.Substring(0, 2), 16);
         int g = Convert.ToInt32("0x" + colorHexCode.Substring(2, 2), 16);
         int b = Convert.ToInt32("0x" + colorHexCode.Substring(4, 2), 16);
