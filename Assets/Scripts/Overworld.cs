@@ -4,13 +4,40 @@ using UnityEngine;
 
 public class Overworld : MonoBehaviour
 {
-    public float PERLIN_SCALE = 45f;
-    public float SEA_PERLIN_SCALE = 150f;
-    public float SEA_NOISE_PERLIN_SCALE = 3f;
-    public float SEA_CUTOFF;
+    public float HEIGHT_PERLIN_SCALE = 45f;
+    public int numOctaves = 3;
     public int Seed = 10293;
     public int worldWidth = 1000;
+    public float[,] HeightMap;
     public bool ShouldUpdate;
+    public List<Biome> Biomes = new List<Biome>() {
+        Biome.Sea,
+        Biome.Desert,
+        Biome.Grasslands,
+        Biome.BlackForest,
+        Biome.Mountain,
+        Biome.SnowMountain,
+    };
+    public float[] HeightCutoffs = new float[] {
+        .3f,
+        .35f,
+        .4f,
+        .7f,
+        .9f,
+        1.1f
+    };
+
+    public List<Biome> AdditionalMaps = new List<Biome>() {
+        Biome.BlackForest,
+    };
+
+    public float[] AdditionalMapScale = new float[] {
+        50f,
+    };
+
+    public float[] AdditionalMapWeight = new float[] {
+        .3f
+    };
 
     void Update()
     {
@@ -24,6 +51,8 @@ public class Overworld : MonoBehaviour
     void Start()
     {
         colorMap = new Dictionary<Biome, Color>();
+        HeightMap = new float[worldWidth, worldWidth];
+        Random.InitState(Seed);
         ResetTexture();
     }
 
@@ -34,68 +63,97 @@ public class Overworld : MonoBehaviour
         {
             for (int x = 0; x < worldWidth; x++)
             {
-                newTexture.SetPixel(x, y, GetColorWrapper(GetBiome(x, y)));
+                HeightMap[x, y] = GetHeight(x, y);
+                newTexture.SetPixel(x, y, GetColorWrapper(GetBiome(x, y), HeightMap[x, y]));
             }
         }
         newTexture.Apply();
         this.GetComponent<MeshRenderer>().material.mainTexture = newTexture;
     }
 
-    private float IsSea(float x, float y)
+    private float GetHeight(float x, float y)
     {
-        float seaValue = Mathf.PerlinNoise(x / SEA_PERLIN_SCALE + Seed, y / SEA_PERLIN_SCALE + Seed) +
-                         (Mathf.PerlinNoise(x / SEA_PERLIN_SCALE / 2f + Seed, y / SEA_PERLIN_SCALE / 2f + Seed) - .5f) / 2f +
-                         (Mathf.PerlinNoise(x / SEA_PERLIN_SCALE / 4f + Seed, y / SEA_PERLIN_SCALE / 4f + Seed) - .5f) / 4f +
-                         (Mathf.PerlinNoise(x / SEA_NOISE_PERLIN_SCALE + Seed, y / SEA_NOISE_PERLIN_SCALE + Seed) - .5f) / 2f;
-
-        return seaValue;
+        float height = Helpers.PerlinNoise(x, y, HEIGHT_PERLIN_SCALE, Seed, numOctaves);
+        height += (x / (worldWidth / 2)) * -.3f + .3f;
+        return height;
     }
 
     public Biome GetBiome(float x, float y)
     {
-        float seaPerlin = IsSea(x, y);
-        if (seaPerlin < SEA_CUTOFF)
+        float height = GetHeight(x, y);
+
+        for (int i = 0; i < HeightCutoffs.Length; i++)
+        {
+            if (height > HeightCutoffs[i])
+            {
+                continue;
+            }
+
+            if (i > 0)
+            {
+                float range = HeightCutoffs[i] - HeightCutoffs[i - 1];
+                float progressInRange = height - HeightCutoffs[i - 1];
+                float percent = progressInRange / range;
+                if (Random.Range(0f, 1f) < percent - getAdditionalMapValue(x, y, Biomes[i]))
+                {
+                    return Biomes[i];
+                }
+                else
+                {
+                    return Biomes[i - 1];
+                }
+            }
+            else
+            {
+                return Biomes[i];
+            }
+        }
+
+        if (height < .3f)
         {
             return Biome.Sea;
         }
-
-        if (seaPerlin < SEA_CUTOFF + .05f)
+        else if (height < .35f)
         {
             return Biome.Desert;
         }
-
-        float value = Mathf.PerlinNoise(x / PERLIN_SCALE + Seed, y / PERLIN_SCALE + Seed);
-
-        if (value < .4f)
-        {
-            return Biome.Grasslands;
-        }
-        else if (value < .6f)
+        else if (height < .7f)
         {
             return Biome.BlackForest;
         }
-        else if (value < .8f)
-        {
-            return Biome.BirchForest;
-        }
-        else
+        else if (height < .95f)
         {
             return Biome.Mountain;
         }
+        else
+        {
+            return Biome.SnowMountain;
+        }
+    }
+
+    private float getAdditionalMapValue(float x, float y, Biome biome)
+    {
+        int index = AdditionalMaps.IndexOf(biome);
+        if (index < 0)
+        {
+            return 0;
+        }
+
+        return Mathf.PerlinNoise(
+            x / AdditionalMapScale[index] + Seed,
+            y / AdditionalMapScale[index] + Seed)
+                * AdditionalMapWeight[index];
     }
 
     private Dictionary<Biome, Color> colorMap;
-    private Color GetColorWrapper(Biome biome)
+    private Color GetColorWrapper(Biome biome, float height)
     {
-        if (colorMap.ContainsKey(biome))
-        {
-            return colorMap[biome];
-        }
-        else
+        if (colorMap.ContainsKey(biome) == false)
         {
             colorMap[biome] = GetColor(biome);
-            return colorMap[biome];
         }
+
+        return ColorExtensions.Lighten(colorMap[biome], height - .5f);
     }
 
     private Color GetColor(Biome biome)
@@ -114,6 +172,8 @@ public class Overworld : MonoBehaviour
                 return ColorExtensions.Create("#306111");
             case (Biome.Mountain):
                 return ColorExtensions.Create("#808080");
+            case (Biome.SnowMountain):
+                return ColorExtensions.Create("#FFFFFF");
             default:
                 return ColorExtensions.Create("#FF00FF");
         }

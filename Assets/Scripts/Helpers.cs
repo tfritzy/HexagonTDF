@@ -290,6 +290,16 @@ public static class Helpers
         return path;
     }
 
+    public static float PerlinNoise(float x, float y, float scale, int seed, int numOctaves)
+    {
+        float value = Mathf.PerlinNoise(x / scale + seed, y / scale + seed);
+        for (int i = 2; i <= numOctaves; i++)
+        {
+            value += (Mathf.PerlinNoise(x / (scale / i) + seed, y / (scale / i) + seed) - .5f) / i;
+        }
+        return value;
+    }
+
     public static bool IsInBounds(Map map, Vector2Int position)
     {
         if (position.x < 0 || position.x >= map.Width)

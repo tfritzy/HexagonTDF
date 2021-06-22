@@ -22,10 +22,10 @@ public static class ColorExtensions
         return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
     }
 
-    public static Color Lighten(Color color)
+    public static Color Lighten(Color color, float amount)
     {
         float a = color.a;
-        color *= 1.5f;
+        color *= (1 + amount);
         color.a = a;
         return color;
     }

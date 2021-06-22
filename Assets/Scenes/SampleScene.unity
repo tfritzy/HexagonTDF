@@ -12977,13 +12977,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14ab6dfd54a472149b186618ff130fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PERLIN_SCALE: 100
-  SEA_PERLIN_SCALE: 200
-  SEA_NOISE_PERLIN_SCALE: 75
-  SEA_CUTOFF: 0.3
+  HEIGHT_PERLIN_SCALE: 1000
+  numOctaves: 3
   Seed: 10265
-  worldWidth: 1000
+  worldWidth: 3000
   ShouldUpdate: 0
+  Biomes: 000000000100000006000000020000000400000005000000
+  HeightCutoffs:
+  - 0.3
+  - 0.35
+  - 0.4
+  - 0.7
+  - 0.9
+  - 1.1
 --- !u!64 &1893922886
 MeshCollider:
   m_ObjectHideFlags: 0

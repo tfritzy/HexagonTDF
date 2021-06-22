@@ -5,5 +5,6 @@
     BlackForest,
     BirchForest,
     Mountain,
+    SnowMountain,
     Grasslands
 }
