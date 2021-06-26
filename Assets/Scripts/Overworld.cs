@@ -4,40 +4,20 @@ using UnityEngine;
 
 public class Overworld : MonoBehaviour
 {
-    public float HEIGHT_PERLIN_SCALE = 45f;
-    public int numOctaves = 3;
-    public int Seed = 10293;
-    public int worldWidth = 1000;
-    public float[,] HeightMap;
+    public float HEIGHT_PERLIN_SCALE;
+    public float BIOME_PERLIN_SCALE;
+    public float WATER_CUTOFF = .3f;
     public bool ShouldUpdate;
-    public List<Biome> Biomes = new List<Biome>() {
-        Biome.Sea,
+    private int Seed = 10293;
+    private int worldWidth = 1000;
+    private float[,] HeightMap;
+    private List<Biome> Biomes = new List<Biome>() {
         Biome.Desert,
         Biome.Grasslands,
         Biome.BlackForest,
         Biome.Mountain,
-        Biome.SnowMountain,
     };
-    public float[] HeightCutoffs = new float[] {
-        .3f,
-        .35f,
-        .4f,
-        .7f,
-        .9f,
-        1.1f
-    };
-
-    public List<Biome> AdditionalMaps = new List<Biome>() {
-        Biome.BlackForest,
-    };
-
-    public float[] AdditionalMapScale = new float[] {
-        50f,
-    };
-
-    public float[] AdditionalMapWeight = new float[] {
-        .3f
-    };
+    private List<float[,]> biomeMaps = new List<float[,]>();
 
     void Update()
     {
@@ -58,6 +38,7 @@ public class Overworld : MonoBehaviour
 
     private void ResetTexture()
     {
+        CalculateBiomeMaps();
         Texture2D newTexture = new Texture2D(worldWidth, worldWidth, TextureFormat.ARGB32, false);
         for (int y = 0; y < worldWidth; y++)
         {
@@ -71,78 +52,51 @@ public class Overworld : MonoBehaviour
         this.GetComponent<MeshRenderer>().material.mainTexture = newTexture;
     }
 
+    private void CalculateBiomeMaps()
+    {
+        biomeMaps = new List<float[,]>();
+        foreach (Biome biome in Biomes)
+        {
+            float[,] map = new float[worldWidth, worldWidth];
+            for (int y = 0; y < worldWidth; y++)
+            {
+                for (int x = 0; x < worldWidth; x++)
+                {
+                    map[x, y] = Helpers.PerlinNoise(x, y, BIOME_PERLIN_SCALE, Seed + biomeMaps.Count);
+                    map[x, y] = Mathf.Pow(map[x, y], 6f);
+                }
+            }
+            biomeMaps.Add(map);
+        }
+    }
+
     private float GetHeight(float x, float y)
     {
-        float height = Helpers.PerlinNoise(x, y, HEIGHT_PERLIN_SCALE, Seed, numOctaves);
+        float height = Helpers.PerlinNoise(x, y, HEIGHT_PERLIN_SCALE, Seed);
         height += (x / (worldWidth / 2)) * -.3f + .3f;
         return height;
     }
 
-    public Biome GetBiome(float x, float y)
+    public Biome GetBiome(int x, int y)
     {
-        float height = GetHeight(x, y);
-
-        for (int i = 0; i < HeightCutoffs.Length; i++)
-        {
-            if (height > HeightCutoffs[i])
-            {
-                continue;
-            }
-
-            if (i > 0)
-            {
-                float range = HeightCutoffs[i] - HeightCutoffs[i - 1];
-                float progressInRange = height - HeightCutoffs[i - 1];
-                float percent = progressInRange / range;
-                if (Random.Range(0f, 1f) < percent - getAdditionalMapValue(x, y, Biomes[i]))
-                {
-                    return Biomes[i];
-                }
-                else
-                {
-                    return Biomes[i - 1];
-                }
-            }
-            else
-            {
-                return Biomes[i];
-            }
-        }
-
-        if (height < .3f)
+        if (HeightMap[x, y] < WATER_CUTOFF)
         {
             return Biome.Sea;
         }
-        else if (height < .35f)
-        {
-            return Biome.Desert;
-        }
-        else if (height < .7f)
-        {
-            return Biome.BlackForest;
-        }
-        else if (height < .95f)
-        {
-            return Biome.Mountain;
-        }
-        else
-        {
-            return Biome.SnowMountain;
-        }
-    }
 
-    private float getAdditionalMapValue(float x, float y, Biome biome)
-    {
-        int index = AdditionalMaps.IndexOf(biome);
-        if (index < 0)
+        int maxBiomeIndex = 0;
+        float maxBiomeValue = biomeMaps[0][x, y];
+
+        for (int i = 1; i < biomeMaps.Count; i++)
         {
-            return 0;
+            if (biomeMaps[i][x, y] > maxBiomeValue)
+            {
+                maxBiomeValue = biomeMaps[i][x, y];
+                maxBiomeIndex = i;
+            }
         }
 
-        return Mathf.PerlinNoise(
-            x / AdditionalMapScale[index] + Seed,
-            y / AdditionalMapScale[index] + Seed)
-                * AdditionalMapWeight[index];
+        return Biomes[maxBiomeIndex];
     }
 
     private Dictionary<Biome, Color> colorMap;
