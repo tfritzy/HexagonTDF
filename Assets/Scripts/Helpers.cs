@@ -395,4 +395,9 @@ public static class Helpers
 
         return null;
     }
+
+    public static bool IsGridPosOccupiedByCharacter(Vector2Int pos)
+    {
+        return Managers.Board.CharacterPositions.ContainsKey(pos) && Managers.Board.CharacterPositions[pos] != null;
+    }
 }

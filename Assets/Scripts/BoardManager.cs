@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,21 +15,13 @@ public class BoardManager : MonoBehaviour
     public bool RegenerateMap;
     public Map Map;
     public Guid PathingId { get; private set; }
+    public Dictionary<Vector2Int, Character> CharacterPositions;
     private Dictionary<Vector2Int, Vector2Int[,]> predGridMap;
     private Dictionary<Vector2Int, Vector2Int[,]> predGridIgnoringBuildings;
 
     void Awake()
     {
-        GameObject asdf = Prefabs.Healthbar;
-        asdf = Prefabs.Hexagons[0];
-        asdf = Prefabs.HighlightHex;
-        asdf = Prefabs.Projectiles[0];
-        asdf = Prefabs.RangeCircle;
-        var sprite = Prefabs.ResourceIcons[ResourceType.Gold];
-        asdf = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
-        asdf = Prefabs.ResourceNumber;
-        sprite = Prefabs.UIIcons[UIIconType.Accept];
-
+        CharacterPositions = new Dictionary<Vector2Int, Character>();
         SpawnMap();
     }
 

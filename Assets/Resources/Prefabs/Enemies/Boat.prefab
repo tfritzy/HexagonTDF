@@ -40,7 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1914075769718934612}
   m_Layer: 0
-  m_Name: Seat0
+  m_Name: Seat2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,6 +111,9 @@ MonoBehaviour:
   IsOnBoat: 0
   Boat: {fileID: 0}
   _animationState: 0
+  TargetBuilding: {fileID: 0}
+  IsAttacking: 0
+  IsJumping: 0
   Capacity: 3
   Passangers: []
 --- !u!54 &3196493604001891924
@@ -139,7 +142,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5691221839178152461}
   m_Layer: 0
-  m_Name: Seat2
+  m_Name: Seat0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

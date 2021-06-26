@@ -25,6 +25,8 @@ public class Boat : Enemy
     protected List<Vector2Int> pathToShore;
     protected int pathProgress;
 
+    private bool hasCompletedPath;
+
     public void SetInitialPos(Vector2Int startGridPos)
     {
         FindNewPath(startGridPos);
@@ -37,11 +39,20 @@ public class Boat : Enemy
         this.destinationPos = pathToShore.Last();
     }
 
+    protected override void UpdateLoop()
+    {
+        base.UpdateLoop();
+
+        if (hasCompletedPath)
+        {
+            UnloadPassangers();
+        }
+    }
+
     protected override void OnReachPathEnd()
     {
         this.Rigidbody.velocity = Vector3.zero;
-        KickPassangersOffBoat();
-        Die();
+        hasCompletedPath = true;
     }
 
     public override void CalculatePathingPositions(Vector2Int currentPosition)
@@ -106,20 +117,29 @@ public class Boat : Enemy
         return this.transform.Find("Body").Find(SEAT_NAME + index).position;
     }
 
-    private void KickPassangersOffBoat()
+    private int unloadIndex = 0;
+    private void UnloadPassangers()
     {
-        foreach (Enemy passanger in Passangers)
+        while (unloadIndex < Passangers.Count && Passangers[unloadIndex] == null)
         {
-            if (passanger == null)
-            {
-                // passanger could have been killed.
-                continue;
-            }
-
-            passanger.transform.parent = null;
-            passanger.IsOnBoat = false;
-            passanger.AddRigidbody();
-            passanger.SetPathingPositions(this.Waypoint.EndPos, destinationPos, false);
+            unloadIndex += 1;
         }
+
+        if (unloadIndex >= Passangers.Count)
+        {
+            Die();
+            return;
+        }
+
+        if (Helpers.IsGridPosOccupiedByCharacter(destinationPos))
+        {
+            return;
+        }
+
+        Passangers[unloadIndex].transform.parent = null;
+        Passangers[unloadIndex].IsOnBoat = false;
+        Passangers[unloadIndex].AddRigidbody();
+        Passangers[unloadIndex].SetPathingPositions(this.Waypoint.EndPos, destinationPos, false);
+        unloadIndex += 1;
     }
 }

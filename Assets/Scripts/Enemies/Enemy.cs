@@ -135,19 +135,30 @@ public abstract class Enemy : Character
 
     public virtual void CalculatePathingPositions(Vector2Int currentPosition)
     {
+        Vector2Int nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition);
+
+        if (nextPos == Constants.MaxVector2Int)
+        {
+            nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition, ignoreBuildings: true);
+        }
+
+        if (Managers.Board.CharacterPositions.ContainsKey(nextPos) && Managers.Board.CharacterPositions[nextPos] != null)
+        {
+            return;
+        }
+
+        Managers.Board.CharacterPositions.Remove(this.Waypoint.EndPos);
         this.Waypoint = new Waypoint();
         this.Waypoint.StartPos = currentPosition;
-        this.Waypoint.EndPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, this.Waypoint.StartPos);
+        this.Waypoint.EndPos = nextPos;
 
-        if (this.Waypoint.EndPos == Constants.MaxVector2Int)
-        {
-            this.Waypoint.EndPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, this.Waypoint.StartPos, ignoreBuildings: true);
-        }
+        Managers.Board.CharacterPositions[nextPos] = this;
     }
 
     public void SetPathingPositions(Vector2Int startPos, Vector2Int endPos, bool isRecalculable)
     {
         this.Waypoint = new Waypoint(startPos, endPos, isRecalculable);
+        Managers.Board.CharacterPositions[endPos] = this;
     }
 
     private void FollowPath()
