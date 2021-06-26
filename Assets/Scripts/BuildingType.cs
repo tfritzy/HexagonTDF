@@ -15,5 +15,6 @@
     House,
     GuardTower,
     Dock,
-    Orb
+    Orb,
+    Barracks
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class Dock : Building
 {
     public override BuildingType Type => BuildingType.Dock;
-    public override bool IsVillageBuilding => false;
     public override Alliances Alliance => Alliances.Neutral;
     public override Alliances Enemies => Alliances.Neutral;
     public override int StartingHealth => int.MaxValue / 2;

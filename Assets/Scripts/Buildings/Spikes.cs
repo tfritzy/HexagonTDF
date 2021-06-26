@@ -11,7 +11,6 @@ public class Spikes : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override bool IsWalkable => true;
-    public override bool IsVillageBuilding => false;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
 
     private List<Enemy> enemiesInRange = new List<Enemy>();

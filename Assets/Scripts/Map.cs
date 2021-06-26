@@ -297,12 +297,12 @@ public class Map
         int index = Random.Range(0, centerLandmass.Count);
         Buildings[centerLandmass[index]] = BuildingType.Orb;
 
-        float numTowers = 5;
-        float hexesBetweenTowers = LandableShores.Count / numTowers;
+        float numBarracks = 5;
+        float hexesBetweenTowers = LandableShores.Count / numBarracks;
         for (float i = 0; i < LandableShores.Count; i += hexesBetweenTowers)
         {
             Vector2Int pos = LandableShores[(int)i];
-            Buildings[pos] = BuildingType.GuardTower;
+            Buildings[pos] = BuildingType.Barracks;
         }
     }
 

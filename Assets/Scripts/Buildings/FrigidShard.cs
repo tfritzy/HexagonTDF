@@ -13,7 +13,6 @@ public class FrigidShard : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public float SlowAmount => .5f;
-    public override bool IsVillageBuilding => false;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 10;
     protected override float ManualPowerAdjustment => 8;
     private FrozenEffect frozenEffect;

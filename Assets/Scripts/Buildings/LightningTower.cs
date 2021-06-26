@@ -11,7 +11,6 @@ public class LightningTower : AttackTower
     public override int Damage => 30;
     public override float Range => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
-    public override bool IsVillageBuilding => false;
     protected override float ManualPowerAdjustment => 1; // Double damage to air.
     protected override void Attack()
     {

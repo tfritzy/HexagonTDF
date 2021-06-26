@@ -5,7 +5,6 @@ using UnityEngine;
 public class Orb : Building
 {
     public override BuildingType Type => BuildingType.Orb;
-    public override bool IsVillageBuilding => true;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override int StartingHealth => 100;

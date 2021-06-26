@@ -11,6 +11,5 @@ public class FireTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
-    public override bool IsVillageBuilding => false;
     protected override float ExplosionRadius => 0.5f;
 }

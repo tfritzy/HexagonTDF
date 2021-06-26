@@ -85,18 +85,18 @@ public static class Managers
         }
     }
 
-    private static EnemySpawner enemySpawner;
-    public static EnemySpawner EnemySpawner
-    {
-        get
-        {
-            if (enemySpawner == null)
-            {
-                enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
-            }
-            return enemySpawner;
-        }
-    }
+    // private static EnemySpawner enemySpawner;
+    // public static EnemySpawner EnemySpawner
+    // {
+    //     get
+    //     {
+    //         if (enemySpawner == null)
+    //         {
+    //             enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+    //         }
+    //         return enemySpawner;
+    //     }
+    // }
 
     private static CaptureProgressBar captureProgressBar;
     public static CaptureProgressBar CaptureProgressBar

@@ -78,7 +78,7 @@ public abstract class Enemy : Character
         this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
-        this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
+        this.TargetBuilding = Managers.Board.Orbs[UnityEngine.Random.Range(0, Managers.Board.Orbs.Count)];
         this.destinationPos = TargetBuilding.GridPosition;
         this.projectileStartPosition = Helpers.RecursiveFindChild(this.transform, "ProjectileStartPosition") ?? this.transform;
         SetRagdollState(false);
@@ -144,6 +144,8 @@ public abstract class Enemy : Character
 
         if (Managers.Board.CharacterPositions.ContainsKey(nextPos) && Managers.Board.CharacterPositions[nextPos] != null)
         {
+            this.Rigidbody.velocity = Vector3.zero;
+            this.CurrentAnimation = EnemyAnimationState.Idle;
             return;
         }
 
@@ -165,7 +167,7 @@ public abstract class Enemy : Character
     {
         if (this.TargetBuilding == null)
         {
-            this.TargetBuilding = Managers.Board.VillageBuildings[UnityEngine.Random.Range(0, Managers.Board.VillageBuildings.Count)];
+            this.TargetBuilding = Managers.Board.Orbs[UnityEngine.Random.Range(0, Managers.Board.Orbs.Count)];
             if (shouldRecalculatePath())
             {
                 RecalculatePath();

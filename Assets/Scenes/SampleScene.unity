@@ -397,6 +397,7 @@ GameObject:
   - component: {fileID: 244310259}
   - component: {fileID: 244310261}
   - component: {fileID: 244310260}
+  - component: {fileID: 244310262}
   m_Layer: 5
   m_Name: CaptureProgressBar
   m_TagString: Untagged
@@ -463,6 +464,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 244310258}
   m_CullTransparentMesh: 0
+--- !u!114 &244310262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244310258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0339bbf5a53764c918e849f5b15aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &246724961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6932,7 +6945,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &967497971
 Transform:
   m_ObjectHideFlags: 0
@@ -7290,7 +7303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cbad0a6491390842a802033be91c186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VillageBuildings: []
+  Orbs: []
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
   RegenerateMap: 0
 --- !u!4 &1096331704

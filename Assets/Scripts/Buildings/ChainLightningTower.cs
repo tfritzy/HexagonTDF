@@ -11,7 +11,6 @@ public class ChainLightningTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 3;
-    public override bool IsVillageBuilding => false;
     private const float LIGHTNING_HOP_RANGE = 1f;
     private const float LIGHTNING_FLASH_DURATION = .075f;
     private List<GameObject> alreadyHitEnemies;

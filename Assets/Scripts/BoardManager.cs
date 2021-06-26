@@ -10,7 +10,7 @@ public class BoardManager : MonoBehaviour
     public const int IslandRadius = 8;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
-    public List<Building> VillageBuildings;
+    public List<Orb> Orbs;
     public string ActiveMapName;
     public bool RegenerateMap;
     public Map Map;
@@ -73,7 +73,7 @@ public class BoardManager : MonoBehaviour
             this.Hexagons[pos.x, pos.y].transform.Find("Hex").gameObject.SetActive(false);
         }
 
-        Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
+        // Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
     }
 
     public void AddBuilding(Building building)
@@ -101,9 +101,9 @@ public class BoardManager : MonoBehaviour
                     this.transform)
                     .GetComponent<Building>();
 
-            if (building.IsVillageBuilding)
+            if (building is Orb)
             {
-                VillageBuildings.Add(building);
+                Orbs.Add((Orb)building);
             }
 
             building.Initialize(pos);
@@ -143,14 +143,14 @@ public class BoardManager : MonoBehaviour
     {
         predGridMap = new Dictionary<Vector2Int, Vector2Int[,]>();
 
-        foreach (Building building in VillageBuildings)
+        foreach (Orb orb in Orbs)
         {
-            predGridMap[building.GridPosition] = Helpers.GetPredecessorGrid(
+            predGridMap[orb.GridPosition] = Helpers.GetPredecessorGrid(
                 this.Map,
-                building.GridPosition,
+                orb.GridPosition,
                 (Vector2Int pos) =>
                 {
-                    return Helpers.IsTraversable(pos) || pos == building.GridPosition || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
+                    return Helpers.IsTraversable(pos) || pos == orb.GridPosition || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
                 });
         }
     }
@@ -159,11 +159,11 @@ public class BoardManager : MonoBehaviour
     {
         predGridIgnoringBuildings = new Dictionary<Vector2Int, Vector2Int[,]>();
 
-        foreach (Building building in VillageBuildings)
+        foreach (Orb orb in Orbs)
         {
-            predGridIgnoringBuildings[building.GridPosition] = Helpers.GetPredecessorGrid(
+            predGridIgnoringBuildings[orb.GridPosition] = Helpers.GetPredecessorGrid(
                 this.Map,
-                building.GridPosition,
+                orb.GridPosition,
                 (Vector2Int pos) =>
                 {
                     return Managers.Board.Hexagons[pos.x, pos.y].IsWalkable || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);

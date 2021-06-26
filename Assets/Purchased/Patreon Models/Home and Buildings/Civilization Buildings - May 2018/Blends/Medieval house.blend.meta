@@ -13,7 +13,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: DarkBlue
-    second: {fileID: 2100000, guid: c407ca8a01351c047a204215dcd576fd, type: 2}
+    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -23,12 +23,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: DarkGrey
-    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
+    second: {fileID: 2100000, guid: 7c56cc08eaefe204d88a696f584eb0bc, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: DarkPurple
-    second: {fileID: 2100000, guid: 6fd9d35b9a03a0745a9714b67f61e874, type: 2}
+    second: {fileID: 2100000, guid: 89bfdebf4ca44be47a6667841527bcbf, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

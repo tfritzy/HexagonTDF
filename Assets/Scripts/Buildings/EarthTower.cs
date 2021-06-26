@@ -14,7 +14,6 @@ public class EarthTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
-    public override bool IsVillageBuilding => false;
     protected override float ManualPowerAdjustment => .5f; // Can store projectiles.
     private const float ROCK_ROTATION_RADIUS = .5f;
     private const float ROCK_ROTATION_TIME_SECONDS = 20f;
