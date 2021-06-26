@@ -7,7 +7,7 @@ public class BoardManager : MonoBehaviour
 {
     public const int BoardWidth = 20;
     public const int BoardHeight = 22;
-    public const int IslandRadius = 6;
+    public const int IslandRadius = 8;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public List<Building> VillageBuildings;

@@ -29,7 +29,7 @@ public class Map
     public const float FORREST_PERLIN_SCALE = 3f;
     public const float SHORE_PERLIN_SCALE = 2f;
     public const float LandPerlinCutoff = .60f;
-    public const float TreePerlinCutoff = .60f;
+    public const float TreePerlinCutoff = .70f;
     public const float ShorePerlinCutoff = .3f;
     public const int MaxDocks = 6;
     public const int MinDocks = 3;
