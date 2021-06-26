@@ -15,5 +15,5 @@
     House,
     GuardTower,
     Dock,
-    GreatHall
+    Orb
 }

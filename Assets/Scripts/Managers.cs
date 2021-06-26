@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class Managers
 {
@@ -94,6 +95,20 @@ public static class Managers
                 enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
             }
             return enemySpawner;
+        }
+    }
+
+    private static CaptureProgressBar captureProgressBar;
+    public static CaptureProgressBar CaptureProgressBar
+    {
+        get
+        {
+            if (captureProgressBar == null)
+            {
+                captureProgressBar = Canvas.Find("CaptureProgressBar").GetComponent<CaptureProgressBar>();
+            }
+
+            return captureProgressBar;
         }
     }
 }

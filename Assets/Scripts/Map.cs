@@ -295,7 +295,7 @@ public class Map
         }
 
         int index = Random.Range(0, centerLandmass.Count);
-        Buildings[centerLandmass[index]] = BuildingType.GreatHall;
+        Buildings[centerLandmass[index]] = BuildingType.Orb;
 
         float numTowers = 5;
         float hexesBetweenTowers = LandableShores.Count / numTowers;
