@@ -7272,6 +7272,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: StartWaveDialog
       objectReference: {fileID: 0}
+    - target: {fileID: 1377141091539701829, guid: c03dbbc83cca9bd41a8ac811542b2abc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c03dbbc83cca9bd41a8ac811542b2abc, type: 3}
 --- !u!1 &1096331702

@@ -112,7 +112,7 @@ public class EnemySpawner : MonoBehaviour
             ShoreMono shore = this.shores[Random.Range(0, this.shores.Count)];
             Boat boat = Instantiate(
                 Prefabs.Enemies[EnemyType.Boat],
-                Map.ToWorldPosition(boatPos),
+                Helpers.ToWorldPosition(boatPos),
                 new Quaternion()).GetComponent<Boat>();
             boat.SetInitialPos(boatPos);
             float boatPower = PowerPerSecondByWave[CurrentWave] * DEFAULT_SEC_BETWEEN_SPAWN;

@@ -19,7 +19,7 @@ public class Boat : Enemy
     protected override float DistanceFromFinalDestinationBeforeEnd => 1.8f;
     protected override float Cooldown => float.MaxValue / 2; // Divide by 2 because cooldown gets added to time, which would overflow.
     protected override int AttackDamage => 0;
-    protected override float AttackRange => 0;
+    protected override int AttackRange => 0;
     protected override EnemyAnimationState AttackAnimation => throw new System.Exception("Boat should not be trying to use an attack animation.");
 
     protected List<Vector2Int> pathToShore;
@@ -49,7 +49,7 @@ public class Boat : Enemy
         }
     }
 
-    protected override void OnReachPathEnd()
+    protected void OnReachPathEnd()
     {
         this.Rigidbody.velocity = Vector3.zero;
         hasCompletedPath = true;

@@ -400,4 +400,41 @@ public static class Helpers
     {
         return Managers.Board.CharacterPositions.ContainsKey(pos) && Managers.Board.CharacterPositions[pos] != null;
     }
+
+    public static int CubeDistance(Vector3Int a, Vector3Int b)
+    {
+        return (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y) + Mathf.Abs(a.z - b.z)) / 2;
+    }
+
+    public static Vector3Int OffsetToCube(Vector2Int offset)
+    {
+        int x = offset.y;
+        var z = offset.y - (offset.x + (offset.x & 1)) / 2;
+        var y = -x - z;
+        return new Vector3Int(x, y, z);
+    }
+
+    public static int hex_distance(Vector2Int posA, Vector2Int posB)
+    {
+        Vector3Int ac = OffsetToCube(posA);
+        Vector3Int bc = OffsetToCube(posB);
+        return CubeDistance(ac, bc);
+    }
+
+    public static bool IsWithinRange(Vector2Int sourcePos, Vector2Int targetPos, int range)
+    {
+        return hex_distance(sourcePos, targetPos) <= range + 1;
+    }
+
+    public static Vector3 ToWorldPosition(int x, int y)
+    {
+        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
+        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
+        return new Vector3(xF, 0f, zF);
+    }
+
+    public static Vector3 ToWorldPosition(Vector2Int position)
+    {
+        return ToWorldPosition(position.x, position.y);
+    }
 }

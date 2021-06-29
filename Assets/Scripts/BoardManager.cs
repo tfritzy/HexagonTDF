@@ -178,7 +178,7 @@ public class BoardManager : MonoBehaviour
 
     private void BuildHexagon(HexagonType type, int x, int y)
     {
-        Vector3 position = Map.ToWorldPosition(x, y);
+        Vector3 position = Helpers.ToWorldPosition(x, y);
         position.y = Map.HexHeightMap[x, y];
         GameObject go = Instantiate(Prefabs.Hexagons[type], position, new Quaternion(), this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();

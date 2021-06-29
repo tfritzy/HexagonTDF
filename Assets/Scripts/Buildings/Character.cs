@@ -48,6 +48,7 @@ public abstract class Character : MonoBehaviour
     private int health;
     private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
     private Healthbar healthbar;
+    public Vector2Int GridPosition { get; set; }
 
     void Start()
     {

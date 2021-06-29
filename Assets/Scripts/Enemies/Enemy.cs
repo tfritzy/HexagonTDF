@@ -46,18 +46,21 @@ public abstract class Enemy : Character
     }
     public Building TargetBuilding;
     public bool IsAttacking;
+    public bool IsJumping;
     private Animator animator;
     protected Vector2Int destinationPos;
     protected abstract float Cooldown { get; }
     protected abstract int AttackDamage { get; }
-    protected virtual float AttackRange => MELEE_ATTACK_RANGE;
+    protected virtual int AttackRange => MELEE_ATTACK_RANGE;
     protected abstract EnemyAnimationState AttackAnimation { get; }
-    public bool IsJumping;
+    protected Vector2Int ActualGridPosition;
 
     private const float VERTICAL_MOVEMENT_MODIFIER = .5f;
-    private const float MELEE_ATTACK_RANGE = .8f;
+    private const int MELEE_ATTACK_RANGE = 1;
     private float lastAttackTime;
     private Transform projectileStartPosition;
+    private LineRenderer lineRenderer;
+    private Transform currentPositionOrb;
 
     public void SetPower(float power, float healthModifier)
     {
@@ -81,6 +84,9 @@ public abstract class Enemy : Character
         this.TargetBuilding = Managers.Board.Orbs[UnityEngine.Random.Range(0, Managers.Board.Orbs.Count)];
         this.destinationPos = TargetBuilding.GridPosition;
         this.projectileStartPosition = Helpers.RecursiveFindChild(this.transform, "ProjectileStartPosition") ?? this.transform;
+        this.lineRenderer = this.GetComponent<LineRenderer>();
+        this.currentPositionOrb = transform.Find("CurrentPosition");
+        this.currentPositionOrb.transform.parent = null;
         SetRagdollState(false);
     }
 
@@ -149,18 +155,22 @@ public abstract class Enemy : Character
             return;
         }
 
-        Managers.Board.CharacterPositions.Remove(this.Waypoint.EndPos);
         this.Waypoint = new Waypoint();
         this.Waypoint.StartPos = currentPosition;
         this.Waypoint.EndPos = nextPos;
 
-        Managers.Board.CharacterPositions[nextPos] = this;
+        if (this.lineRenderer != null)
+        {
+            this.lineRenderer.SetPosition(0, Managers.Board.GetHex(this.Waypoint.StartPos).transform.position);
+            this.lineRenderer.SetPosition(1, Managers.Board.GetHex(this.Waypoint.EndPos).transform.position);
+        }
     }
 
     public void SetPathingPositions(Vector2Int startPos, Vector2Int endPos, bool isRecalculable)
     {
         this.Waypoint = new Waypoint(startPos, endPos, isRecalculable);
         Managers.Board.CharacterPositions[endPos] = this;
+        this.GridPosition = endPos;
     }
 
     private void FollowPath()
@@ -168,15 +178,19 @@ public abstract class Enemy : Character
         if (this.TargetBuilding == null)
         {
             this.TargetBuilding = Managers.Board.Orbs[UnityEngine.Random.Range(0, Managers.Board.Orbs.Count)];
-            if (shouldRecalculatePath())
-            {
-                RecalculatePath();
-            }
         }
 
         if (shouldRecalculatePath())
         {
             RecalculatePath();
+        }
+
+        // Waypoint end position is unblocked, so claim it.
+        if (this.Waypoint.EndPos != this.GridPosition)
+        {
+            Managers.Board.CharacterPositions.Remove(this.GridPosition);
+            this.GridPosition = this.Waypoint.EndPos;
+            Managers.Board.CharacterPositions[this.GridPosition] = this;
         }
 
         Vector3 difference = (Managers.Board.GetHex(this.Waypoint.EndPos).transform.position - this.transform.position);
@@ -194,38 +208,25 @@ public abstract class Enemy : Character
             this.CurrentAnimation = EnemyAnimationState.Walking;
         }
 
-        if (this.Waypoint.EndPos == this.destinationPos)
+        if (difference.magnitude < .1f)
         {
-            if (difference.magnitude < DistanceFromFinalDestinationBeforeEnd)
-            {
-                OnReachPathEnd();
-            }
-        }
-        else
-        {
-            if (difference.magnitude < .1f)
-            {
-                CalculatePathingPositions(this.Waypoint.EndPos);
-            }
+            this.ActualGridPosition = this.Waypoint.EndPos;
+            currentPositionOrb.transform.position = Managers.Board.GetHex(this.GridPosition).transform.position;
+            CalculatePathingPositions(this.Waypoint.EndPos);
         }
     }
 
     private void AttackTarget()
     {
-        if (Managers.Board.Buildings.ContainsKey(this.Waypoint.EndPos) == false)
-        {
-            this.IsAttacking = false;
-        }
-
         if (IsInRangeOfTarget())
         {
+            this.IsAttacking = true;
             this.CurrentAnimation = this.AttackAnimation;
             IsAttacking = true;
             this.Rigidbody.velocity = Vector3.zero;
             Vector3 diffVector = TargetBuilding.transform.position - this.transform.position;
             diffVector.y = 0;
             this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
-
             lastAttackTime = Time.time;
         }
     }
@@ -264,15 +265,14 @@ public abstract class Enemy : Character
 
     private bool IsInRangeOfTarget()
     {
-        if (Managers.Board.Buildings.ContainsKey(this.Waypoint.EndPos) &&
-            Managers.Board.Buildings[this.Waypoint.EndPos].Alliance == this.Enemies &&
-            Managers.Board.Buildings[this.Waypoint.EndPos].IsWalkable == false)
+        if (Managers.Board.Buildings.ContainsKey(this.Waypoint?.EndPos ?? Constants.MaxVector2Int) == false)
         {
-            Vector3 diffToTarget = this.transform.position - Managers.Board.Buildings[this.Waypoint.EndPos].transform.position;
-            if (diffToTarget.magnitude < this.AttackRange)
-            {
-                return true;
-            }
+            return false;
+        }
+
+        if (Helpers.IsWithinRange(this.ActualGridPosition, Managers.Board.Buildings[this.Waypoint.EndPos].GridPosition, this.AttackRange))
+        {
+            return true;
         }
 
         return false;
@@ -368,14 +368,6 @@ public abstract class Enemy : Character
     protected virtual void RecalculatePath()
     {
         CalculatePathingPositions(this.Waypoint.StartPos);
-    }
-
-    protected virtual void OnReachPathEnd()
-    {
-        this.Rigidbody.velocity = Vector3.zero;
-        this.TargetBuilding.TakeDamage(1, this);
-        Destroy(this.gameObject);
-        IsDead = true;
     }
 
     public int RollGoldReward()

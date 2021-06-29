@@ -305,18 +305,6 @@ public class Map
             Buildings[pos] = BuildingType.Barracks;
         }
     }
-
-    public static Vector3 ToWorldPosition(int x, int y)
-    {
-        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
-        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        return new Vector3(xF, 0f, zF);
-    }
-
-    public static Vector3 ToWorldPosition(Vector2Int position)
-    {
-        return ToWorldPosition(position.x, position.y);
-    }
 }
 
 
