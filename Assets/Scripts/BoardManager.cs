@@ -17,6 +17,7 @@ public class BoardManager : MonoBehaviour
     public Guid PathingId { get; private set; }
     public Dictionary<Vector2Int, Character> CharacterPositions;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
+    private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
 
     void Awake()
     {
@@ -83,7 +84,7 @@ public class BoardManager : MonoBehaviour
 
         Buildings[building.GridPosition] = building;
 
-        RecalculatePredGrid();
+        RecalculatePredGrids();
     }
 
     private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
@@ -132,7 +133,12 @@ public class BoardManager : MonoBehaviour
         return predGridMap[sourceBuilding][currentPos.x, currentPos.y];
     }
 
-    private void RecalculatePredGrid()
+    public int GetFlightDistanceToTarget(Vector2Int building, Vector2Int pos)
+    {
+        return flightPredGridMap[building][pos.x, pos.y].Distance - 1;
+    }
+
+    private void RecalculatePredGrids()
     {
         predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
@@ -150,6 +156,15 @@ public class BoardManager : MonoBehaviour
 
                     return Hexagons[testEndPos.x, testEndPos.y].IsWalkable || testEndPos == orb.GridPosition;
                 });
+        }
+
+        flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
+        foreach (Orb orb in Orbs)
+        {
+            flightPredGridMap[orb.GridPosition] = Helpers.GetPredecessorGrid(
+                this.Map,
+                orb.GridPosition,
+                (Vector2Int startPos, Vector2Int testEndPos) => true);
         }
     }
 

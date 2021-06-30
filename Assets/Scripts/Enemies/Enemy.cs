@@ -149,9 +149,15 @@ public abstract class Enemy : Character
             {
                 Vector2Int neighborPos = Helpers.GetNeighborPosition(Managers.Board.Map, currentPosition, i);
                 PredGridPoint testNextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, neighborPos);
-                if (testNextPos.Distance <= nextPos.Distance + 2)
+
+                if (testNextPos.Position == Constants.MaxVector2Int)
                 {
-                    nextPos = testNextPos;
+                    continue;
+                }
+
+                if (testNextPos.Distance <= nextPos.Distance + 1 && Managers.Board.CharacterPositions.ContainsKey(testNextPos.Position) == false)
+                {
+                    nextPos = new PredGridPoint(neighborPos, testNextPos.Distance - 1);
                     break;
                 }
             }
