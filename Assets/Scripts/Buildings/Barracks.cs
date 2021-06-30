@@ -18,7 +18,7 @@ public class Barracks : Building
         base.Setup();
 
         NumSoldiers = Random.Range(20, 30);
-        exitGridPosition = Managers.Board.GetNextStepInPathToSource(Managers.Board.Orbs[0].GridPosition, this.GridPosition, true);
+        exitGridPosition = Managers.Board.GetNextStepInPathToSource(Managers.Board.Orbs[0].GridPosition, this.GridPosition).Position;
     }
 
     private float lastSpawnTime = 0f;

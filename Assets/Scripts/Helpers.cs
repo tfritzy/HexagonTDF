@@ -47,7 +47,7 @@ public static class Helpers
         return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude, (Vector2Int pos) => { return true; });
     }
 
-    public static List<Vector2Int> FindPath(Vector2Int[,] predecessorGrid, Vector2Int startPos, Vector2Int endPos)
+    public static List<Vector2Int> FindPath(PredGridPoint[,] predecessorGrid, Vector2Int startPos, Vector2Int endPos)
     {
         return GetPathFromPredecessorGrid(predecessorGrid, startPos, endPos);
     }
@@ -59,29 +59,29 @@ public static class Helpers
 
     public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude, Func<Vector2Int, bool> isValidEnd)
     {
-        Queue<Vector2Int> q = new Queue<Vector2Int>();
+        Queue<PredGridPoint> q = new Queue<PredGridPoint>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-        Vector2Int[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
-        q.Enqueue(sourcePos);
+        PredGridPoint[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
+        q.Enqueue(new PredGridPoint(sourcePos, 0));
 
         while (q.Count > 0)
         {
-            Vector2Int current = q.Dequeue();
-            if (visited.Contains(current))
+            PredGridPoint current = q.Dequeue();
+            if (visited.Contains(current.Position))
             {
                 continue;
             }
 
-            visited.Add(current);
+            visited.Add(current.Position);
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int testPosition = GetNeighborPosition(map, current, i);
+                Vector2Int testPosition = GetNeighborPosition(map, current.Position, i);
                 if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
                 }
 
-                if (predecessorGrid[testPosition.x, testPosition.y] == Constants.MaxVector2Int)
+                if (predecessorGrid[testPosition.x, testPosition.y].Position == Constants.MaxVector2Int)
                 {
                     predecessorGrid[testPosition.x, testPosition.y] = current;
                 }
@@ -96,7 +96,7 @@ public static class Helpers
                     continue;
                 }
 
-                q.Enqueue(testPosition);
+                q.Enqueue(new PredGridPoint(testPosition, current.Distance + 1));
             }
         }
 
@@ -104,92 +104,51 @@ public static class Helpers
     }
 
 
-    public static Vector2Int[,] GetPredecessorGrid(Map map, Vector2Int sourcePos, Func<Vector2Int, bool> shouldInclude)
+    public static PredGridPoint[,] GetPredecessorGrid(Map map, Vector2Int sourcePos, Func<Vector2Int, Vector2Int, bool> shouldInclude)
     {
-        Queue<Vector2Int> q = new Queue<Vector2Int>();
+        Queue<PredGridPoint> q = new Queue<PredGridPoint>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-        Vector2Int[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
+        PredGridPoint[,] predecessorGrid = BuildPredecessorGrid(map.Width, map.Height);
 
-        if (shouldInclude(sourcePos) == false)
+        if (shouldInclude(Constants.MaxVector2Int, sourcePos) == false)
         {
             return predecessorGrid;
         }
 
-        q.Enqueue(sourcePos);
+        q.Enqueue(new PredGridPoint(sourcePos, 0));
 
         while (q.Count > 0)
         {
-            Vector2Int current = q.Dequeue();
-            if (visited.Contains(current))
+            PredGridPoint current = q.Dequeue();
+            if (visited.Contains(current.Position))
             {
                 continue;
             }
 
-            visited.Add(current);
+            visited.Add(current.Position);
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int testPosition = GetNeighborPosition(map, current, i);
+                Vector2Int testPosition = GetNeighborPosition(map, current.Position, i);
                 if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
                 }
 
-                if (visited.Contains(testPosition) || shouldInclude(testPosition) == false)
+                if (visited.Contains(testPosition) || shouldInclude(current.Position, testPosition) == false)
                 {
                     continue;
                 }
 
-                if (predecessorGrid[testPosition.x, testPosition.y] == Constants.MaxVector2Int)
+                if (predecessorGrid[testPosition.x, testPosition.y].Position == Constants.MaxVector2Int)
                 {
                     predecessorGrid[testPosition.x, testPosition.y] = current;
                 }
 
-                q.Enqueue(testPosition);
+                q.Enqueue(new PredGridPoint(testPosition, current.Distance + 1));
             }
         }
 
         return predecessorGrid;
-    }
-
-    private static bool IsTraversable(Vector2Int position, HexagonMono[,] grid, Dictionary<Vector2Int, Building> buildings)
-    {
-        return (buildings.ContainsKey(position) == false || buildings[position].IsWalkable) && Managers.Board.Hexagons[position.x, position.y].IsWalkable;
-    }
-
-    public static bool IsTraversable(Vector2Int position)
-    {
-        return IsTraversable(position, Managers.Board.Hexagons, Managers.Board.Buildings);
-    }
-
-    public static List<Vector2Int> GetAllHexInRange(Map map, Vector2Int position, int range)
-    {
-        Dictionary<Vector2Int, int> visited = new Dictionary<Vector2Int, int>();
-        Queue<Vector3Int> q = new Queue<Vector3Int>();
-        q.Enqueue(new Vector3Int(position.x, position.y, 0)); // z == number of hops.
-
-        while (q.Count > 0)
-        {
-            Vector3Int current = q.Dequeue();
-            if (visited.ContainsKey((Vector2Int)current))
-            {
-                continue;
-            }
-
-            if (current.z > range)
-            {
-                continue;
-            }
-
-            visited[(Vector2Int)current] = current.z;
-
-            for (int i = 0; i < 6; i++)
-            {
-                Vector2Int neighbor = GetNeighborPosition(map, (Vector2Int)current, i);
-                q.Enqueue(new Vector3Int(neighbor.x, neighbor.y, current.z + 1));
-            }
-        }
-
-        return visited.Keys.ToList();
     }
 
     public static List<HashSet<Vector2Int>> FindCongruentGroups(Map map, HashSet<Vector2Int> allPositions, Func<Vector2Int, bool> shouldInclude)
@@ -256,28 +215,28 @@ public static class Helpers
         }
     }
 
-    private static Vector2Int[,] BuildPredecessorGrid(int sizeX, int sizeY)
+    private static PredGridPoint[,] BuildPredecessorGrid(int sizeX, int sizeY)
     {
-        Vector2Int[,] predecessorGrid = new Vector2Int[sizeX, sizeY];
+        PredGridPoint[,] predecessorGrid = new PredGridPoint[sizeX, sizeY];
         for (int x = 0; x < sizeX; x++)
         {
             for (int y = 0; y < sizeY; y++)
             {
-                predecessorGrid[x, y] = Constants.MaxVector2Int;
+                predecessorGrid[x, y] = new PredGridPoint();
             }
         }
 
         return predecessorGrid;
     }
 
-    private static List<Vector2Int> GetPathFromPredecessorGrid(Vector2Int[,] grid, Vector2Int startPosition, Vector2Int endPosition)
+    private static List<Vector2Int> GetPathFromPredecessorGrid(PredGridPoint[,] grid, Vector2Int startPosition, Vector2Int endPosition)
     {
         List<Vector2Int> path = new List<Vector2Int>();
         Vector2Int current = endPosition;
         while (current != Constants.MaxVector2Int)
         {
             path.Add(current);
-            current = grid[current.x, current.y];
+            current = grid[current.x, current.y].Position;
 
             if (current == startPosition)
             {

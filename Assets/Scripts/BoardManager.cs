@@ -16,8 +16,7 @@ public class BoardManager : MonoBehaviour
     public Map Map;
     public Guid PathingId { get; private set; }
     public Dictionary<Vector2Int, Character> CharacterPositions;
-    private Dictionary<Vector2Int, Vector2Int[,]> predGridMap;
-    private Dictionary<Vector2Int, Vector2Int[,]> predGridIgnoringBuildings;
+    private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
 
     void Awake()
     {
@@ -40,7 +39,6 @@ public class BoardManager : MonoBehaviour
         Map = new Map(BoardWidth, BoardHeight, IslandRadius);
         SpawnHexagons(Map);
         SpawnBuildings(Map.Buildings);
-        CalculatePredGridIgnoringBuildings();
     }
 
     private void CleanupMap()
@@ -129,44 +127,28 @@ public class BoardManager : MonoBehaviour
         return typeMap;
     }
 
-    public Vector2Int GetNextStepInPathToSource(Vector2Int sourceBuilding, Vector2Int currentPos, bool ignoreBuildings = false)
+    public PredGridPoint GetNextStepInPathToSource(Vector2Int sourceBuilding, Vector2Int currentPos)
     {
-        if (ignoreBuildings)
-        {
-            return predGridIgnoringBuildings[sourceBuilding][currentPos.x, currentPos.y];
-        }
-
         return predGridMap[sourceBuilding][currentPos.x, currentPos.y];
     }
 
     private void RecalculatePredGrid()
     {
-        predGridMap = new Dictionary<Vector2Int, Vector2Int[,]>();
+        predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
         foreach (Orb orb in Orbs)
         {
             predGridMap[orb.GridPosition] = Helpers.GetPredecessorGrid(
                 this.Map,
                 orb.GridPosition,
-                (Vector2Int pos) =>
+                (Vector2Int startPos, Vector2Int testEndPos) =>
                 {
-                    return Helpers.IsTraversable(pos) || pos == orb.GridPosition || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
-                });
-        }
-    }
+                    if ((startPos != orb.GridPosition && Buildings.ContainsKey(startPos) && Buildings[startPos].Type != BuildingType.Dock))
+                    {
+                        return false; // You would have needed to pass through a building to get here.
+                    }
 
-    private void CalculatePredGridIgnoringBuildings()
-    {
-        predGridIgnoringBuildings = new Dictionary<Vector2Int, Vector2Int[,]>();
-
-        foreach (Orb orb in Orbs)
-        {
-            predGridIgnoringBuildings[orb.GridPosition] = Helpers.GetPredecessorGrid(
-                this.Map,
-                orb.GridPosition,
-                (Vector2Int pos) =>
-                {
-                    return Managers.Board.Hexagons[pos.x, pos.y].IsWalkable || (Buildings.ContainsKey(pos) && Buildings[pos].Type == BuildingType.Dock);
+                    return Hexagons[testEndPos.x, testEndPos.y].IsWalkable || testEndPos == orb.GridPosition;
                 });
         }
     }

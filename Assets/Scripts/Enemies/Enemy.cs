@@ -141,14 +141,28 @@ public abstract class Enemy : Character
 
     public virtual void CalculatePathingPositions(Vector2Int currentPosition)
     {
-        Vector2Int nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition);
+        PredGridPoint nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition);
 
-        if (nextPos == Constants.MaxVector2Int)
+        if (Managers.Board.CharacterPositions.ContainsKey(nextPos.Position))
         {
-            nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition, ignoreBuildings: true);
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2Int neighborPos = Helpers.GetNeighborPosition(Managers.Board.Map, currentPosition, i);
+                PredGridPoint testNextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, neighborPos);
+                if (testNextPos.Distance <= nextPos.Distance + 2)
+                {
+                    nextPos = testNextPos;
+                    break;
+                }
+            }
         }
 
-        if (Managers.Board.CharacterPositions.ContainsKey(nextPos) && Managers.Board.CharacterPositions[nextPos] != null)
+        if (nextPos.Position == Constants.MaxVector2Int)
+        {
+            nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetBuilding.GridPosition, currentPosition);
+        }
+
+        if (Managers.Board.CharacterPositions.ContainsKey(nextPos.Position) && Managers.Board.CharacterPositions[nextPos.Position] != null)
         {
             this.Rigidbody.velocity = Vector3.zero;
             this.CurrentAnimation = EnemyAnimationState.Idle;
@@ -157,7 +171,7 @@ public abstract class Enemy : Character
 
         this.Waypoint = new Waypoint();
         this.Waypoint.StartPos = currentPosition;
-        this.Waypoint.EndPos = nextPos;
+        this.Waypoint.EndPos = nextPos.Position;
 
         if (this.lineRenderer != null)
         {
