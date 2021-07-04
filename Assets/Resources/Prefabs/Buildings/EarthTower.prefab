@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  Projectile: {fileID: 2350400136769622953, guid: 2fd70514a54531f4dae04917c84640d7, type: 3}
   Target: {fileID: 0}
   MaxRocks: 3
 --- !u!65 &2840691404283401182

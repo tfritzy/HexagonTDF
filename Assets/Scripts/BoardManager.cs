@@ -7,10 +7,9 @@ public class BoardManager : MonoBehaviour
 {
     public const int BoardWidth = 20;
     public const int BoardHeight = 22;
-    public const int IslandRadius = 8;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
-    public List<Orb> Orbs;
+    public Trebuchet Trebuchet;
     public string ActiveMapName;
     public bool RegenerateMap;
     public Map Map;
@@ -37,8 +36,9 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        Map = new Map(BoardWidth, BoardHeight, IslandRadius);
+        Map = new Map(BoardWidth, BoardHeight);
         SpawnHexagons(Map);
+        SpawnTrebuchet(Map);
         SpawnBuildings(Map.Buildings);
     }
 
@@ -67,10 +67,10 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        foreach (Vector2Int pos in map.OceanHex)
-        {
-            this.Hexagons[pos.x, pos.y].transform.Find("Hex").gameObject.SetActive(false);
-        }
+        // foreach (Vector2Int pos in map.OceanHex)
+        // {
+        //     this.Hexagons[pos.x, pos.y].transform.Find("Hex").gameObject.SetActive(false);
+        // }
 
         // Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
     }
@@ -100,13 +100,18 @@ public class BoardManager : MonoBehaviour
                     this.transform)
                     .GetComponent<Building>();
 
-            if (building is Orb)
-            {
-                Orbs.Add((Orb)building);
-            }
-
             building.Initialize(pos);
         }
+    }
+
+    private void SpawnTrebuchet(Map map)
+    {
+        Vector2Int pos = map.Trebuchet;
+        Trebuchet = Instantiate(
+            Prefabs.Allies[AlliedUnitType.Trebuchet],
+            Hexagons[pos.x, pos.y].transform.position,
+            new Quaternion())
+                .GetComponent<Trebuchet>();
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
@@ -142,30 +147,27 @@ public class BoardManager : MonoBehaviour
     {
         predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
-        foreach (Orb orb in Orbs)
-        {
-            predGridMap[orb.GridPosition] = Helpers.GetPredecessorGrid(
-                this.Map,
-                orb.GridPosition,
-                (Vector2Int startPos, Vector2Int testEndPos) =>
+        predGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
+            this.Map,
+            Trebuchet.GridPosition,
+            (Vector2Int startPos, Vector2Int testEndPos) =>
+            {
+                if ((startPos != Trebuchet.GridPosition && Buildings.ContainsKey(startPos) && Buildings[startPos].Type != BuildingType.Dock))
                 {
-                    if ((startPos != orb.GridPosition && Buildings.ContainsKey(startPos) && Buildings[startPos].Type != BuildingType.Dock))
-                    {
-                        return false; // You would have needed to pass through a building to get here.
-                    }
+                    return false; // You would have needed to pass through a building to get here.
+                }
 
-                    return Hexagons[testEndPos.x, testEndPos.y].IsWalkable || testEndPos == orb.GridPosition;
-                });
-        }
+                return Hexagons[testEndPos.x, testEndPos.y].IsWalkable || testEndPos == Trebuchet.GridPosition;
+            });
+
 
         flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
-        foreach (Orb orb in Orbs)
-        {
-            flightPredGridMap[orb.GridPosition] = Helpers.GetPredecessorGrid(
-                this.Map,
-                orb.GridPosition,
-                (Vector2Int startPos, Vector2Int testEndPos) => true);
-        }
+
+        flightPredGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
+            this.Map,
+            Trebuchet.GridPosition,
+            (Vector2Int startPos, Vector2Int testEndPos) => true);
+
     }
 
     public bool IsBuildable(Vector2Int pos)

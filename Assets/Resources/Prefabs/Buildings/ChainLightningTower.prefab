@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  Projectile: {fileID: 0}
   Target: {fileID: 0}
 --- !u!65 &-6342631325454125683
 BoxCollider:

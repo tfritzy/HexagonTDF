@@ -1,8 +1,8 @@
 public static class RangeOptions
 {
-    public const float VeryVeryShort = .75f;
-    public const float Short = 2.6f;
-    public const float Medium = 3.6f;
-    public const float Long = 5.1f;
-    public const float VeryLong = 6.6f;
+    public const int VeryVeryShort = 1;
+    public const int Short = 2;
+    public const int Medium = 3;
+    public const int Long = 4;
+    public const int VeryLong = 5;
 }

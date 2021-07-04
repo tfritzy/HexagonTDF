@@ -10,6 +10,12 @@ public class Barracks : Building
     public override Alliances Enemies => Alliances.Player;
     public override int StartingHealth => 100;
     public override float Power => int.MaxValue;
+
+    public override float Cooldown => float.MaxValue / 2;
+    public override int Damage => throw new System.NotImplementedException();
+    public override int Range => throw new System.NotImplementedException();
+    public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
+
     public EnemyType[] Soldiers;
     private Vector2Int exitGridPosition;
 
@@ -18,7 +24,7 @@ public class Barracks : Building
         base.Setup();
 
         NumSoldiers = Random.Range(20, 30);
-        exitGridPosition = Managers.Board.GetNextStepInPathToSource(Managers.Board.Orbs[0].GridPosition, this.GridPosition).Position;
+        exitGridPosition = Managers.Board.GetNextStepInPathToSource(Managers.Board.Trebuchet.GridPosition, this.GridPosition).Position;
     }
 
     private float lastSpawnTime = 0f;

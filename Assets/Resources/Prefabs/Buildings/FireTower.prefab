@@ -4828,6 +4828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  Projectile: {fileID: 7620643641299552154, guid: bb805b82716990345b71d0bfaee4f956, type: 3}
   Target: {fileID: 0}
 --- !u!65 &-1366059427063301412
 BoxCollider:

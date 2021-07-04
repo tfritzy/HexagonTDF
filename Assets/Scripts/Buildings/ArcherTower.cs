@@ -9,6 +9,6 @@ public class ArcherTower : AttackTower
     public override int Damage => 4;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override float Range => RangeOptions.Medium;
+    public override int Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
 }

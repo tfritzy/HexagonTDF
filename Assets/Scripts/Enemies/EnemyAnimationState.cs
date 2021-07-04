@@ -1,4 +1,4 @@
-public enum EnemyAnimationState
+public enum AnimationState
 {
     Idle,
     Walking,
@@ -6,4 +6,6 @@ public enum EnemyAnimationState
     ClimbingDown,
     SlashingSword,
     CastingSpell,
+    GeneralAttack,
+    Reloading
 }

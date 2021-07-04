@@ -7,7 +7,7 @@ public class EarthTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Fast;
     public override int Damage => 10;
-    public override float Range => RangeOptions.Medium;
+    public override int Range => RangeOptions.Medium;
     public float TimeBetweenRockTrows => .25f;
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;
@@ -70,7 +70,7 @@ public class EarthTower : AttackTower
         float angle = this.Projectiles.Count * (360f / MaxRocks);
         GameObject rock = Instantiate(
             Prefabs.Projectiles[this.Type],
-            projectileStartPosition + Vector3.right * ROCK_ROTATION_RADIUS,
+            projectileStartPosition.position + Vector3.right * ROCK_ROTATION_RADIUS,
             new Quaternion(),
             this.transform);
         rock.GetComponent<Projectile>().Initialize(this.DealDamageToEnemy, this.IsCollisionTarget, this);

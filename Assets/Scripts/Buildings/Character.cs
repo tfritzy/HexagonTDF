@@ -31,6 +31,10 @@ public abstract class Character : MonoBehaviour
         }
     }
     public virtual Vector3 Velocity { get { return Vector3.zero; } }
+    public abstract float Cooldown { get; }
+    public abstract int Damage { get; }
+    public abstract int Range { get; }
+    public abstract VerticalRegion AttackRegion { get; }
     private Rigidbody rb;
     protected Rigidbody Rigidbody
     {
@@ -49,6 +53,9 @@ public abstract class Character : MonoBehaviour
     private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
     private Healthbar healthbar;
     public Vector2Int GridPosition { get; set; }
+    protected virtual float ProjectileSpeed => 10;
+    protected Transform projectileStartPosition;
+    public GameObject Projectile;
 
     void Start()
     {
@@ -67,6 +74,7 @@ public abstract class Character : MonoBehaviour
             Managers.Canvas).GetComponent<Healthbar>();
         this.healthbar.SetOwner(this.transform);
         this.healthbar.enabled = false;
+        this.projectileStartPosition = Helpers.RecursiveFindChild(this.transform, "ProjectileStartPosition") ?? this.transform;
     }
 
     void Update()

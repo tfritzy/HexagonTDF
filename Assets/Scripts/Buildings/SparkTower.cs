@@ -6,7 +6,7 @@ public class SparkTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.VeryVeryFast;
     public override int Damage => 1;
-    public override float Range => RangeOptions.Short;
+    public override int Range => RangeOptions.Short;
     public override BuildingType Type => BuildingType.SparkTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
@@ -23,14 +23,17 @@ public class SparkTower : AttackTower
 
     protected override void Attack()
     {
-        Vector3 difference = Target.Position - projectileStartPosition;
+        Vector3 difference = Target.Position - projectileStartPosition.position;
         int numPoints = (int)(difference.magnitude / DIST_BETWEEN_LIGHTNING_SEGMENTS);
         lr.enabled = true;
         difference = difference.normalized;
         lr.positionCount = numPoints + 1;
         for (int i = 0; i < numPoints; i++)
         {
-            lr.SetPosition(i, projectileStartPosition + (difference * i * DIST_BETWEEN_LIGHTNING_SEGMENTS + Random.insideUnitSphere * DIST_BETWEEN_LIGHTNING_SEGMENTS));
+            lr.SetPosition(
+                i,
+                projectileStartPosition.position +
+                (difference * i * DIST_BETWEEN_LIGHTNING_SEGMENTS + Random.insideUnitSphere * DIST_BETWEEN_LIGHTNING_SEGMENTS));
         }
         lr.SetPosition(numPoints, Target.transform.position);
 

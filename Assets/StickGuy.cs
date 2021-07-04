@@ -7,9 +7,11 @@ public class StickGuy : Enemy
     public override EnemyType Type => EnemyType.StickGuy;
     public override Dictionary<AttributeType, float> PowerToAttributeRatio => powerToAttributeRatio;
     public override VerticalRegion Region => VerticalRegion.Ground;
-    protected override float Cooldown => AttackSpeed.Medium;
-    protected override int AttackDamage => 1;
-    protected override EnemyAnimationState AttackAnimation => EnemyAnimationState.SlashingSword;
+    public override float Cooldown => AttackSpeed.Medium;
+    public override int Damage => 1;
+    protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
+    public override int Range => 1;
+    public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

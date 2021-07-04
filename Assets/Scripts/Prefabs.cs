@@ -25,6 +25,25 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<AlliedUnitType, GameObject> allies;
+    public static Dictionary<AlliedUnitType, GameObject> Allies
+    {
+        get
+        {
+            if (allies == null)
+            {
+                allies = new Dictionary<AlliedUnitType, GameObject>();
+
+                foreach (AlliedUnitType type in Enum.GetValues(typeof(AlliedUnitType)))
+                {
+                    allies[type] = Resources.Load<GameObject>("Prefabs/Allies/" + type.ToString());
+                }
+            }
+
+            return allies;
+        }
+    }
+
     private static Dictionary<BuildingType, GameObject> buildings;
     public static Dictionary<BuildingType, GameObject> Buildings
     {

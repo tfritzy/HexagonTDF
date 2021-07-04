@@ -5,7 +5,7 @@ public class ChainLightningTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Slow;
     public override int Damage => 10;
-    public override float Range => RangeOptions.Medium;
+    public override int Range => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override BuildingType Type => BuildingType.ChainLightningTower;
     public override Alliances Alliance => Alliances.Player;
@@ -28,7 +28,7 @@ public class ChainLightningTower : AttackTower
         alreadyHitEnemies = new List<GameObject>();
         Character current = Target;
         List<Vector3> hitPositions = new List<Vector3>();
-        hitPositions.Add(projectileStartPosition);
+        hitPositions.Add(this.projectileStartPosition.position);
         while (current != null)
         {
             current.TakeDamage(this.Damage, this);

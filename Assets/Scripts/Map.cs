@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-/*
-Biomes: Desert, Dense Pine Forest, Light birch Forest, Island, Lake, Mountain (low, rocky), Mountain (high, snowy), Grasslands.
-    Perlin Map:
-        Lake - 30%
-        Rest - 10%
-*/
-
 public class Map
 {
     public Dictionary<Vector2Int, BuildingType> Buildings;
+    public Vector2Int Trebuchet;
     public List<Vector2Int> LandableShores;
     public List<Vector2Int> Docks;
     public HashSet<Vector2Int> OceanHex;
@@ -35,13 +29,13 @@ public class Map
     public const int MinDocks = 3;
 
 
-    public Map(int width, int height, int islandRadius)
+    public Map(int width, int height)
     {
         Buildings = new Dictionary<Vector2Int, BuildingType>();
-        GenerateMap(width, height, islandRadius);
+        GenerateMap(width, height);
     }
 
-    public void GenerateMap(int width, int height, float islandRadius)
+    public void GenerateMap(int width, int height)
     {
         this.hexes = new HexagonType?[width, height];
         HexHeightMap = new float[width, height];
@@ -52,11 +46,6 @@ public class Map
             for (int x = 0; x < width; x++)
             {
                 float distFromCenter = DistFromCenter(x, y);
-                if (distFromCenter > islandRadius)
-                {
-                    hexes[x, y] = HexagonType.Water;
-                    continue;
-                }
 
                 float sampleX = x / LAND_PERLIN_SCALE;
                 float sampleY = y / LAND_PERLIN_SCALE;
@@ -65,12 +54,11 @@ public class Map
 
                 float treePerlinValue = Mathf.PerlinNoise(x / FORREST_PERLIN_SCALE + forrestSeed, y / FORREST_PERLIN_SCALE + forrestSeed);
 
-                if (treePerlinValue > TreePerlinCutoff && distFromCenter < islandRadius * .8f)
+                if (treePerlinValue > TreePerlinCutoff)
                 {
                     hexes[x, y] = HexagonType.Forrest;
                 }
 
-                // float heightBias = (-4 / islandRadius) * distFromCenter + 4;
                 float heightNoise = (perlinValue) * 10;
                 float finalValue = (int)(heightNoise / 2f);
                 HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
@@ -88,10 +76,10 @@ public class Map
 
     public void ConfigureMap()
     {
-        FindOceanHexes();
+        // FindOceanHexes();
         FindMainLandmass();
         ConnectOrphanedLandMasses();
-        FindLandableShores();
+        // FindLandableShores();
         PlaceVillageBuildings();
     }
 
@@ -286,22 +274,27 @@ public class Map
     private void PlaceVillageBuildings()
     {
         List<Vector2Int> centerLandmass = new List<Vector2Int>();
+        List<Vector2Int> outerRing = new List<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
         {
             if (hexes[pos.x, pos.y] == HexagonType.Grass && DistFromCenter(pos.x, pos.y) < 5)
             {
                 centerLandmass.Add(pos);
             }
+
+            if (hexes[pos.x, pos.y] == HexagonType.Grass && DistFromCenter(pos.x, pos.y) > 9)
+            {
+                outerRing.Add(pos);
+            }
         }
 
-        int index = Random.Range(0, centerLandmass.Count);
-        Buildings[centerLandmass[index]] = BuildingType.Orb;
+        int index = Random.Range(0, outerRing.Count);
+        this.Trebuchet = outerRing[index];
 
         float numBarracks = 5;
-        float hexesBetweenTowers = LandableShores.Count / numBarracks;
-        for (float i = 0; i < LandableShores.Count; i += hexesBetweenTowers)
+        for (float i = 0; i < centerLandmass.Count; i += centerLandmass.Count / numBarracks)
         {
-            Vector2Int pos = LandableShores[(int)i];
+            Vector2Int pos = centerLandmass[(int)i];
             Buildings[pos] = BuildingType.Barracks;
         }
     }

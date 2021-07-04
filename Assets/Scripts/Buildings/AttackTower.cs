@@ -2,25 +2,18 @@ using UnityEngine;
 
 public abstract class AttackTower : Building
 {
-    public abstract float Cooldown { get; }
-    public abstract int Damage { get; }
-    public abstract float Range { get; }
-    public abstract VerticalRegion AttackRegion { get; }
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
     public Character Target;
     protected virtual float ManualPowerAdjustment => 0;
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ExplosionRadius => 0;
-    protected virtual float ProjectileSpeed => 10;
-    protected Vector3 projectileStartPosition;
     protected GameObject Turret;
     protected GameObject Body;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
 
     protected override void Setup()
     {
-        this.projectileStartPosition = this.transform.Find("ProjectileStartPosition")?.transform.position ?? this.transform.position;
         this.Turret = transform.Find("Turret")?.gameObject;
         this.Body = transform.Find("Body")?.gameObject;
         base.Setup();
@@ -67,7 +60,7 @@ public abstract class AttackTower : Building
         {
             GameObject projectile = Instantiate(
                 Prefabs.Projectiles[Type],
-                this.projectileStartPosition,
+                this.projectileStartPosition.position,
                 new Quaternion());
             projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, IsCollisionTarget, this);
             projectile.transform.LookAt(this.Target.transform, Vector3.up);

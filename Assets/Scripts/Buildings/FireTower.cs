@@ -6,7 +6,7 @@ public class FireTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Medium;
     public override int Damage => 20;
-    public override float Range => RangeOptions.Medium;
+    public override int Range => RangeOptions.Medium;
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;

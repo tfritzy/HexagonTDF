@@ -5,7 +5,7 @@ public class Spikes : AttackTower
 {
     public override float Cooldown => AttackSpeed.Medium;
     public override int Damage => 20;
-    public override float Range => RangeOptions.VeryVeryShort;
+    public override int Range => RangeOptions.VeryVeryShort;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.Spikes;
     public override Alliances Alliance => Alliances.Player;

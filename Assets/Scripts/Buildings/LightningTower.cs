@@ -9,7 +9,7 @@ public class LightningTower : AttackTower
     public override Alliances Enemies => Alliances.Illigons;
     public override float Cooldown => AttackSpeed.Slow;
     public override int Damage => 30;
-    public override float Range => RangeOptions.VeryLong;
+    public override int Range => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     protected override float ManualPowerAdjustment => 1; // Double damage to air.
     protected override void Attack()

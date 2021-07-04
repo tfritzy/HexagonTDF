@@ -7,7 +7,7 @@ public class FrigidShard : AttackTower
 {
     public override float Cooldown => AttackSpeed.Fast;
     public override int Damage => 1;
-    public override float Range => RangeOptions.Short;
+    public override int Range => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.FrigidShard;
     public override Alliances Alliance => Alliances.Player;
