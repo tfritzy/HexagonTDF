@@ -12,6 +12,7 @@ public class Spellcaster : Enemy
     public override int Range => 2;
     protected override AnimationState AttackAnimation => AnimationState.CastingSpell;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
+    public override float BasePower => 3;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

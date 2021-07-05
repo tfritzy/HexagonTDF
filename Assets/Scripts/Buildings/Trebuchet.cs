@@ -25,17 +25,16 @@ public class Trebuchet : Unit
         return true;
     }
 
-    protected override Character FindTargetCharacter()
+    protected override void FindTargetCharacter()
     {
         foreach (Building building in Managers.Board.Buildings.Values)
         {
             if (building.Alliance == this.Enemies)
             {
-                return building;
+                this.TargetCharacter = building;
+                return;
             }
         }
-
-        return null;
     }
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)

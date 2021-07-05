@@ -27,9 +27,9 @@ public abstract class Unit : Character
             this.animator.SetInteger("Animation_State", (int)_animationState);
         }
     }
+    public Unit UnitBlockingPath { get; private set; }
 
     protected Vector2Int destinationPos;
-    protected Vector2Int ActualGridPosition;
     protected float baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
     protected bool IsDead;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
@@ -46,7 +46,7 @@ public abstract class Unit : Character
     protected override void Setup()
     {
         base.Setup();
-        this.TargetCharacter = FindTargetCharacter();
+        FindTargetCharacter();
         this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = baseMovementSpeed;
@@ -62,13 +62,13 @@ public abstract class Unit : Character
 
         if (TargetCharacter == null)
         {
-            TargetCharacter = FindTargetCharacter();
+            FindTargetCharacter();
         }
 
         base.UpdateLoop();
 
         AttackTarget();
-        if (this.AttackPhase != AttackPhase.Idle)
+        if (this.AttackPhase == AttackPhase.Idle)
         {
             FollowPath();
         }
@@ -77,7 +77,7 @@ public abstract class Unit : Character
     protected abstract void CalculateNextPathingPosition(Vector2Int currentPosition);
     protected abstract bool ShouldRecalculatePath();
     protected abstract void RecalculatePath();
-    protected abstract Character FindTargetCharacter();
+    protected abstract void FindTargetCharacter();
 
     private void FollowPath()
     {
@@ -86,17 +86,16 @@ public abstract class Unit : Character
             RecalculatePath();
         }
 
-        if (this.ActualGridPosition == this.Waypoint.EndPos)
+        this.UnitBlockingPath = null;
+        if (TryGetCharacterBlockingPath(out Unit unit))
         {
-            return;
-        }
-
-        // Waypoint end position is unblocked, so claim it.
-        if (this.Waypoint.EndPos != this.GridPosition)
-        {
-            Managers.Board.CharacterPositions.Remove(this.GridPosition);
-            this.GridPosition = this.Waypoint.EndPos;
-            Managers.Board.CharacterPositions[this.GridPosition] = this;
+            if (unit.UnitBlockingPath != this)
+            {
+                this.Rigidbody.velocity = Vector3.zero;
+                this.CurrentAnimation = AnimationState.Idle;
+                this.UnitBlockingPath = unit;
+                return;
+            }
         }
 
         Vector3 difference = (Managers.Board.GetHex(this.Waypoint.EndPos).transform.position - this.transform.position);
@@ -110,15 +109,60 @@ public abstract class Unit : Character
         else
         {
             this.Rigidbody.velocity = difference.normalized * (MovementSpeed + MovementSpeedModification);
-            this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
-            this.CurrentAnimation = AnimationState.Walking;
+
+            if (this.Rigidbody.velocity != Vector3.zero)
+            {
+                this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
+                this.CurrentAnimation = AnimationState.Walking;
+            }
+        }
+
+        if (difference.magnitude < Constants.HEXAGON_r)
+        {
+            this.GridPosition = this.Waypoint.EndPos;
         }
 
         if (difference.magnitude < .1f)
         {
-            this.ActualGridPosition = this.Waypoint.EndPos;
             CalculateNextPathingPosition(this.Waypoint.EndPos);
+
+            if (this.GridPosition == this.Waypoint.EndPos)
+            {
+                this.Rigidbody.velocity = Vector3.zero;
+                this.CurrentAnimation = AnimationState.Idle;
+                return;
+            }
         }
+    }
+
+    private const float FORWARD_BLOCK_DISTANCE = .75f;
+    private bool TryGetCharacterBlockingPath(out Unit unit)
+    {
+        RaycastHit[] hits = Physics.RaycastAll(
+            this.transform.position,
+            this.transform.forward,
+            FORWARD_BLOCK_DISTANCE,
+            Constants.Layers.Characters);
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.transform.TryGetComponent<Unit>(out Unit checkUnit))
+            {
+                if (checkUnit == this)
+                {
+                    continue;
+                }
+
+                if (checkUnit.GridPosition == this.GridPosition || checkUnit.GridPosition == this.Waypoint.EndPos)
+                {
+                    unit = checkUnit;
+                    return true;
+                }
+            }
+        }
+
+        unit = null;
+        return false;
     }
 
     private Projectile windingUpProjectile;
@@ -142,14 +186,11 @@ public abstract class Unit : Character
         this.AttackPhase = AttackPhase.Recovering;
         if (this.Range == MELEE_ATTACK_RANGE)
         {
-            Managers.Board.Buildings[this.Waypoint.EndPos].TakeDamage(this.Damage, this);
+            this.TargetCharacter.TakeDamage(this.Damage, this);
         }
         else
         {
-            windingUpProjectile.transform.parent = null;
-            windingUpProjectile.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
-            windingUpProjectile.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
-            windingUpProjectile = null;
+            ConfigureProjectile(windingUpProjectile);
         }
     }
 
@@ -159,13 +200,21 @@ public abstract class Unit : Character
         this.CurrentAnimation = AnimationState.Idle;
     }
 
+    protected virtual void ConfigureProjectile(Projectile projectile)
+    {
+        projectile.transform.parent = null;
+        projectile.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+        projectile.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
+        projectile = null;
+    }
+
     private void AttackTarget()
     {
         if (Time.time > lastAttackTime + this.Cooldown && IsInRangeOfTarget() && AttackPhase == AttackPhase.Idle)
         {
             this.AttackPhase = AttackPhase.WindingUp;
             this.CurrentAnimation = this.AttackAnimation;
-            if (this.Rigidbody != null) this.Rigidbody.velocity = Vector3.zero;
+            this.Rigidbody.velocity = Vector3.zero;
             Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
             diffVector.y = 0;
             this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
@@ -278,37 +327,14 @@ public abstract class Unit : Character
         }
     }
 
-    private bool IsCollisionTarget(Character attacker, GameObject collision)
+    protected virtual bool IsInRangeOfTarget()
     {
-        if (collision.TryGetComponent<Character>(out Character character))
+        if (TryGetCharacterBlockingPath(out Unit unit))
         {
-            if (character == TargetCharacter)
+            if (unit is Trebuchet)
             {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    private void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
-    {
-        target.TakeDamage(this.Damage, this);
-    }
-
-    protected virtual bool IsInRangeOfTarget()
-    {
-        if (Managers.Board.Buildings.ContainsKey(this.Waypoint?.EndPos ?? Constants.MaxVector2Int) == false)
-        {
-            return false;
-        }
-
-        if (Helpers.IsWithinRange(
-            this.ActualGridPosition,
-            Managers.Board.Buildings[this.Waypoint.EndPos].GridPosition,
-            this.Range))
-        {
-            return true;
         }
 
         return false;
@@ -318,5 +344,10 @@ public abstract class Unit : Character
     {
         this.Body.transform.parent = null;
         Destroy(this.Body.gameObject, 5f);
+    }
+
+    public void SetInitialPosition(Vector2Int startPos)
+    {
+        this.GridPosition = startPos;
     }
 }

@@ -12,6 +12,7 @@ public abstract class Enemy : Unit
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
     public override float Power { get { return power; } }
     public override int StartingHealth => startingHealth;
+    public abstract float BasePower { get; }
 
     private float power;
     private LineRenderer lineRenderer;
@@ -31,14 +32,16 @@ public abstract class Enemy : Unit
         this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
     }
 
-    protected override Character FindTargetCharacter()
+    protected override void FindTargetCharacter()
     {
-        return Managers.Board.Trebuchet;
+        this.TargetCharacter = Managers.Board.Trebuchet;
     }
 
     protected override void Setup()
     {
         base.Setup();
+        FindTargetCharacter();
+        RecalculatePath();
         this.destinationPos = this.TargetCharacter.GridPosition;
         this.lineRenderer = this.GetComponent<LineRenderer>();
         this.currentPositionOrb = transform.Find("CurrentPosition");
@@ -63,36 +66,9 @@ public abstract class Enemy : Unit
     {
         PredGridPoint nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetCharacter.GridPosition, currentPosition);
 
-        if (Managers.Board.CharacterPositions.ContainsKey(nextPos.Position))
-        {
-            for (int i = 0; i < 6; i++)
-            {
-                Vector2Int neighborPos = Helpers.GetNeighborPosition(Managers.Board.Map, currentPosition, i);
-                PredGridPoint testNextPos = Managers.Board.GetNextStepInPathToSource(this.TargetCharacter.GridPosition, neighborPos);
-
-                if (testNextPos.Position == Constants.MaxVector2Int)
-                {
-                    continue;
-                }
-
-                if (testNextPos.Distance <= nextPos.Distance + 1 && Managers.Board.CharacterPositions.ContainsKey(testNextPos.Position) == false)
-                {
-                    nextPos = new PredGridPoint(neighborPos, testNextPos.Distance - 1);
-                    break;
-                }
-            }
-        }
-
         if (nextPos.Position == Constants.MaxVector2Int)
         {
             nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetCharacter.GridPosition, currentPosition);
-        }
-
-        if (Managers.Board.CharacterPositions.ContainsKey(nextPos.Position) && Managers.Board.CharacterPositions[nextPos.Position] != null)
-        {
-            this.Rigidbody.velocity = Vector3.zero;
-            this.CurrentAnimation = AnimationState.Idle;
-            return;
         }
 
         this.Waypoint = new Waypoint();
@@ -101,16 +77,12 @@ public abstract class Enemy : Unit
 
         if (this.lineRenderer != null)
         {
-            this.lineRenderer.SetPosition(0, Managers.Board.GetHex(this.Waypoint.StartPos).transform.position);
-            this.lineRenderer.SetPosition(1, Managers.Board.GetHex(this.Waypoint.EndPos).transform.position);
+            if (this.Waypoint.EndPos != Constants.MaxVector2Int && this.Waypoint.StartPos != Constants.MaxVector2Int)
+            {
+                this.lineRenderer.SetPosition(0, Managers.Board.GetHex(this.Waypoint.StartPos).transform.position);
+                this.lineRenderer.SetPosition(1, Managers.Board.GetHex(this.Waypoint.EndPos).transform.position);
+            }
         }
-    }
-
-    public void SetPathingPositions(Vector2Int startPos, Vector2Int endPos, bool isRecalculable)
-    {
-        this.Waypoint = new Waypoint(startPos, endPos, isRecalculable);
-        Managers.Board.CharacterPositions[endPos] = this;
-        this.GridPosition = endPos;
     }
 
     protected override bool ShouldRecalculatePath()
@@ -130,7 +102,7 @@ public abstract class Enemy : Unit
 
     protected override void RecalculatePath()
     {
-        CalculateNextPathingPosition(this.Waypoint.StartPos);
+        CalculateNextPathingPosition(this.GridPosition);
     }
 
     public int RollGoldReward()

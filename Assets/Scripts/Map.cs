@@ -284,7 +284,7 @@ public class Map
 
         this.Trebuchet = new Vector2Int(1, this.Height / 2);
 
-        float numBarracks = 5;
+        float numBarracks = 3;
         for (float i = 0; i < rightLandmass.Count; i += rightLandmass.Count / numBarracks)
         {
             Vector2Int pos = rightLandmass[(int)i];

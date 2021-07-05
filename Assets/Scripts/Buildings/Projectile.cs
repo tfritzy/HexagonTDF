@@ -15,6 +15,7 @@ public class Projectile : MonoBehaviour
     private Transform explosionParticles;
     private bool upForceOnDeath;
     private bool isTracking;
+    private bool isInitialized;
 
     void Start()
     {
@@ -42,6 +43,7 @@ public class Projectile : MonoBehaviour
         this.birthTime = Time.time;
         this.upForceOnDeath = upForceOnDeath;
         SetupRigidbody();
+        this.isInitialized = true;
     }
 
     private GameObject trackingTarget;
@@ -69,6 +71,11 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (this.isInitialized == false)
+        {
+            return;
+        }
+
         if (other?.gameObject == null)
         {
             return;

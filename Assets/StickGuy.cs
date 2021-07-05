@@ -11,7 +11,8 @@ public class StickGuy : Enemy
     public override int Damage => 1;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
     public override int Range => 1;
-    public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
+    public override VerticalRegion AttackRegion => VerticalRegion.Ground;
+    public override float BasePower => 1;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

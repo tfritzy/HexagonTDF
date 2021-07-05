@@ -146,8 +146,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8563558074129281694}
   - component: {fileID: 5124017739010379706}
-  - component: {fileID: -449481547752371667}
   - component: {fileID: 7184620230144916628}
+  - component: {fileID: 5420920303599549961}
   m_Layer: 9
   m_Name: StickGuy
   m_TagString: Untagged
@@ -184,27 +184,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  Projectile: {fileID: 0}
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsOnBoat: 0
-  Boat: {fileID: 0}
-  _animationState: 0
-  TargetBuilding: {fileID: 0}
-  IsAttacking: 0
   IsJumping: 0
---- !u!65 &-449481547752371667
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2951637780009353476}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.25592017, y: 1, z: 0.28208876}
-  m_Center: {x: 0, y: 0.58, z: 0}
+  _animationState: 0
+  AttackPhase: 0
 --- !u!120 &7184620230144916628
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -303,6 +288,20 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!136 &5420920303599549961
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2951637780009353476}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.39
+  m_Height: 1.3997228
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5364716, z: 0}
 --- !u!54 &5047287489377004975
 Rigidbody:
   m_ObjectHideFlags: 0

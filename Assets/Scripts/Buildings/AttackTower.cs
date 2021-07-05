@@ -112,7 +112,7 @@ public abstract class AttackTower : Building
         return closest;
     }
 
-    protected void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    protected override void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
     {
         // target can be null on contact with ground.
         if (ExplosionRadius == 0 && target != null)
@@ -153,21 +153,6 @@ public abstract class AttackTower : Building
             Debug.Log($"{this.Type} Power\n {getDamagePower()} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier()} range + {ManualPowerAdjustment} manual == {power}");
             return power;
         }
-    }
-
-    protected virtual bool IsCollisionTarget(Character attacker, GameObject other)
-    {
-        if (other.TryGetComponent<Character>(out Character targetCharacter))
-        {
-            return attacker.Enemies == targetCharacter.Alliance;
-        }
-
-        if (other.CompareTag(Constants.Tags.Hexagon))
-        {
-            return true;
-        }
-
-        return false;
     }
 
     private float getDamagePower()

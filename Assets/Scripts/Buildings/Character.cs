@@ -158,4 +158,25 @@ public abstract class Character : MonoBehaviour
             renderer.material = material;
         }
     }
+
+    protected virtual void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    {
+        target.TakeDamage(this.Damage, this);
+    }
+
+    protected virtual bool IsCollisionTarget(Character attacker, GameObject other)
+    {
+        if (other.TryGetComponent<Character>(out Character targetCharacter))
+        {
+            return attacker.Enemies == targetCharacter.Alliance;
+        }
+
+        if (other.CompareTag(Constants.Tags.Hexagon))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }

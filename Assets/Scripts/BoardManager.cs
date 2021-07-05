@@ -14,13 +14,11 @@ public class BoardManager : MonoBehaviour
     public bool RegenerateMap;
     public Map Map;
     public Guid PathingId { get; private set; }
-    public Dictionary<Vector2Int, Character> CharacterPositions;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
     private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
 
     void Awake()
     {
-        CharacterPositions = new Dictionary<Vector2Int, Character>();
         SpawnMap();
     }
 
@@ -112,6 +110,7 @@ public class BoardManager : MonoBehaviour
             Hexagons[pos.x, pos.y].transform.position,
             new Quaternion())
                 .GetComponent<Trebuchet>();
+        Trebuchet.SetInitialPosition(pos);
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)

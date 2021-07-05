@@ -355,11 +355,6 @@ public static class Helpers
         return null;
     }
 
-    public static bool IsGridPosOccupiedByCharacter(Vector2Int pos)
-    {
-        return Managers.Board.CharacterPositions.ContainsKey(pos) && Managers.Board.CharacterPositions[pos] != null;
-    }
-
     public static bool IsWithinRange(Vector2Int sourcePos, Vector2Int targetPos, int range)
     {
         return Managers.Board.GetFlightDistanceToTarget(targetPos, sourcePos) <= range;
