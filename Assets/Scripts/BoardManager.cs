@@ -10,6 +10,7 @@ public class BoardManager : MonoBehaviour
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Trebuchet Trebuchet;
+    public List<Barracks> Barracks;
     public string ActiveMapName;
     public bool RegenerateMap;
     public Map Map;
@@ -88,6 +89,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
+        this.Barracks = new List<Barracks>();
 
         foreach (Vector2Int pos in buildingMap.Keys)
         {
@@ -97,6 +99,11 @@ public class BoardManager : MonoBehaviour
                     new Quaternion(),
                     this.transform)
                     .GetComponent<Building>();
+
+            if (building is Barracks)
+            {
+                this.Barracks.Add((Barracks)building);
+            }
 
             building.Initialize(pos);
         }
