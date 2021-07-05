@@ -60,7 +60,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.37942666
-        functionName: DealDamage
+        functionName: ReleaseAttack
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0
+        functionName: BeginWindup
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -73,7 +80,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.4
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -124,7 +131,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.4
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

@@ -11,8 +11,18 @@ public class FunctionCallRelay : MonoBehaviour
         GameObjectToRelayTo.SendMessage("TriggerParticleCollision", other);
     }
 
-    public void DealDamage()
+    public void BeginWindup()
     {
-        GameObjectToRelayTo.SendMessage("DealDamage");
+        GameObjectToRelayTo.SendMessage("BeginWindup");
+    }
+
+    public void ReleaseAttack()
+    {
+        GameObjectToRelayTo.SendMessage("ReleaseAttack");
+    }
+
+    public void FinishedRecovering()
+    {
+        GameObjectToRelayTo.SendMessage("FinishedRecovering");
     }
 }
