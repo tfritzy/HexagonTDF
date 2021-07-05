@@ -20,9 +20,9 @@ public class Map
     private List<HashSet<Vector2Int>> landGroups;
 
     public const float LAND_PERLIN_SCALE = 5f;
-    public const float FORREST_PERLIN_SCALE = 3f;
+    public const float FORREST_PERLIN_SCALE = 2.5f;
     public const float SHORE_PERLIN_SCALE = 2f;
-    public const float LandPerlinCutoff = .60f;
+    public const float LandPerlinCutoff = .70f;
     public const float TreePerlinCutoff = .70f;
     public const float ShorePerlinCutoff = .3f;
     public const int MaxDocks = 6;
@@ -59,7 +59,7 @@ public class Map
                     hexes[x, y] = HexagonType.Forrest;
                 }
 
-                float heightNoise = (perlinValue) * 10;
+                float heightNoise = (perlinValue) * 3;
                 float finalValue = (int)(heightNoise / 2f);
                 HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
             }
@@ -273,28 +273,21 @@ public class Map
 
     private void PlaceVillageBuildings()
     {
-        List<Vector2Int> centerLandmass = new List<Vector2Int>();
-        List<Vector2Int> outerRing = new List<Vector2Int>();
+        List<Vector2Int> rightLandmass = new List<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
         {
-            if (hexes[pos.x, pos.y] == HexagonType.Grass && DistFromCenter(pos.x, pos.y) < 5)
+            if (hexes[pos.x, pos.y] == HexagonType.Grass && pos.x > this.Width * .75f)
             {
-                centerLandmass.Add(pos);
-            }
-
-            if (hexes[pos.x, pos.y] == HexagonType.Grass && DistFromCenter(pos.x, pos.y) > 9)
-            {
-                outerRing.Add(pos);
+                rightLandmass.Add(pos);
             }
         }
 
-        int index = Random.Range(0, outerRing.Count);
-        this.Trebuchet = outerRing[index];
+        this.Trebuchet = new Vector2Int(1, this.Height / 2);
 
         float numBarracks = 5;
-        for (float i = 0; i < centerLandmass.Count; i += centerLandmass.Count / numBarracks)
+        for (float i = 0; i < rightLandmass.Count; i += rightLandmass.Count / numBarracks)
         {
-            Vector2Int pos = centerLandmass[(int)i];
+            Vector2Int pos = rightLandmass[(int)i];
             Buildings[pos] = BuildingType.Barracks;
         }
     }

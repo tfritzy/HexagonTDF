@@ -6,7 +6,7 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
     public const int BoardWidth = 20;
-    public const int BoardHeight = 22;
+    public const int BoardHeight = 11;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Trebuchet Trebuchet;
