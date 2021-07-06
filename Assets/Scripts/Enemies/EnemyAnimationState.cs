@@ -7,5 +7,6 @@ public enum AnimationState
     SlashingSword,
     CastingSpell,
     GeneralAttack,
-    Reloading
+    Reloading,
+    ShieldWalk,
 }

@@ -6972,30 +6972,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e98b1a49a6319449943b2bd8c665d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shoreIncomingAttackerColor:
-    r: 0.7647059
-    g: 0.32941177
-    b: 0.37254903
-    a: 1
-  shoreActiveColor:
-    r: 0.25490198
-    g: 0.25490198
-    b: 0.25490198
-    a: 1
-  shoreInactiveColor:
-    r: 0.2627451
-    g: 0.2627451
-    b: 0.2627451
-    a: 0
-  _currentWave: 0
-  levelStartTime: 0
-  lastWaveStartTime: 0
-  startWaveDialog: {fileID: 0}
-  startWaveTimer: {fileID: 0}
-  startWaveCounter: {fileID: 0}
-  currentWaveEnemy: 0
-  shores: []
-  lastSpawnTime: 0
 --- !u!1001 &978161047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7332,6 +7308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Trebuchet: {fileID: 0}
+  Barracks: []
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
   RegenerateMap: 0
 --- !u!4 &1096331704

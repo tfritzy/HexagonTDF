@@ -29,11 +29,11 @@ public class CrystalAccelerator : AttackTower
     {
         foreach (RaycastHit hit in ShootRaycastFromTurret(100f))
         {
-            if (hit.collider.gameObject.TryGetComponent<Character>(out Character character))
+            if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, hit.collider.gameObject))
             {
-                if (character.Alliance == this.Enemies)
+                if (damageable.Alliance == this.Enemies)
                 {
-                    character.TakeDamage(Damage, this);
+                    damageable.TakeDamage(Damage, this);
                 }
             }
         }

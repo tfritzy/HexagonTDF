@@ -61,7 +61,8 @@ public class Map
 
                 float heightNoise = (perlinValue) * 3;
                 float finalValue = (int)(heightNoise / 2f);
-                HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
+                // HexHeightMap[x, y] = finalValue > 0 ? finalValue : 0;
+                HexHeightMap[x, y] = 0;
             }
         }
 

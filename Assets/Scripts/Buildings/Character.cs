@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour, Damageable
 {
     public abstract Alliances Alliance { get; }
     public abstract Alliances Enemies { get; }
@@ -65,6 +65,11 @@ public abstract class Character : MonoBehaviour
     protected virtual void Setup()
     {
         this.Collider = this.GetComponent<Collider>();
+        if (StartingHealth == 0)
+        {
+            throw new Exception("Starting health should not be 0.");
+        }
+
         this.Health = StartingHealth;
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
@@ -166,9 +171,9 @@ public abstract class Character : MonoBehaviour
 
     protected virtual bool IsCollisionTarget(Character attacker, GameObject other)
     {
-        if (other.TryGetComponent<Character>(out Character targetCharacter))
+        if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, other))
         {
-            return attacker.Enemies == targetCharacter.Alliance;
+            return attacker.Enemies == damageable.Alliance;
         }
 
         if (other.CompareTag(Constants.Tags.Hexagon))

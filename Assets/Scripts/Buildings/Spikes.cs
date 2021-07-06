@@ -13,7 +13,7 @@ public class Spikes : AttackTower
     public override bool IsWalkable => true;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
 
-    private List<Enemy> enemiesInRange = new List<Enemy>();
+    private List<Damageable> damageablesInRange = new List<Damageable>();
     private float spikeMovementDistance;
     private GameObject spikesModel;
     private Vector3 initialSpikesPos;
@@ -34,17 +34,17 @@ public class Spikes : AttackTower
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Enemy>(out Enemy enemy))
+        if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, other.gameObject))
         {
-            enemiesInRange.Add(enemy);
+            damageablesInRange.Add(damageable);
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<Enemy>(out Enemy enemy))
+        if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, other.gameObject))
         {
-            enemiesInRange.Remove(enemy);
+            damageablesInRange.Remove(damageable);
         }
     }
 
@@ -52,25 +52,25 @@ public class Spikes : AttackTower
     {
         spikesModel.transform.position = initialSpikesPos + Vector3.up * spikeMovementDistance;
 
-        foreach (Enemy enemy in enemiesInRange)
+        foreach (Damageable damageable in damageablesInRange)
         {
-            enemy.TakeDamage(this.Damage, this);
+            damageable.TakeDamage(this.Damage, this);
         }
     }
 
     protected override bool CanAttack()
     {
-        TrimEnemyList();
-        return enemiesInRange.Count > 0 && Time.time > lastAttackTime + Cooldown;
+        TrimDamageableList();
+        return damageablesInRange.Count > 0 && Time.time > lastAttackTime + Cooldown;
     }
 
-    private void TrimEnemyList()
+    private void TrimDamageableList()
     {
-        for (int i = enemiesInRange.Count - 1; i >= 0; i--)
+        for (int i = damageablesInRange.Count - 1; i >= 0; i--)
         {
-            if (enemiesInRange[i] == null)
+            if (damageablesInRange[i] == null)
             {
-                enemiesInRange.RemoveAt(i);
+                damageablesInRange.RemoveAt(i);
             }
         }
     }

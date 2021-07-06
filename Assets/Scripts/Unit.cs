@@ -37,6 +37,7 @@ public abstract class Unit : Character
     protected Guid PathId;
     protected Character TargetCharacter;
     protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
+    protected virtual AnimationState WalkAnimation => AnimationState.Walking;
 
     private const int MELEE_ATTACK_RANGE = 1;
     private GameObject DeathAnimation;
@@ -113,7 +114,7 @@ public abstract class Unit : Character
             if (this.Rigidbody.velocity != Vector3.zero)
             {
                 this.transform.rotation = Quaternion.LookRotation(this.Rigidbody.velocity, Vector3.up);
-                this.CurrentAnimation = AnimationState.Walking;
+                this.CurrentAnimation = WalkAnimation;
             }
         }
 
@@ -191,6 +192,7 @@ public abstract class Unit : Character
         else
         {
             ConfigureProjectile(windingUpProjectile);
+            windingUpProjectile = null;
         }
     }
 
@@ -246,11 +248,21 @@ public abstract class Unit : Character
     {
         foreach (Collider collider in this.Body.GetComponentsInChildren<Collider>())
         {
+            if (1 << collider.gameObject.layer == Constants.Layers.Characters)
+            {
+                continue; // Need to not disable colliders on items such as shields.
+            }
+
             collider.enabled = value;
         }
 
         foreach (Rigidbody rb in this.Body.GetComponentsInChildren<Rigidbody>())
         {
+            if (1 << rb.gameObject.layer == Constants.Layers.Characters)
+            {
+                continue; // Need to not disable rigidbodies on items such as shields.
+            }
+
             rb.isKinematic = !value;
         }
     }

@@ -16,19 +16,19 @@ public abstract class Enemy : Unit
 
     private float power;
     private LineRenderer lineRenderer;
-    private Transform currentPositionOrb;
     private int startingHealth;
 
-    public void SetPower(float power, float healthModifier)
+    public void SetPower(float power)
     {
         this.power = power;
-        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER * healthModifier);
+        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER);
         if (StartingHealth == 0)
         {
             throw new Exception("Tried to spawn an enemy with 0 health");
         }
         // this.Body.transform.localScale *= healthModifier;
-        float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed) ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
+        float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
+            ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
         this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
     }
 
@@ -39,13 +39,12 @@ public abstract class Enemy : Unit
 
     protected override void Setup()
     {
+        this.SetPower(this.BasePower);
         base.Setup();
         FindTargetCharacter();
         RecalculatePath();
         this.destinationPos = this.TargetCharacter.GridPosition;
         this.lineRenderer = this.GetComponent<LineRenderer>();
-        this.currentPositionOrb = transform.Find("CurrentPosition");
-        this.currentPositionOrb.transform.parent = null;
     }
 
     protected override void Die()

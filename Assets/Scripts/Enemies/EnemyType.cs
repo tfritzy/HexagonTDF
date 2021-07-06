@@ -2,5 +2,5 @@ public enum EnemyType
 {
     StickGuy,
     Spellcaster,
-    Boat
+    ShieldKnight,
 }

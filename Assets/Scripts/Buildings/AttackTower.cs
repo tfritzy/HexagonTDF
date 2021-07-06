@@ -118,11 +118,6 @@ public abstract class AttackTower : Building
         if (ExplosionRadius == 0 && target != null)
         {
             target.TakeDamage(Damage, this);
-
-            if (target.Body != null && target.Health <= 0 && projectile.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
-            {
-                ThrowKilledEnemy(rigidbody.velocity, target.Body);
-            }
         }
         else
         {
@@ -165,29 +160,15 @@ public abstract class AttackTower : Building
         Collider[] nearby = Physics.OverlapSphere(projectile.transform.position, this.ExplosionRadius, Constants.Layers.Characters, QueryTriggerInteraction.Collide);
         foreach (Collider collider in nearby)
         {
-            Character character = collider.transform?.GetComponent<Character>();
-            if (character == null)
+            if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, collider.gameObject))
             {
                 continue;
             }
 
-            if (attacker.Enemies == character.Alliance)
+            if (attacker.Enemies == damageable.Alliance)
             {
-                character.TakeDamage(Damage, this);
-
-                if (character.Body != null && character.Health <= 0)
-                {
-                    ThrowKilledEnemy((character.Position - projectile.transform.position).normalized * 10f, character.Body);
-                }
+                damageable.TakeDamage(Damage, this);
             }
-        }
-    }
-
-    protected void ThrowKilledEnemy(Vector3 velocity, Transform body)
-    {
-        foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>())
-        {
-            rb.AddForce(velocity / UnityEngine.Random.Range(5, 10) + UnityEngine.Random.insideUnitSphere, ForceMode.VelocityChange);
         }
     }
 

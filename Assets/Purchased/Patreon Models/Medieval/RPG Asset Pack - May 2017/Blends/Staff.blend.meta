@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Gem
-    second: {fileID: 2100000, guid: 89bfdebf4ca44be47a6667841527bcbf, type: 2}
+    second: {fileID: 2100000, guid: ebc849b59cfc44b4492b10625da771ee, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
