@@ -38,6 +38,7 @@ public abstract class Unit : Character
     protected Character TargetCharacter;
     protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
     protected virtual AnimationState WalkAnimation => AnimationState.Walking;
+    protected virtual AnimationState IdleAnimation => AnimationState.Idle;
 
     private const int MELEE_ATTACK_RANGE = 1;
     private GameObject DeathAnimation;
@@ -93,7 +94,7 @@ public abstract class Unit : Character
             if (unit.UnitBlockingPath != this)
             {
                 this.Rigidbody.velocity = Vector3.zero;
-                this.CurrentAnimation = AnimationState.Idle;
+                this.CurrentAnimation = IdleAnimation;
                 this.UnitBlockingPath = unit;
                 return;
             }
@@ -130,7 +131,7 @@ public abstract class Unit : Character
             if (this.GridPosition == this.Waypoint.EndPos)
             {
                 this.Rigidbody.velocity = Vector3.zero;
-                this.CurrentAnimation = AnimationState.Idle;
+                this.CurrentAnimation = IdleAnimation;
                 return;
             }
         }
@@ -199,7 +200,7 @@ public abstract class Unit : Character
     public void FinishedRecovering()
     {
         this.AttackPhase = AttackPhase.Idle;
-        this.CurrentAnimation = AnimationState.Idle;
+        this.CurrentAnimation = IdleAnimation;
     }
 
     protected virtual void ConfigureProjectile(Projectile projectile)

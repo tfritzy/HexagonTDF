@@ -1,12 +1,14 @@
 public enum AnimationState
 {
-    Idle,
-    Walking,
-    Jumping,
-    ClimbingDown,
-    SlashingSword,
-    CastingSpell,
-    GeneralAttack,
-    Reloading,
-    ShieldWalk,
+    Idle = 0,
+    Walking = 1,
+    Jumping = 2,
+    ClimbingDown = 3,
+    SlashingSword = 4,
+    CastingSpell = 5,
+    GeneralAttack = 6,
+    Reloading = 7,
+    ShieldWalk = 8,
+    ShieldAttack = 9,
+    ShieldIdle = 10,
 }
