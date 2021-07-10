@@ -34,9 +34,9 @@ public class Barracks : Building
     private float levelStartTime;
     List<EnemyType> spawnableEnemies = new List<EnemyType>()
     {
-        // EnemyType.StickGuy,
+        EnemyType.StickGuy,
         // EnemyType.Spellcaster,
-        EnemyType.ShieldKnight,
+        // EnemyType.ShieldKnight,
     };
     protected override void Setup()
     {
@@ -46,6 +46,11 @@ public class Barracks : Building
             Managers.Board.Trebuchet.GridPosition,
             this.GridPosition).Position;
         this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
+
+        foreach (Transform t in this.transform)
+        {
+            Debug.Log(t);
+        }
     }
     private List<SpawnDetail> spawnTimings;
 

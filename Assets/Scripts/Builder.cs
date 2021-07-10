@@ -41,6 +41,7 @@ public class Builder : MonoBehaviour
     private GameObject confirmButtons;
     private Dictionary<ResourceType, Text> CostPanels;
     private GameObject menu;
+    private bool CanOpenMenuThisFrame; // Used to stop menu from getting reopened after it got closed.
 
     void Start()
     {
@@ -50,6 +51,9 @@ public class Builder : MonoBehaviour
             CostPanels[resourceType] = Managers.ResourceStore.transform.Find(resourceType.ToString()).Find("Cost").Find("Text").GetComponent<Text>();
         }
         SetCostPanels();
+
+        menu = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
+        menu.SetActive(false);
     }
 
     void Update()
@@ -73,10 +77,12 @@ public class Builder : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
+        if (CanOpenMenuThisFrame && Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
         {
             SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
         }
+
+        CanOpenMenuThisFrame = true;
     }
 
     private void SetBuildTargetHex(HexagonMono newPotentialHexagon)
@@ -94,7 +100,6 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         UnHighlightHexagon();
 
-        menu = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
         menu.SetActive(true);
         highlightedHexagon = newPotentialHexagon;
         highlightedHexagon.SetMaterial(Constants.Materials.Gold);
@@ -205,5 +210,6 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
         this.menu?.SetActive(false);
+        CanOpenMenuThisFrame = false;
     }
 }
