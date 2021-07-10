@@ -8,8 +8,8 @@ public class Spellcaster : Enemy
     public override Dictionary<AttributeType, float> PowerToAttributeRatio => powerToAttributeRatio;
     public override VerticalRegion Region => VerticalRegion.Ground;
     public override float Cooldown => AttackSpeed.Slow;
-    public override int Damage => 3;
-    public override int Range => 2;
+    public override int BaseDamage => 3;
+    public override int BaseRange => 2;
     protected override AnimationState AttackAnimation => AnimationState.CastingSpell;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override float BasePower => 3;

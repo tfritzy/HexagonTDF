@@ -13,4 +13,9 @@ public class Shield : MonoBehaviour, Damageable
     {
         Wielder.TakeDamage((int)(amount * DamageReductionAmount), attacker);
     }
+
+    public bool IsNull()
+    {
+        return this == null || Wielder == null;
+    }
 }

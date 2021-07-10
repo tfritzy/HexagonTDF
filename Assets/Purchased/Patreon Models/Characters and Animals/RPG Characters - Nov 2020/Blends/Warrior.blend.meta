@@ -6,6 +6,24 @@ ModelImporter:
   - first:
       74: -623603649343465320
     second: Scene
+  - first:
+      74: -1158726129008117130
+    second: Scene (1)
+  - first:
+      74: -4454139077703410880
+    second: Scene (2)
+  - first:
+      74: 163946661222951639
+    second: Scene (3)
+  - first:
+      74: -2867762225416997021
+    second: Scene (4)
+  - first:
+      74: -1762091521222982064
+    second: Scene (5)
+  - first:
+      74: 1123765553479869685
+    second: Scene (6)
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -33,7 +51,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Scene
+      takeName: Scene
+      internalID: 0
+      firstFrame: 1
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
     isReadable: 0
   meshes:
     lODScreenPercentages: []

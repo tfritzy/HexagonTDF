@@ -8,7 +8,6 @@ public class Map
     public Dictionary<Vector2Int, BuildingType> Buildings;
     public Vector2Int Trebuchet;
     public List<Vector2Int> LandableShores;
-    public List<Vector2Int> Docks;
     public HashSet<Vector2Int> OceanHex;
     public HashSet<Vector2Int> MainLandmass;
     public int Width { get { return hexes.GetLength(0); } }
@@ -25,9 +24,6 @@ public class Map
     public const float LandPerlinCutoff = .70f;
     public const float TreePerlinCutoff = .70f;
     public const float ShorePerlinCutoff = .3f;
-    public const int MaxDocks = 6;
-    public const int MinDocks = 3;
-
 
     public Map(int width, int height)
     {
@@ -184,86 +180,6 @@ public class Map
         }
     }
 
-    private void FindLandableShores()
-    {
-        HashSet<Vector2Int> landableShoreSet = new HashSet<Vector2Int>();
-        foreach (Vector2Int pos in MainLandmass)
-        {
-            if (shorePerlinNoise(pos.x, pos.y) < ShorePerlinCutoff)
-            {
-                continue;
-            }
-
-            for (int i = 0; i < 6; i++)
-            {
-                if (OceanHex.Contains(Helpers.GetNeighborPosition(this, pos, i)))
-                {
-                    landableShoreSet.Add(pos);
-                }
-            }
-        }
-
-        if (landableShoreSet.Count < 5)
-        {
-            IsInvalid = true;
-            return;
-        }
-
-        LandableShores = landableShoreSet.ToList();
-
-        for (int i = 0; i < LandableShores.Count; i++)
-        {
-            Vector2Int shorePos = LandableShores[i];
-            hexes[shorePos.x, shorePos.y] = HexagonType.Shore;
-            HexHeightMap[shorePos.x, shorePos.y] = 0;
-        }
-
-        Docks = new List<Vector2Int>();
-        List<Vector2Int> possibleDocks = new List<Vector2Int>();
-        for (int i = 0; i < LandableShores.Count; i += 1)
-        {
-            if (Buildings.ContainsKey(LandableShores[i]))
-            {
-                continue;
-            }
-
-            int waterCount = 0;
-            for (int j = 0; j < 6; j++)
-            {
-                Vector2Int pos = Helpers.GetNeighborPosition(this, LandableShores[i], j);
-                if (hexes[pos.x, pos.y] == HexagonType.Water)
-                {
-                    waterCount += 1;
-                    if (waterCount == 3)
-                    {
-                        possibleDocks.Add(Helpers.GetNeighborPosition(this, LandableShores[i], j - 1));
-                        break;
-                    }
-                }
-                else
-                {
-                    waterCount = 0;
-                }
-            }
-        }
-
-        if (possibleDocks.Count < MinDocks)
-        {
-            this.IsInvalid = true;
-            return;
-        }
-
-        int numDocks = Random.Range(MinDocks, Mathf.Min(MaxDocks + 1, possibleDocks.Count));
-        while (numDocks > 0)
-        {
-            int selectedIndex = Random.Range(0, possibleDocks.Count);
-            Docks.Add(possibleDocks[selectedIndex]);
-            Buildings[possibleDocks[selectedIndex]] = BuildingType.Dock;
-            possibleDocks.RemoveAt(selectedIndex);
-            numDocks -= 1;
-        }
-    }
-
     private float shorePerlinNoise(int x, int y)
     {
         int seed = Random.Range(0, 100000);
@@ -274,21 +190,21 @@ public class Map
 
     private void PlaceVillageBuildings()
     {
-        List<Vector2Int> rightLandmass = new List<Vector2Int>();
+        List<Vector2Int> topLandmass = new List<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
         {
-            if (hexes[pos.x, pos.y] == HexagonType.Grass && pos.x > this.Width * .75f)
+            if (hexes[pos.x, pos.y] == HexagonType.Grass && pos.y > this.Height * .75f)
             {
-                rightLandmass.Add(pos);
+                topLandmass.Add(pos);
             }
         }
 
-        this.Trebuchet = new Vector2Int(1, this.Height / 2);
+        this.Trebuchet = new Vector2Int(this.Width / 2, 2);
 
         float numBarracks = 3;
-        for (float i = 0; i < rightLandmass.Count; i += rightLandmass.Count / numBarracks)
+        for (float i = 0; i < topLandmass.Count; i += topLandmass.Count / numBarracks)
         {
-            Vector2Int pos = rightLandmass[(int)i];
+            Vector2Int pos = topLandmass[(int)i];
             Buildings[pos] = BuildingType.Barracks;
         }
     }

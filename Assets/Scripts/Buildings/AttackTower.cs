@@ -11,11 +11,15 @@ public abstract class AttackTower : Building
     protected GameObject Turret;
     protected GameObject Body;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
+    public override int Damage => (int)(this.BaseDamage * (1 + .25f * UpgradeLevel));
+    public override int BaseRange => (int)(this.BaseRange * (1 + .1f * UpgradeLevel));
+    public int UpgradeLevel;
 
     protected override void Setup()
     {
         this.Turret = transform.Find("Turret")?.gameObject;
         this.Body = transform.Find("Body")?.gameObject;
+        UpgradeLevel = 1;
         base.Setup();
     }
 
@@ -148,6 +152,11 @@ public abstract class AttackTower : Building
             Debug.Log($"{this.Type} Power\n {getDamagePower()} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier()} range + {ManualPowerAdjustment} manual == {power}");
             return power;
         }
+    }
+
+    public void Upgrade()
+    {
+
     }
 
     private float getDamagePower()

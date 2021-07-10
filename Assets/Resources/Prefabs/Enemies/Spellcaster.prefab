@@ -559,9 +559,9 @@ MonoBehaviour:
   Projectile: {fileID: 11615957185843604, guid: c098d5659fb7309479da1b7994638813, type: 3}
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsAttacking: 0
   IsJumping: 0
   _animationState: 0
+  AttackPhase: 0
 --- !u!65 &6916862429020804333
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -570,7 +570,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4599123733135363583}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.45331633, y: 1.2383993, z: 0.44644392}

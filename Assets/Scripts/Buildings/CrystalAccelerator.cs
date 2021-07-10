@@ -4,8 +4,8 @@ using UnityEngine;
 public class CrystalAccelerator : AttackTower
 {
     public override float Cooldown => AttackSpeed.Slow;
-    public override int Damage => 10;
-    public override int Range => RangeOptions.Short;
+    public override int BaseDamage => 10;
+    public override int BaseRange => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.CrystalAccelerator;
     public override Alliances Alliance => Alliances.Player;

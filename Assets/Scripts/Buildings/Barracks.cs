@@ -11,8 +11,8 @@ public class Barracks : Building
     public override float Power => int.MaxValue;
     public int BarracksIndex;
     public override float Cooldown => float.MaxValue / 2;
-    public override int Damage => throw new System.NotImplementedException();
-    public override int Range => throw new System.NotImplementedException();
+    public override int BaseDamage => throw new System.NotImplementedException();
+    public override int BaseRange => throw new System.NotImplementedException();
     public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
 
     private Vector2Int exitGridPosition;
@@ -46,11 +46,6 @@ public class Barracks : Building
             Managers.Board.Trebuchet.GridPosition,
             this.GridPosition).Position;
         this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
-
-        foreach (Transform t in this.transform)
-        {
-            Debug.Log(t);
-        }
     }
     private List<SpawnDetail> spawnTimings;
 

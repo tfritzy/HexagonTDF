@@ -4,20 +4,25 @@ using UnityEngine;
 public class Trebuchet : Unit
 {
     public override float Cooldown => AttackSpeed.VerySlow;
-    public override int Damage => 10;
-    public override int Range => int.MaxValue;
+    public override int BaseDamage => 10;
+    public override int BaseRange => int.MaxValue;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override int StartingHealth => 100;
+    public override int StartingHealth => 25;
     public override float Power => int.MaxValue / 2;
     public override VerticalRegion Region => VerticalRegion.Ground;
+    public GameObject ProtectionSpellAnimation;
     protected override float ProjectileSpeed => 20;
 
     protected override void Setup()
     {
         base.Setup();
         RecalculatePath();
+
+        ProtectionSpellAnimation = Instantiate(ProtectionSpellAnimation, this.transform);
+        Helpers.TriggerAllParticleSystems(ProtectionSpellAnimation.transform, false);
+        ProtectionSpellAnimation.SetActive(false);
     }
 
     protected override bool IsInRangeOfTarget()
@@ -35,6 +40,20 @@ public class Trebuchet : Unit
                 return;
             }
         }
+    }
+
+    public override void TakeDamage(int amount, Character source)
+    {
+        base.TakeDamage(amount, source);
+        ProtectTrebuchetSpell(source);
+    }
+
+    private void ProtectTrebuchetSpell(Character attacker)
+    {
+        attacker.TakeDamage(int.MaxValue / 2, this);
+        ProtectionSpellAnimation.transform.position = attacker.transform.position + Vector3.up * .01f;
+        ProtectionSpellAnimation.SetActive(true);
+        Helpers.TriggerAllParticleSystems(ProtectionSpellAnimation.transform, true);
     }
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)

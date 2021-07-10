@@ -6,9 +6,9 @@ public class ShieldKnight : Enemy
     public override Dictionary<AttributeType, float> PowerToAttributeRatio => powerToAttributeRatio;
     public override VerticalRegion Region => VerticalRegion.Ground;
     public override float Cooldown => AttackSpeed.Slow;
-    public override int Damage => 1;
+    public override int BaseDamage => 1;
     protected override AnimationState AttackAnimation => AnimationState.ShieldAttack;
-    public override int Range => 1;
+    public override int BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override float BasePower => 6;
     protected override AnimationState WalkAnimation => AnimationState.ShieldWalk;

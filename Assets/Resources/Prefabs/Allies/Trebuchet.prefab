@@ -53,6 +53,7 @@ MonoBehaviour:
   IsJumping: 0
   _animationState: 0
   AttackPhase: 0
+  ProtectionSpellAnimation: {fileID: 2075249364008622177, guid: 4b1de71f42ba283409a054dc9c2c4280, type: 3}
 --- !u!65 &3979614908779510399
 BoxCollider:
   m_ObjectHideFlags: 0

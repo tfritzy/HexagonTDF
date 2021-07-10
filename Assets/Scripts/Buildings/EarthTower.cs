@@ -6,8 +6,8 @@ using UnityEngine;
 public class EarthTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Fast;
-    public override int Damage => 10;
-    public override int Range => RangeOptions.Medium;
+    public override int BaseDamage => 10;
+    public override int BaseRange => RangeOptions.Medium;
     public float TimeBetweenRockTrows => .25f;
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public const int BoardWidth = 20;
-    public const int BoardHeight = 11;
+    public const int BoardWidth = 11;
+    public const int BoardHeight = 20;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Trebuchet Trebuchet;
@@ -156,14 +156,16 @@ public class BoardManager : MonoBehaviour
         predGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
             this.Map,
             Trebuchet.GridPosition,
-            (Vector2Int startPos, Vector2Int testEndPos) =>
+            (Vector2Int prevPos, Vector2Int nextPos) =>
             {
-                if ((startPos != Trebuchet.GridPosition && Buildings.ContainsKey(startPos) && Buildings[startPos].Type != BuildingType.Dock))
+                if ((prevPos != Trebuchet.GridPosition &&
+                    Buildings.ContainsKey(prevPos) &&
+                    Buildings[prevPos].IsWalkable == false))
                 {
                     return false; // You would have needed to pass through a building to get here.
                 }
 
-                return Hexagons[testEndPos.x, testEndPos.y].IsWalkable || testEndPos == Trebuchet.GridPosition;
+                return Hexagons[nextPos.x, nextPos.y].IsWalkable || nextPos == Trebuchet.GridPosition;
             });
 
 

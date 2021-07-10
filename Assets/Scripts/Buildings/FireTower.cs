@@ -5,8 +5,8 @@ using UnityEngine;
 public class FireTower : AttackTower
 {
     public override float Cooldown => AttackSpeed.Medium;
-    public override int Damage => 20;
-    public override int Range => RangeOptions.Medium;
+    public override int BaseDamage => 20;
+    public override int BaseRange => RangeOptions.Medium;
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;

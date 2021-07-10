@@ -32,8 +32,10 @@ public abstract class Character : MonoBehaviour, Damageable
     }
     public virtual Vector3 Velocity { get { return Vector3.zero; } }
     public abstract float Cooldown { get; }
-    public abstract int Damage { get; }
-    public abstract int Range { get; }
+    public virtual int Damage => BaseDamage;
+    public abstract int BaseDamage { get; }
+    public virtual int Range => BaseRange;
+    public abstract int BaseRange { get; }
     public abstract VerticalRegion AttackRegion { get; }
     private Rigidbody rb;
     protected Rigidbody Rigidbody
@@ -184,4 +186,8 @@ public abstract class Character : MonoBehaviour, Damageable
         return false;
     }
 
+    public bool IsNull()
+    {
+        return this == null;
+    }
 }

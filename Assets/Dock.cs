@@ -11,8 +11,8 @@ public class Dock : Building
     public override float Power => float.MaxValue / 2;
     public override bool IsWalkable => true;
     public override float Cooldown => float.MaxValue / 2;
-    public override int Damage => throw new System.NotImplementedException();
-    public override int Range => throw new System.NotImplementedException();
+    public override int BaseDamage => throw new System.NotImplementedException();
+    public override int BaseRange => throw new System.NotImplementedException();
     public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
 
     private HexagonMono shore;

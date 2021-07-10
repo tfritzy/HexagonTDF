@@ -4,8 +4,8 @@ using UnityEngine;
 public class Spikes : AttackTower
 {
     public override float Cooldown => AttackSpeed.Medium;
-    public override int Damage => 20;
-    public override int Range => RangeOptions.VeryVeryShort;
+    public override int BaseDamage => 20;
+    public override int BaseRange => RangeOptions.VeryVeryShort;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.Spikes;
     public override Alliances Alliance => Alliances.Player;
@@ -68,7 +68,7 @@ public class Spikes : AttackTower
     {
         for (int i = damageablesInRange.Count - 1; i >= 0; i--)
         {
-            if (damageablesInRange[i] == null)
+            if (damageablesInRange[i].IsNull())
             {
                 damageablesInRange.RemoveAt(i);
             }
