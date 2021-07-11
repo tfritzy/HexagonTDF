@@ -35,8 +35,8 @@ public class Barracks : Building
     List<EnemyType> spawnableEnemies = new List<EnemyType>()
     {
         EnemyType.StickGuy,
-        // EnemyType.Spellcaster,
-        // EnemyType.ShieldKnight,
+        EnemyType.Spellcaster,
+        EnemyType.ShieldKnight,
     };
     protected override void Setup()
     {

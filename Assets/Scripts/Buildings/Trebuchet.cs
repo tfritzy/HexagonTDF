@@ -14,6 +14,7 @@ public class Trebuchet : Unit
     public override VerticalRegion Region => VerticalRegion.Ground;
     public GameObject ProtectionSpellAnimation;
     protected override float ProjectileSpeed => 20;
+    public override bool IsMelee => false;
 
     protected override void Setup()
     {

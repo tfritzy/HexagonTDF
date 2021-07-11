@@ -13,6 +13,7 @@ public class StickGuy : Enemy
     public override int BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override float BasePower => 1;
+    public override bool IsMelee => true;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

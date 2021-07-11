@@ -37,7 +37,7 @@ public abstract class Character : MonoBehaviour, Damageable
     public virtual int Range => BaseRange;
     public abstract int BaseRange { get; }
     public abstract VerticalRegion AttackRegion { get; }
-    public bool IsDead { get; private set; }
+    public bool IsDead { get; protected set; }
     private Rigidbody rb;
     protected Rigidbody Rigidbody
     {
@@ -76,13 +76,16 @@ public abstract class Character : MonoBehaviour, Damageable
         this.Health = StartingHealth;
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
-        this.healthbar = Instantiate(Prefabs.Healthbar,
-            new Vector3(10000, 10000),
-            new Quaternion(),
-            Managers.Canvas).GetComponent<Healthbar>();
-        this.healthbar.SetOwner(this.transform);
-        this.healthbar.enabled = false;
         this.projectileStartPosition = Helpers.RecursiveFindChild(this.transform, "ProjectileStartPosition") ?? this.transform;
+        if (this.healthbar == null)
+        {
+            this.healthbar = Instantiate(Prefabs.Healthbar,
+                        new Vector3(10000, 10000),
+                        new Quaternion(),
+                        Managers.Canvas).GetComponent<Healthbar>();
+            this.healthbar.SetOwner(this.transform);
+            this.healthbar.enabled = false;
+        }
     }
 
     void Update()

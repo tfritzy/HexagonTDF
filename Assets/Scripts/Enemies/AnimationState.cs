@@ -11,4 +11,5 @@ public enum AnimationState
     ShieldWalk = 8,
     ShieldAttack = 9,
     ShieldIdle = 10,
+    Dead = 11,
 }

@@ -15,4 +15,5 @@ public class Warrior : Hero
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
     protected override float BaseMovementSpeed => 3f;
+    public override bool IsMelee => true;
 }

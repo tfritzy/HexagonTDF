@@ -27,7 +27,7 @@ public abstract class Unit : Character
             this.animator.SetInteger("Animation_State", (int)_animationState);
         }
     }
-    public Unit UnitBlockingPath { get; private set; }
+    public abstract bool IsMelee { get; }
 
     protected Vector2Int destinationPos;
     protected virtual float BaseMovementSpeed => Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
@@ -39,7 +39,7 @@ public abstract class Unit : Character
     protected virtual AnimationState WalkAnimation => AnimationState.Walking;
     protected virtual AnimationState IdleAnimation => AnimationState.Idle;
 
-    private const int MELEE_ATTACK_RANGE = 1;
+    private const int MELEE_ATTACK_RANGE = 2;
     private GameObject DeathAnimation;
     private float lastAttackTime;
     private Animator animator;
@@ -51,6 +51,7 @@ public abstract class Unit : Character
         this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = BaseMovementSpeed;
+        this.CurrentAnimation = IdleAnimation;
         SetRagdollState(false);
     }
 
@@ -92,16 +93,9 @@ public abstract class Unit : Character
             return;
         }
 
-        this.UnitBlockingPath = null;
-        if (TryGetCharacterBlockingPath(out Unit unit))
+        if (IsPathBlocked())
         {
-            if (unit.UnitBlockingPath != this && (unit is Enemy && ((Enemy)unit).IsEngagedInFight))
-            {
-                this.Rigidbody.velocity = Vector3.zero;
-                this.CurrentAnimation = IdleAnimation;
-                this.UnitBlockingPath = unit;
-                return;
-            }
+            return;
         }
 
         Vector3 difference = (Managers.Board.GetHex(this.Waypoint.EndPos).transform.position - this.transform.position);
@@ -141,34 +135,8 @@ public abstract class Unit : Character
         }
     }
 
-    private const float FORWARD_BLOCK_DISTANCE = .75f;
-    private bool TryGetCharacterBlockingPath(out Unit unit)
+    protected virtual bool IsPathBlocked()
     {
-        RaycastHit[] hits = Physics.RaycastAll(
-            this.transform.position,
-            this.transform.forward,
-            FORWARD_BLOCK_DISTANCE,
-            Constants.Layers.Characters);
-
-        foreach (RaycastHit hit in hits)
-        {
-            if (hit.transform.TryGetComponent<Unit>(out Unit checkUnit))
-            {
-                if (checkUnit == this)
-                {
-                    continue;
-                }
-
-                if (checkUnit.GridPosition == this.GridPosition ||
-                   (this.Waypoint != null && checkUnit.GridPosition == this.Waypoint.EndPos))
-                {
-                    unit = checkUnit;
-                    return true;
-                }
-            }
-        }
-
-        unit = null;
         return false;
     }
 
@@ -177,7 +145,7 @@ public abstract class Unit : Character
     {
         this.AttackPhase = AttackPhase.WindingUp;
 
-        if (this.Range != MELEE_ATTACK_RANGE && windingUpProjectile == null)
+        if (IsMelee == false && windingUpProjectile == null)
         {
             windingUpProjectile = Instantiate(
                 Projectile,
@@ -197,7 +165,7 @@ public abstract class Unit : Character
             return;
         }
 
-        if (this.Range == MELEE_ATTACK_RANGE)
+        if (IsMelee)
         {
             this.TargetCharacter.TakeDamage(this.Damage, this);
         }
@@ -353,6 +321,11 @@ public abstract class Unit : Character
 
     protected virtual bool IsInRangeOfTarget()
     {
+        if (TargetCharacter == null)
+        {
+            return false;
+        }
+
         return (TargetCharacter.transform.position - this.transform.position).magnitude <= this.Range;
     }
 

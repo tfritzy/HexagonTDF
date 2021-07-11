@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Hero : Unit, Interactable
 {
@@ -11,6 +12,10 @@ public abstract class Hero : Unit, Interactable
     private int pathProgress;
     private GameObject selectedRing;
     private LineRenderer pathRenderer;
+    private GameObject reviveTimer;
+    private Text reviveTimerText;
+    private float deathTime;
+    private const float DEATH_RECOVERY_TIME = 30f;
 
     protected override void Setup()
     {
@@ -29,10 +34,29 @@ public abstract class Hero : Unit, Interactable
             Managers.Prefabs.PathRenderer.transform.rotation,
             this.transform).GetComponent<LineRenderer>();
         pathRenderer.gameObject.SetActive(false);
+
+        reviveTimer = Instantiate(
+            Managers.Prefabs.HeroReviveTimer,
+            Vector3.zero,
+            new Quaternion(),
+            Managers.Canvas);
+        reviveTimer.GetComponent<UIElementFollowObject>().ObjectToFollow = this.gameObject;
+        reviveTimerText = reviveTimer.transform.Find("Text").GetComponent<Text>();
+        reviveTimer.SetActive(false);
     }
 
     protected override void UpdateLoop()
     {
+        if (IsDead)
+        {
+            reviveTimerText.text = (int)(deathTime + DEATH_RECOVERY_TIME - Time.time) + " s";
+        }
+
+        if (IsDead && Time.time > deathTime + DEATH_RECOVERY_TIME)
+        {
+            Revive();
+        }
+
         base.UpdateLoop();
     }
 
@@ -56,9 +80,30 @@ public abstract class Hero : Unit, Interactable
         }
     }
 
+    private void Revive()
+    {
+        this.IsDead = false;
+        this.reviveTimer.SetActive(false);
+        Setup();
+        GameObject effect = Instantiate(
+            Managers.Prefabs.HeroReviveEffect,
+            this.transform.position + Vector3.up * .01f,
+            new Quaternion(),
+            null);
+        Destroy(effect, 8f);
+    }
+
     protected override bool IsInRangeOfTarget()
     {
         return IsGuardingHex && this.TargetCharacter != null;
+    }
+
+    protected override void Die()
+    {
+        this.CurrentAnimation = AnimationState.Dead;
+        this.IsDead = true;
+        this.deathTime = Time.time;
+        this.reviveTimer.SetActive(true);
     }
 
     private Enemy SearchForEnemyOnGuardedHex()

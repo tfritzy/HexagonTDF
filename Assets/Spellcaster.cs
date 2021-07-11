@@ -13,6 +13,7 @@ public class Spellcaster : Enemy
     protected override AnimationState AttackAnimation => AnimationState.CastingSpell;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override float BasePower => 3;
+    public override bool IsMelee => false;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

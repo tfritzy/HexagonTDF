@@ -14,10 +14,12 @@ public abstract class Enemy : Unit
     public override int StartingHealth => startingHealth;
     public abstract float BasePower { get; }
     public bool IsEngagedInFight { get; private set; }
+    public Enemy EnemyBlockingPath { get; private set; }
 
     private float power;
     private LineRenderer lineRenderer;
     private int startingHealth;
+
 
     public void SetPower(float power)
     {
@@ -40,6 +42,8 @@ public abstract class Enemy : Unit
             if (this.TargetCharacter == null || this.TargetCharacter.IsDead)
             {
                 this.IsEngagedInFight = false;
+                this.TargetCharacter = null;
+                return;
             }
 
             if (IsInRangeOfTarget())
@@ -57,6 +61,55 @@ public abstract class Enemy : Unit
             base.UpdateLoop();
         }
     }
+
+    protected override bool IsPathBlocked()
+    {
+        this.EnemyBlockingPath = null;
+        if (TryGetEnemyBlockingPath(out Enemy enemy))
+        {
+            if (enemy.EnemyBlockingPath != this && enemy.IsEngagedInFight == false)
+            {
+                this.Rigidbody.velocity = Vector3.zero;
+                this.CurrentAnimation = IdleAnimation;
+                this.EnemyBlockingPath = enemy;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private const float FORWARD_BLOCK_DISTANCE = .5f;
+    private bool TryGetEnemyBlockingPath(out Enemy enemy)
+    {
+        RaycastHit[] hits = Physics.RaycastAll(
+            this.transform.position,
+            this.transform.forward,
+            FORWARD_BLOCK_DISTANCE,
+            Constants.Layers.Characters);
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.transform.TryGetComponent<Enemy>(out Enemy checkEnemy))
+            {
+                if (checkEnemy == this)
+                {
+                    continue;
+                }
+
+                if (checkEnemy.GridPosition == this.GridPosition ||
+                   (this.Waypoint != null && checkEnemy.GridPosition == this.Waypoint.EndPos))
+                {
+                    enemy = checkEnemy;
+                    return true;
+                }
+            }
+        }
+
+        enemy = null;
+        return false;
+    }
+
 
     protected override void FindTargetCharacter()
     {
