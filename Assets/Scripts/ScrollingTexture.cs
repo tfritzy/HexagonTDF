@@ -11,13 +11,13 @@ public class ScrollingTexture : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.mat = this.GetComponent<MeshRenderer>().material;
+        this.mat = this.GetComponent<Renderer>().material;
     }
 
     float uvOffset = 0f;
     void LateUpdate()
     {
         uvOffset += (ScrollSpeed * Time.deltaTime);
-        mat.mainTextureOffset = new Vector2(0, uvOffset);
+        mat.mainTextureOffset = new Vector2(uvOffset, 0);
     }
 }

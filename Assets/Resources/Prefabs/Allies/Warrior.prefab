@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1362436362773913565}
   - component: {fileID: -8927852196158113207}
-  - component: {fileID: 3228231831383717613}
   - component: {fileID: 8691378324718058487}
+  - component: {fileID: 4928978329776709900}
   m_Layer: 11
   m_Name: Warrior
   m_TagString: Untagged
@@ -54,19 +54,6 @@ MonoBehaviour:
   _animationState: 0
   AttackPhase: 0
   IsListeningForTargetPosition: 0
---- !u!65 &3228231831383717613
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1362436362773913562}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2.8896618, z: 1}
-  m_Center: {x: 0, y: 1.4479294, z: 0}
 --- !u!54 &8691378324718058487
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -83,6 +70,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &4928978329776709900
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362436362773913562}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.71
+  m_Height: 1.9992619
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.73876, z: 0}
 --- !u!95 &1362436363026820242
 Animator:
   serializedVersion: 3

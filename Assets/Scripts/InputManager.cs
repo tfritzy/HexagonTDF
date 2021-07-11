@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
         }
 
         Vector3? inputPos = null;
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonUp(0))
         {
             inputPos = Input.mousePosition;
         }

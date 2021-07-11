@@ -31,7 +31,6 @@ public abstract class Unit : Character
 
     protected Vector2Int destinationPos;
     protected virtual float BaseMovementSpeed => Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
-    protected bool IsDead;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
     protected Waypoint Waypoint;
     protected Guid PathId;
@@ -96,7 +95,7 @@ public abstract class Unit : Character
         this.UnitBlockingPath = null;
         if (TryGetCharacterBlockingPath(out Unit unit))
         {
-            if (unit.UnitBlockingPath != this)
+            if (unit.UnitBlockingPath != this && (unit is Enemy && ((Enemy)unit).IsEngagedInFight))
             {
                 this.Rigidbody.velocity = Vector3.zero;
                 this.CurrentAnimation = IdleAnimation;
@@ -192,6 +191,12 @@ public abstract class Unit : Character
     public void ReleaseAttack()
     {
         this.AttackPhase = AttackPhase.Recovering;
+
+        if (!IsInRangeOfTarget())
+        {
+            return;
+        }
+
         if (this.Range == MELEE_ATTACK_RANGE)
         {
             this.TargetCharacter.TakeDamage(this.Damage, this);
@@ -217,7 +222,7 @@ public abstract class Unit : Character
         projectile = null;
     }
 
-    private void AttackTarget()
+    protected void AttackTarget()
     {
         if (Time.time > lastAttackTime + this.Cooldown && IsInRangeOfTarget() && AttackPhase == AttackPhase.Idle)
         {
@@ -348,15 +353,7 @@ public abstract class Unit : Character
 
     protected virtual bool IsInRangeOfTarget()
     {
-        if (TryGetCharacterBlockingPath(out Unit unit))
-        {
-            if (unit.Alliance == this.Enemies)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return (TargetCharacter.transform.position - this.transform.position).magnitude <= this.Range;
     }
 
     private void DetachBody()

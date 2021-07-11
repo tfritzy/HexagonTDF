@@ -37,6 +37,7 @@ public abstract class Character : MonoBehaviour, Damageable
     public virtual int Range => BaseRange;
     public abstract int BaseRange { get; }
     public abstract VerticalRegion AttackRegion { get; }
+    public bool IsDead { get; private set; }
     private Rigidbody rb;
     protected Rigidbody Rigidbody
     {
@@ -96,6 +97,7 @@ public abstract class Character : MonoBehaviour, Damageable
 
     protected virtual void Die()
     {
+        this.IsDead = true;
         Destroy(this.gameObject);
     }
 

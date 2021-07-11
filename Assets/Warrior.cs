@@ -14,5 +14,5 @@ public class Warrior : Hero
     public override int BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
-    protected override float BaseMovementSpeed => 2f;
+    protected override float BaseMovementSpeed => 3f;
 }

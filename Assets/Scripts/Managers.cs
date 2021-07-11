@@ -111,4 +111,18 @@ public static class Managers
             return captureProgressBar;
         }
     }
+
+    private static InMemPrefabs prefabs;
+    public static InMemPrefabs Prefabs
+    {
+        get
+        {
+            if (prefabs == null)
+            {
+                prefabs = GameObject.Find("Prefabs").GetComponent<InMemPrefabs>();
+            }
+
+            return prefabs;
+        }
+    }
 }

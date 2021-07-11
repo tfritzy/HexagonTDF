@@ -102,6 +102,11 @@ public abstract class AttackTower : Building
                 continue;
             }
 
+            if (character is Building)
+            {
+                continue;
+            }
+
             if (this.Enemies == character.Alliance)
             {
                 float distance = Vector3.Distance(collider.transform.position, this.transform.position);

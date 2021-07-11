@@ -13,6 +13,7 @@ public abstract class Enemy : Unit
     public override float Power { get { return power; } }
     public override int StartingHealth => startingHealth;
     public abstract float BasePower { get; }
+    public bool IsEngagedInFight { get; private set; }
 
     private float power;
     private LineRenderer lineRenderer;
@@ -30,6 +31,31 @@ public abstract class Enemy : Unit
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
             ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
         this.MovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
+    }
+
+    protected override void UpdateLoop()
+    {
+        if (IsEngagedInFight)
+        {
+            if (this.TargetCharacter == null || this.TargetCharacter.IsDead)
+            {
+                this.IsEngagedInFight = false;
+            }
+
+            if (IsInRangeOfTarget())
+            {
+                AttackTarget();
+            }
+            else
+            {
+                Vector3 diffVector = (TargetCharacter.transform.position - this.transform.position).normalized;
+                this.Rigidbody.velocity = diffVector * this.MovementSpeed;
+            }
+        }
+        else
+        {
+            base.UpdateLoop();
+        }
     }
 
     protected override void FindTargetCharacter()
@@ -59,6 +85,18 @@ public abstract class Enemy : Unit
         }
 
         base.Die();
+    }
+
+    public void EngageInFight(Hero challenger)
+    {
+        IsEngagedInFight = true;
+        this.TargetCharacter = challenger;
+    }
+
+    public void DisengageFromFight()
+    {
+        this.IsEngagedInFight = false;
+        FindTargetCharacter();
     }
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)

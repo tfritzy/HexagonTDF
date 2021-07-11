@@ -62,7 +62,6 @@ public class Builder : MonoBehaviour
         highlightedHexagon?.ResetMaterial();
         buildingInst = null;
         highlightedHexagon = null;
-        this.GetComponent<LineRenderer>().enabled = false;
     }
 
     public void InformHexWasClicked(HexagonMono hex)
@@ -157,19 +156,6 @@ public class Builder : MonoBehaviour
         }
 
         CreateHighlightBuilding(isBuildable);
-    }
-
-    private void SetupLineRenderer(List<Vector2Int> path)
-    {
-        LineRenderer lr = this.GetComponent<LineRenderer>();
-        lr.enabled = true;
-        lr.positionCount = path.Count + 1;
-        lr.SetPosition(0, this.transform.position);
-        for (int i = 1; i < lr.positionCount; i++)
-        {
-            Vector2Int pos = path[i - 1];
-            lr.SetPosition(i, Managers.Board.Hexagons[pos.x, pos.y].transform.position + Vector3.up * .01f);
-        }
     }
 
     private void SetCostPanels()
