@@ -15,6 +15,7 @@ public class BoardManager : MonoBehaviour
     public bool RegenerateMap;
     public Map Map;
     public Guid PathingId { get; private set; }
+    public Hero Hero;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
     private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
 
@@ -38,6 +39,7 @@ public class BoardManager : MonoBehaviour
         Map = new Map(BoardWidth, BoardHeight);
         SpawnHexagons(Map);
         SpawnTrebuchet(Map);
+        SpawnHero(Map);
         SpawnBuildings(Map.Buildings);
     }
 
@@ -111,13 +113,24 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnTrebuchet(Map map)
     {
-        Vector2Int pos = map.Trebuchet;
+        Vector2Int pos = map.TrebuchetPos;
         Trebuchet = Instantiate(
             Prefabs.Allies[AlliedUnitType.Trebuchet],
             Hexagons[pos.x, pos.y].transform.position,
             new Quaternion())
                 .GetComponent<Trebuchet>();
         Trebuchet.SetInitialPosition(pos);
+    }
+
+    private void SpawnHero(Map map)
+    {
+        Vector2Int pos = map.HeroPos;
+        this.Hero = Instantiate(
+            Prefabs.Allies[AlliedUnitType.Warrior],
+            Hexagons[pos.x, pos.y].transform.position,
+            new Quaternion())
+                .GetComponent<Hero>();
+        this.Hero.SetInitialPosition(pos);
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)

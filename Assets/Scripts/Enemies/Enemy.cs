@@ -29,7 +29,7 @@ public abstract class Enemy : Unit
         // this.Body.transform.localScale *= healthModifier;
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
             ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
-        this.baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
+        this.MovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
     }
 
     protected override void FindTargetCharacter()
@@ -63,6 +63,12 @@ public abstract class Enemy : Unit
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)
     {
+        if (currentPosition == this.TargetCharacter.GridPosition)
+        {
+            this.Waypoint = null;
+            return;
+        }
+
         PredGridPoint nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetCharacter.GridPosition, currentPosition);
 
         if (nextPos.Position == Constants.MaxVector2Int)

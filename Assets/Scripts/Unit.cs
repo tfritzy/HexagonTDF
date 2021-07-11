@@ -30,7 +30,7 @@ public abstract class Unit : Character
     public Unit UnitBlockingPath { get; private set; }
 
     protected Vector2Int destinationPos;
-    protected float baseMovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
+    protected virtual float BaseMovementSpeed => Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
     protected bool IsDead;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
     protected Waypoint Waypoint;
@@ -51,7 +51,7 @@ public abstract class Unit : Character
         FindTargetCharacter();
         this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
-        this.MovementSpeed = baseMovementSpeed;
+        this.MovementSpeed = BaseMovementSpeed;
         SetRagdollState(false);
     }
 
@@ -86,6 +86,11 @@ public abstract class Unit : Character
         if (ShouldRecalculatePath())
         {
             RecalculatePath();
+        }
+
+        if (this.Waypoint == null)
+        {
+            return;
         }
 
         this.UnitBlockingPath = null;
@@ -128,7 +133,7 @@ public abstract class Unit : Character
         {
             CalculateNextPathingPosition(this.Waypoint.EndPos);
 
-            if (this.GridPosition == this.Waypoint.EndPos)
+            if (this.Waypoint == null)
             {
                 this.Rigidbody.velocity = Vector3.zero;
                 this.CurrentAnimation = IdleAnimation;
@@ -155,7 +160,8 @@ public abstract class Unit : Character
                     continue;
                 }
 
-                if (checkUnit.GridPosition == this.GridPosition || checkUnit.GridPosition == this.Waypoint.EndPos)
+                if (checkUnit.GridPosition == this.GridPosition ||
+                   (this.Waypoint != null && checkUnit.GridPosition == this.Waypoint.EndPos))
                 {
                     unit = checkUnit;
                     return true;
@@ -344,7 +350,7 @@ public abstract class Unit : Character
     {
         if (TryGetCharacterBlockingPath(out Unit unit))
         {
-            if (unit is Trebuchet)
+            if (unit.Alliance == this.Enemies)
             {
                 return true;
             }

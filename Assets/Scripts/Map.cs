@@ -6,7 +6,8 @@ using UnityEngine;
 public class Map
 {
     public Dictionary<Vector2Int, BuildingType> Buildings;
-    public Vector2Int Trebuchet;
+    public Vector2Int TrebuchetPos;
+    public Vector2Int HeroPos;
     public List<Vector2Int> LandableShores;
     public HashSet<Vector2Int> OceanHex;
     public HashSet<Vector2Int> MainLandmass;
@@ -77,7 +78,7 @@ public class Map
         FindMainLandmass();
         ConnectOrphanedLandMasses();
         // FindLandableShores();
-        PlaceVillageBuildings();
+        PlaceTrebuchetAndEnemyBuildings();
     }
 
     public HexagonType? GetHex(int x, int y)
@@ -157,7 +158,11 @@ public class Map
             {
                 continue;
             }
-            List<Vector2Int> path = Helpers.FindPath(this, landGroups[i].First(), MainLandmass, (Vector2Int pos) => { return GetHex(pos).Value != HexagonType.Water; });
+            List<Vector2Int> path = Helpers.FindPath(
+                this,
+                landGroups[i].First(),
+                MainLandmass,
+                (Vector2Int pos) => { return GetHex(pos).Value != HexagonType.Water; });
 
             if (path == null)
             {
@@ -188,7 +193,7 @@ public class Map
         return Mathf.PerlinNoise(sampleX + seed, sampleY + seed);
     }
 
-    private void PlaceVillageBuildings()
+    private void PlaceTrebuchetAndEnemyBuildings()
     {
         List<Vector2Int> topLandmass = new List<Vector2Int>();
         foreach (Vector2Int pos in MainLandmass)
@@ -199,7 +204,10 @@ public class Map
             }
         }
 
-        this.Trebuchet = new Vector2Int(this.Width / 2, 2);
+        this.TrebuchetPos = new Vector2Int(this.Width / 2, 2);
+        this.HeroPos = new Vector2Int(this.Width / 2, 3);
+        this.hexes[this.TrebuchetPos.x, this.TrebuchetPos.y] = HexagonType.Grass;
+        this.hexes[this.HeroPos.x, this.HeroPos.y] = HexagonType.Grass;
 
         float numBarracks = 3;
         for (float i = 0; i < topLandmass.Count; i += topLandmass.Count / numBarracks)
@@ -209,5 +217,3 @@ public class Map
         }
     }
 }
-
-

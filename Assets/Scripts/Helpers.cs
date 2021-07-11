@@ -17,7 +17,7 @@ public static class Helpers
 
         Ray ray = Managers.Camera.ScreenPointToRay(startPos);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons))
+        if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons | Constants.Layers.Interactables))
         {
             return hit.collider.transform?.parent?.GetComponent<HexagonMono>();
         }
@@ -42,6 +42,11 @@ public static class Helpers
         }
     }
 
+    public static List<Vector2Int> FindPathByWalking(Map map, Vector2Int sourcePos, Vector2Int endPos)
+    {
+        return FindPath(map, sourcePos, endPos, IsPosTraversable);
+    }
+
     public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, bool> shouldInclude)
     {
         return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude, (Vector2Int pos) => { return true; });
@@ -57,7 +62,12 @@ public static class Helpers
         return FindPath(map, sourcePos, endPos, shouldInclude, (Vector2Int pos) => { return true; });
     }
 
-    public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude, Func<Vector2Int, bool> isValidEnd)
+    public static List<Vector2Int> FindPath(
+        Map map,
+        Vector2Int sourcePos,
+        HashSet<Vector2Int> endPos,
+        Func<Vector2Int, bool> shouldInclude,
+        Func<Vector2Int, bool> isValidEnd)
     {
         Queue<PredGridPoint> q = new Queue<PredGridPoint>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -104,7 +114,10 @@ public static class Helpers
     }
 
 
-    public static PredGridPoint[,] GetPredecessorGrid(Map map, Vector2Int sourcePos, Func<Vector2Int, Vector2Int, bool> shouldInclude)
+    public static PredGridPoint[,] GetPredecessorGrid(
+        Map map,
+        Vector2Int sourcePos,
+        Func<Vector2Int, Vector2Int, bool> shouldInclude)
     {
         Queue<PredGridPoint> q = new Queue<PredGridPoint>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -370,5 +383,11 @@ public static class Helpers
     public static Vector3 ToWorldPosition(Vector2Int position)
     {
         return ToWorldPosition(position.x, position.y);
+    }
+
+    public static bool IsPosTraversable(Vector2Int pos)
+    {
+        return Managers.Board.GetHex(pos).IsWalkable &&
+              (Managers.Board.Buildings.ContainsKey(pos) == false || Managers.Board.Buildings[pos].IsWalkable);
     }
 }

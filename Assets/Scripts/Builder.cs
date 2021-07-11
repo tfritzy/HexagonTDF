@@ -56,11 +56,6 @@ public class Builder : MonoBehaviour
         menu.SetActive(false);
     }
 
-    void Update()
-    {
-        BuildBuildingLoop();
-    }
-
     private void UnHighlightHexagon()
     {
         Destroy(buildingInst);
@@ -70,19 +65,9 @@ public class Builder : MonoBehaviour
         this.GetComponent<LineRenderer>().enabled = false;
     }
 
-    private void BuildBuildingLoop()
+    public void InformHexWasClicked(HexagonMono hex)
     {
-        if (Managers.CameraControl.IsDragging())
-        {
-            return;
-        }
-
-        if (CanOpenMenuThisFrame && Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
-        {
-            SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
-        }
-
-        CanOpenMenuThisFrame = true;
+        SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
     }
 
     private void SetBuildTargetHex(HexagonMono newPotentialHexagon)

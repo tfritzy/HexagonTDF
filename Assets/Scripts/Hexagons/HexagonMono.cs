@@ -37,7 +37,8 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void Interact()
     {
-        Debug.Log($"Clicked on {Type} hex at {GridPosition}");
+        Managers.Board.Hero.InformHexWasClicked(this);
+        Managers.Builder.InformHexWasClicked(this);
     }
 
     public void SetMaterial(Material material)
