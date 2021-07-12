@@ -142,14 +142,17 @@ public abstract class Hero : Unit, Interactable
         }
     }
 
-    public void InformHexWasClicked(HexagonMono hex)
+    public bool InformHexWasClicked(HexagonMono hex)
     {
         selectedRing.SetActive(false);
         if (IsListeningForTargetPosition)
         {
             FindPath(hex.GridPosition);
             IsListeningForTargetPosition = false;
+            return true;
         }
+
+        return false;
     }
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)

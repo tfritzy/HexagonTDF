@@ -37,8 +37,12 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void Interact()
     {
-        Managers.Board.Hero.InformHexWasClicked(this);
-        Managers.Builder.InformHexWasClicked(this);
+        bool wasInputUsed = Managers.Board.Hero.InformHexWasClicked(this);
+
+        if (!wasInputUsed)
+        {
+            Managers.Builder.InformHexWasClicked(this);
+        }
     }
 
     public void SetMaterial(Material material)

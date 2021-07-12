@@ -4,23 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Steps:
-///  1. Select a hex by clicking. Highlight hex.
-///     1.a click on other hex
-///       1. Unhighlight hex goto 1.
-///  2. Build menu flies in.
-///  3. Select a building. Create highlight building.
-///     3.a Click on other hex.
-///       1. Unhighlight hex, destroy highlight building. goto 1.
-///     3.b Select different building.
-///       1. Destroy highlight building. goto 3.
-///  4. Create confirm or deny buttons, and building stats page.
-///     4.a Deny
-///       1. Close menu, unselect hex, unhighlight hex.
-///     4.b Accept
-///       1. Create real building, unighlight hex, unselect hex, close menu.
-/// </summary>
 public class Builder : MonoBehaviour
 {
     public Building SelectedBuilding
@@ -41,7 +24,7 @@ public class Builder : MonoBehaviour
     private GameObject confirmButtons;
     private Dictionary<ResourceType, Text> CostPanels;
     private GameObject menu;
-    private bool CanOpenMenuThisFrame; // Used to stop menu from getting reopened after it got closed.
+    private float menuCloseTime;
 
     void Start()
     {
@@ -71,6 +54,11 @@ public class Builder : MonoBehaviour
 
     private void SetBuildTargetHex(HexagonMono newPotentialHexagon)
     {
+        if (Time.time < menuCloseTime + .1f)
+        {
+            return;
+        }
+
         if (newPotentialHexagon == null)
         {
             return;
@@ -181,6 +169,6 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
         this.menu?.SetActive(false);
-        CanOpenMenuThisFrame = false;
+        menuCloseTime = Time.time;
     }
 }
