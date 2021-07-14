@@ -9,6 +9,8 @@ public abstract class Hero : Unit, Interactable
     protected List<Vector2Int> PathToTargetPosition;
     public bool IsListeningForTargetPosition;
     public bool IsGuardingHex { get; private set; }
+    public List<Ability> Abilities;
+    protected abstract void InitializeAbilities();
     private int pathProgress;
     private GameObject selectedRing;
     private LineRenderer pathRenderer;
@@ -20,6 +22,7 @@ public abstract class Hero : Unit, Interactable
     protected override void Setup()
     {
         base.Setup();
+        this.InitializeAbilities();
         PathToTargetPosition = new List<Vector2Int>();
         selectedRing = Instantiate(
             Managers.Prefabs.UnitSelectedRing,
@@ -217,6 +220,17 @@ public abstract class Hero : Unit, Interactable
         for (int i = 0; i < this.PathToTargetPosition.Count; i++)
         {
             this.pathRenderer.SetPosition(i, Helpers.ToWorldPosition(this.PathToTargetPosition[i]));
+        }
+    }
+
+    public void InformCharacterWasClicked(Character character)
+    {
+        foreach (Ability ability in this.Abilities)
+        {
+            if (ability is CharacterTargetAbility)
+            {
+                ((CharacterTargetAbility)ability).InformCharacterWasClicked(character);
+            }
         }
     }
 }

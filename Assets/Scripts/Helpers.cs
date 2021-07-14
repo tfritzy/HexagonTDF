@@ -17,7 +17,7 @@ public static class Helpers
 
         Ray ray = Managers.Camera.ScreenPointToRay(startPos);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons | Constants.Layers.Interactables))
+        if (Physics.Raycast(ray, out hit, 100f, Constants.Layers.Hexagons))
         {
             return hit.collider.transform?.parent?.GetComponent<HexagonMono>();
         }

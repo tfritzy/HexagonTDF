@@ -34,7 +34,6 @@ public static class Constants
         public static int Hexagons = 1 << 8;
         public static int Characters = 1 << 9;
         public static int UI = 1 << 5;
-        public static int Interactables = 1 << 11;
     }
 
     private static Dictionary<ResourceType, Color> resourceColors = new Dictionary<ResourceType, Color>()

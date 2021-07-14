@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class Enemy : Unit
+public abstract class Enemy : Unit, Interactable
 {
     public override Alliances Alliance => Alliances.Illigons;
     public override Alliances Enemies => Alliances.Player;
@@ -213,5 +213,11 @@ public abstract class Enemy : Unit
     {
         this.gameObject.AddComponent<Rigidbody>();
         this.Rigidbody.useGravity = false;
+    }
+
+    public void Interact()
+    {
+        Debug.Log("Enemy was clicked");
+        Managers.Board.Hero.InformCharacterWasClicked(this);
     }
 }

@@ -36,7 +36,7 @@ public class InputManager : MonoBehaviour
             ray,
             out hit,
             100f,
-            Constants.Layers.Hexagons | Constants.Layers.Interactables,
+            Constants.Layers.Hexagons | Constants.Layers.Characters,
             QueryTriggerInteraction.Collide))
         {
             if (InterfaceUtility.TryGetInterface<Interactable>(out Interactable interactable, hit.collider.gameObject))

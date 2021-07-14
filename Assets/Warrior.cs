@@ -16,4 +16,12 @@ public class Warrior : Hero
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
     protected override float BaseMovementSpeed => 3f;
     public override bool IsMelee => true;
+
+    protected override void InitializeAbilities()
+    {
+        this.Abilities = new List<Ability>()
+        {
+            new SwordThrow(this),
+        };
+    }
 }
