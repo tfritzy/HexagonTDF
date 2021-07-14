@@ -41,11 +41,6 @@ public class CameraControl : MonoBehaviour
             return true;
         }
 
-        if (rb.velocity.magnitude > .2f)
-        {
-            return true;
-        }
-
         return false;
     }
 

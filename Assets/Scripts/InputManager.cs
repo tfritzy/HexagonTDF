@@ -4,19 +4,31 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    public bool DisabledByScroll;
+    public bool IsFingerHeldDown;
+
     void Update()
     {
-        ShootRayCast();
+        if (DisabledByScroll == false)
+        {
+            ShootRayCast();
+        }
+
+        if (Managers.CameraControl.IsDragging())
+        {
+            DisabledByScroll = true;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            DisabledByScroll = false;
+        }
     }
 
     private void ShootRayCast()
     {
-        if (Managers.CameraControl.IsDragging())
-        {
-            return;
-        }
-
         Vector3? inputPos = null;
+
         if (Input.GetMouseButtonUp(0))
         {
             inputPos = Input.mousePosition;

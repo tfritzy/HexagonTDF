@@ -7544,6 +7544,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08ae4b79543fce8479633721fe202ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DisabledByScroll: 0
+  IsFingerHeldDown: 0
 --- !u!4 &1156985238 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: eb63f078618abcb499eb6467f62e0e14, type: 3}
