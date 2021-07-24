@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,6 +8,7 @@ public class InputManager : MonoBehaviour
 {
     public bool DisabledByScroll;
     public bool IsFingerHeldDown;
+    public static event EventHandler InputWasMade;
 
     void Update()
     {
@@ -66,21 +68,38 @@ public class InputManager : MonoBehaviour
             QueryTriggerInteraction.Collide);
         foreach (RaycastHit hit in hits)
         {
-            Interactable interactable;
-            if (InterfaceUtility.TryGetInterface<Interactable>(out interactable, hit.collider.gameObject))
+            bool wasConsumed = Interact(hit.collider.gameObject);
+
+            if (!wasConsumed)
             {
-                if (interactable.Interact())
-                {
-                    return true;
-                }
+                wasConsumed = Interact(hit.transform.parent?.gameObject);
             }
 
-            if (hit.transform.parent != null && hit.transform.parent.TryGetComponent<Interactable>(out interactable))
+            if (wasConsumed)
             {
-                if (interactable.Interact())
-                {
-                    return true;
-                }
+                InputWasMade?.Invoke(this, null);
+            }
+
+            return wasConsumed;
+        }
+
+        return false;
+    }
+
+    private bool Interact(GameObject gameObject)
+    {
+        if (gameObject == null)
+        {
+            return false;
+        }
+
+        if (InterfaceUtility.TryGetInterface<Interactable>(out Interactable interactable, gameObject))
+        {
+            if (interactable.Interact())
+            {
+                EventHandler handler = InputWasMade;
+                handler?.Invoke(this, null);
+                return true;
             }
         }
 

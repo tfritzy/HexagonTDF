@@ -34,9 +34,9 @@ public class Barracks : Building
     private float levelStartTime;
     List<EnemyType> spawnableEnemies = new List<EnemyType>()
     {
-        // EnemyType.StickGuy,
-        // EnemyType.Spellcaster,
-        // EnemyType.ShieldKnight,
+        EnemyType.StickGuy,
+        EnemyType.Spellcaster,
+        EnemyType.ShieldKnight,
         EnemyType.Velociraptor,
     };
     protected override void Setup()

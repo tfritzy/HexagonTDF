@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class AttackTower : Building
+public abstract class AttackTower : Building, Interactable
 {
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
@@ -214,5 +214,20 @@ public abstract class AttackTower : Building
         Vector3 direction = targetsPos - this.transform.position;
         direction.y = 0;
         return Physics.RaycastAll(source, direction, maxDistance, Constants.Layers.Characters);
+    }
+
+    public bool Interact()
+    {
+        if (Managers.SelectTowerMenu.gameObject.activeInHierarchy && Managers.SelectTowerMenu.TargetTower == this)
+        {
+            Managers.SelectTowerMenu.gameObject.SetActive(false);
+        }
+        else
+        {
+            Managers.SelectTowerMenu.gameObject.SetActive(true);
+            Managers.SelectTowerMenu.SetTargetTower(this);
+        }
+
+        return true;
     }
 }

@@ -9,4 +9,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject HeroReviveEffect;
     public GameObject HeroReviveTimer;
     public GameObject ConsecrateEffect;
+    public GameObject SelectTowerMenu;
 }

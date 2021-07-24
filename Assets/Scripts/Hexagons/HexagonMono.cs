@@ -39,15 +39,13 @@ public class HexagonMono : MonoBehaviour, Interactable
     {
         bool wasInputUsed = Managers.Board.Hero.InformHexWasClicked(this);
 
-        if (!wasInputUsed)
-        {
-            wasInputUsed = Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
-        }
+        if (wasInputUsed) return true;
 
-        if (!wasInputUsed)
-        {
-            wasInputUsed = Managers.Builder.InformHexWasClicked(this);
-        }
+        wasInputUsed = Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
+
+        if (wasInputUsed) return true;
+
+        wasInputUsed = Managers.Builder.InformHexWasClicked(this);
 
         return wasInputUsed;
     }

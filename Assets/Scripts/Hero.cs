@@ -131,6 +131,11 @@ public abstract class Hero : Unit, Interactable
 
     public bool Interact()
     {
+        if (IsDead)
+        {
+            return false;
+        }
+
         if (IsListeningForTargetPosition == false)
         {
             IsListeningForTargetPosition = true;

@@ -125,4 +125,19 @@ public static class Managers
             return prefabs;
         }
     }
+
+    private static SelectTowerMenu selectTowerMenu;
+    public static SelectTowerMenu SelectTowerMenu
+    {
+        get
+        {
+            if (selectTowerMenu == null)
+            {
+                selectTowerMenu = GameObject.Instantiate(Managers.prefabs.SelectTowerMenu, Canvas).GetComponent<SelectTowerMenu>();
+                selectTowerMenu.gameObject.SetActive(false);
+            }
+
+            return selectTowerMenu;
+        }
+    }
 }

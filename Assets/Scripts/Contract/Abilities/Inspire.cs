@@ -5,6 +5,7 @@ public class Inspire : InstantCastAbility
     public override float Cooldown => 60;
     private const float duration = 30f;
     private Guid id;
+    private const float INCREASE_AMOUNT = .75f;
 
     public Inspire(Hero owner) : base(owner)
     {
@@ -17,7 +18,7 @@ public class Inspire : InstantCastAbility
         {
             if (building is AttackTower && building.Alliance == this.Owner.Alliance)
             {
-                building.AddEffect(new AttackSpeedEffect(.5f, duration, id, this.Owner));
+                building.AddEffect(new AttackSpeedEffect(INCREASE_AMOUNT, duration, id, this.Owner));
             }
         }
     }

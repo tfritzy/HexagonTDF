@@ -363,6 +363,7 @@ MonoBehaviour:
   HeroReviveEffect: {fileID: 4106687889419873739, guid: 3a4d98053d1232d468bd8cbdb643984f, type: 3}
   HeroReviveTimer: {fileID: 5797505427367968115, guid: 116e3f1a5b2c2244ab2119ed7de1b61f, type: 3}
   ConsecrateEffect: {fileID: 5736227985175077343, guid: 366c1fd6527279e4380263f44b668ff6, type: 3}
+  SelectTowerMenu: {fileID: 4900946743011058300, guid: 094c4f7d73db6f8458ce2e150746b09f, type: 3}
 --- !u!1001 &231087952
 PrefabInstance:
   m_ObjectHideFlags: 0
