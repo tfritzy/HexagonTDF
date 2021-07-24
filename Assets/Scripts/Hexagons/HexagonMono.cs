@@ -41,6 +41,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
         if (!wasInputUsed)
         {
+            Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
             Managers.Builder.InformHexWasClicked(this);
         }
     }

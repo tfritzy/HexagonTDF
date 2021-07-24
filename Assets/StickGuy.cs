@@ -7,7 +7,7 @@ public class StickGuy : Enemy
     public override EnemyType Type => EnemyType.StickGuy;
     public override Dictionary<AttributeType, float> PowerToAttributeRatio => powerToAttributeRatio;
     public override VerticalRegion Region => VerticalRegion.Ground;
-    public override float Cooldown => AttackSpeed.Medium;
+    public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 1;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
     public override int BaseRange => 1;

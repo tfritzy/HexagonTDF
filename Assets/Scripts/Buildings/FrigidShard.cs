@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FrigidShard : AttackTower
 {
-    public override float Cooldown => AttackSpeed.Fast;
+    public override float BaseCooldown => AttackSpeed.Fast;
     public override int BaseDamage => 1;
     public override int BaseRange => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeteorTower : AttackTower
 {
-    public override float Cooldown => AttackSpeed.VerySlow;
+    public override float BaseCooldown => AttackSpeed.VerySlow;
     public override int BaseDamage => 50;
     public override int BaseRange => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;

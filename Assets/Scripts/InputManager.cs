@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
@@ -42,6 +43,11 @@ public class InputManager : MonoBehaviour
             return;
         }
 
+        if (IsPointerOverUIObject())
+        {
+            return;
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(inputPos.Value);
         RaycastHit hit;
         if (Physics.Raycast(
@@ -61,5 +67,14 @@ public class InputManager : MonoBehaviour
                 hexagon.Interact();
             }
         }
+    }
+
+    private bool IsPointerOverUIObject()
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 }

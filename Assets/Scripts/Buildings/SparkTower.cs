@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SparkTower : AttackTower
 {
-    public override float Cooldown => AttackSpeed.VeryVeryFast;
+    public override float BaseCooldown => AttackSpeed.VeryVeryFast;
     public override int BaseDamage => 1;
     public override int BaseRange => RangeOptions.Short;
     public override BuildingType Type => BuildingType.SparkTower;

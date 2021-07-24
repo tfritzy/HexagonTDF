@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Spikes : AttackTower
 {
-    public override float Cooldown => AttackSpeed.Medium;
+    public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 20;
     public override int BaseRange => RangeOptions.VeryVeryShort;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;

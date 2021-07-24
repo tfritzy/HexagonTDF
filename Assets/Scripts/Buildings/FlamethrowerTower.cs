@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FlamethrowerTower : AttackTower
 {
-    public override float Cooldown => AttackSpeed.VeryVeryVeryFast;
+    public override float BaseCooldown => AttackSpeed.VeryVeryVeryFast;
     public override int BaseDamage => 1;
     public override int BaseRange => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;

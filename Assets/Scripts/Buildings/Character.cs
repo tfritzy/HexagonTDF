@@ -31,7 +31,9 @@ public abstract class Character : MonoBehaviour, Damageable
         }
     }
     public virtual Vector3 Velocity { get { return Vector3.zero; } }
-    public abstract float Cooldown { get; }
+    public abstract float BaseCooldown { get; }
+    public float Cooldown => BaseCooldown + CooldownModificationAmount;
+    public float CooldownModificationAmount;
     public virtual int Damage => BaseDamage;
     public abstract int BaseDamage { get; }
     public virtual int Range => BaseRange;
@@ -59,6 +61,14 @@ public abstract class Character : MonoBehaviour, Damageable
     protected virtual float ProjectileSpeed => 10;
     protected Transform projectileStartPosition;
     public GameObject Projectile;
+    private List<TakeDamageTiming> damageTimings;
+
+    private class TakeDamageTiming
+    {
+        public float DamageTime;
+        public int Damage;
+        public Character Source;
+    }
 
     void Start()
     {
@@ -86,6 +96,7 @@ public abstract class Character : MonoBehaviour, Damageable
             this.healthbar.SetOwner(this.transform);
             this.healthbar.enabled = false;
         }
+        damageTimings = new List<TakeDamageTiming>();
     }
 
     void Update()
@@ -96,6 +107,16 @@ public abstract class Character : MonoBehaviour, Damageable
     protected virtual void UpdateLoop()
     {
         ApplyEffects();
+        ProcessTakeDamageTimings();
+    }
+
+    private void ProcessTakeDamageTimings()
+    {
+        while (this.damageTimings.Count > 0 && Time.time > this.damageTimings.Last().DamageTime)
+        {
+            this.TakeDamage(this.damageTimings.Last().Damage, this.damageTimings.Last().Source);
+            this.damageTimings.RemoveAt(this.damageTimings.Count - 1);
+        }
     }
 
     protected virtual void Die()
@@ -117,6 +138,18 @@ public abstract class Character : MonoBehaviour, Damageable
 
         this.healthbar.enabled = true;
         this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
+    }
+
+    public void TakeDamage(int amount, Character source, float delay)
+    {
+        this.damageTimings.Add(new TakeDamageTiming
+        {
+            Damage = amount,
+            DamageTime = Time.time + delay,
+            Source = source,
+        });
+
+        this.damageTimings.Sort((x, y) => y.DamageTime.CompareTo(x.DamageTime));
     }
 
     private void ApplyEffects()

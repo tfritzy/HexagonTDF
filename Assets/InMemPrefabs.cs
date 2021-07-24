@@ -8,4 +8,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject PathRenderer;
     public GameObject HeroReviveEffect;
     public GameObject HeroReviveTimer;
+    public GameObject ConsecrateEffect;
 }

@@ -10,7 +10,7 @@ public class Barracks : Building
     public override int StartingHealth => 100;
     public override float Power => int.MaxValue;
     public int BarracksIndex;
-    public override float Cooldown => float.MaxValue / 2;
+    public override float BaseCooldown => float.MaxValue / 2;
     public override int BaseDamage => throw new System.NotImplementedException();
     public override int BaseRange => throw new System.NotImplementedException();
     public override VerticalRegion AttackRegion => throw new System.NotImplementedException();

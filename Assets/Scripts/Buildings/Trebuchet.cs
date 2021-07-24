@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Trebuchet : Unit
 {
-    public override float Cooldown => AttackSpeed.VerySlow;
+    public override float BaseCooldown => AttackSpeed.VerySlow;
     public override int BaseDamage => 10;
     public override int BaseRange => int.MaxValue;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;

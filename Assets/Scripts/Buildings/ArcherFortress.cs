@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ArcherFortress : AttackTower
 {
     public override BuildingType Type => BuildingType.ArcherFortress;
-    public override float Cooldown => AttackSpeed.Fast;
+    public override float BaseCooldown => AttackSpeed.Fast;
     public override int BaseDamage => 5;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;

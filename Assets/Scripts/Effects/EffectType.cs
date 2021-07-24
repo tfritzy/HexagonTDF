@@ -2,5 +2,6 @@ public enum EffectType
 {
     Frozen,
     FrozenDamage,
-    FireDamage
+    FireDamage,
+    AttackSpeed
 }

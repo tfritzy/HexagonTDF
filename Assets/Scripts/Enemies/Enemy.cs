@@ -217,7 +217,6 @@ public abstract class Enemy : Unit, Interactable
 
     public void Interact()
     {
-        Debug.Log("Enemy was clicked");
-        Managers.Board.Hero.InformCharacterWasClicked(this);
+        Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
     }
 }

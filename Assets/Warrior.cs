@@ -9,7 +9,7 @@ public class Warrior : Hero
     public override int StartingHealth => 15;
     public override float Power => 100;
     public override VerticalRegion Region => VerticalRegion.Ground;
-    public override float Cooldown => AttackSpeed.Medium;
+    public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 3;
     public override int BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
@@ -21,7 +21,8 @@ public class Warrior : Hero
     {
         this.Abilities = new List<Ability>()
         {
-            new SwordThrow(this),
+            new Consecrate(this),
+            new Inspire(this),
         };
     }
 }

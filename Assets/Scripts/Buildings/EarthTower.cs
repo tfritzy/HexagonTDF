@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EarthTower : AttackTower
 {
-    public override float Cooldown => AttackSpeed.Fast;
+    public override float BaseCooldown => AttackSpeed.Fast;
     public override int BaseDamage => 10;
     public override int BaseRange => RangeOptions.Medium;
     public float TimeBetweenRockTrows => .25f;

@@ -147,6 +147,8 @@ public abstract class Hero : Unit, Interactable
 
     public bool InformHexWasClicked(HexagonMono hex)
     {
+
+
         selectedRing.SetActive(false);
         if (IsListeningForTargetPosition)
         {
@@ -223,13 +225,13 @@ public abstract class Hero : Unit, Interactable
         }
     }
 
-    public void InformCharacterWasClicked(Character character)
+    public void InformGameObjectWasClicked(GameObject gameObject)
     {
         foreach (Ability ability in this.Abilities)
         {
-            if (ability is CharacterTargetAbility)
+            if (ability is TargetAbility)
             {
-                ((CharacterTargetAbility)ability).InformCharacterWasClicked(character);
+                ((TargetAbility)ability).InformGameObjectWasClicked(gameObject);
             }
         }
     }
