@@ -10,13 +10,15 @@ public class ShieldKnight : Enemy
     protected override AnimationState AttackAnimation => AnimationState.ShieldAttack;
     public override int BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
-    public override float BasePower => 6;
+    public override float BasePower => 5;
     protected override AnimationState WalkAnimation => AnimationState.ShieldWalk;
     protected override AnimationState IdleAnimation => AnimationState.ShieldIdle;
     public override bool IsMelee => true;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {
-        {AttributeType.Health, .75f}, // Shield costs 25%
+        // Shield .25f
+        {AttributeType.Health, 1f},
+        {AttributeType.MovementSpeed, -.25f} // Movement speed
     };
 }

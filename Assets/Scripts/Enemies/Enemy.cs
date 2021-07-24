@@ -32,7 +32,7 @@ public abstract class Enemy : Unit, Interactable
         // this.Body.transform.localScale *= healthModifier;
         float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
             ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
-        this.MovementSpeed = Constants.ENEMY_DEFAULT_MOVEMENTSPEED * (1 + movementSpeedPower);
+        this.MovementSpeed = this.BaseMovementSpeed * (1 + movementSpeedPower);
     }
 
     protected override void UpdateLoop()

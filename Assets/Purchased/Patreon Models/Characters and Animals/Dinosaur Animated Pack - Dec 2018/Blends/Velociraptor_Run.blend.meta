@@ -1,27 +1,12 @@
 fileFormatVersion: 2
-guid: f947cd89ec20bba499e3e1fb9b52cca2
+guid: 5472b80a06a9e9f449ad2a846c9e97da
 ModelImporter:
   serializedVersion: 20101
   internalIDToNameTable:
   - first:
       74: -623603649343465320
     second: Scene
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Black
-    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Brown
-    second: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: LightBrown
-    second: {fileID: 2100000, guid: 2c45432d2d09d0a428f9c2a94807a1c3, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -54,7 +39,7 @@ ModelImporter:
       takeName: Scene
       internalID: 0
       firstFrame: 1
-      lastFrame: 60
+      lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

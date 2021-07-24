@@ -57,6 +57,19 @@ public class Trebuchet : Unit
         Helpers.TriggerAllParticleSystems(ProtectionSpellAnimation.transform, true);
     }
 
+    protected override bool IsCollisionTarget(Character attacker, GameObject other)
+    {
+        if (other.TryGetComponent<Building>(out Building building))
+        {
+            if (building.Alliance == this.Enemies)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)
     {
         this.Waypoint = new Waypoint(this.GridPosition, this.GridPosition);
