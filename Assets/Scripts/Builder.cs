@@ -47,9 +47,11 @@ public class Builder : MonoBehaviour
         highlightedHexagon = null;
     }
 
-    public void InformHexWasClicked(HexagonMono hex)
+    public bool InformHexWasClicked(HexagonMono hex)
     {
-        SetBuildTargetHex(Helpers.FindHexByRaycast(Input.mousePosition));
+        HexagonMono clickedHex = Helpers.FindHexByRaycast(Input.mousePosition);
+        SetBuildTargetHex(clickedHex);
+        return clickedHex != null;
     }
 
     private void SetBuildTargetHex(HexagonMono newPotentialHexagon)

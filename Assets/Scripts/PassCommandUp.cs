@@ -11,8 +11,8 @@ public class PassCommandUp : MonoBehaviour, Interactable
         this.hexagon = this.transform.parent.GetComponent<HexagonMono>();
     }
 
-    public void Interact()
+    public bool Interact()
     {
-        hexagon.Interact();
+        return hexagon.Interact();
     }
 }

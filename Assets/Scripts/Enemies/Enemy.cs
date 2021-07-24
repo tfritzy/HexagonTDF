@@ -215,8 +215,8 @@ public abstract class Enemy : Unit, Interactable
         this.Rigidbody.useGravity = false;
     }
 
-    public void Interact()
+    public bool Interact()
     {
-        Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
+        return Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
     }
 }

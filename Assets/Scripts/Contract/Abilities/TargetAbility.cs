@@ -10,7 +10,7 @@ public abstract class TargetAbility : Ability
 
     protected abstract bool IsValidTarget(GameObject gameObject);
 
-    public void InformGameObjectWasClicked(GameObject gameObject)
+    public bool InformGameObjectWasClicked(GameObject gameObject)
     {
         if (IsWaitingForTargetSelection)
         {
@@ -19,8 +19,11 @@ public abstract class TargetAbility : Ability
                 this.Target = gameObject;
                 IsWaitingForTargetSelection = false;
                 Cast();
+                return true;
             }
         }
+
+        return false;
     }
 
     public override bool Cast()

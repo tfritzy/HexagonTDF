@@ -129,18 +129,20 @@ public abstract class Hero : Unit, Interactable
         return null;
     }
 
-    public void Interact()
+    public bool Interact()
     {
         if (IsListeningForTargetPosition == false)
         {
             IsListeningForTargetPosition = true;
             selectedRing.SetActive(true);
+            return true;
             // TODO: Show user this is listening for target position.
         }
         else
         {
             IsListeningForTargetPosition = false;
             selectedRing.SetActive(false);
+            return true;
             // TODO: Remove elements showing it's looking for target position.
         }
     }
@@ -225,14 +227,20 @@ public abstract class Hero : Unit, Interactable
         }
     }
 
-    public void InformGameObjectWasClicked(GameObject gameObject)
+    public bool InformGameObjectWasClicked(GameObject gameObject)
     {
         foreach (Ability ability in this.Abilities)
         {
             if (ability is TargetAbility)
             {
-                ((TargetAbility)ability).InformGameObjectWasClicked(gameObject);
+                bool wasUsed = ((TargetAbility)ability).InformGameObjectWasClicked(gameObject);
+                if (wasUsed)
+                {
+                    return true;
+                }
             }
         }
+
+        return false;
     }
 }

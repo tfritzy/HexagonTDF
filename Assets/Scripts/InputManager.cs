@@ -48,26 +48,45 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(inputPos.Value);
-        RaycastHit hit;
-        if (Physics.Raycast(
-            ray,
-            out hit,
-            100f,
-            Constants.Layers.Hexagons | Constants.Layers.Characters,
-            QueryTriggerInteraction.Collide))
+        if (RaycastAndInteract(inputPos, Constants.Layers.Characters))
         {
-            if (InterfaceUtility.TryGetInterface<Interactable>(out Interactable interactable, hit.collider.gameObject))
+            return;
+        }
+
+        RaycastAndInteract(inputPos, Constants.Layers.Hexagons);
+    }
+
+    private bool RaycastAndInteract(Vector3? inputPos, int layer)
+    {
+        Ray ray = Managers.Camera.ScreenPointToRay(inputPos.Value);
+        RaycastHit[] hits = Physics.RaycastAll(
+            ray,
+            100f,
+            layer,
+            QueryTriggerInteraction.Collide);
+        foreach (RaycastHit hit in hits)
+        {
+            Interactable interactable;
+            if (InterfaceUtility.TryGetInterface<Interactable>(out interactable, hit.collider.gameObject))
             {
-                interactable.Interact();
+                if (interactable.Interact())
+                {
+                    return true;
+                }
             }
 
-            if (hit.transform.parent != null && hit.transform.parent.TryGetComponent<HexagonMono>(out HexagonMono hexagon))
+            if (hit.transform.parent != null && hit.transform.parent.TryGetComponent<Interactable>(out interactable))
             {
-                hexagon.Interact();
+                if (interactable.Interact())
+                {
+                    return true;
+                }
             }
         }
+
+        return false;
     }
+
 
     private bool IsPointerOverUIObject()
     {

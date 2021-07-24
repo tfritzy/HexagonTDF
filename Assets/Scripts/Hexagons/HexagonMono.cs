@@ -35,15 +35,21 @@ public class HexagonMono : MonoBehaviour, Interactable
         SetHexBodyColor();
     }
 
-    public void Interact()
+    public bool Interact()
     {
         bool wasInputUsed = Managers.Board.Hero.InformHexWasClicked(this);
 
         if (!wasInputUsed)
         {
-            Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
-            Managers.Builder.InformHexWasClicked(this);
+            wasInputUsed = Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
         }
+
+        if (!wasInputUsed)
+        {
+            wasInputUsed = Managers.Builder.InformHexWasClicked(this);
+        }
+
+        return wasInputUsed;
     }
 
     public void SetMaterial(Material material)
