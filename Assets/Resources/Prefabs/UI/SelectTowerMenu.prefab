@@ -135,11 +135,39 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1231968860591474, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_Name
-      value: Consumable Button (Yellow)
+      value: UpgradeButton
       objectReference: {fileID: 0}
     - target: {fileID: 1563603773627110, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2197895045577084644}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SelectTowerMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Upgrade
+      objectReference: {fileID: 0}
+    - target: {fileID: 114051709975456292, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 114260338470967228, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_Color.r
@@ -152,6 +180,26 @@ PrefabInstance:
     - target: {fileID: 114260338470967228, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_Color.b
       value: 0.58431375
+      objectReference: {fileID: 0}
+    - target: {fileID: 114304027506566810, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_Text
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 114304027506566810, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114304027506566810, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114595298902139108, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0591d975caf1f0a4290eb3d9903401b0, type: 3}
+    - target: {fileID: 114595298902139108, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_Type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114907597972140706, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_Sprite
@@ -172,6 +220,10 @@ PrefabInstance:
     - target: {fileID: 114907597972140706, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_Color.a
       value: 0.6784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 224221081056599278, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 85.3
       objectReference: {fileID: 0}
     - target: {fileID: 224269817821683530, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -285,6 +337,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: -6.5
       objectReference: {fileID: 0}
+    - target: {fileID: 224980839762747728, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -12.87
+      objectReference: {fileID: 0}
+    - target: {fileID: 224980839762747728, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 37.55371
+      objectReference: {fileID: 0}
+    - target: {fileID: 224980839762747728, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -12.788498
+      objectReference: {fileID: 0}
+    - target: {fileID: 224980839762747728, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 6.17
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114433841086833506, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2770a2aa62913154da2ed33134cc8ed3, type: 3}
@@ -302,7 +370,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1388725972461592, guid: 929fe58bbeda09d4eb64bf73dd82defe, type: 3}
       propertyPath: m_Name
-      value: Consumable Button (Red)
+      value: DestroyButton
       objectReference: {fileID: 0}
     - target: {fileID: 114240036057004532, guid: 929fe58bbeda09d4eb64bf73dd82defe, type: 3}
       propertyPath: m_Sprite
@@ -458,6 +526,34 @@ PrefabInstance:
     - target: {fileID: 1601861156141182, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_Name
       value: Consumable Button (Blue)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2197895045577084644}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SelectTowerMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Upgrade
+      objectReference: {fileID: 0}
+    - target: {fileID: 114233970781294842, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 224987822835661758, guid: 967e481cc40410443ab952b87ce90f63, type: 3}
       propertyPath: m_LocalPosition.x

@@ -11,8 +11,11 @@ public abstract class AttackTower : Building, Interactable
     protected GameObject Turret;
     protected GameObject Body;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
-    public override int Damage => (int)(this.BaseDamage * (1 + .25f * UpgradeLevel));
-    public override int BaseRange => (int)(this.BaseRange * (1 + .1f * UpgradeLevel));
+    public override int Damage => GetDamage(UpgradeLevel);
+    public override int BaseRange => GetRange(UpgradeLevel);
+    public override float Power => GetPower(UpgradeLevel);
+    public ResourceTransaction UpgradeCost { get; private set; }
+
     public int UpgradeLevel;
 
     protected override void Setup()
@@ -20,6 +23,7 @@ public abstract class AttackTower : Building, Interactable
         this.Turret = transform.Find("Turret")?.gameObject;
         this.Body = transform.Find("Body")?.gameObject;
         UpgradeLevel = 1;
+        UpgradeCost = new ResourceTransaction(GetUpgradeCost());
         base.Setup();
     }
 
@@ -39,6 +43,16 @@ public abstract class AttackTower : Building, Interactable
             Attack();
             lastAttackTime = Time.time;
         }
+    }
+
+    private int GetDamage(int upgradeLevel)
+    {
+        return (int)(this.BaseDamage * (1 + .25f * upgradeLevel));
+    }
+
+    private int GetRange(int upgradeLevel)
+    {
+        return (int)(this.BaseRange * (1 + .1f * upgradeLevel));
     }
 
     protected virtual bool CanAttack()
@@ -149,24 +163,37 @@ public abstract class AttackTower : Building, Interactable
         circle.transform.localScale *= Range;
     }
 
-    public override float Power
+    public void Upgrade()
     {
-        get
+        if (this.UpgradeCost.CanFulfill())
         {
-            float power = getDamagePower() * getAttackRegionMultiplier() * getRangePowerMultiplier() + ManualPowerAdjustment;
-            Debug.Log($"{this.Type} Power\n {getDamagePower()} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier()} range + {ManualPowerAdjustment} manual == {power}");
-            return power;
+            this.UpgradeCost.Deduct();
+            this.UpgradeLevel += 1;
+            this.UpgradeCost = new ResourceTransaction(this.GetUpgradeCost());
+            Debug.Log("Upgraded tower to level " + UpgradeLevel);
+        }
+        else
+        {
+            Debug.Log("Not enough gold for upgrade");
         }
     }
 
-    public void Upgrade()
+    private int GetUpgradeCost()
     {
-
+        float powerIncrease = GetPower(UpgradeLevel + 1) - GetPower(UpgradeLevel);
+        return (int)(powerIncrease * Constants.ResourcePowerMap[ResourceType.Gold]);
     }
 
-    private float getDamagePower()
+    private float GetPower(int upgradeLevel)
     {
-        return (((float)(Damage * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile)) / Cooldown) / Constants.ENEMY_HEALTH_PER_POWER;
+        float power = getDamagePower(upgradeLevel) * getAttackRegionMultiplier() * getRangePowerMultiplier(upgradeLevel) + ManualPowerAdjustment;
+        Debug.Log($"{this.Type} Power\n {getDamagePower(upgradeLevel)} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier(upgradeLevel)} range + {ManualPowerAdjustment} manual == {power}");
+        return power;
+    }
+
+    private float getDamagePower(int upgradeLevel)
+    {
+        return (((float)(GetDamage(upgradeLevel) * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile)) / Cooldown) / Constants.ENEMY_HEALTH_PER_POWER;
     }
 
     private void Explode(Character attacker, Character target, GameObject projectile)
@@ -186,9 +213,9 @@ public abstract class AttackTower : Building, Interactable
         }
     }
 
-    private float getRangePowerMultiplier()
+    private float getRangePowerMultiplier(int upgradeLevel)
     {
-        return Range / 3;
+        return GetRange(upgradeLevel) / 3;
     }
 
     private float getAttackRegionMultiplier()

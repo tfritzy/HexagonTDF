@@ -40,7 +40,7 @@ public class ResourceStore : MonoBehaviour
 
         lastCollectionTimes = new Dictionary<ResourceType, float>();
 
-        Add(ResourceType.Gold, 10);
+        Add(ResourceType.Gold, 100);
     }
 
     public void Add(ResourceType type, int amount)

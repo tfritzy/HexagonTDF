@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectTowerMenu : MonoBehaviour
 {
     public AttackTower TargetTower { get; private set; }
     private float setActiveTime;
+    private Text upgradeCostText;
 
     void Start()
     {
@@ -22,6 +22,13 @@ public class SelectTowerMenu : MonoBehaviour
     {
         this.TargetTower = targetTower;
         this.setActiveTime = Time.time;
+
+        if (upgradeCostText == null)
+        {
+            upgradeCostText = this.transform.Find("UpgradeButton").Find("Count Box").Find("Text").GetComponent<Text>();
+        }
+
+        upgradeCostText.text = this.TargetTower.UpgradeCost.Costs[ResourceType.Gold].ToString();
     }
 
     private void Follow()
@@ -45,5 +52,11 @@ public class SelectTowerMenu : MonoBehaviour
     void OnDestroy()
     {
         InputManager.InputWasMade -= InformOfClickElsewhere;
+    }
+
+    public void Upgrade()
+    {
+        TargetTower.Upgrade();
+        upgradeCostText.text = TargetTower.UpgradeCost.Costs[ResourceType.Gold].ToString();
     }
 }
