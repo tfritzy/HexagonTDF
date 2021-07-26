@@ -29,13 +29,14 @@ public class SelectTowerMenu : MonoBehaviour
         }
 
         upgradeCostText.text = this.TargetTower.UpgradeCost.Costs[ResourceType.Gold].ToString();
+        this.TargetTower.ShowRangeCircle();
     }
 
     private void Follow()
     {
         if (TargetTower == null)
         {
-            this.gameObject.SetActive(false);
+            Disable();
         }
 
         this.transform.position = Managers.Camera.WorldToScreenPoint(TargetTower.transform.position);
@@ -45,7 +46,7 @@ public class SelectTowerMenu : MonoBehaviour
     {
         if (Time.time > setActiveTime + .25f && this.gameObject.activeSelf)
         {
-            this.gameObject.SetActive(false);
+            Disable();
         }
     }
 
@@ -58,5 +59,11 @@ public class SelectTowerMenu : MonoBehaviour
     {
         TargetTower.Upgrade();
         upgradeCostText.text = TargetTower.UpgradeCost.Costs[ResourceType.Gold].ToString();
+    }
+
+    public void Disable()
+    {
+        this.TargetTower?.HideRangeCircle();
+        this.gameObject.SetActive(false);
     }
 }

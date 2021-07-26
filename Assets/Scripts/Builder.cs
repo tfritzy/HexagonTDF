@@ -101,7 +101,7 @@ public class Builder : MonoBehaviour
 
         if (selectedBuilding is AttackTower)
         {
-            ((AttackTower)selectedBuilding).CreateRangeCircle(buildingInst.transform);
+            ((AttackTower)selectedBuilding).ShowRangeCircle(buildingInst.transform);
         }
     }
 
@@ -168,6 +168,10 @@ public class Builder : MonoBehaviour
     public void ExitBuildDialog()
     {
         UnHighlightHexagon();
+        if (selectedBuilding is AttackTower)
+        {
+            ((AttackTower)selectedBuilding).HideRangeCircle();
+        }
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
         this.menu?.SetActive(false);

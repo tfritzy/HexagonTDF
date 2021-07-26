@@ -134,7 +134,7 @@ public static class Managers
             if (selectTowerMenu == null)
             {
                 selectTowerMenu = GameObject.Instantiate(Managers.prefabs.SelectTowerMenu, Canvas).GetComponent<SelectTowerMenu>();
-                selectTowerMenu.gameObject.SetActive(false);
+                selectTowerMenu.Disable();
             }
 
             return selectTowerMenu;

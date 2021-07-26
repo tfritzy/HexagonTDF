@@ -16,6 +16,8 @@ public abstract class AttackTower : Building, Interactable
     public override float Power => GetPower(UpgradeLevel);
     protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     public ResourceTransaction UpgradeCost { get; private set; }
+    private GameObject rangeCircle;
+    private Vector3 rangeCircleOriginalScale;
 
     public int UpgradeLevel;
 
@@ -156,12 +158,30 @@ public abstract class AttackTower : Building, Interactable
         projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
     }
 
-    public void CreateRangeCircle(Transform parent)
+    public void ShowRangeCircle(Transform parent = null)
     {
-        Destroy(parent.Find("Range Circle")?.gameObject);
-        GameObject circle = Instantiate(Prefabs.RangeCircle, parent.position, Prefabs.RangeCircle.transform.rotation, parent);
-        circle.name = "Range Circle";
-        circle.transform.localScale *= Range;
+        if (parent == null)
+        {
+            parent = this.transform;
+        }
+
+        if (rangeCircle == null)
+        {
+            this.rangeCircle = Instantiate(Prefabs.RangeCircle, parent.position, Prefabs.RangeCircle.transform.rotation, parent);
+            this.rangeCircle.name = "Range Circle";
+            this.rangeCircleOriginalScale = this.rangeCircle.transform.localScale;
+        }
+        else
+        {
+            this.rangeCircle.SetActive(true);
+        }
+
+        this.rangeCircle.transform.localScale = rangeCircleOriginalScale * Range;
+    }
+
+    public void HideRangeCircle()
+    {
+        this.rangeCircle?.SetActive(false);
     }
 
     public void Upgrade()
@@ -259,7 +279,7 @@ public abstract class AttackTower : Building, Interactable
     {
         if (Managers.SelectTowerMenu.gameObject.activeInHierarchy && Managers.SelectTowerMenu.TargetTower == this)
         {
-            Managers.SelectTowerMenu.gameObject.SetActive(false);
+            Managers.SelectTowerMenu.Disable();
         }
         else
         {
