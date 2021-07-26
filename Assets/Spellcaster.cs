@@ -9,7 +9,7 @@ public class Spellcaster : Enemy
     public override VerticalRegion Region => VerticalRegion.Ground;
     public override float BaseCooldown => AttackSpeed.Slow;
     public override int BaseDamage => 3;
-    public override int BaseRange => 2;
+    public override float BaseRange => 2;
     protected override AnimationState AttackAnimation => AnimationState.CastingSpell;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override float BasePower => 3;

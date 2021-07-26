@@ -5,7 +5,7 @@ public class CrystalAccelerator : AttackTower
 {
     public override float BaseCooldown => AttackSpeed.Slow;
     public override int BaseDamage => 10;
-    public override int BaseRange => RangeOptions.Short;
+    public override float BaseRange => RangeOptions.Short;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.CrystalAccelerator;
     public override Alliances Alliance => Alliances.Player;

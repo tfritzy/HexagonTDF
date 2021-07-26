@@ -8,7 +8,7 @@ public class LightningTower : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
     public override float BaseCooldown => AttackSpeed.Slow;
-    public override int BaseRange => RangeOptions.VeryLong;
+    public override float BaseRange => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override int BaseDamage => 30;
 

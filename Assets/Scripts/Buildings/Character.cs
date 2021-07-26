@@ -37,8 +37,8 @@ public abstract class Character : MonoBehaviour, Damageable
     protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
     public virtual int Damage => BaseDamage;
     public abstract int BaseDamage { get; }
-    public virtual int Range => BaseRange;
-    public abstract int BaseRange { get; }
+    public virtual float Range => BaseRange;
+    public abstract float BaseRange { get; }
     public abstract VerticalRegion AttackRegion { get; }
     public bool IsDead { get; protected set; }
     private Rigidbody rb;

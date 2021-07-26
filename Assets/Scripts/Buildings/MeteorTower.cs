@@ -6,7 +6,7 @@ public class MeteorTower : AttackTower
 {
     public override float BaseCooldown => AttackSpeed.VerySlow;
     public override int BaseDamage => 50;
-    public override int BaseRange => RangeOptions.VeryLong;
+    public override float BaseRange => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.MeteorTower;
     public override Alliances Alliance => Alliances.Player;

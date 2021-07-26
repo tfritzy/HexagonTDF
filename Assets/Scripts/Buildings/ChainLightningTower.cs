@@ -5,7 +5,7 @@ public class ChainLightningTower : AttackTower
 {
     public override float BaseCooldown => AttackSpeed.Slow;
     public override int BaseDamage => 10;
-    public override int BaseRange => RangeOptions.Medium;
+    public override float BaseRange => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override BuildingType Type => BuildingType.ChainLightningTower;
     public override Alliances Alliance => Alliances.Player;

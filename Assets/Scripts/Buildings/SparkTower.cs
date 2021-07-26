@@ -6,7 +6,7 @@ public class SparkTower : AttackTower
 {
     public override float BaseCooldown => AttackSpeed.VeryVeryFast;
     public override int BaseDamage => 1;
-    public override int BaseRange => RangeOptions.Short;
+    public override float BaseRange => RangeOptions.Short;
     public override BuildingType Type => BuildingType.SparkTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;

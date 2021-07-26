@@ -12,7 +12,7 @@ public abstract class AttackTower : Building, Interactable
     protected GameObject Body;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
     public override int Damage => GetDamage(UpgradeLevel);
-    public override int BaseRange => GetRange(UpgradeLevel);
+    public override float BaseRange => GetRange(UpgradeLevel);
     public override float Power => GetPower(UpgradeLevel);
     protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     public ResourceTransaction UpgradeCost { get; private set; }

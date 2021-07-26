@@ -8,7 +8,7 @@ public class Healthbar : MonoBehaviour
     protected RectTransform DamageBar;
     protected float DamageBarWidth;
     protected float DamageBarDecreaseSpeed;
-    private float scale;
+    private float height;
 
     void Update()
     {
@@ -19,13 +19,18 @@ public class Healthbar : MonoBehaviour
         }
 
         ScaleDamageBar();
-        transform.position = Managers.Camera.WorldToScreenPoint(Owner.position) + new Vector3(0, 75 * scale);
+        transform.position = Managers.Camera.WorldToScreenPoint(Owner.position + Vector3.up * height * 1.5f);
     }
 
     public void SetOwner(Transform owner)
     {
         this.Owner = owner;
-        this.scale = owner.localScale.x;
+        this.height = 1f;
+        if (owner.TryGetComponent<Collider>(out Collider collider))
+        {
+            this.height = collider.bounds.extents.y * 2;
+        }
+
         this.FillBar = this.transform.Find("FillBar").transform;
         this.DamageBar = this.transform.Find("DamageBar").GetComponent<RectTransform>();
         this.FillPercentage = 1;

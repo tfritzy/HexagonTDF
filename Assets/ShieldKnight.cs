@@ -8,7 +8,7 @@ public class ShieldKnight : Enemy
     public override float BaseCooldown => AttackSpeed.Slow;
     public override int BaseDamage => 1;
     protected override AnimationState AttackAnimation => AnimationState.ShieldAttack;
-    public override int BaseRange => 1;
+    public override float BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override float BasePower => 5;
     protected override AnimationState WalkAnimation => AnimationState.ShieldWalk;

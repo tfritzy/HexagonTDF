@@ -5,7 +5,7 @@ public class Trebuchet : Unit
 {
     public override float BaseCooldown => AttackSpeed.VerySlow;
     public override int BaseDamage => 10;
-    public override int BaseRange => int.MaxValue;
+    public override float BaseRange => int.MaxValue;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;

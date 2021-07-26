@@ -7,7 +7,7 @@ public class EarthTower : AttackTower
 {
     public override float BaseCooldown => AttackSpeed.Fast;
     public override int BaseDamage => 10;
-    public override int BaseRange => RangeOptions.Medium;
+    public override float BaseRange => RangeOptions.Medium;
     public float TimeBetweenRockTrows => .25f;
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;

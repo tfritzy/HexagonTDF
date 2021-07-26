@@ -10,7 +10,7 @@ public class StickGuy : Enemy
     public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 1;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;
-    public override int BaseRange => 1;
+    public override float BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override float BasePower => 1;
     public override bool IsMelee => true;

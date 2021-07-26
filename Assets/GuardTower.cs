@@ -9,6 +9,6 @@ public class GuardTower : AttackTower
     public override Alliances Enemies => Alliances.Illigons;
     public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 5;
-    public override int BaseRange => RangeOptions.Medium;
+    public override float BaseRange => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
 }
