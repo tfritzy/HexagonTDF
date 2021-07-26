@@ -15,12 +15,11 @@ public class AttackSpeedEffect : Effect
 
     protected override void ApplyEffect(Character character)
     {
-        modificationAmount = character.Cooldown * percentIncrease;
-        character.CooldownModificationAmount -= modificationAmount;
+        character.AttackSpeedModifiedPercent += modificationAmount;
     }
 
     public override void RemoveEffect(Character character)
     {
-        character.CooldownModificationAmount += modificationAmount;
+        character.AttackSpeedModifiedPercent -= modificationAmount;
     }
 }

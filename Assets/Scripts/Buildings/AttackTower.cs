@@ -14,6 +14,7 @@ public abstract class AttackTower : Building, Interactable
     public override int Damage => GetDamage(UpgradeLevel);
     public override int BaseRange => GetRange(UpgradeLevel);
     public override float Power => GetPower(UpgradeLevel);
+    protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     public ResourceTransaction UpgradeCost { get; private set; }
 
     public int UpgradeLevel;
@@ -22,7 +23,7 @@ public abstract class AttackTower : Building, Interactable
     {
         this.Turret = transform.Find("Turret")?.gameObject;
         this.Body = transform.Find("Body")?.gameObject;
-        UpgradeLevel = 1;
+        UpgradeLevel = 0;
         UpgradeCost = new ResourceTransaction(GetUpgradeCost());
         base.Setup();
     }
@@ -47,7 +48,7 @@ public abstract class AttackTower : Building, Interactable
 
     private int GetDamage(int upgradeLevel)
     {
-        return (int)(this.BaseDamage * (1 + .25f * upgradeLevel));
+        return (int)(this.BaseDamage * (1 + .5f * upgradeLevel));
     }
 
     private int GetRange(int upgradeLevel)
@@ -191,9 +192,20 @@ public abstract class AttackTower : Building, Interactable
         return power;
     }
 
+    private float GetCooldown(int upgradeLevel)
+    {
+        return Cooldown / GetCooldownModificationAmount(upgradeLevel);
+    }
+
+    private float GetCooldownModificationAmount(int upgradeLevel)
+    {
+        return base.CooldownModificationAmount + upgradeLevel * .25f;
+    }
+
     private float getDamagePower(int upgradeLevel)
     {
-        return (((float)(GetDamage(upgradeLevel) * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile)) / Cooldown) / Constants.ENEMY_HEALTH_PER_POWER;
+        float dps = ((GetDamage(upgradeLevel) * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / GetCooldown(upgradeLevel));
+        return dps / Constants.ENEMY_HEALTH_PER_POWER;
     }
 
     private void Explode(Character attacker, Character target, GameObject projectile)

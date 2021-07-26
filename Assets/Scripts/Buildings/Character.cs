@@ -32,8 +32,9 @@ public abstract class Character : MonoBehaviour, Damageable
     }
     public virtual Vector3 Velocity { get { return Vector3.zero; } }
     public abstract float BaseCooldown { get; }
-    public float Cooldown => BaseCooldown + CooldownModificationAmount;
-    public float CooldownModificationAmount;
+    public float Cooldown => BaseCooldown / CooldownModificationAmount;
+    public float AttackSpeedModifiedPercent;
+    protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
     public virtual int Damage => BaseDamage;
     public abstract int BaseDamage { get; }
     public virtual int Range => BaseRange;
