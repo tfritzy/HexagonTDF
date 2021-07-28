@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CaptureProgressBar : MonoBehaviour
+public class TrebuchetHealthbar : MonoBehaviour
 {
     private Text text;
     private Image fillBar;
@@ -11,7 +11,7 @@ public class CaptureProgressBar : MonoBehaviour
     void Start()
     {
         fillBar = transform.Find("Bar").Find("Fill").GetComponent<Image>();
-        text = transform.Find("Level Frame").Find("Text").GetComponent<Text>();
+        text = transform.Find("Text").GetComponent<Text>();
     }
 
     public void SetValue(float fillPercent)

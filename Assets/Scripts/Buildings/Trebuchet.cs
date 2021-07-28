@@ -47,6 +47,8 @@ public class Trebuchet : Unit
     {
         base.TakeDamage(amount, source);
         ProtectTrebuchetSpell(source);
+        float healthPercent = ((float)this.Health) / ((float)this.StartingHealth);
+        Managers.TrebuchetHealthbar.SetValue(healthPercent);
     }
 
     private void ProtectTrebuchetSpell(Character attacker)

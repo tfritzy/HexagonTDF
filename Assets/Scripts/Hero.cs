@@ -46,6 +46,7 @@ public abstract class Hero : Unit, Interactable
         reviveTimer.GetComponent<UIElementFollowObject>().ObjectToFollow = this.gameObject;
         reviveTimerText = reviveTimer.transform.Find("Text").GetComponent<Text>();
         reviveTimer.SetActive(false);
+        IsGuardingHex = true;
     }
 
     protected override void UpdateLoop()

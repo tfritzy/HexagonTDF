@@ -53,9 +53,9 @@ public abstract class AttackTower : Building, Interactable
         return (int)(this.BaseDamage * (1 + .5f * upgradeLevel));
     }
 
-    private int GetRange(int upgradeLevel)
+    private float GetRange(int upgradeLevel)
     {
-        return (int)(this.BaseRange * (1 + .1f * upgradeLevel));
+        return this.BaseRange * (1 + .1f * upgradeLevel);
     }
 
     protected virtual bool CanAttack()

@@ -85,30 +85,17 @@ public static class Managers
         }
     }
 
-    // private static EnemySpawner enemySpawner;
-    // public static EnemySpawner EnemySpawner
-    // {
-    //     get
-    //     {
-    //         if (enemySpawner == null)
-    //         {
-    //             enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
-    //         }
-    //         return enemySpawner;
-    //     }
-    // }
-
-    private static CaptureProgressBar captureProgressBar;
-    public static CaptureProgressBar CaptureProgressBar
+    private static TrebuchetHealthbar trebuchetHealthbar;
+    public static TrebuchetHealthbar TrebuchetHealthbar
     {
         get
         {
-            if (captureProgressBar == null)
+            if (trebuchetHealthbar == null)
             {
-                captureProgressBar = Canvas.Find("CaptureProgressBar").GetComponent<CaptureProgressBar>();
+                trebuchetHealthbar = Canvas.Find("TrebuchetHealthbar").GetComponent<TrebuchetHealthbar>();
             }
 
-            return captureProgressBar;
+            return trebuchetHealthbar;
         }
     }
 
