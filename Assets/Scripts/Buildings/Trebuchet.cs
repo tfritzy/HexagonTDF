@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Trebuchet : Unit
 {
-    public override float BaseCooldown => AttackSpeed.VerySlow;
-    public override int BaseDamage => 10;
+    public override float BaseCooldown => 10;
+    public override int BaseDamage => 100;
     public override float BaseRange => int.MaxValue;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override Alliances Alliance => Alliances.Player;
@@ -24,6 +24,7 @@ public class Trebuchet : Unit
         ProtectionSpellAnimation = Instantiate(ProtectionSpellAnimation, this.transform);
         Helpers.TriggerAllParticleSystems(ProtectionSpellAnimation.transform, false);
         ProtectionSpellAnimation.SetActive(false);
+        SetHealthbarValues();
     }
 
     protected override bool IsInRangeOfTarget()
@@ -47,8 +48,12 @@ public class Trebuchet : Unit
     {
         base.TakeDamage(amount, source);
         ProtectTrebuchetSpell(source);
-        float healthPercent = ((float)this.Health) / ((float)this.StartingHealth);
-        Managers.TrebuchetHealthbar.SetValue(healthPercent);
+        SetHealthbarValues();
+    }
+
+    private void SetHealthbarValues()
+    {
+        Managers.TrebuchetHealthbar.SetValue(this.Health, this.StartingHealth);
     }
 
     private void ProtectTrebuchetSpell(Character attacker)

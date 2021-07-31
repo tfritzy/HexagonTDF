@@ -5,8 +5,8 @@ using UnityEngine;
 public class Consecrate : HexagonTargetAbility
 {
     public override float Cooldown => 30;
-    public const float RANGE = 4f;
-    public const int DAMAGE = 20;
+    public const float RANGE = 3f;
+    public const int DAMAGE = 200;
 
     public Consecrate(Hero owner) : base(owner) { }
 

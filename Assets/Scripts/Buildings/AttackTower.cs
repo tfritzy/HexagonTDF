@@ -207,7 +207,7 @@ public abstract class AttackTower : Building, Interactable
 
     private float GetPower(int upgradeLevel)
     {
-        float power = getDamagePower(upgradeLevel) * getAttackRegionMultiplier() * getRangePowerMultiplier(upgradeLevel) + ManualPowerAdjustment;
+        float power = (getDamagePower(upgradeLevel) * getAttackRegionMultiplier() * getRangePowerMultiplier(upgradeLevel) + ManualPowerAdjustment) * Constants.HARD_DIFFICULTY_ADJUSTMENT;
         Debug.Log($"{this.Type} Power\n {getDamagePower(upgradeLevel)} damage * {getAttackRegionMultiplier()} region * {getRangePowerMultiplier(upgradeLevel)} range + {ManualPowerAdjustment} manual == {power}");
         return power;
     }
@@ -225,7 +225,7 @@ public abstract class AttackTower : Building, Interactable
     private float getDamagePower(int upgradeLevel)
     {
         float dps = ((GetDamage(upgradeLevel) * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / GetCooldown(upgradeLevel));
-        return dps / Constants.ENEMY_HEALTH_PER_POWER;
+        return (dps / Constants.ENEMY_HEALTH_PER_POWER) * Constants.BALANCE_INTERVAL_SECONDS;
     }
 
     private void Explode(Character attacker, Character target, GameObject projectile)
@@ -288,5 +288,25 @@ public abstract class AttackTower : Building, Interactable
         }
 
         return true;
+    }
+
+    protected override bool IsCollisionTarget(Character attacker, GameObject other)
+    {
+        if (other.GetComponent<Building>() != null)
+        {
+            return false;
+        }
+
+        if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, other))
+        {
+            return attacker.Enemies == damageable.Alliance;
+        }
+
+        if (other.CompareTag(Constants.Tags.Hexagon))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

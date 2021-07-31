@@ -6,11 +6,11 @@ public class Warrior : Hero
 {
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Illigons;
-    public override int StartingHealth => 15;
-    public override float Power => 100;
+    public override int StartingHealth => 150;
+    public override float Power => float.MaxValue / 2;
     public override VerticalRegion Region => VerticalRegion.Ground;
     public override float BaseCooldown => AttackSpeed.Medium;
-    public override int BaseDamage => 3;
+    public override int BaseDamage => 20;
     public override float BaseRange => 1;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override AnimationState AttackAnimation => AnimationState.SlashingSword;

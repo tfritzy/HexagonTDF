@@ -20,6 +20,7 @@ public class SelectTowerMenu : MonoBehaviour
 
     public void SetTargetTower(AttackTower targetTower)
     {
+        this.TargetTower?.HideRangeCircle();
         this.TargetTower = targetTower;
         this.setActiveTime = Time.time;
 

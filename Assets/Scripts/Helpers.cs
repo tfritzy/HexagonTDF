@@ -390,4 +390,9 @@ public static class Helpers
         return Managers.Board.GetHex(pos).IsWalkable &&
               (Managers.Board.Buildings.ContainsKey(pos) == false || Managers.Board.Buildings[pos].IsWalkable);
     }
+
+    public static int RoundTo25(int value)
+    {
+        return (value / 25 + (value % 25 > 12 ? 1 : 0)) * 25;
+    }
 }

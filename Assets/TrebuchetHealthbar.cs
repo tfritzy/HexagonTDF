@@ -14,9 +14,9 @@ public class TrebuchetHealthbar : MonoBehaviour
         text = transform.Find("Text").GetComponent<Text>();
     }
 
-    public void SetValue(float fillPercent)
+    public void SetValue(float currentVal, float maxVal)
     {
-        text.text = (int)(fillPercent * 100) + "%";
-        fillBar.fillAmount = fillPercent;
+        text.text = $"{currentVal} / {maxVal}";
+        fillBar.fillAmount = currentVal / maxVal;
     }
 }

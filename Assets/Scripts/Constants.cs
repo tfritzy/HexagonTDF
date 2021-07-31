@@ -11,8 +11,11 @@ public static class Constants
     public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
     public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
     public static Vector3 CenterScreen => new Vector3(Screen.width / 2, Screen.height / 2);
-    public const float ENEMY_HEALTH_PER_POWER = 5f;
+    public const float ENEMY_HEALTH_PER_POWER = 50;
     public const float ENEMY_DEFAULT_MOVEMENTSPEED = 1f;
+    // The duration used for balance calculations such as how much damage a tower should do in an interval, or how many enemies to spawn.
+    public const float BALANCE_INTERVAL_SECONDS = 15f;
+    public const float HARD_DIFFICULTY_ADJUSTMENT = .8f;
 
     /// <summary>
     /// How much of each resource 1 power maps to.

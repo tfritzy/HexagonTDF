@@ -9,12 +9,14 @@ public class ResourceTransaction
         Costs = new Dictionary<ResourceType, int>();
         foreach (ResourceType type in resourceRatio.Keys)
         {
-            Costs[type] = (int)(Constants.ResourcePowerMap[type] * (power * resourceRatio[type]));
+            Costs[type] = Helpers.RoundTo25((int)(Constants.ResourcePowerMap[type] * (power * resourceRatio[type])));
         }
     }
 
     public ResourceTransaction(int gold)
     {
+        gold = Helpers.RoundTo25(gold);
+
         Costs = new Dictionary<ResourceType, int>()
         {
             {ResourceType.Gold, gold},

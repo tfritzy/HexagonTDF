@@ -127,4 +127,18 @@ public static class Managers
             return selectTowerMenu;
         }
     }
+
+    private static DebugDetails debugDetails;
+    public static DebugDetails DebugDetails
+    {
+        get
+        {
+            if (debugDetails == null)
+            {
+                debugDetails = Canvas.Find("DebugDetails").GetComponent<DebugDetails>();
+            }
+
+            return debugDetails;
+        }
+    }
 }

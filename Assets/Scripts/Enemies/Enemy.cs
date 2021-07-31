@@ -10,30 +10,16 @@ public abstract class Enemy : Unit, Interactable
     public override Alliances Enemies => Alliances.Player;
     public abstract EnemyType Type { get; }
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
-    public override float Power { get { return power; } }
+    public override float Power => BasePower;
     public override int StartingHealth => startingHealth;
     public abstract float BasePower { get; }
     public bool IsEngagedInFight { get; private set; }
     public Enemy EnemyBlockingPath { get; private set; }
+    public float GoldTaperAmount;
 
-    private float power;
     private LineRenderer lineRenderer;
     private int startingHealth;
-
-
-    public void SetPower(float power)
-    {
-        this.power = power;
-        this.startingHealth = (int)((this.power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER);
-        if (StartingHealth == 0)
-        {
-            throw new Exception("Tried to spawn an enemy with 0 health");
-        }
-        // this.Body.transform.localScale *= healthModifier;
-        float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
-            ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
-        this.MovementSpeed = this.BaseMovementSpeed * (1 + movementSpeedPower);
-    }
+    private const float GOLD_PILLAGED_RATIO = .5f;
 
     protected override void UpdateLoop()
     {
@@ -118,7 +104,14 @@ public abstract class Enemy : Unit, Interactable
 
     protected override void Setup()
     {
-        this.SetPower(this.BasePower);
+        this.startingHealth = (int)((this.Power * PowerToAttributeRatio[AttributeType.Health]) * Constants.ENEMY_HEALTH_PER_POWER);
+        if (StartingHealth == 0)
+        {
+            throw new Exception("Tried to spawn an enemy with 0 health");
+        }
+        float movementSpeedPower = PowerToAttributeRatio.ContainsKey(AttributeType.MovementSpeed)
+            ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
+        this.MovementSpeed = this.BaseMovementSpeed * (1 + movementSpeedPower);
         base.Setup();
         FindTargetCharacter();
         RecalculatePath();
@@ -203,10 +196,7 @@ public abstract class Enemy : Unit, Interactable
 
     public int RollGoldReward()
     {
-        double fullVal = ((float)Power) / (Constants.ResourcePowerMap[ResourceType.Gold] / 4); // Divide by 4 so player can build more stuff.
-        double modulous = (int)fullVal > 0 ? (int)fullVal : 1;
-        double randomPart = fullVal % modulous;
-        return ((int)fullVal) + (UnityEngine.Random.Range(0f, 1f) <= randomPart ? 1 : 0);
+        return (int)(Power * Constants.ResourcePowerMap[ResourceType.Gold] * GOLD_PILLAGED_RATIO * UnityEngine.Random.Range(.5f, 1.5f) * this.GoldTaperAmount);
     }
 
     public void AddRigidbody()
