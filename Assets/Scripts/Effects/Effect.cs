@@ -22,6 +22,7 @@ public abstract class Effect
         birthTime = Time.time;
         this.Id = id;
         this.Owner = owner;
+        lastApplyTime = float.MinValue / 2;
     }
 
     public void Update(Character character)

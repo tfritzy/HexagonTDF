@@ -5,7 +5,6 @@ public class AttackSpeedEffect : Effect
     public override bool Stacks => false;
     public override EffectType Type => EffectType.AttackSpeed;
     private float percentIncrease;
-    private float modificationAmount;
 
     public AttackSpeedEffect(float percentIncrease, float duration, Guid id, Character owner)
         : base(duration, duration, id, owner)
@@ -15,11 +14,12 @@ public class AttackSpeedEffect : Effect
 
     protected override void ApplyEffect(Character character)
     {
-        character.AttackSpeedModifiedPercent += modificationAmount;
+        character.AttackSpeedModifiedPercent += percentIncrease;
     }
 
     public override void RemoveEffect(Character character)
     {
-        character.AttackSpeedModifiedPercent -= modificationAmount;
+        character.AttackSpeedModifiedPercent -= percentIncrease;
+        base.RemoveEffect(character);
     }
 }

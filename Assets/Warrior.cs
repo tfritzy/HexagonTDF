@@ -5,7 +5,7 @@ using UnityEngine;
 public class Warrior : Hero
 {
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override int StartingHealth => 150;
     public override float Power => float.MaxValue / 2;
     public override VerticalRegion Region => VerticalRegion.Ground;

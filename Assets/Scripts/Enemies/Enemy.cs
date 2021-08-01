@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class Enemy : Unit, Interactable
 {
-    public override Alliances Alliance => Alliances.Illigons;
+    public override Alliances Alliance => Alliances.Maltov;
     public override Alliances Enemies => Alliances.Player;
     public abstract EnemyType Type { get; }
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
@@ -15,7 +15,9 @@ public abstract class Enemy : Unit, Interactable
     public abstract float BasePower { get; }
     public bool IsEngagedInFight { get; private set; }
     public Enemy EnemyBlockingPath { get; private set; }
+
     public float GoldTaperAmount;
+    public Vector3 PositionOffset;
 
     private LineRenderer lineRenderer;
     private int startingHealth;
@@ -50,6 +52,7 @@ public abstract class Enemy : Unit, Interactable
 
     protected override bool IsPathBlocked()
     {
+        // Testing this being disabled.
         this.EnemyBlockingPath = null;
         if (TryGetEnemyBlockingPath(out Enemy enemy))
         {
@@ -65,16 +68,15 @@ public abstract class Enemy : Unit, Interactable
         return false;
     }
 
-    private const float FORWARD_BLOCK_DISTANCE = .5f;
+    private const float BLOCK_DISTANCE = .1f;
     private bool TryGetEnemyBlockingPath(out Enemy enemy)
     {
-        RaycastHit[] hits = Physics.RaycastAll(
+        Collider[] hits = Physics.OverlapSphere(
             this.transform.position,
-            this.transform.forward,
-            FORWARD_BLOCK_DISTANCE,
+            BLOCK_DISTANCE,
             Constants.Layers.Characters);
 
-        foreach (RaycastHit hit in hits)
+        foreach (Collider hit in hits)
         {
             if (hit.transform.TryGetComponent<Enemy>(out Enemy checkEnemy))
             {
@@ -160,18 +162,7 @@ public abstract class Enemy : Unit, Interactable
             nextPos = Managers.Board.GetNextStepInPathToSource(this.TargetCharacter.GridPosition, currentPosition);
         }
 
-        this.Waypoint = new Waypoint();
-        this.Waypoint.StartPos = currentPosition;
-        this.Waypoint.EndPos = nextPos.Position;
-
-        if (this.lineRenderer != null)
-        {
-            if (this.Waypoint.EndPos != Constants.MaxVector2Int && this.Waypoint.StartPos != Constants.MaxVector2Int)
-            {
-                this.lineRenderer.SetPosition(0, Managers.Board.GetHex(this.Waypoint.StartPos).transform.position);
-                this.lineRenderer.SetPosition(1, Managers.Board.GetHex(this.Waypoint.EndPos).transform.position);
-            }
-        }
+        this.Waypoint = new Waypoint(currentPosition, nextPos.Position, this.PositionOffset);
     }
 
     protected override bool ShouldRecalculatePath()

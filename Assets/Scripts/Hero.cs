@@ -13,7 +13,7 @@ public abstract class Hero : Unit, Interactable
     protected abstract void InitializeAbilities();
     private int pathProgress;
     private GameObject selectedRing;
-    private LineRenderer pathRenderer;
+    private GameObject moveTargetIndicator;
     private GameObject reviveTimer;
     private Text reviveTimerText;
     private float deathTime;
@@ -31,12 +31,12 @@ public abstract class Hero : Unit, Interactable
             this.transform);
         selectedRing.SetActive(false);
 
-        pathRenderer = Instantiate(
-            Managers.Prefabs.PathRenderer,
+        moveTargetIndicator = Instantiate(
+            Managers.Prefabs.MoveTargetIndicator,
             this.transform.position,
             Managers.Prefabs.PathRenderer.transform.rotation,
-            this.transform).GetComponent<LineRenderer>();
-        pathRenderer.gameObject.SetActive(false);
+            null);
+        moveTargetIndicator.gameObject.SetActive(false);
 
         reviveTimer = Instantiate(
             Managers.Prefabs.HeroReviveTimer,
@@ -137,6 +137,8 @@ public abstract class Hero : Unit, Interactable
             return false;
         }
 
+        Managers.Builder.ExitBuildDialog();
+
         if (IsListeningForTargetPosition == false)
         {
             IsListeningForTargetPosition = true;
@@ -155,8 +157,6 @@ public abstract class Hero : Unit, Interactable
 
     public bool InformHexWasClicked(HexagonMono hex)
     {
-
-
         selectedRing.SetActive(false);
         if (IsListeningForTargetPosition)
         {
@@ -176,11 +176,11 @@ public abstract class Hero : Unit, Interactable
         {
             this.Waypoint = null;
             IsGuardingHex = true;
-            this.pathRenderer.gameObject.SetActive(false);
+            this.moveTargetIndicator.gameObject.SetActive(false);
             return;
         }
 
-        this.Waypoint = new Waypoint(PathToTargetPosition[pathProgress - 1], PathToTargetPosition[pathProgress]);
+        this.Waypoint = new Waypoint(PathToTargetPosition[pathProgress - 1], PathToTargetPosition[pathProgress], Vector3.zero);
     }
 
     protected override void RecalculatePath()
@@ -195,6 +195,11 @@ public abstract class Hero : Unit, Interactable
 
     private void FindPath(Vector2Int targetPos)
     {
+        if (targetPos == this.GridPosition)
+        {
+            return;
+        }
+
         pathProgress = 0;
         this.PathId = Managers.Board.PathingId;
         this.PathToTargetPosition = Helpers.FindPathByWalking(
@@ -207,8 +212,9 @@ public abstract class Hero : Unit, Interactable
             return;
         }
 
-        this.pathRenderer.gameObject.SetActive(true);
-        RenderPath();
+        this.moveTargetIndicator.gameObject.SetActive(true);
+        this.moveTargetIndicator.transform.position = Helpers.ToWorldPosition(targetPos) + Vector3.up * .01f;
+        Helpers.TriggerAllParticleSystems(this.moveTargetIndicator.transform, true);
         if (this.TargetCharacter != null && this.TargetCharacter is Enemy)
         {
             ((Enemy)this.TargetCharacter).DisengageFromFight();
@@ -216,21 +222,12 @@ public abstract class Hero : Unit, Interactable
 
         this.TargetCharacter = null;
         IsGuardingHex = false;
-        this.Waypoint = new Waypoint(PathToTargetPosition[0], PathToTargetPosition[1]);
+        this.Waypoint = new Waypoint(PathToTargetPosition[0], PathToTargetPosition[1], Vector3.zero);
     }
 
     protected override bool ShouldRecalculatePath()
     {
         return this.PathId != Managers.Board.PathingId;
-    }
-
-    private void RenderPath()
-    {
-        this.pathRenderer.positionCount = this.PathToTargetPosition.Count;
-        for (int i = 0; i < this.PathToTargetPosition.Count; i++)
-        {
-            this.pathRenderer.SetPosition(i, Helpers.ToWorldPosition(this.PathToTargetPosition[i]));
-        }
     }
 
     public bool InformGameObjectWasClicked(GameObject gameObject)

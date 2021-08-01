@@ -9,7 +9,7 @@ public class Spikes : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.Spikes;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override bool IsWalkable => true;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
 

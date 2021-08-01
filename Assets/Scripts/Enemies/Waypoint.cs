@@ -4,6 +4,10 @@ public class Waypoint
 {
     public Vector2Int StartPos;
     public Vector2Int EndPos;
+    public Vector3 Offset;
+
+    public Vector3 WorldspaceStartPos => Helpers.ToWorldPosition(StartPos) + Offset;
+    public Vector3 WorldspaceEndPos => Helpers.ToWorldPosition(EndPos) + Offset;
 
     /// <summary>
     /// Whether or not this waypoint can be calculated from the map's pred grid.
@@ -13,15 +17,10 @@ public class Waypoint
     /// </summary>
     public bool IsRecalculable;
 
-    public Waypoint(Vector2Int startPos, Vector2Int endPos, bool isRecalculable = true)
+    public Waypoint(Vector2Int startPos, Vector2Int endPos, Vector3 offset)
     {
         this.StartPos = startPos;
         this.EndPos = endPos;
-        this.IsRecalculable = isRecalculable;
-    }
-
-    public Waypoint(bool isRecalculable = true)
-    {
-        this.IsRecalculable = isRecalculable;
+        this.Offset = offset;
     }
 }

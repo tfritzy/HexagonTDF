@@ -12,7 +12,7 @@ public class EarthTower : AttackTower
     public float MaxRocks = 3;
     public override BuildingType Type => BuildingType.EarthTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override float ManualPowerAdjustment => .5f; // Can store projectiles.
     private const float ROCK_ROTATION_RADIUS = .5f;

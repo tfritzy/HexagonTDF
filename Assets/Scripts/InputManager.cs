@@ -66,6 +66,7 @@ public class InputManager : MonoBehaviour
             100f,
             layer,
             QueryTriggerInteraction.Collide);
+        Array.Sort(hits, (RaycastHit h1, RaycastHit h2) => h1.distance.CompareTo(h2.distance));
         foreach (RaycastHit hit in hits)
         {
             bool wasConsumed = Interact(hit.collider.gameObject);

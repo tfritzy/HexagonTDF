@@ -11,7 +11,7 @@ public class FrigidShard : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.FrigidShard;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public float SlowAmount => .5f;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 10;
     protected override float ManualPowerAdjustment => 8;

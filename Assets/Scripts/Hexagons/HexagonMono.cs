@@ -15,6 +15,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected const float MAX_COLOR_VARIANCE = .02f;
 
     private static float ColorVarianceM => (MAX_COLOR_VARIANCE * 2f) / ((float)Managers.Board.Map.Width);
+
     private MeshRenderer hex;
 
     public void SetType(Hexagon hexagon)

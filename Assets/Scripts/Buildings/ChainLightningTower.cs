@@ -9,7 +9,7 @@ public class ChainLightningTower : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override BuildingType Type => BuildingType.ChainLightningTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 8;
     private const float LIGHTNING_HOP_RANGE = 1f;
     private const float LIGHTNING_FLASH_DURATION = .075f;

@@ -6,7 +6,7 @@ public class GuardTower : AttackTower
 {
     public override BuildingType Type => BuildingType.GuardTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override float BaseCooldown => AttackSpeed.Medium;
     public override int BaseDamage => 5;
     public override float BaseRange => RangeOptions.Medium;

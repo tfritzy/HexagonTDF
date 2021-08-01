@@ -9,7 +9,7 @@ public class SparkTower : AttackTower
     public override float BaseRange => RangeOptions.Short;
     public override BuildingType Type => BuildingType.SparkTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     private const float DIST_BETWEEN_LIGHTNING_SEGMENTS = .25f;
     private LineRenderer lr;

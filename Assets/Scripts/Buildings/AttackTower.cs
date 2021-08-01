@@ -9,7 +9,6 @@ public abstract class AttackTower : Building, Interactable
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ExplosionRadius => 0;
     protected GameObject Turret;
-    protected GameObject Body;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
     public override int Damage => GetDamage(UpgradeLevel);
     public override float BaseRange => GetRange(UpgradeLevel);
@@ -24,7 +23,6 @@ public abstract class AttackTower : Building, Interactable
     protected override void Setup()
     {
         this.Turret = transform.Find("Turret")?.gameObject;
-        this.Body = transform.Find("Body")?.gameObject;
         UpgradeLevel = 0;
         UpgradeCost = new ResourceTransaction(GetUpgradeCost());
         base.Setup();
@@ -50,12 +48,12 @@ public abstract class AttackTower : Building, Interactable
 
     private int GetDamage(int upgradeLevel)
     {
-        return (int)(this.BaseDamage * (1 + .5f * upgradeLevel));
+        return (int)(this.BaseDamage * (1 + .25f * upgradeLevel));
     }
 
     private float GetRange(int upgradeLevel)
     {
-        return this.BaseRange * (1 + .1f * upgradeLevel);
+        return this.BaseRange * (1 + .2f * upgradeLevel);
     }
 
     protected virtual bool CanAttack()
@@ -247,7 +245,8 @@ public abstract class AttackTower : Building, Interactable
 
     private float getRangePowerMultiplier(int upgradeLevel)
     {
-        return GetRange(upgradeLevel) / 3;
+        float percentDiff = GetRange(upgradeLevel) / RangeOptions.Medium - 1;
+        return (1 + percentDiff / .5f);
     }
 
     private float getAttackRegionMultiplier()

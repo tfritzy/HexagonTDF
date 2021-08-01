@@ -556,12 +556,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 11615957185843604, guid: c098d5659fb7309479da1b7994638813, type: 3}
   MovementSpeedModification: 0
   MovementSpeed: 0
   IsJumping: 0
   _animationState: 0
   AttackPhase: 0
+  GoldTaperAmount: 0
+  PositionOffset: {x: 0, y: 0, z: 0}
 --- !u!136 &2825852201522874033
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1146,15 +1149,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6c4ec67f0dd969f47a579b11b3244ced, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6c4ec67f0dd969f47a579b11b3244ced, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6c4ec67f0dd969f47a579b11b3244ced, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -7847919637959219537, guid: 6c4ec67f0dd969f47a579b11b3244ced, type: 3}
       propertyPath: m_Layer

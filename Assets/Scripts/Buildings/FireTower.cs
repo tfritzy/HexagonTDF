@@ -9,7 +9,7 @@ public class FireTower : AttackTower
     public override float BaseRange => RangeOptions.Medium;
     public override BuildingType Type => BuildingType.FireTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     protected override float ExplosionRadius => 0.5f;
 }

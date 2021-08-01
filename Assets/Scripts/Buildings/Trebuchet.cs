@@ -8,7 +8,7 @@ public class Trebuchet : Unit
     public override float BaseRange => int.MaxValue;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override int StartingHealth => 25;
     public override float Power => int.MaxValue / 2;
     public override VerticalRegion Region => VerticalRegion.Ground;
@@ -79,7 +79,7 @@ public class Trebuchet : Unit
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)
     {
-        this.Waypoint = new Waypoint(this.GridPosition, this.GridPosition);
+        this.Waypoint = new Waypoint(this.GridPosition, this.GridPosition, Vector3.zero);
     }
 
     protected override void RecalculatePath()

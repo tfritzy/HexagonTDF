@@ -10,7 +10,7 @@ public class MeteorTower : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.MeteorTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     protected override float ExplosionRadius => 3f;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
     protected override float ProjectileSpeed => 20;

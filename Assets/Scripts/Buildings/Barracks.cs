@@ -5,7 +5,7 @@ using UnityEngine;
 public class Barracks : Building
 {
     public override BuildingType Type => BuildingType.Barracks;
-    public override Alliances Alliance => Alliances.Illigons;
+    public override Alliances Alliance => Alliances.Maltov;
     public override Alliances Enemies => Alliances.Player;
     public override int StartingHealth => 900;
     public override float Power => int.MaxValue;
@@ -88,12 +88,15 @@ public class Barracks : Building
 
         if (currentSpawnIndex < spawnTimings.Count && Time.time > spawnTimings[currentSpawnIndex].Time)
         {
+            Vector3 enemyOffset = Random.insideUnitSphere * Constants.HEXAGON_r;
+            enemyOffset.y = 0;
             GameObject enemy = Instantiate(
                 Prefabs.Enemies[spawnTimings[currentSpawnIndex].Type].gameObject,
-                this.transform.position,
+                this.transform.position + enemyOffset,
                 new Quaternion(),
                 null);
             Enemy enemyMono = enemy.GetComponent<Enemy>();
+            enemyMono.PositionOffset = enemyOffset;
             enemyMono.AddRigidbody();
             enemyMono.SetInitialPosition(this.GridPosition);
             enemyMono.GoldTaperAmount = 1 - Mathf.Min((Time.time - levelStartTime) * goldTaperPercentPerSecond, .9f);

@@ -1,6 +1,6 @@
 public enum Alliances
 {
     Player,
-    Illigons,
+    Maltov,
     Neutral
 }

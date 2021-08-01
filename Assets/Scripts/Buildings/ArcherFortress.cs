@@ -9,7 +9,7 @@ public class ArcherFortress : AttackTower
     public override float BaseCooldown => AttackSpeed.Fast;
     public override int BaseDamage => 5;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override float BaseRange => RangeOptions.Medium;
     public override int NumProjectiles => 5;
     public override float ProjectileStartPostionRandomness => .3f;

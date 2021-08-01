@@ -10,7 +10,7 @@ public class FlamethrowerTower : AttackTower
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override BuildingType Type => BuildingType.FlamethrowerTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
 
     private FireDamageEffect effect;
     private ParticleSystem flamethrowerPS;

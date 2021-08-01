@@ -182,12 +182,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 0}
   MovementSpeedModification: 0
   MovementSpeed: 0
   IsJumping: 0
   _animationState: 0
   AttackPhase: 0
+  GoldTaperAmount: 0
+  PositionOffset: {x: 0, y: 0, z: 0}
 --- !u!136 &5420920303599549961
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -198,10 +201,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.39
-  m_Height: 1.3997228
+  m_Radius: 0.15
+  m_Height: 0.7927327
   m_Direction: 1
-  m_Center: {x: 0, y: 0.5364716, z: 0}
+  m_Center: {x: 0, y: 0.323954, z: 0}
 --- !u!54 &5047287489377004975
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1127,15 +1130,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 80862a93873b29d40bea3da16424b5cc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 80862a93873b29d40bea3da16424b5cc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 80862a93873b29d40bea3da16424b5cc, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -7847919637959219537, guid: 80862a93873b29d40bea3da16424b5cc, type: 3}
       propertyPath: m_Layer

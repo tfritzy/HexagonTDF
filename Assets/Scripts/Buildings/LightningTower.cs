@@ -6,7 +6,7 @@ public class LightningTower : AttackTower
 {
     public override BuildingType Type => BuildingType.LightningTower;
     public override Alliances Alliance => Alliances.Player;
-    public override Alliances Enemies => Alliances.Illigons;
+    public override Alliances Enemies => Alliances.Maltov;
     public override float BaseCooldown => AttackSpeed.Slow;
     public override float BaseRange => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
