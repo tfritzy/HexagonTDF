@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class ResourceNumber : OnScreenNumber
 {
-    protected override Vector3 InitialVelocity => Vector3.up * 200f;
-    protected override float GravityForce => 100f;
+    protected override Vector3 InitialVelocity => Vector3.up * 200f + Vector3.right * Random.Range(-50f, 50f);
+    protected override float GravityForce => 200f;
 
     public void SetValue(int value, GameObject owner, ResourceType resourceType, bool isStatic = false)
     {
