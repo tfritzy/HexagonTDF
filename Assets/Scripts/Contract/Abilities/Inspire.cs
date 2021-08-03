@@ -2,8 +2,8 @@ using System;
 
 public class Inspire : InstantCastAbility
 {
-    public override float Cooldown => 5f;
-    private const float duration = 30f;
+    public override float Cooldown => 45f;
+    private const float duration = 15f;
     private Guid id;
     private const float INCREASE_AMOUNT = .75f;
 

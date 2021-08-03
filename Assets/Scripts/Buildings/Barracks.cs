@@ -17,21 +17,6 @@ public class Barracks : Building
 
     private const float goldTaperPercentPerSecond = 0.00333333333333333f;
     private Vector2Int exitGridPosition;
-    private readonly List<int> tricklePowerCurve = new List<int>()
-    {
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,
-        39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,
-        75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100
-    };
-    private readonly List<int> burstSpawnPowerCurve = new List<int>()
-    {
-        0, 2, 6, 10, 15, 20, 25, 31, 37, 43, 49, 56, 62, 69, 76, 83, 91, 98, 105, 113, 121, 129, 137,
-        145, 153, 162, 170, 179, 187, 196, 205, 214, 223, 232, 241, 250, 260, 269, 279, 288, 298, 308,
-        317, 327, 337, 347, 357, 367, 378, 388, 398, 408, 419, 429, 440, 451, 461, 472, 483, 494, 505,
-        516, 527, 538, 549, 560, 571, 582, 594, 605, 617, 628, 640, 651, 663, 674, 686, 698, 710, 722,
-        733, 745, 757, 769, 781, 794, 806, 818, 830, 842, 855, 867, 880, 892, 904, 917, 930, 942, 955,
-        968, 980
-    };
 
     private int currentWave;
     private float levelStartTime;
@@ -49,7 +34,6 @@ public class Barracks : Building
         this.exitGridPosition = Managers.Board.GetNextStepInPathToSource(
             Managers.Board.Trebuchet.GridPosition,
             this.GridPosition).Position;
-        this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
     }
     private List<SpawnDetail> spawnTimings;
 
@@ -65,20 +49,21 @@ public class Barracks : Building
     {
         base.UpdateLoop();
 
-        if (currentWave >= tricklePowerCurve.Count)
-        {
-            return;
-        }
-
         if (Time.time >= levelStartTime + currentWave * Constants.BALANCE_INTERVAL_SECONDS)
         {
-            float powerBudget = tricklePowerCurve[currentWave];
+            float powerBudget = currentWave;
             System.Random random = new System.Random(currentWave);
-            int roll = random.Next(0, Managers.Board.Barracks.Count);
-            if (roll == this.BarracksIndex)
+
+            if (currentWave % 2 == 0)
             {
-                powerBudget += burstSpawnPowerCurve[currentWave];
+                this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
+                int roll = random.Next(0, Managers.Board.Barracks.Count);
+                if (roll == this.BarracksIndex)
+                {
+                    powerBudget += Mathf.Pow(currentWave * 2, 1.3f);
+                }
             }
+
             Managers.DebugDetails.InformOfWaveStart(currentWave, powerBudget);
             List<EnemyType> spawnFormation = RollSpawnFormation(powerBudget);
             CalculateSpawnTimings(powerBudget, spawnFormation);
