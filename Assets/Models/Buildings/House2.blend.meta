@@ -1,59 +1,9 @@
 fileFormatVersion: 2
-guid: 87ffa4348859f4945b82be8c42f5a83f
+guid: 3d339d4413123c84dab59735b487e23e
 ModelImporter:
   serializedVersion: 20101
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Brass
-    second: {fileID: 2100000, guid: f36b3379db90d174c983a25aeeae9fc7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DarkStone
-    second: {fileID: 2100000, guid: 7c56cc08eaefe204d88a696f584eb0bc, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: LampLight
-    second: {fileID: 2100000, guid: 3a74c6eb9c12ed7449ce129bedfafa1d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: LightWood
-    second: {fileID: 2100000, guid: 1b3250e56ac62114aa2604a7341b1696, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Stone
-    second: {fileID: 2100000, guid: c8aad5e943bd8b14ab6163aa310317ac, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TileDark
-    second: {fileID: 2100000, guid: a8a56313f3048f1408d3c8066ca3d60d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TileLight
-    second: {fileID: 2100000, guid: 2b0c2a673c125c340ad85cf8482ba45f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TopBase
-    second: {fileID: 2100000, guid: 1b3250e56ac62114aa2604a7341b1696, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Window
-    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Wood
-    second: {fileID: 2100000, guid: d08c97c6c398cc6459e3d761ed4a2880, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 1
     materialName: 0
