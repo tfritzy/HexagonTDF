@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour
 {
     public const float MOVEMENT_SPEED = 9f;
+    public bool DisableXScroll;
     private const float INPUT_BUFFER_DURATION = .25f;
     private const float MAX_CAMERA_VELOCITY = 20f;
     private Vector3? touchStartPosition;
@@ -144,6 +145,12 @@ public class CameraControl : MonoBehaviour
         Vector3 delta = Input.mousePosition - startScreenPosition;
         delta.z = delta.y;
         delta.y = 0;
+
+        if (DisableXScroll)
+        {
+            delta.x = 0;
+        }
+
         return -delta * pixelToWorldConversion;
     }
 

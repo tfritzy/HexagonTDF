@@ -1,10 +1,9 @@
 ﻿public enum Biome
 {
-    Sea,
-    Desert,
-    BlackForest,
-    BirchForest,
+    Snow,
     Mountain,
-    SnowMountain,
-    Grasslands
+    Forrest,
+    Grassland,
+    Sand,
+    Water,
 }

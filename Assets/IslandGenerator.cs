@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 public class IslandGenerator : MonoBehaviour
 {
-    const int DIMENSIONS = 2048;
+    const int DIMENSIONS = 1024;
+    private float halfDimensions = DIMENSIONS / 2f;
+    private float quarterDimensionsFloat = DIMENSIONS / 4f;
+    private int quarterDimensionsInt = DIMENSIONS / 4;
 
     public double Scale;
     public int Octaves;
@@ -18,43 +21,38 @@ public class IslandGenerator : MonoBehaviour
     public float TreeLine;
     public float LushMoistureLine;
     public float GrasslandsMoistureLine;
+
     public bool ShouldRegenerate;
     public Vector3 stuff;
-
-    private enum Biome
-    {
-        Snow,
-        Mountain,
-        Forrest,
-        Grassland,
-        Sand,
-        Water,
-    }
 
     private Dictionary<Biome, Color> colorMap = new Dictionary<Biome, Color>
     {
         {Biome.Snow, ColorExtensions.Create("#dee1e3")},
         {Biome.Mountain, ColorExtensions.Create("#80857e")},
         {Biome.Forrest, ColorExtensions.Create("#6a7132")},
-        {Biome.Grassland, ColorExtensions.Create("#94a050")},
+        {Biome.Grassland, ColorExtensions.Create("#98a050")},
         {Biome.Sand, ColorExtensions.Create("#c6ba8a")},
         {Biome.Water, ColorExtensions.Create("#5f8b8e")},
     };
 
-    // Start is called before the first frame update
+    public struct MapPoint
+    {
+        public float Height;
+        public Biome Biome;
+    }
+
     void Start()
     {
         ShouldRegenerate = true;
     }
 
-    public void ResetTexture()
+    public MapPoint[,] GetSegment(int index, int Seed)
     {
-        OpenSimplexNoise heightNoise = new OpenSimplexNoise();
-        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(DateTime.Now.Ticks - 5);
-        Texture2D mapTexture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
-        Texture2D heightTexture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
-        Texture2D moistureTexture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
-        for (int y = 0; y < DIMENSIONS; y++)
+        OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
+        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
+        MapPoint[,] mapSegment = new MapPoint[DIMENSIONS, DIMENSIONS];
+        int yOffset = DIMENSIONS * index;
+        for (int y = yOffset; y < DIMENSIONS + yOffset; y++)
         {
             for (int x = 0; x < DIMENSIONS; x++)
             {
@@ -62,58 +60,79 @@ public class IslandGenerator : MonoBehaviour
                 double yD = y / Scale;
                 float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 heightValue = (heightValue + 1) / 2;
-                heightTexture.SetPixel(x, y, new Color(heightValue, heightValue, heightValue));
+                heightValue -= trimEdgesModification(x);
 
                 float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 moistureValue = (moistureValue + 1) / 2;
-                moistureValue = (moistureValue * .7f) + (heightValue * .3f);
-                moistureTexture.SetPixel(x, y, new Color(0, 0, 1, moistureValue));
+                moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
-                mapTexture.SetPixel(x, y, GetMapPixel(heightValue, moistureValue));
+                mapSegment[x, y - yOffset] = new MapPoint
+                {
+                    Height = heightValue,
+                    Biome = GetBiome(heightValue, moistureValue),
+                };
             }
         }
-        heightTexture.Apply();
-        moistureTexture.Apply();
-        mapTexture.Apply();
-        this.transform.Find("HeightMap").GetComponent<RawImage>().texture = heightTexture;
-        this.transform.Find("MoistureMap").GetComponent<RawImage>().texture = moistureTexture;
-        this.transform.Find("Map").GetComponent<RawImage>().texture = mapTexture;
+
+        return mapSegment;
     }
 
-    private Color GetMapPixel(float height, float moisture)
+    private float trimEdgesModification(int x)
     {
-        if (height < WaterLine)
+        float dist = Mathf.Abs(x - halfDimensions) / halfDimensions;
+
+        if (dist < .5f)
         {
-            return colorMap[Biome.Water];
-        }
-        else if (height > SnowLine)
-        {
-            return colorMap[Biome.Snow];
-        }
-        else if (height > TreeLine)
-        {
-            return colorMap[Biome.Mountain];
-        }
-        else if (moisture > LushMoistureLine)
-        {
-            return colorMap[Biome.Forrest];
-        }
-        else if (moisture > GrasslandsMoistureLine)
-        {
-            return colorMap[Biome.Grassland];
+            return 0;
         }
         else
         {
-            return colorMap[Biome.Sand];
+            return dist - .5f;
         }
     }
 
-    void Update()
+    private Biome GetBiome(float height, float moisture)
     {
-        if (ShouldRegenerate)
+        if (height < WaterLine)
         {
-            ResetTexture();
-            ShouldRegenerate = false;
+            return Biome.Water;
+        }
+        else if (height > SnowLine)
+        {
+            return Biome.Snow;
+        }
+        else if (height > TreeLine)
+        {
+            return Biome.Mountain;
+        }
+        else if (moisture > LushMoistureLine)
+        {
+            return Biome.Forrest;
+        }
+        else if (moisture > GrasslandsMoistureLine)
+        {
+            return Biome.Grassland;
+        }
+        else
+        {
+            return Biome.Sand;
         }
     }
+
+    public Texture2D GetTextureOfMap(MapPoint[,] mapPoints)
+    {
+        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
+
+        for (int y = 0; y < mapPoints.GetLength(1); y++)
+        {
+            for (int x = 0; x < mapPoints.GetLength(0); x++)
+            {
+                texture.SetPixel(x, y, colorMap[mapPoints[x, y].Biome]);
+            }
+        }
+
+        texture.Apply();
+        return texture;
+    }
+
 }
