@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class IslandGenerator : MonoBehaviour
 {
-    const int DIMENSIONS = 1024;
+    const int DIMENSIONS = 128;
     private float halfDimensions = DIMENSIONS / 2f;
     private float quarterDimensionsFloat = DIMENSIONS / 4f;
     private int quarterDimensionsInt = DIMENSIONS / 4;
@@ -46,35 +48,52 @@ public class IslandGenerator : MonoBehaviour
         ShouldRegenerate = true;
     }
 
-    public MapPoint[,] GetSegment(int index, int Seed)
+    public async Task<MapPoint[,]> GetSegment(int xIndex, int yIndex, int Seed)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
         MapPoint[,] mapSegment = new MapPoint[DIMENSIONS, DIMENSIONS];
-        int yOffset = DIMENSIONS * index;
-        for (int y = yOffset; y < DIMENSIONS + yOffset; y++)
+        int xOffset = DIMENSIONS * xIndex;
+        int yOffset = DIMENSIONS * yIndex;
+
+        var list = new List<Task>();
+        for (var y = yOffset; y < DIMENSIONS + yOffset; y++)
         {
-            for (int x = 0; x < DIMENSIONS; x++)
-            {
-                double xD = x / Scale;
-                double yD = y / Scale;
-                float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-                heightValue = (heightValue + 1) / 2;
-                heightValue -= trimEdgesModification(x);
-
-                float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-                moistureValue = (moistureValue + 1) / 2;
-                moistureValue = (moistureValue * .6f) + (heightValue * .4f);
-
-                mapSegment[x, y - yOffset] = new MapPoint
+            var yCopy = y;
+            var t = new Task(() =>
                 {
-                    Height = heightValue,
-                    Biome = GetBiome(heightValue, moistureValue),
-                };
-            }
+                    formatRow(mapSegment, heightNoise, moistureNoise, yCopy, xOffset, yOffset);
+                });
+            list.Add(t);
+            t.Start();
         }
 
+        await Task.WhenAll(list);
+
         return mapSegment;
+    }
+
+    private void formatRow(MapPoint[,] mapSegment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset)
+    {
+        for (int x = xOffset; x < DIMENSIONS + xOffset; x++)
+        {
+            double xD = x / Scale;
+            double yD = y / Scale;
+            float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+            heightValue = (heightValue + 1) / 2;
+            // heightValue -= trimEdgesModification(x + xOffset);
+
+            float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+            moistureValue = (moistureValue + 1) / 2;
+            moistureValue = (moistureValue * .6f) + (heightValue * .4f);
+
+            mapSegment[x - xOffset, y - yOffset] = new MapPoint
+            {
+                Height = heightValue,
+                Biome = GetBiome(heightValue, moistureValue),
+            };
+        }
+
     }
 
     private float trimEdgesModification(int x)
@@ -121,7 +140,8 @@ public class IslandGenerator : MonoBehaviour
 
     public Texture2D GetTextureOfMap(MapPoint[,] mapPoints)
     {
-        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
+        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGB24, false);
+        texture.filterMode = FilterMode.Point;
 
         for (int y = 0; y < mapPoints.GetLength(1); y++)
         {
