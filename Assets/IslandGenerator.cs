@@ -24,6 +24,46 @@ public class IslandGenerator : MonoBehaviour
     public float LushMoistureLine;
     public float GrasslandsMoistureLine;
 
+    private struct BiomeFormationCriterium
+    {
+        public Biome Biome;
+        public float MinMoisture;
+    }
+
+    private Dictionary<float, BiomeFormationCriterium[]> biomeDeterminator = new Dictionary<float, BiomeFormationCriterium[]>
+    {
+        {
+            .9f,
+            new BiomeFormationCriterium[]
+            {
+                new BiomeFormationCriterium {Biome = Biome.Snow, MinMoisture = float.MinValue}
+            }
+        },
+        {
+            0.82f,
+            new BiomeFormationCriterium[]
+            {
+                new BiomeFormationCriterium {Biome = Biome.Mountain, MinMoisture = float.MinValue}
+            }
+        },
+        {
+            0.45f,
+            new BiomeFormationCriterium[]
+            {
+                new BiomeFormationCriterium {Biome = Biome.Forrest, MinMoisture = .57f},
+                new BiomeFormationCriterium {Biome = Biome.Grassland, MinMoisture = .46f},
+                new BiomeFormationCriterium {Biome = Biome.Sand, MinMoisture = float.MinValue},
+            }
+        },
+        {
+            -0.1f,
+            new BiomeFormationCriterium[]
+            {
+                new BiomeFormationCriterium {Biome = Biome.Water, MinMoisture = float.MinValue},
+            }
+        },
+    };
+
     public bool ShouldRegenerate;
     public Vector3 stuff;
 
@@ -35,12 +75,15 @@ public class IslandGenerator : MonoBehaviour
         {Biome.Grassland, ColorExtensions.Create("#98a050")},
         {Biome.Sand, ColorExtensions.Create("#c6ba8a")},
         {Biome.Water, ColorExtensions.Create("#5f8b8e")},
+        {Biome.Null, Color.magenta},
     };
 
     public struct MapPoint
     {
         public float Height;
+        public float Moisture;
         public Biome Biome;
+        public float HeightDiffFromMinReq;
     }
 
     void Start()
@@ -87,10 +130,13 @@ public class IslandGenerator : MonoBehaviour
             moistureValue = (moistureValue + 1) / 2;
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
+            Tuple<Biome, float> biomeDetails = GetBiome(heightValue, moistureValue);
             mapSegment[x - xOffset, y - yOffset] = new MapPoint
             {
                 Height = heightValue,
-                Biome = GetBiome(heightValue, moistureValue),
+                Biome = biomeDetails.Item1,
+                HeightDiffFromMinReq = biomeDetails.Item2,
+                Moisture = moistureValue,
             };
         }
 
@@ -110,33 +156,29 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
-    private Biome GetBiome(float height, float moisture)
+    private Tuple<Biome, float> GetBiome(float height, float moisture)
     {
-        if (height < WaterLine)
+        foreach (float heightLine in this.biomeDeterminator.Keys)
         {
-            return Biome.Water;
+            if (height > heightLine)
+            {
+                foreach (BiomeFormationCriterium criterium in this.biomeDeterminator[heightLine])
+                {
+                    if (moisture > criterium.MinMoisture)
+                    {
+                        return new Tuple<Biome, float>(criterium.Biome, height - heightLine);
+                    }
+                }
+            }
         }
-        else if (height > SnowLine)
-        {
-            return Biome.Snow;
-        }
-        else if (height > TreeLine)
-        {
-            return Biome.Mountain;
-        }
-        else if (moisture > LushMoistureLine)
-        {
-            return Biome.Forrest;
-        }
-        else if (moisture > GrasslandsMoistureLine)
-        {
-            return Biome.Grassland;
-        }
-        else
-        {
-            return Biome.Sand;
-        }
+
+        return new Tuple<Biome, float>(Biome.Null, 0);
     }
+
+    private Dictionary<Biome, float> biomeColorDampens = new Dictionary<Biome, float>()
+    {
+        {Biome.Water, .33333f},
+    };
 
     public Texture2D GetTextureOfMap(MapPoint[,] mapPoints)
     {
@@ -147,7 +189,11 @@ public class IslandGenerator : MonoBehaviour
         {
             for (int x = 0; x < mapPoints.GetLength(0); x++)
             {
-                texture.SetPixel(x, y, colorMap[mapPoints[x, y].Biome]);
+                Color color = colorMap[mapPoints[x, y].Biome];
+                float dampen = biomeColorDampens.ContainsKey(mapPoints[x, y].Biome) ? biomeColorDampens[mapPoints[x, y].Biome] : .5f;
+                color = ColorExtensions.VaryBy(color, mapPoints[x, y].HeightDiffFromMinReq * dampen);
+
+                texture.SetPixel(x, y, color);
             }
         }
 

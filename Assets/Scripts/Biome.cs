@@ -6,4 +6,5 @@
     Grassland,
     Sand,
     Water,
+    Null
 }
