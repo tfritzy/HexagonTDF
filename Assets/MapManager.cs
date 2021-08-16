@@ -9,7 +9,7 @@ public class MapManager : MonoBehaviour
     public GameObject Tile;
     public int Seed;
 
-    private const int NUM_SEGMENTS_SPAWNED_HEIGHT = 36;
+    private const int NUM_SEGMENTS_SPAWNED_HEIGHT = 50;
     private const int NUM_SEGMENTS_SPAWNED_WIDTH = 6;
     private float tileWidth;
     private Camera cam;
@@ -56,7 +56,7 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        if (cam.transform.position.z > ((targetMapLowY + NUM_SEGMENTS_SPAWNED_HEIGHT / 2) * tileWidth))
+        if (cam.transform.position.z > ((targetMapLowY + NUM_SEGMENTS_SPAWNED_HEIGHT * .33f) * tileWidth))
         {
             targetMapLowX += 1;
             if (targetMapLowX >= NUM_SEGMENTS_SPAWNED_WIDTH)
@@ -66,7 +66,7 @@ public class MapManager : MonoBehaviour
             }
         }
 
-        if (cam.transform.position.z < ((targetMapLowY + NUM_SEGMENTS_SPAWNED_HEIGHT / 2) * tileWidth))
+        if (cam.transform.position.z < ((targetMapLowY + NUM_SEGMENTS_SPAWNED_HEIGHT * .33f) * tileWidth))
         {
             targetMapLowX -= 1;
             if (targetMapLowX < 0)
@@ -83,10 +83,10 @@ public class MapManager : MonoBehaviour
     float lastProcessTime;
     private async Task SpawnTiles()
     {
-        if (Time.time < lastProcessTime + .01f)
-        {
-            return;
-        }
+        // if (Time.time < lastProcessTime + .01f)
+        // {
+        //     return;
+        // }
 
         bool cacheMiss = false;
 
@@ -148,7 +148,20 @@ public class MapManager : MonoBehaviour
         bool cacheMiss = false;
         if (mapCache.ContainsKey(gridPos) == false)
         {
-            IslandGenerator.MapPoint[,] map = await generator.GetSegment(pos.x, pos.y, Seed);
+            IslandGenerator.MapPoint[,] map;
+            if (pos.x == NUM_SEGMENTS_SPAWNED_WIDTH - 1)
+            {
+                map = await generator.GetSegment(pos.x, pos.y, Seed, -.5f, 1);
+            }
+            else if (pos.x == 0)
+            {
+                map = await generator.GetSegment(pos.x, pos.y, Seed, .5f, .5f);
+            }
+            else
+            {
+                map = await generator.GetSegment(pos.x, pos.y, Seed);
+            }
+
             mapCache[gridPos] = new MapSegment
             {
                 Map = map,

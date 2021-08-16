@@ -4,25 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class IslandGenerator : MonoBehaviour
 {
-    const int DIMENSIONS = 128;
+    const int DIMENSIONS = 64;
     private float halfDimensions = DIMENSIONS / 2f;
-    private float quarterDimensionsFloat = DIMENSIONS / 4f;
-    private int quarterDimensionsInt = DIMENSIONS / 4;
 
     public double Scale;
     public int Octaves;
     public double Persistence;
     public double Lacunarity;
 
-    public float SnowLine;
-    public float WaterLine;
-    public float TreeLine;
-    public float LushMoistureLine;
-    public float GrasslandsMoistureLine;
 
     private struct BiomeFormationCriterium
     {
@@ -33,14 +27,14 @@ public class IslandGenerator : MonoBehaviour
     private Dictionary<float, BiomeFormationCriterium[]> biomeDeterminator = new Dictionary<float, BiomeFormationCriterium[]>
     {
         {
-            .9f,
+            .75f,
             new BiomeFormationCriterium[]
             {
                 new BiomeFormationCriterium {Biome = Biome.Snow, MinMoisture = float.MinValue}
             }
         },
         {
-            0.82f,
+            0.65f,
             new BiomeFormationCriterium[]
             {
                 new BiomeFormationCriterium {Biome = Biome.Mountain, MinMoisture = float.MinValue}
@@ -56,7 +50,7 @@ public class IslandGenerator : MonoBehaviour
             }
         },
         {
-            -0.1f,
+            -3f,
             new BiomeFormationCriterium[]
             {
                 new BiomeFormationCriterium {Biome = Biome.Water, MinMoisture = float.MinValue},
@@ -91,7 +85,7 @@ public class IslandGenerator : MonoBehaviour
         ShouldRegenerate = true;
     }
 
-    public async Task<MapPoint[,]> GetSegment(int xIndex, int yIndex, int Seed)
+    public async Task<MapPoint[,]> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
@@ -105,7 +99,7 @@ public class IslandGenerator : MonoBehaviour
             var yCopy = y;
             var t = new Task(() =>
                 {
-                    formatRow(mapSegment, heightNoise, moistureNoise, yCopy, xOffset, yOffset);
+                    formatRow(mapSegment, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
                 });
             list.Add(t);
             t.Start();
@@ -116,7 +110,7 @@ public class IslandGenerator : MonoBehaviour
         return mapSegment;
     }
 
-    private void formatRow(MapPoint[,] mapSegment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset)
+    private void formatRow(MapPoint[,] mapSegment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset, float xSlope, float xB)
     {
         for (int x = xOffset; x < DIMENSIONS + xOffset; x++)
         {
@@ -124,7 +118,7 @@ public class IslandGenerator : MonoBehaviour
             double yD = y / Scale;
             float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             heightValue = (heightValue + 1) / 2;
-            // heightValue -= trimEdgesModification(x + xOffset);
+            heightValue *= ((float)(x - xOffset) / (DIMENSIONS) * xSlope + xB);
 
             float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             moistureValue = (moistureValue + 1) / 2;
@@ -175,11 +169,6 @@ public class IslandGenerator : MonoBehaviour
         return new Tuple<Biome, float>(Biome.Null, 0);
     }
 
-    private Dictionary<Biome, float> biomeColorDampens = new Dictionary<Biome, float>()
-    {
-        {Biome.Water, .33333f},
-    };
-
     public Texture2D GetTextureOfMap(MapPoint[,] mapPoints)
     {
         Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGB24, false);
@@ -190,8 +179,15 @@ public class IslandGenerator : MonoBehaviour
             for (int x = 0; x < mapPoints.GetLength(0); x++)
             {
                 Color color = colorMap[mapPoints[x, y].Biome];
-                float dampen = biomeColorDampens.ContainsKey(mapPoints[x, y].Biome) ? biomeColorDampens[mapPoints[x, y].Biome] : .5f;
-                color = ColorExtensions.VaryBy(color, mapPoints[x, y].HeightDiffFromMinReq * dampen);
+
+                if (mapPoints[x, y].Biome != Biome.Water)
+                {
+                    color = ColorExtensions.VaryBy(color, mapPoints[x, y].HeightDiffFromMinReq * .5f);
+                }
+                else
+                {
+                    color = ColorExtensions.VaryBy(color, Mathf.Max(mapPoints[x, y].Height - .3f, .08f));
+                }
 
                 texture.SetPixel(x, y, color);
             }
