@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class Explodinate : MonoBehaviour
 {
-    private Collider[] parts;
+    private Rigidbody[] parts;
 
     void Start()
     {
-        parts = this.GetComponentsInChildren<Collider>();
 
-        foreach (Collider part in parts)
+    }
+
+    public void Explode()
+    {
+        parts = this.GetComponentsInChildren<Rigidbody>();
+
+        foreach (Rigidbody rb in parts)
         {
-            Rigidbody rigidbody = part.GetComponent<Rigidbody>();
-            rigidbody.velocity = new Vector3(Random.Range(-3, 3), Random.Range(3, 6), Random.Range(-3, 3));
-            rigidbody.useGravity = true;
-            rigidbody.angularVelocity = Random.insideUnitSphere * Random.Range(10, 30);
+            rb.velocity = new Vector3(Random.Range(-3, 3), Random.Range(3, 6), Random.Range(-3, 3));
+            rb.useGravity = true;
+            rb.angularVelocity = Random.insideUnitSphere * Random.Range(10, 30);
         }
     }
 }

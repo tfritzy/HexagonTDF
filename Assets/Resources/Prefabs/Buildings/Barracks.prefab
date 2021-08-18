@@ -14825,7 +14825,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 736cfed202404b049a5eea7f84a3776b, type: 3}
       propertyPath: m_Name
-      value: VileFotress_Fractured
+      value: Parts
       objectReference: {fileID: 0}
     - target: {fileID: 8513859187771203891, guid: 736cfed202404b049a5eea7f84a3776b, type: 3}
       propertyPath: m_Layer
@@ -14930,7 +14930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 76b150072c3c46e4681f7079f36769f9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76b150072c3c46e4681f7079f36769f9, type: 3}
