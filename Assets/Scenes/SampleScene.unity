@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 1}
+  m_AmbientSkyColor: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -10777,8 +10777,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.7348291, b: 0.5911949, a: 1}
-  m_Intensity: 0.2
+  m_Color: {r: 0.9433962, g: 0.88908356, b: 0.86032987, a: 1}
+  m_Intensity: 0.51
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -11558,6 +11558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6645306161aeda40b15c33435bd177e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DisableXScroll: 0
 --- !u!54 &963194230
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18409,10 +18410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14ab6dfd54a472149b186618ff130fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HEIGHT_PERLIN_SCALE: 400
-  BIOME_PERLIN_SCALE: 300
-  WATER_CUTOFF: 0.3
-  ShouldUpdate: 0
 --- !u!64 &1893922886
 MeshCollider:
   m_ObjectHideFlags: 0
