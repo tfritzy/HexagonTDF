@@ -7,9 +7,12 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
 
-public class IslandGenerator : MonoBehaviour
+public class OverworldTerrainGenerator : MonoBehaviour
 {
-    const int DIMENSIONS = 64;
+    public const int DIMENSIONS = 64;
+    private const float CITY_CHANCE = .3f;
+    private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
+    private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
 
     public double Scale;
@@ -72,6 +75,12 @@ public class IslandGenerator : MonoBehaviour
         {Biome.Null, Color.magenta},
     };
 
+    public struct Segment
+    {
+        public MapPoint[,] Points;
+        public Vector2Int? CityPosition;
+    }
+
     public struct MapPoint
     {
         public float Height;
@@ -85,11 +94,16 @@ public class IslandGenerator : MonoBehaviour
         ShouldRegenerate = true;
     }
 
-    public async Task<MapPoint[,]> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
+    public async Task<Segment> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
-        MapPoint[,] mapSegment = new MapPoint[DIMENSIONS, DIMENSIONS];
+        Segment segment = new Segment
+        {
+            Points = new MapPoint[DIMENSIONS, DIMENSIONS],
+            CityPosition = null,
+        };
+
         int xOffset = DIMENSIONS * xIndex;
         int yOffset = DIMENSIONS * yIndex;
 
@@ -99,7 +113,7 @@ public class IslandGenerator : MonoBehaviour
             var yCopy = y;
             var t = new Task(() =>
                 {
-                    formatRow(mapSegment, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
+                    formatRow(segment, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
                 });
             list.Add(t);
             t.Start();
@@ -107,10 +121,30 @@ public class IslandGenerator : MonoBehaviour
 
         await Task.WhenAll(list);
 
-        return mapSegment;
+        Vector2Int? cityPosition = GetCityPosition(xIndex, yIndex);
+        if (cityPosition != null)
+        {
+
+            segment.CityPosition = new Vector2Int(cityPosition.Value.x, cityPosition.Value.y);
+        }
+
+        return segment;
     }
 
-    private void formatRow(MapPoint[,] mapSegment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset, float xSlope, float xB)
+    private Vector2Int? GetCityPosition(int xIndex, int yIndex)
+    {
+        int citySeed = xIndex * 2 + yIndex * 3;
+        print(citySeed);
+        System.Random random = new System.Random(citySeed);
+        if (random.NextDouble() > CITY_CHANCE)
+        {
+            return null;
+        }
+
+        return new Vector2Int(random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS), random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS));
+    }
+
+    private void formatRow(Segment segment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset, float xSlope, float xB)
     {
         for (int x = xOffset; x < DIMENSIONS + xOffset; x++)
         {
@@ -125,7 +159,7 @@ public class IslandGenerator : MonoBehaviour
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
             Tuple<Biome, float> biomeDetails = GetBiome(heightValue, moistureValue);
-            mapSegment[x - xOffset, y - yOffset] = new MapPoint
+            segment.Points[x - xOffset, y - yOffset] = new MapPoint
             {
                 Height = heightValue,
                 Biome = biomeDetails.Item1,
@@ -169,24 +203,24 @@ public class IslandGenerator : MonoBehaviour
         return new Tuple<Biome, float>(Biome.Null, 0);
     }
 
-    public Texture2D GetTextureOfMap(MapPoint[,] mapPoints)
+    public Texture2D GetTextureOfMap(Segment segment)
     {
         Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGB24, false);
         texture.filterMode = FilterMode.Point;
 
-        for (int y = 0; y < mapPoints.GetLength(1); y++)
+        for (int y = 0; y < segment.Points.GetLength(1); y++)
         {
-            for (int x = 0; x < mapPoints.GetLength(0); x++)
+            for (int x = 0; x < segment.Points.GetLength(0); x++)
             {
-                Color color = colorMap[mapPoints[x, y].Biome];
+                Color color = colorMap[segment.Points[x, y].Biome];
 
-                if (mapPoints[x, y].Biome != Biome.Water)
+                if (segment.Points[x, y].Biome != Biome.Water)
                 {
-                    color = ColorExtensions.VaryBy(color, mapPoints[x, y].HeightDiffFromMinReq * .5f);
+                    color = ColorExtensions.VaryBy(color, segment.Points[x, y].HeightDiffFromMinReq * .5f);
                 }
                 else
                 {
-                    color = ColorExtensions.VaryBy(color, Mathf.Max(mapPoints[x, y].Height - .3f, .08f));
+                    color = ColorExtensions.VaryBy(color, Mathf.Max(segment.Points[x, y].Height - .3f, .08f));
                 }
 
                 texture.SetPixel(x, y, color);

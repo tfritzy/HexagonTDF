@@ -167,6 +167,11 @@ public abstract class Enemy : Unit, Interactable
 
     protected override bool ShouldRecalculatePath()
     {
+        if (this.Waypoint == null)
+        {
+            return false;
+        }
+
         if (this.Waypoint.IsRecalculable)
         {
             return false;
