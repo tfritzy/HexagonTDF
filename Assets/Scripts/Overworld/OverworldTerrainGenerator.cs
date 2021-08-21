@@ -10,53 +10,59 @@ using UnityEngine.UI;
 public class OverworldTerrainGenerator : MonoBehaviour
 {
     public const int DIMENSIONS = 64;
-    private const float CITY_CHANCE = .3f;
+    private const float CITY_CHANCE = .1f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
+    private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
 
     public double Scale;
     public int Octaves;
     public double Persistence;
     public double Lacunarity;
 
-
-    private struct BiomeFormationCriterium
+    private struct BiomeFormationCriterion
     {
         public Biome Biome;
         public float MinMoisture;
     }
 
-    private Dictionary<float, BiomeFormationCriterium[]> biomeDeterminator = new Dictionary<float, BiomeFormationCriterium[]>
+    private struct BiomeCriteria
     {
-        {
-            .75f,
-            new BiomeFormationCriterium[]
+        public float Height;
+        public BiomeFormationCriterion[] Criteria;
+    }
+
+    private List<BiomeCriteria> biomeDeterminator = new List<BiomeCriteria>
+    {
+        new BiomeCriteria{
+            Height = .75f,
+            Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterium {Biome = Biome.Snow, MinMoisture = float.MinValue}
+                new BiomeFormationCriterion {Biome = Biome.Snow, MinMoisture = float.MinValue}
             }
         },
-        {
-            0.65f,
-            new BiomeFormationCriterium[]
+        new BiomeCriteria{
+            Height = 0.65f,
+            Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterium {Biome = Biome.Mountain, MinMoisture = float.MinValue}
+                new BiomeFormationCriterion {Biome = Biome.Mountain, MinMoisture = float.MinValue}
             }
         },
-        {
-            0.45f,
-            new BiomeFormationCriterium[]
+        new BiomeCriteria{
+            Height = 0.45f,
+            Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterium {Biome = Biome.Forrest, MinMoisture = .57f},
-                new BiomeFormationCriterium {Biome = Biome.Grassland, MinMoisture = .46f},
-                new BiomeFormationCriterium {Biome = Biome.Sand, MinMoisture = float.MinValue},
+                new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .57f},
+                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .46f},
+                new BiomeFormationCriterion {Biome = Biome.Sand, MinMoisture = float.MinValue},
             }
         },
-        {
-            -3f,
-            new BiomeFormationCriterium[]
+        new BiomeCriteria{
+            Height = -3f,
+            Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterium {Biome = Biome.Water, MinMoisture = float.MinValue},
+                new BiomeFormationCriterion {Biome = Biome.Water, MinMoisture = float.MinValue},
             }
         },
     };
@@ -121,10 +127,16 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         await Task.WhenAll(list);
 
-        Vector2Int? cityPosition = GetCityPosition(xIndex, yIndex);
-        if (cityPosition != null)
+        float averageHeight = 0;
+        foreach (MapPoint point in segment.Points)
         {
+            averageHeight += point.Height;
+        }
+        averageHeight /= (DIMENSIONS * DIMENSIONS);
 
+        Vector2Int? cityPosition = GetCityPosition(xIndex, yIndex);
+        if (cityPosition != null && averageHeight > biomeDeterminator[biomeDeterminator.Count - 2].Height + CITY_HEIGHT_CUTOFF_DELTA)
+        {
             segment.CityPosition = new Vector2Int(cityPosition.Value.x, cityPosition.Value.y);
         }
 
@@ -133,8 +145,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private Vector2Int? GetCityPosition(int xIndex, int yIndex)
     {
-        int citySeed = xIndex * 2 + yIndex * 3;
-        print(citySeed);
+        int citySeed = xIndex * 3 + yIndex * 7;
         System.Random random = new System.Random(citySeed);
         if (random.NextDouble() > CITY_CHANCE)
         {
@@ -167,7 +178,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 Moisture = moistureValue,
             };
         }
-
     }
 
     private float trimEdgesModification(int x)
@@ -186,15 +196,15 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private Tuple<Biome, float> GetBiome(float height, float moisture)
     {
-        foreach (float heightLine in this.biomeDeterminator.Keys)
+        foreach (BiomeCriteria criteria in biomeDeterminator)
         {
-            if (height > heightLine)
+            if (height > criteria.Height)
             {
-                foreach (BiomeFormationCriterium criterium in this.biomeDeterminator[heightLine])
+                foreach (BiomeFormationCriterion criterion in criteria.Criteria)
                 {
-                    if (moisture > criterium.MinMoisture)
+                    if (moisture > criterion.MinMoisture)
                     {
-                        return new Tuple<Biome, float>(criterium.Biome, height - heightLine);
+                        return new Tuple<Biome, float>(criterion.Biome, height - criteria.Height);
                     }
                 }
             }

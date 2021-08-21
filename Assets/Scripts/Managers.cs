@@ -141,4 +141,18 @@ public static class Managers
             return debugDetails;
         }
     }
+
+    private static PauseMenu pauseMenu;
+    public static PauseMenu PauseMenu
+    {
+        get
+        {
+            if (pauseMenu == null)
+            {
+                pauseMenu = Canvas.Find("PauseMenu").GetComponent<PauseMenu>();
+            }
+
+            return pauseMenu;
+        }
+    }
 }
