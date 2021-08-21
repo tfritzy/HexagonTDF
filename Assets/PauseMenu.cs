@@ -18,6 +18,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Retreat()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Overworld");
     }
 }

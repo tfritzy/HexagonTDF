@@ -155,4 +155,19 @@ public static class Managers
             return pauseMenu;
         }
     }
+
+    private static GameObject attackTowerBuildMenu;
+    public static GameObject AttackTowerBuildMenu
+    {
+        get
+        {
+            if (attackTowerBuildMenu == null)
+            {
+                attackTowerBuildMenu = Managers.Canvas.Find("AttackTowerBuildMenu").gameObject;
+            }
+
+            return attackTowerBuildMenu;
+        }
+    }
+
 }

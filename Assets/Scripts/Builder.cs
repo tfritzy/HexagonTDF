@@ -23,7 +23,6 @@ public class Builder : MonoBehaviour
     private bool isInConfirmBuild;
     private GameObject confirmButtons;
     private Dictionary<ResourceType, Text> CostPanels;
-    private GameObject menu;
     private float menuCloseTime;
 
     void Start()
@@ -34,9 +33,6 @@ public class Builder : MonoBehaviour
             CostPanels[resourceType] = Managers.ResourceStore.transform.Find(resourceType.ToString()).Find("Cost").Find("Text").GetComponent<Text>();
         }
         SetCostPanels();
-
-        menu = Prefabs.UIElements[UIElementType.AttackTowerBuildMenu];
-        menu.SetActive(false);
     }
 
     private void UnHighlightHexagon()
@@ -74,7 +70,7 @@ public class Builder : MonoBehaviour
         this.SelectedBuilding = null;
         UnHighlightHexagon();
 
-        menu.SetActive(true);
+        Managers.AttackTowerBuildMenu.SetActive(true);
         highlightedHexagon = newPotentialHexagon;
         highlightedHexagon.SetMaterial(Constants.Materials.Gold);
     }
@@ -174,7 +170,7 @@ public class Builder : MonoBehaviour
         }
         this.SelectedBuilding = null;
         ExitConfirmBuildMode();
-        this.menu?.SetActive(false);
+        Managers.AttackTowerBuildMenu.SetActive(false);
         menuCloseTime = Time.time;
     }
 }

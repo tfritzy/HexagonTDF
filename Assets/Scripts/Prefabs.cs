@@ -192,25 +192,6 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<UIElementType, GameObject> uiElements;
-    public static Dictionary<UIElementType, GameObject> UIElements
-    {
-        get
-        {
-            if (uiElements == null)
-            {
-                uiElements = new Dictionary<UIElementType, GameObject>();
-                foreach (UIElementType uiElementType in Enum.GetValues(typeof(UIElementType)))
-                {
-                    uiElements[uiElementType] = Managers.Canvas.Find(uiElementType.ToString()).gameObject;
-                    uiElements[uiElementType].SetActive(false);
-                }
-            }
-
-            return uiElements;
-        }
-    }
-
     private static GameObject rangeCircle;
     public static GameObject RangeCircle
     {

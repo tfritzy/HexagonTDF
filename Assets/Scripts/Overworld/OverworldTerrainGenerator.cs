@@ -67,7 +67,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
         },
     };
 
-    public bool ShouldRegenerate;
     public Vector3 stuff;
 
     private Dictionary<Biome, Color> colorMap = new Dictionary<Biome, Color>
@@ -93,11 +92,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
         public float Moisture;
         public Biome Biome;
         public float HeightDiffFromMinReq;
-    }
-
-    void Start()
-    {
-        ShouldRegenerate = true;
     }
 
     public async Task<Segment> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
