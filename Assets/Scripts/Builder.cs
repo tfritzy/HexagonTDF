@@ -33,6 +33,7 @@ public class Builder : MonoBehaviour
             CostPanels[resourceType] = Managers.ResourceStore.transform.Find(resourceType.ToString()).Find("Cost").Find("Text").GetComponent<Text>();
         }
         SetCostPanels();
+        Managers.AttackTowerBuildMenu.SetActive(false);
     }
 
     private void UnHighlightHexagon()

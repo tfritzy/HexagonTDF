@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class OverworldTerrainGenerator : MonoBehaviour
 {
     public const int DIMENSIONS = 64;
-    private const float CITY_CHANCE = .1f;
+    private const float CITY_CHANCE = .3f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;

@@ -5,8 +5,8 @@ using UnityEngine;
 public class UIElementFollowObject : MonoBehaviour
 {
     public GameObject ObjectToFollow;
+    public Vector3 Offset;
 
-    // Update is called once per frame
     void Update()
     {
         Move();
@@ -19,6 +19,6 @@ public class UIElementFollowObject : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        this.transform.position = Managers.Camera.WorldToScreenPoint(ObjectToFollow.transform.position);
+        this.transform.position = Managers.Camera.WorldToScreenPoint(ObjectToFollow.transform.position + Offset);
     }
 }

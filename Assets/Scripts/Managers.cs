@@ -170,4 +170,17 @@ public static class Managers
         }
     }
 
+    private static LoadingMenu loadingMenu;
+    public static LoadingMenu LoadingMenu
+    {
+        get
+        {
+            if (loadingMenu == null)
+            {
+                loadingMenu = GameObject.Find("LoadingMenu").GetComponent<LoadingMenu>();
+            }
+
+            return loadingMenu;
+        }
+    }
 }

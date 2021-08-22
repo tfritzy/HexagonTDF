@@ -16,6 +16,7 @@ public static class Constants
     // The duration used for balance calculations such as how much damage a tower should do in an interval, or how many enemies to spawn.
     public const float BALANCE_INTERVAL_SECONDS = 15f;
     public const float HARD_DIFFICULTY_ADJUSTMENT = .8f;
+    public const int BASE_CITY_META_POWER = 10;
 
     /// <summary>
     /// How much of each resource 1 power maps to.

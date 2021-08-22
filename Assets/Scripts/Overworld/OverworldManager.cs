@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OverworldManager : MonoBehaviour
 {
@@ -147,12 +148,21 @@ public class OverworldManager : MonoBehaviour
 
         if (mapCache[gridPos].Segment.CityPosition != null)
         {
-            GameObject city = pool.GetObject((int)ObjectType.City);
-            city.transform.position = tile.transform.position;
-            city.transform.parent = tile.transform;
+            SpawnCity(tile, pos.y);
         }
 
         tile.GetComponent<MeshRenderer>().material.mainTexture = mapCache[gridPos].Texture;
+    }
+
+    private void SpawnCity(GameObject tile, int yIndex)
+    {
+        float powerMultiplier = Mathf.Pow(yIndex - 1, 1.1f);
+        int displayedPower = (int)(Mathf.Pow(yIndex - 1, 1.1f) * Constants.BASE_CITY_META_POWER);
+
+        GameObject city = pool.GetObject((int)ObjectType.City);
+        city.transform.position = tile.transform.position;
+        city.transform.parent = tile.transform;
+        city.GetComponent<OverworldFortress>().SetPower(powerMultiplier);
     }
 
     private void ReturnToPool(GameObject gameObject)
