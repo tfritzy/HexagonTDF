@@ -7,7 +7,7 @@ public class Barracks : Building
     public override BuildingType Type => BuildingType.Barracks;
     public override Alliances Alliance => Alliances.Maltov;
     public override Alliances Enemies => Alliances.Player;
-    public override int StartingHealth => 900;
+    public override int StartingHealth => (int)(900 * GameState.LevelPowerMultiplier);
     public override float Power => int.MaxValue;
     public int BarracksIndex;
     public override float BaseCooldown => float.MaxValue / 2;
@@ -54,7 +54,7 @@ public class Barracks : Building
             float powerBudget = currentWave;
             System.Random random = new System.Random(currentWave);
 
-            if (currentWave % 2 == 0)
+            if (currentWave % 2 == 1)
             {
                 this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
                 int roll = random.Next(0, Managers.Board.Barracks.Count);

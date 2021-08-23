@@ -10,7 +10,7 @@ public abstract class Enemy : Unit, Interactable
     public override Alliances Enemies => Alliances.Player;
     public abstract EnemyType Type { get; }
     public abstract Dictionary<AttributeType, float> PowerToAttributeRatio { get; }
-    public override float Power => BasePower;
+    public override float Power => BasePower * GameState.LevelPowerMultiplier;
     public override int StartingHealth => startingHealth;
     public abstract float BasePower { get; }
     public bool IsEngagedInFight { get; private set; }

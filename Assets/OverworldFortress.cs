@@ -6,19 +6,19 @@ public class OverworldFortress : MonoBehaviour, Interactable
 {
     public GameObject PowerIndicator;
 
-    private float power;
+    private float powerMultiplier;
     private Text indicatorText;
     private GameObject powerIndicatorInst;
 
-    public void SetPower(float power)
+    public void SetPower(float powerMultiplier)
     {
         if (powerIndicatorInst == null)
         {
             InitPowerIndicator();
         }
 
-        this.power = power;
-        this.indicatorText.text = ((int)power).ToString();
+        this.powerMultiplier = powerMultiplier;
+        this.indicatorText.text = ((int)(powerMultiplier * 100)).ToString();
     }
 
     private void InitPowerIndicator()
@@ -39,6 +39,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
 
     public void Select()
     {
+        GameState.LevelPowerMultiplier = this.powerMultiplier;
         Managers.LoadingMenu.LoadScene("Level");
     }
 

@@ -9,7 +9,7 @@ public class OverworldManager : MonoBehaviour
     OverworldTerrainGenerator generator;
     public GameObject Tile;
     public GameObject City;
-    public int Seed;
+    public const int Seed = 2;
 
     private Pool pool;
     private const int NUM_SEGMENTS_SPAWNED_HEIGHT = 30;
@@ -148,16 +148,17 @@ public class OverworldManager : MonoBehaviour
 
         if (mapCache[gridPos].Segment.CityPosition != null)
         {
-            SpawnCity(tile, pos.y);
+            SpawnFortress(tile, pos.y);
         }
 
         tile.GetComponent<MeshRenderer>().material.mainTexture = mapCache[gridPos].Texture;
     }
 
-    private void SpawnCity(GameObject tile, int yIndex)
+    const float expectedCitiesPerRow = .5f;
+    const float powerGainedPerCity = .1f;
+    private void SpawnFortress(GameObject tile, int yIndex)
     {
-        float powerMultiplier = Mathf.Pow(yIndex - 1, 1.1f);
-        int displayedPower = (int)(Mathf.Pow(yIndex - 1, 1.1f) * Constants.BASE_CITY_META_POWER);
+        float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, yIndex);
 
         GameObject city = pool.GetObject((int)ObjectType.City);
         city.transform.position = tile.transform.position;
