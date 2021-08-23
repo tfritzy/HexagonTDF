@@ -18,7 +18,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
         }
 
         this.powerMultiplier = powerMultiplier;
-        this.indicatorText.text = ((int)(powerMultiplier * 100)).ToString();
+        this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
     }
 
     private void InitPowerIndicator()

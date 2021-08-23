@@ -21,6 +21,7 @@ public class OverworldManager : MonoBehaviour
     private Dictionary<Vector2Int, OverworldSegment> mapCache;
     private bool initialized;
     private Dictionary<Vector2Int, GameObject> activeTiles;
+    private System.Random Random = new System.Random(Seed);
 
     private struct OverworldSegment
     {
@@ -146,7 +147,7 @@ public class OverworldManager : MonoBehaviour
             };
         }
 
-        if (mapCache[gridPos].Segment.CityPosition != null)
+        if (gridPos.y > 0 && mapCache[gridPos].Segment.CityPosition != null)
         {
             SpawnFortress(tile, pos.y);
         }
@@ -158,7 +159,8 @@ public class OverworldManager : MonoBehaviour
     const float powerGainedPerCity = .1f;
     private void SpawnFortress(GameObject tile, int yIndex)
     {
-        float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, yIndex);
+        float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
+        float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, yIndex) * variance;
 
         GameObject city = pool.GetObject((int)ObjectType.City);
         city.transform.position = tile.transform.position;
