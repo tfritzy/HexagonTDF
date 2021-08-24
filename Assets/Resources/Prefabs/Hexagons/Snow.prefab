@@ -1,20 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!64 &517374584588148937
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 341378807690617310}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 3083383039361824580, guid: 3d53ba8f57986004797dfe974363d15b, type: 3}
---- !u!1 &6148692915799934071
+--- !u!1 &6238814705920982693
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6782239678147272397}
-  - component: {fileID: 9063275092407037121}
-  m_Layer: 8
-  m_Name: Shore
+  - component: {fileID: 6764239819608908831}
+  - component: {fileID: 1091998730480082995}
+  m_Layer: 0
+  m_Name: Water 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!4 &6782239678147272397
+--- !u!4 &6764239819608908831
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6148692915799934071}
+  m_GameObject: {fileID: 6238814705920982693}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1150391095038753636}
+  - {fileID: 8339228048092623526}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9063275092407037121
+--- !u!114 &1091998730480082995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6148692915799934071}
+  m_GameObject: {fileID: 6238814705920982693}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e83f2925f833364290bfc693e657787, type: 3}
+  m_Script: {fileID: 11500000, guid: 271a5faa82e427c458688b4ca494bc7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   GridPosition: {x: 0, y: 0}
---- !u!1001 &611851722556693647
+--- !u!1001 &8372291520127407437
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 6782239678147272397}
+    m_TransformParent: {fileID: 6764239819608908831}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -120,13 +106,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
---- !u!1 &341378807690617310 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
-  m_PrefabInstance: {fileID: 611851722556693647}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1150391095038753636 stripped
+--- !u!4 &8339228048092623526 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 33e95dc993b6ca64b9932d1705fcf16d, type: 3}
-  m_PrefabInstance: {fileID: 611851722556693647}
+  m_PrefabInstance: {fileID: 8372291520127407437}
   m_PrefabAsset: {fileID: 0}

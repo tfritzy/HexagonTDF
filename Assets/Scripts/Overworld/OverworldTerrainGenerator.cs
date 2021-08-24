@@ -80,28 +80,15 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Null, Color.magenta},
     };
 
-    public struct Segment
-    {
-        public MapPoint[,] Points;
-        public Vector2Int? CityPosition;
-    }
-
-    public struct MapPoint
-    {
-        public float Height;
-        public float Moisture;
-        public Biome Biome;
-        public float HeightDiffFromMinReq;
-    }
-
-    public async Task<Segment> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
+    public async Task<OverworldSegment> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
-        Segment segment = new Segment
+        OverworldSegment segment = new OverworldSegment
         {
-            Points = new MapPoint[DIMENSIONS, DIMENSIONS],
-            CityPosition = null,
+            HasCity = false,
+            Points = new OverworldMapPoint[DIMENSIONS, DIMENSIONS],
+            Texture = null,
         };
 
         int xOffset = DIMENSIONS * xIndex;
@@ -113,7 +100,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             var yCopy = y;
             var t = new Task(() =>
                 {
-                    formatRow(segment, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
+                    formatRow(segment.Points, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
                 });
             list.Add(t);
             t.Start();
@@ -122,7 +109,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         await Task.WhenAll(list);
 
         float averageHeight = 0;
-        foreach (MapPoint point in segment.Points)
+        foreach (OverworldMapPoint point in segment.Points)
         {
             averageHeight += point.Height;
         }
@@ -131,7 +118,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         Vector2Int? cityPosition = GetCityPosition(xIndex, yIndex);
         if (cityPosition != null && averageHeight > biomeDeterminator[biomeDeterminator.Count - 2].Height + CITY_HEIGHT_CUTOFF_DELTA)
         {
-            segment.CityPosition = new Vector2Int(cityPosition.Value.x, cityPosition.Value.y);
+            segment.HasCity = true;
         }
 
         return segment;
@@ -149,7 +136,12 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return new Vector2Int(random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS), random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS));
     }
 
-    private void formatRow(Segment segment, OpenSimplexNoise heightNoise, OpenSimplexNoise moistureNoise, int y, int xOffset, int yOffset, float xSlope, float xB)
+    private void formatRow(
+        OverworldMapPoint[,] points,
+        OpenSimplexNoise heightNoise,
+        OpenSimplexNoise moistureNoise,
+        int y, int xOffset, int yOffset,
+        float xSlope, float xB)
     {
         for (int x = xOffset; x < DIMENSIONS + xOffset; x++)
         {
@@ -164,7 +156,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
             Tuple<Biome, float> biomeDetails = GetBiome(heightValue, moistureValue);
-            segment.Points[x - xOffset, y - yOffset] = new MapPoint
+            points[x - xOffset, y - yOffset] = new OverworldMapPoint
             {
                 Height = heightValue,
                 Biome = biomeDetails.Item1,
@@ -207,24 +199,24 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return new Tuple<Biome, float>(Biome.Null, 0);
     }
 
-    public Texture2D GetTextureOfMap(Segment segment)
+    public Texture2D GetTextureOfMap(OverworldMapPoint[,] points)
     {
         Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGB24, false);
         texture.filterMode = FilterMode.Point;
 
-        for (int y = 0; y < segment.Points.GetLength(1); y++)
+        for (int y = 0; y < points.GetLength(1); y++)
         {
-            for (int x = 0; x < segment.Points.GetLength(0); x++)
+            for (int x = 0; x < points.GetLength(0); x++)
             {
-                Color color = colorMap[segment.Points[x, y].Biome];
+                Color color = colorMap[points[x, y].Biome];
 
-                if (segment.Points[x, y].Biome != Biome.Water)
+                if (points[x, y].Biome != Biome.Water)
                 {
-                    color = ColorExtensions.VaryBy(color, segment.Points[x, y].HeightDiffFromMinReq * .5f);
+                    color = ColorExtensions.VaryBy(color, points[x, y].HeightDiffFromMinReq * .5f);
                 }
                 else
                 {
-                    color = ColorExtensions.VaryBy(color, Mathf.Max(segment.Points[x, y].Height - .3f, .08f));
+                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .3f, .08f));
                 }
 
                 texture.SetPixel(x, y, color);

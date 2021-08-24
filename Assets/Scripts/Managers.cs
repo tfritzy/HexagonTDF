@@ -183,4 +183,20 @@ public static class Managers
             return loadingMenu;
         }
     }
+
+    private static OverworldManager overworldManager;
+    public static OverworldManager OverworldManager
+    {
+        get
+        {
+            if (overworldManager == null)
+            {
+                overworldManager = GameObject.Find("OverworldManager").GetComponent<OverworldManager>();
+            }
+
+            return overworldManager;
+        }
+    }
+
+
 }

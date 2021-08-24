@@ -42,12 +42,12 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPathByWalking(Map map, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPathByWalking(OverworldSegment map, Vector2Int sourcePos, Vector2Int endPos)
     {
         return FindPath(map, sourcePos, endPos, IsPosTraversable);
     }
 
-    public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, bool> shouldInclude)
+    public static List<Vector2Int> FindPath(OverworldSegment map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, bool> shouldInclude)
     {
         return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude, (Vector2Int pos) => { return true; });
     }
@@ -57,13 +57,13 @@ public static class Helpers
         return GetPathFromPredecessorGrid(predecessorGrid, startPos, endPos);
     }
 
-    public static List<Vector2Int> FindPath(Map map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude)
+    public static List<Vector2Int> FindPath(OverworldSegment map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude)
     {
         return FindPath(map, sourcePos, endPos, shouldInclude, (Vector2Int pos) => { return true; });
     }
 
     public static List<Vector2Int> FindPath(
-        Map map,
+        OverworldSegment map,
         Vector2Int sourcePos,
         HashSet<Vector2Int> endPos,
         Func<Vector2Int, bool> shouldInclude,
@@ -115,7 +115,7 @@ public static class Helpers
 
 
     public static PredGridPoint[,] GetPredecessorGrid(
-        Map map,
+        OverworldSegment map,
         Vector2Int sourcePos,
         Func<Vector2Int, Vector2Int, bool> shouldInclude)
     {
@@ -164,7 +164,7 @@ public static class Helpers
         return predecessorGrid;
     }
 
-    public static List<HashSet<Vector2Int>> FindCongruentGroups(Map map, HashSet<Vector2Int> allPositions, Func<Vector2Int, bool> shouldInclude)
+    public static List<HashSet<Vector2Int>> FindCongruentGroups(OverworldSegment map, HashSet<Vector2Int> allPositions, Func<Vector2Int, bool> shouldInclude)
     {
         List<HashSet<Vector2Int>> groups = new List<HashSet<Vector2Int>>();
         Queue<Vector2Int> toTraverse = new Queue<Vector2Int>(allPositions);
@@ -191,14 +191,14 @@ public static class Helpers
         return groups;
     }
 
-    public static HashSet<Vector2Int> GetCongruentHexes(Map map, Vector2Int startingPos, Func<Vector2Int, bool> shouldInclude)
+    public static HashSet<Vector2Int> GetCongruentHexes(OverworldSegment map, Vector2Int startingPos, Func<Vector2Int, bool> shouldInclude)
     {
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         DFS(map, startingPos, visited, 0, int.MaxValue, shouldInclude);
         return visited;
     }
 
-    private static void DFS(Map map, Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops, Func<Vector2Int, bool> shouldInclude)
+    private static void DFS(OverworldSegment map, Vector2Int position, HashSet<Vector2Int> visited, int currentHops, int maxHops, Func<Vector2Int, bool> shouldInclude)
     {
         if (currentHops > maxHops)
         {
@@ -267,7 +267,7 @@ public static class Helpers
         return Mathf.PerlinNoise(x / scale + seed, y / scale + seed);
     }
 
-    public static bool IsInBounds(Map map, Vector2Int position)
+    public static bool IsInBounds(OverworldSegment map, Vector2Int position)
     {
         if (position.x < 0 || position.x >= map.Width)
         {
@@ -324,7 +324,7 @@ public static class Helpers
         new Vector2Int(-1, 0)
     };
 
-    public static Vector2Int GetNeighborPosition(Map map, Vector2Int pos, int index)
+    public static Vector2Int GetNeighborPosition(OverworldSegment map, Vector2Int pos, int index)
     {
         Vector2Int position;
 

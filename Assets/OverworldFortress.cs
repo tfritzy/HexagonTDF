@@ -9,8 +9,9 @@ public class OverworldFortress : MonoBehaviour, Interactable
     private float powerMultiplier;
     private Text indicatorText;
     private GameObject powerIndicatorInst;
+    private Vector2Int position;
 
-    public void SetPower(float powerMultiplier)
+    public void Setup(float powerMultiplier, Vector2Int pos)
     {
         if (powerIndicatorInst == null)
         {
@@ -19,6 +20,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
 
         this.powerMultiplier = powerMultiplier;
         this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
+        this.position = pos;
     }
 
     private void InitPowerIndicator()
@@ -40,6 +42,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     public void Select()
     {
         GameState.LevelPowerMultiplier = this.powerMultiplier;
+        GameState.SelectedSegment = Managers.OverworldManager.GetSegment(this.position);
         Managers.LoadingMenu.LoadScene("Level");
     }
 

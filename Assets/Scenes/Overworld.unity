@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 4282630}
   - component: {fileID: 4282632}
   m_Layer: 0
-  m_Name: Map
+  m_Name: OverworldManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,7 +186,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tile: {fileID: 4204665264527942329, guid: 395cc938671107840910e289ebc62a43, type: 3}
   City: {fileID: 8767634999914529545, guid: d9cad4b517b8c7f4d8c00dea92222d9f, type: 3}
-  Seed: 0
 --- !u!1 &448163340
 GameObject:
   m_ObjectHideFlags: 0

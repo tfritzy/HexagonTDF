@@ -17,4 +17,5 @@ public static class GameState
         }
     }
 
+    public static OverworldSegment SelectedSegment;
 }

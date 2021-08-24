@@ -23,12 +23,6 @@ public class OverworldManager : MonoBehaviour
     private Dictionary<Vector2Int, GameObject> activeTiles;
     private System.Random Random = new System.Random(Seed);
 
-    private struct OverworldSegment
-    {
-        public Texture2D Texture;
-        public OverworldTerrainGenerator.Segment Segment;
-    }
-
     private enum ObjectType
     {
         Tile = 0,
@@ -101,6 +95,7 @@ public class OverworldManager : MonoBehaviour
             }
 
             GameObject tile = this.pool.GetObject((int)ObjectType.Tile);
+            tile.transform.SetParent(this.transform);
             await formatSegment(new Vector2Int(spawnedLowPos.x, spawnedLowPos.y + NUM_SEGMENTS_SPAWNED_HEIGHT), tile);
         }
         else if (spawnedLowPos.y > targetLowPos.y)
@@ -126,7 +121,7 @@ public class OverworldManager : MonoBehaviour
         this.activeTiles[gridPos] = tile;
         if (mapCache.ContainsKey(gridPos) == false)
         {
-            OverworldTerrainGenerator.Segment segment;
+            OverworldSegment segment;
             if (pos.x == NUM_SEGMENTS_SPAWNED_WIDTH - 1)
             {
                 segment = await generator.GetSegment(pos.x, pos.y, Seed, -.5f, 1);
@@ -140,16 +135,14 @@ public class OverworldManager : MonoBehaviour
                 segment = await generator.GetSegment(pos.x, pos.y, Seed);
             }
 
-            mapCache[gridPos] = new OverworldSegment
-            {
-                Segment = segment,
-                Texture = generator.GetTextureOfMap(segment),
-            };
+            segment.Texture = generator.GetTextureOfMap(segment.Points);
+
+            mapCache[gridPos] = segment;
         }
 
-        if (gridPos.y > 0 && mapCache[gridPos].Segment.CityPosition != null)
+        if (gridPos.y > 0 && mapCache[gridPos].HasCity)
         {
-            SpawnFortress(tile, pos.y);
+            SpawnFortress(tile, pos);
         }
 
         tile.GetComponent<MeshRenderer>().material.mainTexture = mapCache[gridPos].Texture;
@@ -157,15 +150,15 @@ public class OverworldManager : MonoBehaviour
 
     const float expectedCitiesPerRow = .5f;
     const float powerGainedPerCity = .1f;
-    private void SpawnFortress(GameObject tile, int yIndex)
+    private void SpawnFortress(GameObject tile, Vector2Int pos)
     {
         float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
-        float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, yIndex) * variance;
+        float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, pos.y) * variance;
 
         GameObject city = pool.GetObject((int)ObjectType.City);
         city.transform.position = tile.transform.position;
         city.transform.parent = tile.transform;
-        city.GetComponent<OverworldFortress>().SetPower(powerMultiplier);
+        city.GetComponent<OverworldFortress>().Setup(powerMultiplier, pos);
     }
 
     private void ReturnToPool(GameObject gameObject)
@@ -173,6 +166,18 @@ public class OverworldManager : MonoBehaviour
         foreach (PoolObject poolObject in gameObject.GetComponentsInChildren<PoolObject>())
         {
             poolObject.ReturnToPool();
+        }
+    }
+
+    public OverworldSegment GetSegment(Vector2Int pos)
+    {
+        if (mapCache.ContainsKey(pos))
+        {
+            return mapCache[pos];
+        }
+        else
+        {
+            throw new System.Exception("The requested tile hasn't been generated before.");
         }
     }
 }

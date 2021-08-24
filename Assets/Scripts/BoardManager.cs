@@ -13,7 +13,6 @@ public class BoardManager : MonoBehaviour
     public List<Barracks> Barracks;
     public string ActiveMapName;
     public bool RegenerateMap;
-    public Map Map;
     public Guid PathingId { get; private set; }
     public Hero Hero;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
@@ -36,11 +35,10 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        Map = new Map(BoardWidth, BoardHeight);
-        SpawnHexagons(Map);
-        SpawnTrebuchet(Map);
-        SpawnHero(Map);
-        SpawnBuildings(Map.Buildings);
+        SpawnHexagons(GameState.SelectedSegment);
+        SpawnTrebuchet(GameState.SelectedSegment);
+        SpawnHero(GameState.SelectedSegment);
+        SpawnBuildings(GameState.SelectedSegment);
     }
 
     private void CleanupMap()
@@ -51,7 +49,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void SpawnHexagons(Map map)
+    private void SpawnHexagons(OverworldSegment map)
     {
         this.Hexagons = new HexagonMono[map.Width, map.Height];
 
@@ -59,12 +57,12 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < map.Width; x++)
             {
-                if (map.GetHex(x, y) == null)
+                if (map.GetPoint(x, y) == null)
                 {
                     continue;
                 }
 
-                BuildHexagon(map.GetHex(x, y).Value, x, y);
+                BuildHexagon(map.GetPoint(x, y), x, y);
             }
         }
 
@@ -88,68 +86,54 @@ public class BoardManager : MonoBehaviour
         RecalculatePredGrids();
     }
 
-    private void SpawnBuildings(Dictionary<Vector2Int, BuildingType> buildingMap)
+    private void SpawnBuildings(OverworldSegment segment)
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
         this.Barracks = new List<Barracks>();
 
-        foreach (Vector2Int pos in buildingMap.Keys)
-        {
-            Building building = Instantiate(
-                    Prefabs.Buildings[buildingMap[pos]],
-                    Hexagons[pos.x, pos.y].transform.position,
-                    new Quaternion(),
-                    this.transform)
-                    .GetComponent<Building>();
+        // foreach (Vector2Int pos in buildingMap.Keys)
+        // {
+        //     Building building = Instantiate(
+        //             Prefabs.Buildings[buildingMap[pos]],
+        //             Hexagons[pos.x, pos.y].transform.position,
+        //             new Quaternion(),
+        //             this.transform)
+        //             .GetComponent<Building>();
 
-            if (building is Barracks)
-            {
-                this.Barracks.Add((Barracks)building);
-            }
+        //     if (building is Barracks)
+        //     {
+        //         this.Barracks.Add((Barracks)building);
+        //     }
 
-            building.Initialize(pos);
-        }
+        //     building.Initialize(pos);
+        // }
     }
 
-    private void SpawnTrebuchet(Map map)
+    private void SpawnTrebuchet(OverworldSegment map)
     {
-        Vector2Int pos = map.TrebuchetPos;
-        Trebuchet = Instantiate(
-            Prefabs.Allies[AlliedUnitType.Trebuchet],
-            Hexagons[pos.x, pos.y].transform.position,
-            new Quaternion())
-                .GetComponent<Trebuchet>();
-        Trebuchet.SetInitialPosition(pos);
+        // Vector2Int pos = map.TrebuchetPos;
+        // Trebuchet = Instantiate(
+        //     Prefabs.Allies[AlliedUnitType.Trebuchet],
+        //     Hexagons[pos.x, pos.y].transform.position,
+        //     new Quaternion())
+        //         .GetComponent<Trebuchet>();
+        // Trebuchet.SetInitialPosition(pos);
     }
 
-    private void SpawnHero(Map map)
+    private void SpawnHero(OverworldSegment map)
     {
-        Vector2Int pos = map.HeroPos;
-        this.Hero = Instantiate(
-            Prefabs.Allies[AlliedUnitType.Warrior],
-            Hexagons[pos.x, pos.y].transform.position,
-            new Quaternion())
-                .GetComponent<Hero>();
-        this.Hero.SetInitialPosition(pos);
+        // Vector2Int pos = map.HeroPos;
+        // this.Hero = Instantiate(
+        //     Prefabs.Allies[AlliedUnitType.Warrior],
+        //     Hexagons[pos.x, pos.y].transform.position,
+        //     new Quaternion())
+        //         .GetComponent<Hero>();
+        // this.Hero.SetInitialPosition(pos);
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
     {
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
-    }
-
-    public HexagonType?[,] GetTypeMap()
-    {
-        HexagonType?[,] typeMap = new HexagonType?[this.Hexagons.GetLength(0), this.Hexagons.GetLength(1)];
-        for (int x = 0; x < this.Hexagons.GetLength(0); x++)
-        {
-            for (int y = 0; y < this.Hexagons.GetLength(1); y++)
-            {
-                typeMap[x, y] = this.Hexagons[x, y]?.Type;
-            }
-        }
-
-        return typeMap;
     }
 
     public PredGridPoint GetNextStepInPathToSource(Vector2Int sourceBuilding, Vector2Int currentPos)
@@ -167,7 +151,7 @@ public class BoardManager : MonoBehaviour
         predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
         predGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
-            this.Map,
+            GameState.SelectedSegment,
             Trebuchet.GridPosition,
             (Vector2Int prevPos, Vector2Int nextPos) =>
             {
@@ -185,7 +169,7 @@ public class BoardManager : MonoBehaviour
         flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
         flightPredGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
-            this.Map,
+            GameState.SelectedSegment,
             Trebuchet.GridPosition,
             (Vector2Int startPos, Vector2Int testEndPos) => true);
 
@@ -196,20 +180,20 @@ public class BoardManager : MonoBehaviour
         return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
     }
 
-    private void BuildHexagon(HexagonType type, int x, int y)
+    private void BuildHexagon(OverworldMapPoint point, int x, int y)
     {
         Vector3 position = Helpers.ToWorldPosition(x, y);
-        position.y = Map.HexHeightMap[x, y];
-        GameObject go = Instantiate(Prefabs.Hexagons[type], position, new Quaternion(), this.transform);
+        position.y = (point.Height - .5f) * 20;
+        GameObject go = Instantiate(Prefabs.Hexagons[point.Biome], position, new Quaternion(), this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
-        hexagonScript.SetType(Prefabs.GetHexagonScript(type));
+        hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome));
         this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
     }
 
     public HexagonMono GetHex(Vector2Int pos)
     {
-        if (Helpers.IsInBounds(this.Map, pos) == false)
+        if (Helpers.IsInBounds(GameState.SelectedSegment, pos) == false)
         {
             return null;
         }

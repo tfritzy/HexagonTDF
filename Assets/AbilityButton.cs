@@ -24,8 +24,11 @@ public class AbilityButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        cooldown.fillAmount = Managers.Board.Hero.Abilities[this.AbilityIndex].RemainingCooldownPercent();
-        abilityStatusMessage.text = Managers.Board.Hero.Abilities[this.AbilityIndex].CurrentStatusMessage();
+        if (Managers.Board.Hero != null)
+        {
+            cooldown.fillAmount = Managers.Board.Hero.Abilities[this.AbilityIndex].RemainingCooldownPercent();
+            abilityStatusMessage.text = Managers.Board.Hero.Abilities[this.AbilityIndex].CurrentStatusMessage();
+        }
     }
 
     public void Trigger()

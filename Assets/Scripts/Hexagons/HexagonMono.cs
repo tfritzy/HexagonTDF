@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HexagonMono : MonoBehaviour, Interactable
 {
-    public HexagonType Type { get { return hexagon.Type; } }
+    public Biome Type { get { return hexagon.Biome; } }
     public bool IsBuildable { get { return hexagon.IsBuildable; } }
     public bool IsWalkable { get { return hexagon.IsWalkable; } }
     public Vector2Int GridPosition;
@@ -13,8 +13,6 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
     protected const float MAX_COLOR_VARIANCE = .02f;
-
-    private static float ColorVarianceM => (MAX_COLOR_VARIANCE * 2f) / ((float)Managers.Board.Map.Width);
 
     private MeshRenderer hex;
 

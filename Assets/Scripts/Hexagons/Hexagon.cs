@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class Hexagon
 {
-    public abstract HexagonType Type { get; }
+    public abstract Biome Biome { get; }
     public abstract bool IsBuildable { get; }
     public virtual bool IsWalkable => IsBuildable;
     public abstract Color BaseColor { get; }

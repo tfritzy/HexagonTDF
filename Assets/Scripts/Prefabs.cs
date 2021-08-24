@@ -6,16 +6,16 @@ using UnityEngine.UI;
 
 public static class Prefabs
 {
-    private static Dictionary<HexagonType, GameObject> hexagons;
-    public static Dictionary<HexagonType, GameObject> Hexagons
+    private static Dictionary<Biome, GameObject> hexagons;
+    public static Dictionary<Biome, GameObject> Hexagons
     {
         get
         {
             if (hexagons == null)
             {
-                hexagons = new Dictionary<HexagonType, GameObject>();
+                hexagons = new Dictionary<Biome, GameObject>();
 
-                foreach (HexagonType type in Enum.GetValues(typeof(HexagonType)))
+                foreach (Biome type in Enum.GetValues(typeof(Biome)))
                 {
                     hexagons[type] = Resources.Load<GameObject>("Prefabs/Hexagons/" + type.ToString());
                 }
@@ -125,23 +125,24 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<HexagonType, Hexagon> hexagonScripts;
+    private static Dictionary<Biome, Hexagon> hexagonScripts;
 
-    public static Hexagon GetHexagonScript(HexagonType hexagonType)
+    public static Hexagon GetHexagonScript(Biome Biome)
     {
         if (hexagonScripts == null)
         {
-            hexagonScripts = new Dictionary<HexagonType, Hexagon>()
+            hexagonScripts = new Dictionary<Biome, Hexagon>()
             {
-                {HexagonType.Forrest, new Forrest()},
-                {HexagonType.Grass, new Grass()},
-                {HexagonType.Stone, new Stone()},
-                {HexagonType.Water, new Water()},
-                {HexagonType.Shore, new Shore()},
+                {Biome.Sand, new Sand()},
+                {Biome.Forrest, new Forrest()},
+                {Biome.Grassland, new Grass()},
+                {Biome.Mountain, new Mountain()},
+                {Biome.Snow, new Snow()},
+                {Biome.Water, new Water()},
             };
         }
 
-        return hexagonScripts[hexagonType];
+        return hexagonScripts[Biome];
     }
 
     private static Dictionary<BuildingType, Sprite> buildingIcons;
