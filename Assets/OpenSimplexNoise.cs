@@ -240,8 +240,6 @@ public class OpenSimplexNoise
         return total / totalAmplitude;
     }
 
-
-
     public double Evaluate(double x, double y)
     {
         var stretchOffset = (x + y) * STRETCH_2D;

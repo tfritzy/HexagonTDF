@@ -50,7 +50,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             }
         },
         new BiomeCriteria{
-            Height = 0.35f,
+            Height = 0.4f,
             Criteria = new BiomeFormationCriterion[]
             {
                 new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .57f},
@@ -89,6 +89,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             HasCity = false,
             Points = new OverworldMapPoint[DIMENSIONS, DIMENSIONS],
             Texture = null,
+            Coordinates = new Vector2Int(xIndex, yIndex),
         };
 
         int xOffset = DIMENSIONS * xIndex;

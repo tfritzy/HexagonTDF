@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public const int BoardWidth = 20;
-    public const int BoardHeight = 20;
+    public const int DIMENSIONS = 20;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Trebuchet Trebuchet;
@@ -36,6 +35,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnMap()
     {
         SpawnHexagons(GameState.SelectedSegment);
+        SetupMapHeight(GameState.SelectedSegment);
         SpawnTrebuchet(GameState.SelectedSegment);
         SpawnHero(GameState.SelectedSegment);
         SpawnBuildings(GameState.SelectedSegment);
@@ -49,20 +49,48 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland, Biome.Snow };
+    private void SetupMapHeight(OverworldSegment map)
+    {
+        OpenSimplexNoise heightNoise = new OpenSimplexNoise(map.Coordinates.GetHashCode());
+        for (int y = 0; y < this.Hexagons.GetLength(1); y++)
+        {
+            for (int x = 0; x < this.Hexagons.GetLength(0); x++)
+            {
+                Vector3 pos = this.Hexagons[x, y].transform.position;
+                pos.y = 0;
+                this.Hexagons[x, y].transform.position = pos;
+
+                if (flatBiomes.Contains(this.Hexagons[x, y].Biome))
+                {
+                    continue;
+                }
+
+                double heightVal = heightNoise.Evaluate((double)x / 5.0, (double)y / 5.0, 1) + 1;
+                int hieghtModifier = 0;
+                if (heightVal > 1.35f) hieghtModifier += 1;
+                if (heightVal > 1.6f) hieghtModifier += 1;
+                this.Hexagons[x, y].transform.position += hieghtModifier * Vector3.up;
+            }
+        }
+    }
+
     private void SpawnHexagons(OverworldSegment map)
     {
-        this.Hexagons = new HexagonMono[map.Width, map.Height];
+        this.Hexagons = new HexagonMono[DIMENSIONS, DIMENSIONS];
+        int start = map.Height / 2 - DIMENSIONS / 2;
+        int end = map.Height / 2 + DIMENSIONS / 2;
 
-        for (int y = 0; y < map.Height; y++)
+        for (int y = start; y < end; y++)
         {
-            for (int x = 0; x < map.Width; x++)
+            for (int x = start; x < end; x++)
             {
                 if (map.GetPoint(x, y) == null)
                 {
                     continue;
                 }
 
-                BuildHexagon(map.GetPoint(x, y), x, y);
+                BuildHexagon(map.GetPoint(x, y), x - start, y - start);
             }
         }
 
@@ -172,6 +200,7 @@ public class BoardManager : MonoBehaviour
             GameState.SelectedSegment,
             Trebuchet.GridPosition,
             (Vector2Int startPos, Vector2Int testEndPos) => true);
+
     }
 
     public bool IsBuildable(Vector2Int pos)
@@ -182,7 +211,7 @@ public class BoardManager : MonoBehaviour
     private void BuildHexagon(OverworldMapPoint point, int x, int y)
     {
         Vector3 position = Helpers.ToWorldPosition(x, y);
-        position.y = (point.Height - .5f) * 20;
+        position.y = point.Height;
         GameObject go = Instantiate(Prefabs.Hexagons[point.Biome], position, new Quaternion(), this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome));

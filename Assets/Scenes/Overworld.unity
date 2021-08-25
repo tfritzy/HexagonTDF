@@ -156,7 +156,7 @@ MonoBehaviour:
   Scale: 250
   Octaves: 6
   Persistence: 0.55
-  Lacunarity: 2.5
+  Lacunarity: 3
   stuff: {x: 0, y: 0, z: 0}
 --- !u!4 &4282631
 Transform:

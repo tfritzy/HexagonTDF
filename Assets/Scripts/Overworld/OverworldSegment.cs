@@ -5,6 +5,7 @@ public class OverworldSegment
     public OverworldMapPoint[,] Points;
     public Texture2D Texture;
     public bool HasCity;
+    public Vector2Int Coordinates;
 
     public int Width => Points.GetLength(0);
     public int Height => Points.GetLength(1);

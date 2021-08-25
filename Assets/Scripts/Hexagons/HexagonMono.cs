@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HexagonMono : MonoBehaviour, Interactable
 {
-    public Biome Type { get { return hexagon.Biome; } }
+    public Biome Biome { get { return hexagon.Biome; } }
     public bool IsBuildable { get { return hexagon.IsBuildable; } }
     public bool IsWalkable { get { return hexagon.IsWalkable; } }
     public Vector2Int GridPosition;
