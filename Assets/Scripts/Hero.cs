@@ -203,7 +203,7 @@ public abstract class Hero : Unit, Interactable
         pathProgress = 0;
         this.PathId = Managers.Board.PathingId;
         this.PathToTargetPosition = Helpers.FindPathByWalking(
-            GameState.SelectedSegment,
+            Managers.Board.Hexagons,
             this.GridPosition,
             targetPos);
 

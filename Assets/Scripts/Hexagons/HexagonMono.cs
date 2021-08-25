@@ -14,7 +14,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected List<MeshRenderer> meshRenderers;
     protected const float MAX_COLOR_VARIANCE = .02f;
 
-    private MeshRenderer hex;
+    private MeshRenderer hexMesh;
 
     public void SetType(Hexagon hexagon)
     {
@@ -29,7 +29,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected virtual void Setup()
     {
         this.ColorAfterVariance = ColorExtensions.RandomlyVary(this.hexagon.BaseColor, MAX_COLOR_VARIANCE);
-        this.hex = transform.Find("Hex")?.GetComponent<MeshRenderer>();
+        this.hexMesh = transform.Find("Hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
     }
@@ -51,7 +51,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void SetMaterial(Material material)
     {
-        this.hex.material = material;
+        this.hexMesh.material = material;
     }
 
     public void ResetMaterial()
@@ -70,7 +70,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     protected virtual void SetHexBodyColor()
     {
-        if (this.hex == null)
+        if (this.hexMesh == null)
         {
             return;
         }
@@ -78,16 +78,16 @@ public class HexagonMono : MonoBehaviour, Interactable
         Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         newTexture.SetPixel(0, 0, this.ColorAfterVariance);
         newTexture.Apply();
-        this.hex.material = this.hexagon.Material;
-        this.hex.material.mainTexture = newTexture;
+        Material[] materials = new Material[] { this.hexagon.Material, this.hexagon.Material };
+        this.hexMesh.materials = materials;
+        this.hexMesh.material.mainTexture = newTexture;
 
-        if (this.hex.materials.Length > 1)
+        if (this.hexMesh.materials.Length > 1)
         {
             Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.05f));
             darkerTexture.Apply();
-            this.hex.materials[1] = this.hexagon.Material;
-            this.hex.materials[1].mainTexture = darkerTexture;
+            this.hexMesh.materials[1].mainTexture = darkerTexture;
         }
     }
 }

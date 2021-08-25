@@ -16,6 +16,8 @@ public class BoardManager : MonoBehaviour
     public Hero Hero;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
     private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
+    private Vector2Int xVillageRange = new Vector2Int(DIMENSIONS / 2 - DIMENSIONS / 4, DIMENSIONS / 2 + DIMENSIONS / 4);
+    private Vector2Int yVillageRange = new Vector2Int(DIMENSIONS / 2, DIMENSIONS);
 
     void Awake()
     {
@@ -38,6 +40,7 @@ public class BoardManager : MonoBehaviour
         SetupMapHeight(GameState.SelectedSegment);
         SpawnTrebuchet(GameState.SelectedSegment);
         SpawnHero(GameState.SelectedSegment);
+        FlattenVillageArea();
         SpawnBuildings(GameState.SelectedSegment);
     }
 
@@ -118,45 +121,82 @@ public class BoardManager : MonoBehaviour
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
         this.Barracks = new List<Barracks>();
+        System.Random random = new System.Random(segment.Coordinates.GetHashCode());
+        var buildingMap = new Dictionary<Vector2Int, BuildingType>();
 
-        // foreach (Vector2Int pos in buildingMap.Keys)
-        // {
-        //     Building building = Instantiate(
-        //             Prefabs.Buildings[buildingMap[pos]],
-        //             Hexagons[pos.x, pos.y].transform.position,
-        //             new Quaternion(),
-        //             this.transform)
-        //             .GetComponent<Building>();
+        Vector2Int castlePosition = new Vector2Int(
+            random.Next(xVillageRange.x, xVillageRange.y),
+            random.Next(yVillageRange.x, yVillageRange.y)
+        );
+        buildingMap.Add(castlePosition, BuildingType.Barracks);
 
-        //     if (building is Barracks)
-        //     {
-        //         this.Barracks.Add((Barracks)building);
-        //     }
+        // TODO: Make system for village sizes.
+        int numHouses = random.Next(3, 6);
+        for (int i = 0; i < numHouses; i++)
+        {
+            Vector2Int potentialPos;
+            do
+            {
+                potentialPos = new Vector2Int(
+                    random.Next(xVillageRange.x, xVillageRange.y),
+                    random.Next(yVillageRange.x, yVillageRange.y)
+                );
+            } while (buildingMap.ContainsKey(potentialPos));
 
-        //     building.Initialize(pos);
-        // }
+            buildingMap.Add(potentialPos, BuildingType.House);
+        }
+
+        foreach (Vector2Int pos in buildingMap.Keys)
+        {
+            Building building = Instantiate(
+                    Prefabs.Buildings[buildingMap[pos]],
+                    Hexagons[pos.x, pos.y].transform.position,
+                    new Quaternion(),
+                    this.transform)
+                    .GetComponent<Building>();
+
+            if (building is Barracks)
+            {
+                this.Barracks.Add((Barracks)building);
+            }
+
+            building.Initialize(pos);
+        }
     }
 
     private void SpawnTrebuchet(OverworldSegment map)
     {
-        // Vector2Int pos = map.TrebuchetPos;
-        // Trebuchet = Instantiate(
-        //     Prefabs.Allies[AlliedUnitType.Trebuchet],
-        //     Hexagons[pos.x, pos.y].transform.position,
-        //     new Quaternion())
-        //         .GetComponent<Trebuchet>();
-        // Trebuchet.SetInitialPosition(pos);
+        Vector2Int pos = new Vector2Int(this.Hexagons.GetLength(0) / 2, 2);
+        Trebuchet = Instantiate(
+            Prefabs.Allies[AlliedUnitType.Trebuchet],
+            Hexagons[pos.x, pos.y].transform.position,
+            new Quaternion())
+                .GetComponent<Trebuchet>();
+        Trebuchet.SetInitialPosition(pos);
+    }
+
+    private void FlattenVillageArea()
+    {
+        for (int y = this.yVillageRange.x; y < this.yVillageRange.y; y++)
+        {
+            for (int x = this.xVillageRange.x; x < this.xVillageRange.y; x++)
+            {
+                Vector3 pos = this.Hexagons[x, y].transform.position;
+                pos.y = 0;
+                this.Hexagons[x, y].transform.position = pos;
+            }
+        }
     }
 
     private void SpawnHero(OverworldSegment map)
     {
-        // Vector2Int pos = map.HeroPos;
-        // this.Hero = Instantiate(
-        //     Prefabs.Allies[AlliedUnitType.Warrior],
-        //     Hexagons[pos.x, pos.y].transform.position,
-        //     new Quaternion())
-        //         .GetComponent<Hero>();
-        // this.Hero.SetInitialPosition(pos);
+        Vector2Int pos = this.Trebuchet.GridPosition + Vector2Int.up;
+        this.Hero = Instantiate(
+            Prefabs.Allies[AlliedUnitType.Warrior],
+            Hexagons[pos.x, pos.y].transform.position,
+            new Quaternion())
+                .GetComponent<Hero>();
+        this.Hero.SetInitialPosition(pos);
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
@@ -179,7 +219,7 @@ public class BoardManager : MonoBehaviour
         predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
         predGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
-            GameState.SelectedSegment,
+            this.Hexagons,
             Trebuchet.GridPosition,
             (Vector2Int prevPos, Vector2Int nextPos) =>
             {
@@ -197,10 +237,9 @@ public class BoardManager : MonoBehaviour
         flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
         flightPredGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
-            GameState.SelectedSegment,
+            this.Hexagons,
             Trebuchet.GridPosition,
             (Vector2Int startPos, Vector2Int testEndPos) => true);
-
     }
 
     public bool IsBuildable(Vector2Int pos)
@@ -221,7 +260,7 @@ public class BoardManager : MonoBehaviour
 
     public HexagonMono GetHex(Vector2Int pos)
     {
-        if (Helpers.IsInBounds(GameState.SelectedSegment, pos) == false)
+        if (Helpers.IsInBounds(this.Hexagons, pos) == false)
         {
             return null;
         }
