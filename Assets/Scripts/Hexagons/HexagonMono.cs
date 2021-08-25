@@ -32,6 +32,11 @@ public class HexagonMono : MonoBehaviour, Interactable
         this.hexMesh = transform.Find("Hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
+
+        if (hexagon is ObstacleHexagon)
+        {
+            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition);
+        }
     }
 
     public bool Interact()

@@ -12,4 +12,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject ConsecrateEffect;
     public GameObject SelectTowerMenu;
     public GameObject Gem;
+    public GameObject Tree;
 }

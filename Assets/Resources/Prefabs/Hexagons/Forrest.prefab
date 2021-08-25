@@ -45,9 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee21d5e735bcdc45ba553501f195da8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecorationOptions:
-  - {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
-  NumDecorations: 1
+  DecorationOptions: []
+  NumDecorations: 0
   sizeVariance: 0.5
 --- !u!114 &1409736385486290940
 MonoBehaviour:

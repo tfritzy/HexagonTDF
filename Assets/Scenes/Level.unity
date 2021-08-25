@@ -379,6 +379,7 @@ MonoBehaviour:
   ConsecrateEffect: {fileID: 5736227985175077343, guid: 366c1fd6527279e4380263f44b668ff6, type: 3}
   SelectTowerMenu: {fileID: 4900946743011058300, guid: 094c4f7d73db6f8458ce2e150746b09f, type: 3}
   Gem: {fileID: 5779178242862859042, guid: f4407c7fc3e0e504d81cecb5b514ab00, type: 3}
+  Tree: {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
 --- !u!1001 &231087952
 PrefabInstance:
   m_ObjectHideFlags: 0

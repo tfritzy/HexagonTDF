@@ -21,6 +21,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
     public double Persistence;
     public double Lacunarity;
 
+
     private struct BiomeFormationCriterion
     {
         public Biome Biome;
@@ -53,8 +54,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
             Height = 0.4f,
             Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .57f},
-                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .46f},
+                new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .52f},
+                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .45f},
                 new BiomeFormationCriterion {Biome = Biome.Sand, MinMoisture = float.MinValue},
             }
         },

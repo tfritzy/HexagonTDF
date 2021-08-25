@@ -17,7 +17,7 @@ public class BoardManager : MonoBehaviour
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
     private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
     private Vector2Int xVillageRange = new Vector2Int(DIMENSIONS / 2 - DIMENSIONS / 4, DIMENSIONS / 2 + DIMENSIONS / 4);
-    private Vector2Int yVillageRange = new Vector2Int(DIMENSIONS / 2, DIMENSIONS);
+    private Vector2Int yVillageRange = new Vector2Int(DIMENSIONS / 2 + DIMENSIONS / 4, DIMENSIONS);
 
     void Awake()
     {
@@ -38,9 +38,9 @@ public class BoardManager : MonoBehaviour
     {
         SpawnHexagons(GameState.SelectedSegment);
         SetupMapHeight(GameState.SelectedSegment);
+        FlattenVillageAndTrebArea();
         SpawnTrebuchet(GameState.SelectedSegment);
         SpawnHero(GameState.SelectedSegment);
-        FlattenVillageArea();
         SpawnBuildings(GameState.SelectedSegment);
     }
 
@@ -52,7 +52,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland, Biome.Snow };
+    HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland, Biome.Snow, Biome.Forrest };
     private void SetupMapHeight(OverworldSegment map)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(map.Coordinates.GetHashCode());
@@ -175,9 +175,19 @@ public class BoardManager : MonoBehaviour
         Trebuchet.SetInitialPosition(pos);
     }
 
-    private void FlattenVillageArea()
+    private void FlattenVillageAndTrebArea()
     {
         for (int y = this.yVillageRange.x; y < this.yVillageRange.y; y++)
+        {
+            for (int x = this.xVillageRange.x; x < this.xVillageRange.y; x++)
+            {
+                Vector3 pos = this.Hexagons[x, y].transform.position;
+                pos.y = 0;
+                this.Hexagons[x, y].transform.position = pos;
+            }
+        }
+
+        for (int y = 0; y < this.yVillageRange.y / 4; y++)
         {
             for (int x = this.xVillageRange.x; x < this.xVillageRange.y; x++)
             {

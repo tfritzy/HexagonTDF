@@ -125,24 +125,25 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<Biome, Hexagon> hexagonScripts;
-
-    public static Hexagon GetHexagonScript(Biome Biome)
+    public static Hexagon GetHexagonScript(Biome biome)
     {
-        if (hexagonScripts == null)
+        switch (biome)
         {
-            hexagonScripts = new Dictionary<Biome, Hexagon>()
-            {
-                {Biome.Sand, new Sand()},
-                {Biome.Forrest, new Forrest()},
-                {Biome.Grassland, new Grass()},
-                {Biome.Mountain, new Mountain()},
-                {Biome.Snow, new Snow()},
-                {Biome.Water, new Water()},
-            };
+            case (Biome.Sand):
+                return new Sand();
+            case (Biome.Forrest):
+                return new Forrest();
+            case (Biome.Grassland):
+                return new Grassland();
+            case (Biome.Mountain):
+                return new Mountain();
+            case (Biome.Snow):
+                return new Snow();
+            case (Biome.Water):
+                return new Water();
+            default:
+                throw new System.Exception("Unknown biome " + biome);
         }
-
-        return hexagonScripts[Biome];
     }
 
     private static Dictionary<BuildingType, Sprite> buildingIcons;
