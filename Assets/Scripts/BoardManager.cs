@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public const int BoardWidth = 11;
+    public const int BoardWidth = 20;
     public const int BoardHeight = 20;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
@@ -172,7 +172,6 @@ public class BoardManager : MonoBehaviour
             GameState.SelectedSegment,
             Trebuchet.GridPosition,
             (Vector2Int startPos, Vector2Int testEndPos) => true);
-
     }
 
     public bool IsBuildable(Vector2Int pos)
