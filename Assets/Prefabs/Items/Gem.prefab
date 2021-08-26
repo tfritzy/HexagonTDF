@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7838237069387281134}
   - component: {fileID: 455883753209905953}
   - component: {fileID: 584979723314541520}
+  - component: {fileID: 8065130540337660878}
   m_Layer: 12
   m_Name: Gem
   m_TagString: Untagged
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e3946f61c247aa842baa2165db02aebc, type: 2}
+  - {fileID: 2100000, guid: 2b8880c8358885e41bbeadff0a75284d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -197,7 +198,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -688,7 +689,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -0.01
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4894,3 +4895,15 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &8065130540337660878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5779178242862859042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 439cb5b9ad292f24fb41f0c0b9802cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

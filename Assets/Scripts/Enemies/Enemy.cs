@@ -147,9 +147,7 @@ public abstract class Enemy : Unit, Interactable
                 this.transform.position + Vector3.up * .5f,
                 new Quaternion(),
                 null);
-            Vector3 direction = UnityEngine.Random.insideUnitSphere * 5f;
-            direction.y = Math.Abs(direction.y);
-            gem.GetComponent<Rigidbody>().velocity = direction;
+            gem.GetComponent<Rigidbody>().velocity = Vector3.up * 5f;
             gem.GetComponent<Rigidbody>().angularVelocity = UnityEngine.Random.insideUnitSphere * 360;
         }
     }

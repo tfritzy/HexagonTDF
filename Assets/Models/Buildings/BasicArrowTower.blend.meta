@@ -3,7 +3,37 @@ guid: 46e93b38a894d094cac16c423dc2d0ed
 ModelImporter:
   serializedVersion: 20101
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Roof
+    second: {fileID: 2100000, guid: 17d6bb01d8ae2ba4fa6e7f9abee9bb0a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stone
+    second: {fileID: 2100000, guid: 2735f28172287364b8590b31925d34ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: StoneAlt
+    second: {fileID: 5342537905642139176, guid: ad34ccc011099b543a3ae6bbee49c811, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerWood
+    second: {fileID: 2100000, guid: 834e582139732ea4cb752b8365982657, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vegetation
+    second: {fileID: 2100000, guid: cd5d43162cf6d9345b54bc8939f5cdd6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WoodAlt
+    second: {fileID: 2100000, guid: 0875965354950dd43bd94b21f5ea4d5d, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

@@ -43,6 +43,7 @@ public static class Constants
     private static Dictionary<ResourceType, Color> resourceColors = new Dictionary<ResourceType, Color>()
     {
         { ResourceType.Gold, ColorExtensions.Create("F8C21C")},
+        { ResourceType.Gem, ColorExtensions.Create("1B80E2")},
     };
     public static Dictionary<ResourceType, Color> ResourceColors => resourceColors;
 

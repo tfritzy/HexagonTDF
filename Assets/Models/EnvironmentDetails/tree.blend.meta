@@ -8,12 +8,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: TreeGreen
-    second: {fileID: 2100000, guid: baaeb516d5979f941ae834b4f581bd0e, type: 2}
+    second: {fileID: 2100000, guid: cd5d43162cf6d9345b54bc8939f5cdd6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Wood
-    second: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+    second: {fileID: 2100000, guid: ed0de04546f585e429bf056602d8f18f, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

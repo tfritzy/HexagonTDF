@@ -8,12 +8,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: EvilHighlight
-    second: {fileID: 2100000, guid: ebc849b59cfc44b4492b10625da771ee, type: 2}
+    second: {fileID: 2100000, guid: aaa1172bda3ea59469bb0bd31ba1bb1a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: EvilStone
-    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
+    second: {fileID: 2100000, guid: e8adaad1f19f1a54eb57430f25202055, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
