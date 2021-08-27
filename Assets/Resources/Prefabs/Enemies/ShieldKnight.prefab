@@ -1828,11 +1828,11 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c8aad5e943bd8b14ab6163aa310317ac, type: 2}
-  - {fileID: 2100000, guid: 7c56cc08eaefe204d88a696f584eb0bc, type: 2}
-  - {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
-  - {fileID: 2100000, guid: ebc849b59cfc44b4492b10625da771ee, type: 2}
-  - {fileID: 2100000, guid: ebc849b59cfc44b4492b10625da771ee, type: 2}
+  - {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
+  - {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
+  - {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
+  - {fileID: 2100000, guid: 8897a7bd4657ece4e905ea3fff2b85a7, type: 2}
+  - {fileID: 2100000, guid: 8897a7bd4657ece4e905ea3fff2b85a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2271,19 +2271,19 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f4c26671b40f7e541b43d9e32ec15e19, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7c56cc08eaefe204d88a696f584eb0bc, type: 2}
+      objectReference: {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
     - target: {fileID: -7511558181221131132, guid: f4c26671b40f7e541b43d9e32ec15e19, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+      objectReference: {fileID: 2100000, guid: bf7eb7d4a65737946a32a4fee0479ec9, type: 2}
     - target: {fileID: -7511558181221131132, guid: f4c26671b40f7e541b43d9e32ec15e19, type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 
-      objectReference: {fileID: 2100000, guid: c8aad5e943bd8b14ab6163aa310317ac, type: 2}
+      objectReference: {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
     - target: {fileID: -7511558181221131132, guid: f4c26671b40f7e541b43d9e32ec15e19, type: 3}
       propertyPath: m_Materials.Array.data[3]
       value: 
-      objectReference: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+      objectReference: {fileID: 2100000, guid: bf7eb7d4a65737946a32a4fee0479ec9, type: 2}
     - target: {fileID: 919132149155446097, guid: f4c26671b40f7e541b43d9e32ec15e19, type: 3}
       propertyPath: m_Name
       value: Shield_Heater
@@ -2367,6 +2367,26 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: a8228747783e73c4dbfafddbeb8008a0, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
     - target: {fileID: 919132149155446097, guid: 6e80c8f011f6d8042852c89158df8f65, type: 3}
       propertyPath: m_Name
       value: Sword

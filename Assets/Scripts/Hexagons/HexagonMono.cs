@@ -12,7 +12,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected Color ColorAfterVariance;
     protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
-    protected const float MAX_COLOR_VARIANCE = .02f;
+    protected const float MAX_COLOR_VARIANCE = .01f;
 
     private MeshRenderer hexMesh;
 

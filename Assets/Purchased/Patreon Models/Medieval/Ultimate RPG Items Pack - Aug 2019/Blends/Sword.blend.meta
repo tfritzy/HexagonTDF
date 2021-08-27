@@ -8,27 +8,27 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: DarkSteel
-    second: {fileID: 2100000, guid: 7c56cc08eaefe204d88a696f584eb0bc, type: 2}
+    second: {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: DarkWood
-    second: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+    second: {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: LightSteel
-    second: {fileID: 2100000, guid: c8aad5e943bd8b14ab6163aa310317ac, type: 2}
+    second: {fileID: 2100000, guid: 5fa882bc03206c740b214bd1352bbd36, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: LightWood
-    second: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+    second: {fileID: 2100000, guid: a8228747783e73c4dbfafddbeb8008a0, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Steel
-    second: {fileID: 2100000, guid: 486f6757a664f3d40aa6bb9270e1ad7b, type: 2}
+    second: {fileID: 2100000, guid: 87ea064ea6151244496f1003b1b678c5, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
