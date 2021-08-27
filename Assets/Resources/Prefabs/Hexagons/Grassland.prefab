@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3872373048929311033}
   - component: {fileID: 524514319904566116}
   m_Layer: 8
-  m_Name: Grass
+  m_Name: Grassland
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,9 +52,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecorationOptions:
-  - {fileID: 8903058273634794869, guid: f1fc5bb90ac285e4486771552d63bcb8, type: 3}
-  - {fileID: 3356751432538110193, guid: ffbddc4ef9676cc419e81e06aaa836d8, type: 3}
-  NumDecorations: 0
+  - {fileID: 919132149155446097, guid: 936202e870e9ae24d957e14a9e3c8eec, type: 3}
+  NumDecorations: 1
   sizeVariance: 0
 --- !u!114 &524514319904566116
 MonoBehaviour:
