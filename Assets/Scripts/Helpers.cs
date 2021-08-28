@@ -42,32 +42,21 @@ public static class Helpers
         }
     }
 
-    public static List<Vector2Int> FindPathByWalking(HexagonMono[,] map, Vector2Int sourcePos, Vector2Int endPos)
+    public static List<Vector2Int> FindPathByWalking(Vector2Int sourcePos, Vector2Int endPos, HexagonMono[,] hexes)
     {
-        return FindPath(map, sourcePos, endPos, IsPosTraversable);
+        return FindPath(hexes, sourcePos, endPos, (Vector2Int sPos, Vector2Int ePos) => IsPosWalkable(sPos, ePos, hexes));
     }
 
-    public static List<Vector2Int> FindPath(HexagonMono[,] map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, bool> shouldInclude)
+    public static List<Vector2Int> FindPath(HexagonMono[,] map, Vector2Int sourcePos, Vector2Int endPos, Func<Vector2Int, Vector2Int, bool> shouldInclude)
     {
-        return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude, (Vector2Int pos) => { return true; });
-    }
-
-    public static List<Vector2Int> FindPath(PredGridPoint[,] predecessorGrid, Vector2Int startPos, Vector2Int endPos)
-    {
-        return GetPathFromPredecessorGrid(predecessorGrid, startPos, endPos);
-    }
-
-    public static List<Vector2Int> FindPath(HexagonMono[,] map, Vector2Int sourcePos, HashSet<Vector2Int> endPos, Func<Vector2Int, bool> shouldInclude)
-    {
-        return FindPath(map, sourcePos, endPos, shouldInclude, (Vector2Int pos) => { return true; });
+        return FindPath(map, sourcePos, new HashSet<Vector2Int>() { endPos }, shouldInclude);
     }
 
     public static List<Vector2Int> FindPath(
         HexagonMono[,] map,
         Vector2Int sourcePos,
         HashSet<Vector2Int> endPos,
-        Func<Vector2Int, bool> shouldInclude,
-        Func<Vector2Int, bool> isValidEnd)
+        Func<Vector2Int, Vector2Int, bool> shouldInclude)
     {
         Queue<PredGridPoint> q = new Queue<PredGridPoint>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -96,14 +85,14 @@ public static class Helpers
                     predecessorGrid[testPosition.x, testPosition.y] = current;
                 }
 
-                if (endPos.Contains(testPosition) && isValidEnd(testPosition))
-                {
-                    return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, testPosition);
-                }
-
-                if (visited.Contains(testPosition) || shouldInclude(testPosition) == false)
+                if (visited.Contains(testPosition) || shouldInclude(current.Position, testPosition) == false)
                 {
                     continue;
+                }
+
+                if (endPos.Contains(testPosition))
+                {
+                    return GetPathFromPredecessorGrid(predecessorGrid, sourcePos, testPosition);
                 }
 
                 q.Enqueue(new PredGridPoint(testPosition, current.Distance + 1));
@@ -113,6 +102,15 @@ public static class Helpers
         return null;
     }
 
+    public static PredGridPoint[,] GetPredicessorGridWalking(
+        HexagonMono[,] map,
+        Vector2Int sourcePos)
+    {
+        return GetPredecessorGrid(
+            map, sourcePos, (Vector2Int sPos, Vector2Int ePos) =>
+                IsPosWalkable(sPos, ePos, map) || sPos == sourcePos || ePos == sourcePos
+        );
+    }
 
     public static PredGridPoint[,] GetPredecessorGrid(
         HexagonMono[,] map,
@@ -385,10 +383,12 @@ public static class Helpers
         return ToWorldPosition(position.x, position.y);
     }
 
-    public static bool IsPosTraversable(Vector2Int pos)
+    public static bool IsPosWalkable(Vector2Int startPos, Vector2Int endPos, HexagonMono[,] hexes)
     {
-        return Managers.Board.GetHex(pos).IsWalkable &&
-              (Managers.Board.Buildings.ContainsKey(pos) == false || Managers.Board.Buildings[pos].IsWalkable);
+        return IsInBounds(hexes, startPos) && IsInBounds(hexes, endPos)
+            && hexes[startPos.x, startPos.y].transform.position.y == hexes[endPos.x, endPos.y].transform.position.y
+            && hexes[endPos.x, endPos.y].IsWalkable
+            && (Managers.Board.Buildings.ContainsKey(endPos) == false || Managers.Board.Buildings[endPos].IsWalkable);
     }
 
     public static int RoundTo25(int value)

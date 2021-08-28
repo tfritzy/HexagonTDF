@@ -14,6 +14,7 @@ public class Barracks : Building
     public override int BaseDamage => throw new System.NotImplementedException();
     public override float BaseRange => throw new System.NotImplementedException();
     public override VerticalRegion AttackRegion => throw new System.NotImplementedException();
+    public override bool IsWalkable => true;
 
     private const float goldTaperPercentPerSecond = 0.00333333333333333f;
     private Vector2Int exitGridPosition;

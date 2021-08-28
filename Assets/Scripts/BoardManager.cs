@@ -184,6 +184,7 @@ public class BoardManager : MonoBehaviour
                 Vector3 pos = this.Hexagons[x, y].transform.position;
                 pos.y = 0;
                 this.Hexagons[x, y].transform.position = pos;
+                this.Hexagons[x, y].RemoveObstacle();
             }
         }
 
@@ -194,6 +195,7 @@ public class BoardManager : MonoBehaviour
                 Vector3 pos = this.Hexagons[x, y].transform.position;
                 pos.y = 0;
                 this.Hexagons[x, y].transform.position = pos;
+                this.Hexagons[x, y].RemoveObstacle();
             }
         }
     }
@@ -228,28 +230,9 @@ public class BoardManager : MonoBehaviour
     {
         predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
 
-        predGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
+        predGridMap[Trebuchet.GridPosition] = Helpers.GetPredicessorGridWalking(
             this.Hexagons,
-            Trebuchet.GridPosition,
-            (Vector2Int prevPos, Vector2Int nextPos) =>
-            {
-                print(prevPos + ", " + nextPos);
-                if (this.GetHex(prevPos)?.transform.position.y != this.GetHex(nextPos)?.transform.position.y)
-                {
-                    print(this.GetHex(prevPos)?.transform.position.y);
-                    print(this.GetHex(nextPos)?.transform.position.y);
-                    return false;
-                }
-
-                if ((prevPos != Trebuchet.GridPosition &&
-                    Buildings.ContainsKey(prevPos) &&
-                    Buildings[prevPos].IsWalkable == false))
-                {
-                    return false; // You would have needed to pass through a building to get here.
-                }
-
-                return Hexagons[nextPos.x, nextPos.y].IsWalkable || nextPos == Trebuchet.GridPosition;
-            });
+            Trebuchet.GridPosition);
 
 
         flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
@@ -274,6 +257,7 @@ public class BoardManager : MonoBehaviour
         hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome));
         this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
+        this.Hexagons[x, y].MaybeSpawnObstacle();
     }
 
     public HexagonMono GetHex(Vector2Int pos)

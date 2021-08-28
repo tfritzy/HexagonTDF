@@ -203,9 +203,9 @@ public abstract class Hero : Unit, Interactable
         pathProgress = 0;
         this.PathId = Managers.Board.PathingId;
         this.PathToTargetPosition = Helpers.FindPathByWalking(
-            Managers.Board.Hexagons,
             this.GridPosition,
-            targetPos);
+            targetPos,
+            Managers.Board.Hexagons);
 
         if (this.PathToTargetPosition == null)
         {
