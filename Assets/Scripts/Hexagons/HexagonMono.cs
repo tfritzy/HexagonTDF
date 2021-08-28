@@ -12,7 +12,6 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected Color ColorAfterVariance;
     protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
-    protected const float MAX_COLOR_VARIANCE = .01f;
 
     private MeshRenderer hexMesh;
 
@@ -28,7 +27,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     protected virtual void Setup()
     {
-        this.ColorAfterVariance = ColorExtensions.RandomlyVary(this.hexagon.BaseColor, MAX_COLOR_VARIANCE);
+        this.ColorAfterVariance = ColorExtensions.RandomlyVary(this.hexagon.BaseColor, this.hexagon.MaxColorVariance);
         this.hexMesh = transform.Find("Hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
@@ -90,7 +89,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         if (this.hexMesh.materials.Length > 1)
         {
             Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.05f));
+            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(this.ColorAfterVariance, -.07f));
             darkerTexture.Apply();
             this.hexMesh.materials[1].mainTexture = darkerTexture;
         }

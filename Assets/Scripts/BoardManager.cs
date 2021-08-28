@@ -233,6 +233,14 @@ public class BoardManager : MonoBehaviour
             Trebuchet.GridPosition,
             (Vector2Int prevPos, Vector2Int nextPos) =>
             {
+                print(prevPos + ", " + nextPos);
+                if (this.GetHex(prevPos)?.transform.position.y != this.GetHex(nextPos)?.transform.position.y)
+                {
+                    print(this.GetHex(prevPos)?.transform.position.y);
+                    print(this.GetHex(nextPos)?.transform.position.y);
+                    return false;
+                }
+
                 if ((prevPos != Trebuchet.GridPosition &&
                     Buildings.ContainsKey(prevPos) &&
                     Buildings[prevPos].IsWalkable == false))

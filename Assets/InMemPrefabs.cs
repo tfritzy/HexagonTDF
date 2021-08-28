@@ -16,4 +16,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject ConsecrateEffect;
     public GameObject Gem;
     public GameObject Tree;
+    public GameObject StoneColumn;
 }

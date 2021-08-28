@@ -4,6 +4,7 @@ public abstract class ObstacleHexagon : Hexagon
 {
     public abstract float ObstacleChance { get; }
     public abstract GameObject GetObstacle();
+    public abstract float SizeVarience { get; }
     private bool hasObstacle;
     public override bool IsBuildable => !hasObstacle;
     public override bool IsWalkable => !hasObstacle;
@@ -14,7 +15,10 @@ public abstract class ObstacleHexagon : Hexagon
         if (random.NextDouble() <= ObstacleChance)
         {
             hasObstacle = true;
-            GameObject.Instantiate(GetObstacle(), hex.transform.position, new Quaternion(), hex);
+            GameObject obstacle = GameObject.Instantiate(GetObstacle(), hex.transform.position, new Quaternion(), hex);
+            float size = Random.Range(1 - SizeVarience, 1 + SizeVarience);
+            obstacle.transform.localScale = obstacle.transform.localScale * size;
+            obstacle.transform.rotation = Quaternion.Euler(Vector3.up * Random.Range(0, 360));
         }
     }
 }

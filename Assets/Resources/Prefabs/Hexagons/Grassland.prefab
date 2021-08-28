@@ -53,7 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecorationOptions:
   - {fileID: 919132149155446097, guid: 936202e870e9ae24d957e14a9e3c8eec, type: 3}
-  NumDecorations: 1
+  NumDecorations: 0.1
   sizeVariance: 0
 --- !u!114 &524514319904566116
 MonoBehaviour:

@@ -5,7 +5,7 @@ using UnityEngine;
 public class DecorationHex : MonoBehaviour
 {
     public GameObject[] DecorationOptions;
-    public int NumDecorations;
+    public float NumDecorations;
     public float sizeVariance = 0f;
 
     void Start()
@@ -15,8 +15,14 @@ public class DecorationHex : MonoBehaviour
             return;
         }
 
+        int numDecorations = (int)NumDecorations;
+        if (UnityEngine.Random.Range(0f, 1f) <= NumDecorations % 1)
+        {
+            numDecorations += 1;
+        }
+
         Vector3 centerGround = this.transform.position;
-        for (int i = 0; i < NumDecorations; i++)
+        for (int i = 0; i < numDecorations; i++)
         {
             Vector3 wiggle = Random.insideUnitSphere * .5f;
             wiggle.y = 0;
