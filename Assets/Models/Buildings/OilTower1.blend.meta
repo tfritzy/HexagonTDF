@@ -2,10 +2,43 @@ fileFormatVersion: 2
 guid: 1e7a27159a46a9540958c902c0c5f1fc
 ModelImporter:
   serializedVersion: 20101
-  internalIDToNameTable: []
-  externalObjects: {}
+  internalIDToNameTable:
+  - first:
+      74: -623603649343465320
+    second: Scene
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Brass
+    second: {fileID: 2100000, guid: ff7721808e373f040bf9fc5ea9425cfe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DarkTowerStone
+    second: {fileID: 2100000, guid: 05e26b75b7014d945848e0eba463fa10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerBannerBase
+    second: {fileID: 2100000, guid: c14b066e77b428f4db75644ccb37c1dd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerBannerHighlight
+    second: {fileID: 2100000, guid: 25592d3c98314bb49b65e51a49deed44, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerStone
+    second: {fileID: 2100000, guid: 2735f28172287364b8590b31925d34ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TowerWood.001
+    second: {fileID: 2100000, guid: 834e582139732ea4cb752b8365982657, type: 2}
   materials:
-    materialImportMode: 1
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1

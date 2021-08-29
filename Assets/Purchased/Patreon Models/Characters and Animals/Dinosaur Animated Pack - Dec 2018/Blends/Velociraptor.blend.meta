@@ -11,17 +11,17 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Black
-    second: {fileID: 2100000, guid: 34485a5d7e40d2f45894f77c60c8e067, type: 2}
+    second: {fileID: 2100000, guid: e8adaad1f19f1a54eb57430f25202055, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Brown
-    second: {fileID: 2100000, guid: 8f9535869d9ed6440b5887f2a9ad6de4, type: 2}
+    second: {fileID: 2100000, guid: bf7eb7d4a65737946a32a4fee0479ec9, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: LightBrown
-    second: {fileID: 2100000, guid: 2c45432d2d09d0a428f9c2a94807a1c3, type: 2}
+    second: {fileID: 2100000, guid: 8897a7bd4657ece4e905ea3fff2b85a7, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

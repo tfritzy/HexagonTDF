@@ -245,8 +245,7 @@ public abstract class AttackTower : Building, Interactable
 
     private float getRangePowerMultiplier(int upgradeLevel)
     {
-        float percentDiff = GetRange(upgradeLevel) / RangeOptions.Medium - 1;
-        return (1 + percentDiff / .5f);
+        return 1 + (GetRange(upgradeLevel) / RangeOptions.VeryVeryShort) / 10;
     }
 
     private float getAttackRegionMultiplier()

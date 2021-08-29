@@ -36,7 +36,10 @@ public class Spikes : AttackTower
     {
         if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, other.gameObject))
         {
-            damageablesInRange.Add(damageable);
+            if (damageable.Alliance == this.Enemies)
+            {
+                damageablesInRange.Add(damageable);
+            }
         }
     }
 
@@ -54,7 +57,10 @@ public class Spikes : AttackTower
 
         foreach (Damageable damageable in damageablesInRange)
         {
-            damageable.TakeDamage(this.Damage, this);
+            if (damageable.Alliance == this.Enemies)
+            {
+                damageable.TakeDamage(this.Damage, this);
+            }
         }
     }
 
