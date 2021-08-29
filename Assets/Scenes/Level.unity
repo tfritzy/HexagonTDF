@@ -381,7 +381,10 @@ MonoBehaviour:
   ConsecrateEffect: {fileID: 5736227985175077343, guid: 366c1fd6527279e4380263f44b668ff6, type: 3}
   Gem: {fileID: 5779178242862859042, guid: f4407c7fc3e0e504d81cecb5b514ab00, type: 3}
   Tree: {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
-  StoneColumn: {fileID: 919132149155446097, guid: 90f2b2c38674d3849a7d4d546dd919d5, type: 3}
+  StoneColumns:
+  - {fileID: 919132149155446097, guid: 90f2b2c38674d3849a7d4d546dd919d5, type: 3}
+  - {fileID: 919132149155446097, guid: 84e59c1df73fe034e83087ff78297463, type: 3}
+  - {fileID: 919132149155446097, guid: 2334180e589ad1047ada0365e0bb8d35, type: 3}
 --- !u!1001 &231087952
 PrefabInstance:
   m_ObjectHideFlags: 0

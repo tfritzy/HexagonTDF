@@ -10,6 +10,6 @@ public class Mountain : ObstacleHexagon
 
     public override GameObject GetObstacle()
     {
-        return Managers.Prefabs.StoneColumn;
+        return Managers.Prefabs.StoneColumns[Random.Range(0, Managers.Prefabs.StoneColumns.Length)];
     }
 }
