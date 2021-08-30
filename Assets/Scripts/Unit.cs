@@ -6,52 +6,19 @@ public abstract class Unit : Character
     public float MovementSpeedModification;
     public float MovementSpeed;
     public override Vector3 Velocity => this.Rigidbody.velocity;
-    public bool IsJumping;
-    public AnimationState _animationState;
-    public AttackPhase AttackPhase;
-    public AnimationState CurrentAnimation
-    {
-        get
-        {
-            return _animationState;
-        }
-        set
-        {
-            _animationState = value;
-
-            if (this.animator == null)
-            {
-                return;
-            }
-
-            this.animator.SetInteger("Animation_State", (int)_animationState);
-        }
-    }
-    public abstract bool IsMelee { get; }
 
     protected Vector2Int destinationPos;
     protected virtual float BaseMovementSpeed => Constants.ENEMY_DEFAULT_MOVEMENTSPEED;
     protected virtual float DistanceFromFinalDestinationBeforeEnd => .3f;
     protected Waypoint Waypoint;
     protected Guid PathId;
-    protected Character TargetCharacter;
-    protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
-    protected virtual AnimationState WalkAnimation => AnimationState.Walking;
-    protected virtual AnimationState IdleAnimation => AnimationState.Idle;
-
-    private const int MELEE_ATTACK_RANGE = 2;
     private GameObject DeathAnimation;
-    private float lastAttackTime;
-    private Animator animator;
 
     protected override void Setup()
     {
         base.Setup();
-        FindTargetCharacter();
-        this.animator = this.Body.GetComponent<Animator>();
         this.DeathAnimation = transform.Find("DeathAnimation")?.gameObject;
         this.MovementSpeed = BaseMovementSpeed;
-        this.CurrentAnimation = IdleAnimation;
         SetRagdollState(false);
     }
 
@@ -62,14 +29,7 @@ public abstract class Unit : Character
             return;
         }
 
-        if (TargetCharacter == null)
-        {
-            FindTargetCharacter();
-        }
-
         base.UpdateLoop();
-
-        AttackTarget();
         if (this.AttackPhase == AttackPhase.Idle)
         {
             FollowPath();
@@ -79,7 +39,6 @@ public abstract class Unit : Character
     protected abstract void CalculateNextPathingPosition(Vector2Int currentPosition);
     protected abstract bool ShouldRecalculatePath();
     protected abstract void RecalculatePath();
-    protected abstract void FindTargetCharacter();
 
     private void FollowPath()
     {
@@ -128,70 +87,6 @@ public abstract class Unit : Character
         return false;
     }
 
-    private Projectile windingUpProjectile;
-    public void BeginWindup()
-    {
-        this.AttackPhase = AttackPhase.WindingUp;
-
-        if (IsMelee == false && windingUpProjectile == null)
-        {
-            windingUpProjectile = Instantiate(
-                Projectile,
-                this.projectileStartPosition.position,
-                new Quaternion())
-                    .GetComponent<Projectile>();
-            windingUpProjectile.transform.parent = this.projectileStartPosition;
-        }
-    }
-
-    public void ReleaseAttack()
-    {
-        this.AttackPhase = AttackPhase.Recovering;
-
-        if (!IsInRangeOfTarget())
-        {
-            return;
-        }
-
-        if (IsMelee)
-        {
-            this.TargetCharacter.TakeDamage(this.Damage, this);
-        }
-        else
-        {
-            ConfigureProjectile(windingUpProjectile);
-            windingUpProjectile = null;
-        }
-    }
-
-    public void FinishedRecovering()
-    {
-        this.AttackPhase = AttackPhase.Idle;
-        this.CurrentAnimation = IdleAnimation;
-    }
-
-    protected virtual void ConfigureProjectile(Projectile projectile)
-    {
-        projectile.transform.parent = null;
-        projectile.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
-        projectile.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
-        projectile = null;
-    }
-
-    protected void AttackTarget()
-    {
-        if (Time.time > lastAttackTime + this.Cooldown && IsInRangeOfTarget() && AttackPhase == AttackPhase.Idle)
-        {
-            this.AttackPhase = AttackPhase.WindingUp;
-            this.CurrentAnimation = this.AttackAnimation;
-            this.Rigidbody.velocity = Vector3.zero;
-            Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
-            diffVector.y = 0;
-            this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
-            lastAttackTime = Time.time;
-        }
-    }
-
     protected override void Die()
     {
         base.Die();
@@ -233,16 +128,6 @@ public abstract class Unit : Character
 
             rb.isKinematic = !value;
         }
-    }
-
-    protected virtual bool IsInRangeOfTarget()
-    {
-        if (TargetCharacter == null)
-        {
-            return false;
-        }
-
-        return (TargetCharacter.transform.position - this.transform.position).magnitude <= this.Range;
     }
 
     private void DetachBody()

@@ -47,13 +47,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 8695444489206934294, guid: b625fbc31bd616d4593fe6f475ea8f78, type: 3}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsJumping: 0
-  _animationState: 0
-  AttackPhase: 0
   ProtectionSpellAnimation: {fileID: 2075249364008622177, guid: 4b1de71f42ba283409a054dc9c2c4280, type: 3}
 --- !u!65 &3979614908779510399
 BoxCollider:
@@ -197,9 +196,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -804731622281664130, guid: d6b07aad325980a41bc3d5bfa8a6b9ec, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -678588488315902003, guid: d6b07aad325980a41bc3d5bfa8a6b9ec, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d6b07aad325980a41bc3d5bfa8a6b9ec, type: 3}
       propertyPath: m_Name
-      value: Trebuchet_Full
+      value: Body
+      objectReference: {fileID: 0}
+    - target: {fileID: 9084867732053843440, guid: d6b07aad325980a41bc3d5bfa8a6b9ec, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6b07aad325980a41bc3d5bfa8a6b9ec, type: 3}

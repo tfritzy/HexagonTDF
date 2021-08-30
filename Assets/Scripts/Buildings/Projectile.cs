@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public delegate void DealDamageToEnemy(Character attacker, Character target, GameObject projectile);
+    public delegate void DealDamageToEnemy(Character attacker, Character target);
     private DealDamageToEnemy dealDamageToEnemy;
     public delegate bool IsCollisionTarget(Character attacker, GameObject collision);
     private IsCollisionTarget isCollisionTarget;
@@ -91,7 +91,7 @@ public class Projectile : MonoBehaviour
             hasAlreadyTriggered = true;
             OnCollision(other.gameObject);
             Character character = other.GetComponent<Character>();
-            dealDamageToEnemy(attacker, other.GetComponent<Character>(), this.gameObject);
+            dealDamageToEnemy(attacker, other.GetComponent<Character>());
             ExplodeAnimation();
         }
     }

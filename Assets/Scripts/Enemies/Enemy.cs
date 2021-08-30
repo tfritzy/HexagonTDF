@@ -22,8 +22,8 @@ public abstract class Enemy : Unit, Interactable
     private LineRenderer lineRenderer;
     private int startingHealth;
     private const float GOLD_PILLAGED_RATIO = .5f;
-    // private const float BASE_GEM_DROP_CHANCE = 3 / 829;
-    private const float BASE_GEM_DROP_CHANCE = 1f;
+    private const float BASE_GEM_DROP_CHANCE = 3 / 829;
+
     protected override void UpdateLoop()
     {
         if (IsEngagedInFight)
@@ -100,9 +100,9 @@ public abstract class Enemy : Unit, Interactable
     }
 
 
-    protected override void FindTargetCharacter()
+    protected override Character FindTargetCharacter()
     {
-        this.TargetCharacter = Managers.Board.Trebuchet;
+        return Managers.Board.Trebuchet;
     }
 
     protected override void Setup()
@@ -116,7 +116,7 @@ public abstract class Enemy : Unit, Interactable
             ? PowerToAttributeRatio[AttributeType.MovementSpeed] : 0f;
         this.MovementSpeed = this.BaseMovementSpeed * (1 + movementSpeedPower);
         base.Setup();
-        FindTargetCharacter();
+        this.TargetCharacter = FindTargetCharacter();
         RecalculatePath();
         this.destinationPos = this.TargetCharacter.GridPosition;
         this.lineRenderer = this.GetComponent<LineRenderer>();
@@ -166,7 +166,7 @@ public abstract class Enemy : Unit, Interactable
 
     protected override void CalculateNextPathingPosition(Vector2Int currentPosition)
     {
-        if (currentPosition == this.TargetCharacter.GridPosition)
+        if (currentPosition == this.TargetCharacter?.GridPosition)
         {
             this.Waypoint = null;
             return;

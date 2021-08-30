@@ -12,6 +12,8 @@ public class Spikes : AttackTower
     public override Alliances Enemies => Alliances.Maltov;
     public override bool IsWalkable => true;
     protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
+    public override VerticalRegion Region => VerticalRegion.Ground;
+    public override bool IsMelee => true;
 
     private List<Damageable> damageablesInRange = new List<Damageable>();
     private float spikeMovementDistance;
@@ -51,7 +53,7 @@ public class Spikes : AttackTower
         }
     }
 
-    protected override void Attack()
+    protected override void DealDamageToEnemy(Character attacker, Character target)
     {
         spikesModel.transform.position = initialSpikesPos + Vector3.up * spikeMovementDistance;
 
@@ -64,10 +66,10 @@ public class Spikes : AttackTower
         }
     }
 
-    protected override bool CanAttack()
+    protected override bool IsInRangeOfTarget()
     {
         TrimDamageableList();
-        return damageablesInRange.Count > 0 && Time.time > lastAttackTime + Cooldown;
+        return damageablesInRange.Count > 0;
     }
 
     private void TrimDamageableList()

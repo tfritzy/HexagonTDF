@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1476ccf8fc76659489e8f43f7a55a7db, type: 2}
+  - {fileID: 2100000, guid: 36643397e0083ee43aa0f119ab216d87, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -140,8 +140,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e249035b06773b445ae8acde403e270c, type: 2}
-  - {fileID: 2100000, guid: 1476ccf8fc76659489e8f43f7a55a7db, type: 2}
+  - {fileID: 2100000, guid: 307fb351595522d429f1b27326197c91, type: 2}
+  - {fileID: 2100000, guid: 36643397e0083ee43aa0f119ab216d87, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -210,9 +210,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 0}
-  Target: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   UpgradeLevel: 0
 --- !u!135 &2007133556474699482
 SphereCollider:
@@ -225,5 +226,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.61331886
+  m_Radius: 1.07
   m_Center: {x: 0.025542915, y: -0.15278327, z: 0.015182972}

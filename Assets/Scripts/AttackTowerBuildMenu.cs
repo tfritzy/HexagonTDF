@@ -14,14 +14,5 @@ public class AttackTowerBuildMenu : BuildMenu
         BuildingType.ArcherTower,
         BuildingType.Spikes,
         BuildingType.OilTower,
-        BuildingType.SparkTower,
-        BuildingType.ChainLightningTower,
-        BuildingType.LightningTower,
-        BuildingType.FireTower,
-        BuildingType.FlamethrowerTower,
-        BuildingType.MeteorTower,
-        BuildingType.EarthTower,
-        BuildingType.CrystalAccelerator,
-        BuildingType.FrigidShard,
     };
 }

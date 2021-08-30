@@ -5,12 +5,44 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour, Damageable
 {
-    public abstract Alliances Alliance { get; }
-    public abstract Alliances Enemies { get; }
-    public abstract int StartingHealth { get; }
-    public abstract float Power { get; }
-    public abstract VerticalRegion Region { get; }
+    public virtual Vector3 Velocity { get { return Vector3.zero; } }
+    public virtual int Damage => BaseDamage;
+    public virtual float Range => BaseRange;
+    public Vector2Int GridPosition { get; set; }
     public Transform Body;
+    public GameObject Projectile;
+    public float Cooldown => BaseCooldown / CooldownModificationAmount;
+    public float AttackSpeedModifiedPercent;
+    public bool IsDead { get; protected set; }
+    public AttackPhase AttackPhase;
+    public AnimationState _animationState;
+    public abstract VerticalRegion Region { get; }
+    public abstract VerticalRegion AttackRegion { get; }
+    public abstract int StartingHealth { get; }
+    public abstract int BaseDamage { get; }
+    public abstract float Power { get; }
+    public abstract float BaseRange { get; }
+    public abstract float BaseCooldown { get; }
+    public abstract bool IsMelee { get; }
+    public abstract Alliances Enemies { get; }
+    public abstract Alliances Alliance { get; }
+    protected virtual float ProjectileSpeed => 10;
+    protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
+    protected virtual AnimationState WalkAnimation => AnimationState.Walking;
+    protected virtual AnimationState IdleAnimation => AnimationState.Idle;
+    protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
+    protected Transform projectileStartPosition;
+    protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
+    protected Collider Collider;
+    protected Character TargetCharacter;
+    private Rigidbody rb;
+    private List<TakeDamageTiming> damageTimings;
+    private int health;
+    private Healthbar healthbar;
+    private float lastAttackTime;
+    private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
+    private Animator animator;
+
     public int Health
     {
         get { return health; }
@@ -30,18 +62,7 @@ public abstract class Character : MonoBehaviour, Damageable
             return Collider != null ? Collider.bounds.center : this.transform.position;
         }
     }
-    public virtual Vector3 Velocity { get { return Vector3.zero; } }
-    public abstract float BaseCooldown { get; }
-    public float Cooldown => BaseCooldown / CooldownModificationAmount;
-    public float AttackSpeedModifiedPercent;
-    protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
-    public virtual int Damage => BaseDamage;
-    public abstract int BaseDamage { get; }
-    public virtual float Range => BaseRange;
-    public abstract float BaseRange { get; }
-    public abstract VerticalRegion AttackRegion { get; }
-    public bool IsDead { get; protected set; }
-    private Rigidbody rb;
+
     protected Rigidbody Rigidbody
     {
         get
@@ -53,16 +74,25 @@ public abstract class Character : MonoBehaviour, Damageable
             return rb;
         }
     }
-    protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
-    protected Collider Collider;
-    private int health;
-    private const float PERCENT_DAMAGE_INCREASE_BY_DOWNHILL_SHOT = .5f;
-    private Healthbar healthbar;
-    public Vector2Int GridPosition { get; set; }
-    protected virtual float ProjectileSpeed => 10;
-    protected Transform projectileStartPosition;
-    public GameObject Projectile;
-    private List<TakeDamageTiming> damageTimings;
+
+    public AnimationState CurrentAnimation
+    {
+        get
+        {
+            return _animationState;
+        }
+        set
+        {
+            _animationState = value;
+
+            if (this.animator == null)
+            {
+                return;
+            }
+
+            this.animator.SetInteger("Animation_State", (int)_animationState);
+        }
+    }
 
     private class TakeDamageTiming
     {
@@ -98,6 +128,9 @@ public abstract class Character : MonoBehaviour, Damageable
             this.healthbar.enabled = false;
         }
         damageTimings = new List<TakeDamageTiming>();
+        FindTargetCharacter();
+        this.animator = this.Body.GetComponent<Animator>();
+        this.CurrentAnimation = IdleAnimation;
     }
 
     void Update()
@@ -107,9 +140,23 @@ public abstract class Character : MonoBehaviour, Damageable
 
     protected virtual void UpdateLoop()
     {
+        if (IsDead)
+        {
+            return;
+        }
+
         ApplyEffects();
         ProcessTakeDamageTimings();
+
+        if (TargetCharacter == null)
+        {
+            this.TargetCharacter = FindTargetCharacter();
+        }
+
+        AttackTarget();
     }
+
+    protected abstract Character FindTargetCharacter();
 
     private void ProcessTakeDamageTimings()
     {
@@ -205,7 +252,7 @@ public abstract class Character : MonoBehaviour, Damageable
         }
     }
 
-    protected virtual void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    protected virtual void DealDamageToEnemy(Character attacker, Character target)
     {
         target.TakeDamage(this.Damage, this);
     }
@@ -229,4 +276,91 @@ public abstract class Character : MonoBehaviour, Damageable
     {
         return this == null;
     }
+
+    private GameObject windingUpProjectile;
+    public void BeginWindup()
+    {
+        this.AttackPhase = AttackPhase.WindingUp;
+
+        if (IsMelee == false && windingUpProjectile == null)
+        {
+            windingUpProjectile = Instantiate(
+                Projectile,
+                this.projectileStartPosition.position,
+                new Quaternion(),
+                this.projectileStartPosition.transform);
+        }
+    }
+
+    public void ReleaseAttack()
+    {
+        this.AttackPhase = AttackPhase.Recovering;
+
+        if (!IsInRangeOfTarget())
+        {
+            return;
+        }
+
+        if (IsMelee)
+        {
+            this.DealDamageToEnemy(this, this.TargetCharacter);
+        }
+        else
+        {
+            ConfigureProjectile(windingUpProjectile);
+            windingUpProjectile.transform.parent = null;
+            windingUpProjectile = null;
+        }
+    }
+
+    protected virtual bool IsInRangeOfTarget()
+    {
+        if (TargetCharacter == null)
+        {
+            return false;
+        }
+
+        return (TargetCharacter.transform.position - this.transform.position).magnitude <= this.Range;
+    }
+
+    public void FinishedRecovering()
+    {
+        this.AttackPhase = AttackPhase.Idle;
+        this.CurrentAnimation = IdleAnimation;
+    }
+
+    protected virtual void ConfigureProjectile(GameObject projectile)
+    {
+        projectile.transform.parent = null;
+        if (projectile.TryGetComponent<Projectile>(out Projectile projectileMono))
+        {
+            projectileMono.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+            projectileMono.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
+        }
+    }
+
+    protected void AttackTarget()
+    {
+        if (Time.time > lastAttackTime + this.Cooldown && IsInRangeOfTarget() && AttackPhase == AttackPhase.Idle)
+        {
+            if (this.animator == null)
+            {
+                BeginWindup();
+                ReleaseAttack();
+                FinishedRecovering();
+            }
+            else
+            {
+                this.AttackPhase = AttackPhase.WindingUp;
+                this.CurrentAnimation = this.AttackAnimation;
+                if (this.Rigidbody != null) this.Rigidbody.velocity = Vector3.zero;
+                Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
+                diffVector.y = 0;
+                this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
+            }
+
+            lastAttackTime = Time.time;
+        }
+    }
+
 }

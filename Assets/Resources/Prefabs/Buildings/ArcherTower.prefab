@@ -47,8 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 6969604576012871363, guid: 851516ce09dcafb4a9f23b294ac0b8fc, type: 3}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   Target: {fileID: 0}
   UpgradeLevel: 0
 --- !u!65 &-5916276546233565819
@@ -155,7 +157,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 2735f28172287364b8590b31925d34ca, type: 2}
     - target: {fileID: 919132149155446097, guid: 46e93b38a894d094cac16c423dc2d0ed, type: 3}
       propertyPath: m_Name
-      value: BasicArrowTower
+      value: Body
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46e93b38a894d094cac16c423dc2d0ed, type: 3}

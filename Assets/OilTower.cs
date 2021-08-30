@@ -11,10 +11,6 @@ public class OilTower : AttackTower
     public override int BaseDamage => 30;
     public override VerticalRegion AttackRegion => VerticalRegion.Ground;
     public override float BaseRange => RangeOptions.Short;
-
-    protected override void Attack()
-    {
-        GameObject projectile = SpawnProjectile();
-
-    }
+    public override VerticalRegion Region => VerticalRegion.Ground;
+    protected override float ExplosionRadius => 0.5f;
 }

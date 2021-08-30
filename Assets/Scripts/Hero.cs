@@ -65,11 +65,11 @@ public abstract class Hero : Unit, Interactable
     }
 
     private float lastSearchTime;
-    protected override void FindTargetCharacter()
+    protected override Character FindTargetCharacter()
     {
         if (!IsGuardingHex)
         {
-            return;
+            return null;
         }
 
         if (this.TargetCharacter == null && Time.time > lastSearchTime + .5f)
@@ -79,9 +79,11 @@ public abstract class Hero : Unit, Interactable
             if (enemy != null)
             {
                 enemy.EngageInFight(this);
-                this.TargetCharacter = enemy;
+                return enemy;
             }
         }
+
+        return null;
     }
 
     private void Revive()

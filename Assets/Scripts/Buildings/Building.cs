@@ -5,13 +5,17 @@ using UnityEngine.UI;
 
 public abstract class Building : Character
 {
-    public Sprite Icon { get => Prefabs.BuildingIcons[Type]; }
-    public abstract BuildingType Type { get; }
-    public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, costRatio);
-    public override VerticalRegion Region => VerticalRegion.Ground;
     public virtual bool IsWalkable => false;
-    private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float> { { ResourceType.Gold, 1f } };
+    public Sprite Icon { get => Prefabs.BuildingIcons[Type]; }
+    public ResourceTransaction BuildCost => new ResourceTransaction(this.Power, costRatio);
+    public abstract BuildingType Type { get; }
     private Transform deathAnimation;
+    private static Dictionary<ResourceType, float> costRatio = new Dictionary<ResourceType, float> { { ResourceType.Gold, 1f } };
+
+    protected override Character FindTargetCharacter()
+    {
+        return null;
+    }
 
     public void Initialize(Vector2Int position)
     {

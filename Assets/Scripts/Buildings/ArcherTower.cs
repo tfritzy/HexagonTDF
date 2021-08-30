@@ -11,4 +11,5 @@ public class ArcherTower : AttackTower
     public override Alliances Enemies => Alliances.Maltov;
     public override float BaseRange => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
+    public override VerticalRegion Region => VerticalRegion.Ground;
 }

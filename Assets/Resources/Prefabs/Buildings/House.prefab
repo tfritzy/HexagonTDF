@@ -58,6 +58,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9612b5e23ce22554a927fdb4839a25a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Body: {fileID: 0}
+  Projectile: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
 --- !u!1001 &7218739219201469219
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111,7 +116,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7d223f958962b804e975da38defbe9e9, type: 3}
       propertyPath: m_Name
-      value: House
+      value: Body
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d223f958962b804e975da38defbe9e9, type: 3}

@@ -32,16 +32,17 @@ public class Trebuchet : Unit
         return true;
     }
 
-    protected override void FindTargetCharacter()
+    protected override Character FindTargetCharacter()
     {
         foreach (Building building in Managers.Board.Buildings.Values)
         {
             if (building.Alliance == this.Enemies)
             {
-                this.TargetCharacter = building;
-                return;
+                return building;
             }
         }
+
+        return null;
     }
 
     public override void TakeDamage(int amount, Character source)

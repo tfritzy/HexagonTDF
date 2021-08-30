@@ -4,7 +4,6 @@ public abstract class AttackTower : Building, Interactable
 {
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
-    public Character Target;
     protected virtual float ManualPowerAdjustment => 0;
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ExplosionRadius => 0;
@@ -17,6 +16,7 @@ public abstract class AttackTower : Building, Interactable
     public ResourceTransaction UpgradeCost { get; private set; }
     private GameObject rangeCircle;
     private Vector3 rangeCircleOriginalScale;
+    public override bool IsMelee => false;
 
     public int UpgradeLevel;
 
@@ -31,19 +31,7 @@ public abstract class AttackTower : Building, Interactable
     protected override void UpdateLoop()
     {
         base.UpdateLoop();
-        CheckForTarget();
         LookAtTarget();
-        AttackIfPossible();
-    }
-
-    protected float lastAttackTime;
-    private void AttackIfPossible()
-    {
-        if (CanAttack())
-        {
-            Attack();
-            lastAttackTime = Time.time;
-        }
     }
 
     private int GetDamage(int upgradeLevel)
@@ -56,39 +44,28 @@ public abstract class AttackTower : Building, Interactable
         return this.BaseRange * (1 + .2f * upgradeLevel);
     }
 
-    protected virtual bool CanAttack()
-    {
-        return Time.time > lastAttackTime + Cooldown && Target != null;
-    }
-
     protected virtual void LookAtTarget()
     {
-        if (this.Turret == null || this.Target == null)
+        if (this.Turret == null || this.TargetCharacter == null)
         {
             return;
         }
 
-        Vector3 targetPos = Target.Position;
+        Vector3 targetPos = this.TargetCharacter.Position;
         targetPos.y = Turret.transform.position.y;
         Turret.transform.LookAt(targetPos, Vector3.up);
     }
 
-    protected GameObject SpawnProjectile()
-    {
-        return Instantiate(
-            Prefabs.Projectiles[Type],
-            this.projectileStartPosition.position,
-            new Quaternion());
-    }
-
-    protected virtual void Attack()
+    protected override void ConfigureProjectile(GameObject projectile)
     {
         for (int i = 0; i < NumProjectiles; i++)
         {
-            GameObject projectile = SpawnProjectile();
-            projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, IsCollisionTarget, this);
-            projectile.transform.LookAt(this.Target.transform, Vector3.up);
-            SetProjectileVelocity(projectile);
+            if (projectile.TryGetComponent<Projectile>(out Projectile projectileMono))
+            {
+                projectileMono.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+                SetProjectileVelocity(projectile.gameObject);
+                projectile.transform.LookAt(this.TargetCharacter.transform, Vector3.up);
+            }
 
             // Want first projectile to be perfectly accurate.
             if (i > 0)
@@ -98,18 +75,7 @@ public abstract class AttackTower : Building, Interactable
         }
     }
 
-    protected float timeBetweenTargetChecks = .5f;
-    protected float lastTargetCheckTime;
-    protected virtual void CheckForTarget()
-    {
-        if (Time.time + lastTargetCheckTime > timeBetweenTargetChecks)
-        {
-            this.Target = this.FindTarget();
-            lastTargetCheckTime = Time.time;
-        }
-    }
-
-    protected virtual Character FindTarget()
+    protected override Character FindTargetCharacter()
     {
         Collider[] nearby = Physics.OverlapSphere(this.transform.position, Range, Constants.Layers.Characters, QueryTriggerInteraction.Collide);
         Character closest = null;
@@ -141,7 +107,7 @@ public abstract class AttackTower : Building, Interactable
         return closest;
     }
 
-    protected override void DealDamageToEnemy(Character attacker, Character target, GameObject projectile)
+    protected override void DealDamageToEnemy(Character attacker, Character target)
     {
         // target can be null on contact with ground.
         if (ExplosionRadius == 0 && target != null)
@@ -150,14 +116,14 @@ public abstract class AttackTower : Building, Interactable
         }
         else
         {
-            Explode(attacker, target, projectile);
+            Explode(attacker, target);
         }
     }
 
     protected void SetProjectileVelocity(GameObject projectile)
     {
-        float flightDuration = (Target.Position - projectile.transform.position).magnitude / ProjectileSpeed;
-        Vector3 targetPosition = Target.Position + Target.Velocity * flightDuration;
+        float flightDuration = (this.TargetCharacter.Position - projectile.transform.position).magnitude / ProjectileSpeed;
+        Vector3 targetPosition = this.TargetCharacter.Position + this.TargetCharacter.Velocity * flightDuration;
         projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
     }
 
@@ -231,9 +197,13 @@ public abstract class AttackTower : Building, Interactable
         return (dps / Constants.ENEMY_HEALTH_PER_POWER) * Constants.BALANCE_INTERVAL_SECONDS;
     }
 
-    private void Explode(Character attacker, Character target, GameObject projectile)
+    private void Explode(Character attacker, Character target)
     {
-        Collider[] nearby = Physics.OverlapSphere(projectile.transform.position, this.ExplosionRadius, Constants.Layers.Characters, QueryTriggerInteraction.Collide);
+        Collider[] nearby = Physics.OverlapSphere(
+            target.transform.position,
+            this.ExplosionRadius,
+            Constants.Layers.Characters,
+            QueryTriggerInteraction.Collide);
         foreach (Collider collider in nearby)
         {
             if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, collider.gameObject))
@@ -270,7 +240,7 @@ public abstract class AttackTower : Building, Interactable
 
     protected RaycastHit[] ShootRaycastFromTurret(float maxDistance)
     {
-        Vector3 targetsPos = Target.GetComponent<Collider>().bounds.center;
+        Vector3 targetsPos = this.TargetCharacter.GetComponent<Collider>().bounds.center;
         Vector3 source = this.transform.position;
         source.y = targetsPos.y;
         Vector3 direction = targetsPos - this.transform.position;

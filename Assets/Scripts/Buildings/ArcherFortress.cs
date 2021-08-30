@@ -15,8 +15,5 @@ public class ArcherFortress : AttackTower
     public override float ProjectileStartPostionRandomness => .3f;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     protected override float ManualPowerAdjustment => -0.5f; // Making the arrows spread out means some can miss small targets.
-    protected override void Attack()
-    {
-        base.Attack();
-    }
+    public override VerticalRegion Region => VerticalRegion.Ground;
 }

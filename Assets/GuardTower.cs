@@ -11,4 +11,5 @@ public class GuardTower : AttackTower
     public override int BaseDamage => 5;
     public override float BaseRange => RangeOptions.Medium;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
+    public override VerticalRegion Region => VerticalRegion.Ground;
 }
