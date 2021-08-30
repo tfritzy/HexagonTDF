@@ -11,12 +11,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Cloth
-    second: {fileID: 2100000, guid: 5045e4a312f86ba42adc7614a6116be9, type: 2}
+    second: {fileID: 2100000, guid: c14b066e77b428f4db75644ccb37c1dd, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Coloring
-    second: {fileID: 2100000, guid: 7582380e3984cab4892c79ab127d34d9, type: 2}
+    second: {fileID: 2100000, guid: c14b066e77b428f4db75644ccb37c1dd, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
