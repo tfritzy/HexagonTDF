@@ -16,5 +16,6 @@
     GuardTower,
     Dock,
     Orb,
-    Barracks
+    Barracks,
+    OilTower
 }

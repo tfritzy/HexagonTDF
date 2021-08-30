@@ -11,7 +11,7 @@ public abstract class AttackTower : Building, Interactable
     protected GameObject Turret;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
     public override int Damage => GetDamage(UpgradeLevel);
-    public override float BaseRange => GetRange(UpgradeLevel);
+    public override float Range => GetRange(UpgradeLevel);
     public override float Power => GetPower(UpgradeLevel);
     protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     public ResourceTransaction UpgradeCost { get; private set; }
@@ -73,14 +73,19 @@ public abstract class AttackTower : Building, Interactable
         Turret.transform.LookAt(targetPos, Vector3.up);
     }
 
+    protected GameObject SpawnProjectile()
+    {
+        return Instantiate(
+            Prefabs.Projectiles[Type],
+            this.projectileStartPosition.position,
+            new Quaternion());
+    }
+
     protected virtual void Attack()
     {
         for (int i = 0; i < NumProjectiles; i++)
         {
-            GameObject projectile = Instantiate(
-                Prefabs.Projectiles[Type],
-                this.projectileStartPosition.position,
-                new Quaternion());
+            GameObject projectile = SpawnProjectile();
             projectile.GetComponent<Projectile>().Initialize(DealDamageToEnemy, IsCollisionTarget, this);
             projectile.transform.LookAt(this.Target.transform, Vector3.up);
             SetProjectileVelocity(projectile);

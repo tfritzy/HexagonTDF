@@ -13,7 +13,7 @@ public class AttackTowerBuildMenu : BuildMenu
     {
         BuildingType.ArcherTower,
         BuildingType.Spikes,
-        BuildingType.ArcherFortress,
+        BuildingType.OilTower,
         BuildingType.SparkTower,
         BuildingType.ChainLightningTower,
         BuildingType.LightningTower,
