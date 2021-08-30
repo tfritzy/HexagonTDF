@@ -380,7 +380,11 @@ MonoBehaviour:
   SelectTowerMenu: {fileID: 4900946743011058300, guid: 094c4f7d73db6f8458ce2e150746b09f, type: 3}
   ConsecrateEffect: {fileID: 5736227985175077343, guid: 366c1fd6527279e4380263f44b668ff6, type: 3}
   Gem: {fileID: 5779178242862859042, guid: f4407c7fc3e0e504d81cecb5b514ab00, type: 3}
-  Tree: {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
+  Trees:
+  - {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
+  - {fileID: 919132149155446097, guid: b88a4804521b199438f2929a09eab3b6, type: 3}
+  DeadTrees:
+  - {fileID: 919132149155446097, guid: c5f63746db324a0438a3445a1008b0f7, type: 3}
   StoneColumns:
   - {fileID: 919132149155446097, guid: 90f2b2c38674d3849a7d4d546dd919d5, type: 3}
   - {fileID: 919132149155446097, guid: 84e59c1df73fe034e83087ff78297463, type: 3}

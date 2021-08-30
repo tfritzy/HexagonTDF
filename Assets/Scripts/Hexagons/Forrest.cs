@@ -7,10 +7,19 @@ public class Forrest : ObstacleHexagon
     public override Biome Biome => Biome.Forrest;
     public override Color BaseColor => ColorExtensions.Create("#3f7f59");
     public override float ObstacleChance => .3f;
-    public override float SizeVarience => .5f;
+    public override float SizeVarience => .4f;
+    private const float liveTreeChance = .8f;
 
-    public override GameObject GetObstacle()
+    public override GameObject GetObstacle(System.Random random)
     {
-        return Managers.Prefabs.Tree;
+        if (random.NextDouble() <= liveTreeChance)
+        {
+            return Managers.Prefabs.Trees[random.Next(0, Managers.Prefabs.Trees.Length)];
+        }
+        else
+        {
+            return Managers.Prefabs.DeadTrees[random.Next(0, Managers.Prefabs.DeadTrees.Length)];
+        }
+
     }
 }
