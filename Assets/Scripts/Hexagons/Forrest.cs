@@ -5,7 +5,7 @@ using UnityEngine;
 public class Forrest : ObstacleHexagon
 {
     public override Biome Biome => Biome.Forrest;
-    public override Color BaseColor => ColorExtensions.Create("#3f7f59");
+    public override Color BaseColor => ColorExtensions.Create("#86988b");
     public override float ObstacleChance => .3f;
     public override float SizeVarience => .4f;
     private const float liveTreeChance = .8f;

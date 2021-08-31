@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TintableHex
-  m_Shader: {fileID: 10707, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 48dca5b99d113b8d11006bab44295342, type: 3}
   m_ShaderKeywords: BACKSOLID BOTTOMSOLID COLORCORRECTION_ON FRONTSOLID LEFTSOLID
     RIGHTSOLD RIGHTSOLID TOPSOLID _AOUV_UV0 _COLORCORRECTIONENABLE_ON _GRADIENTSPACE_WORLD_SPACE
     _GRADSETTINGS_B_USE_GLOBAL _GRADSETTINGS_D_USE_GLOBAL _GRADSETTINGS_F_USE_GLOBAL
@@ -67,6 +67,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ramp:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -156,7 +160,7 @@ Material:
     m_Colors:
     - _AOColor: {r: 1, g: 1, b: 1, a: 1}
     - _AmbientColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.43164825, g: 0.7075472, b: 0.4590109, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1_B: {r: 0.17013763, g: 0.3490566, b: 0.21571319, a: 1}
     - _Color1_D: {r: 0.2205882, g: 0.8387422, b: 1, a: 1}
     - _Color1_F: {r: 0.42259994, g: 0.7264151, b: 0.44679278, a: 1}

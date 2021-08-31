@@ -18,4 +18,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject[] Trees;
     public GameObject[] DeadTrees;
     public GameObject[] StoneColumns;
+    public GameObject[] Cacti;
 }
