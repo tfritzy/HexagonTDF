@@ -5,7 +5,7 @@ public class Grassland : ObstacleHexagon
 {
     public override Biome Biome => Biome.Grassland;
     public override bool IsBuildable => true;
-    public override Color BaseColor => ColorExtensions.Create("#a4baaa");
+    public override Color BaseColor => ColorExtensions.Create("#4f664e");
     public override float ObstacleChance => .03f;
     public override float SizeVarience => .4f;
 

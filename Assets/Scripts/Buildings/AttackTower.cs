@@ -34,6 +34,11 @@ public abstract class AttackTower : Building, Interactable
         LookAtTarget();
     }
 
+    protected override bool IsTargetStillValid()
+    {
+        return (TargetCharacter.transform.position - this.transform.position).magnitude <= this.Range;
+    }
+
     private int GetDamage(int upgradeLevel)
     {
         return (int)(this.BaseDamage * (1 + .25f * upgradeLevel));
@@ -62,7 +67,7 @@ public abstract class AttackTower : Building, Interactable
         {
             if (projectile.TryGetComponent<Projectile>(out Projectile projectileMono))
             {
-                projectileMono.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+                base.ConfigureProjectile(projectile);
                 SetProjectileVelocity(projectile.gameObject);
                 projectile.transform.LookAt(this.TargetCharacter.transform, Vector3.up);
             }
@@ -220,7 +225,7 @@ public abstract class AttackTower : Building, Interactable
 
     private float getRangePowerMultiplier(int upgradeLevel)
     {
-        return 1 + (GetRange(upgradeLevel) / RangeOptions.VeryVeryShort) / 10;
+        return 1 + (GetRange(upgradeLevel) / RangeOptions.VeryShort) / 10;
     }
 
     private float getAttackRegionMultiplier()

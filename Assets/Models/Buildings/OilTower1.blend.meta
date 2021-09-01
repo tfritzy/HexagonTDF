@@ -96,14 +96,14 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5261174
+      - time: 0.20743607
         functionName: ReleaseAttack
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.98976845
+      - time: 0.87987834
         functionName: FinishedRecovering
         data: 
         objectReferenceParameter: {instanceID: 0}

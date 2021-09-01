@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Projectile : MonoBehaviour
 {
@@ -10,18 +11,20 @@ public class Projectile : MonoBehaviour
     protected Rigidbody Rigidbody;
     protected float birthTime;
     private Character attacker;
-    private bool hasAlreadyTriggered;
     private Transform trailParticles;
     private Transform explosionParticles;
     private bool upForceOnDeath;
     private bool isTracking;
     private bool isInitialized;
+    private bool canHitMultipleTargets;
+    private HashSet<GameObject> hits;
 
     void Start()
     {
         this.trailParticles = this.transform.Find("Trail");
         this.explosionParticles = this.transform.Find("Explosion");
         Helpers.TriggerAllParticleSystems(this.explosionParticles, false);
+        hits = new HashSet<GameObject>();
         StartLogic();
         Destroy(this.gameObject, 30f);
     }
@@ -35,13 +38,15 @@ public class Projectile : MonoBehaviour
         DealDamageToEnemy damageEnemyHandler,
         IsCollisionTarget isCollisionTarget,
         Character attacker,
-        bool upForceOnDeath = false)
+        bool upForceOnDeath = false,
+        bool canHitMultipleTargets = false)
     {
         this.dealDamageToEnemy = damageEnemyHandler;
         this.isCollisionTarget = isCollisionTarget;
         this.attacker = attacker;
         this.birthTime = Time.time;
         this.upForceOnDeath = upForceOnDeath;
+        this.canHitMultipleTargets = canHitMultipleTargets;
         SetupRigidbody();
         this.isInitialized = true;
     }
@@ -81,14 +86,19 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        if (hasAlreadyTriggered)
+        if (hits.Count > 0 && !canHitMultipleTargets)
         {
             return;
         }
 
         if (isCollisionTarget(attacker, other.gameObject))
         {
-            hasAlreadyTriggered = true;
+            if (hits.Contains(other.gameObject))
+            {
+                return;
+            }
+
+            hits.Add(other.gameObject);
             OnCollision(other.gameObject);
             Character character = other.GetComponent<Character>();
             dealDamageToEnemy(attacker, other.GetComponent<Character>());
@@ -101,7 +111,11 @@ public class Projectile : MonoBehaviour
         Helpers.TriggerAllParticleSystems(this.explosionParticles, true);
         DetachParticles(this.explosionParticles);
         DetachParticles(this.trailParticles);
-        GameObject.Destroy(this.gameObject);
+
+        if (!canHitMultipleTargets)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
     }
 
     private void SetupRigidbody()

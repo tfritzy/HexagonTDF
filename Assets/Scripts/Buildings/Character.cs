@@ -31,6 +31,7 @@ public abstract class Character : MonoBehaviour, Damageable
     protected virtual AnimationState WalkAnimation => AnimationState.Walking;
     protected virtual AnimationState IdleAnimation => AnimationState.Idle;
     protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
+    protected virtual bool CanProjectilesHitMultipleTargets => false;
     protected Transform projectileStartPosition;
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
@@ -148,12 +149,17 @@ public abstract class Character : MonoBehaviour, Damageable
         ApplyEffects();
         ProcessTakeDamageTimings();
 
-        if (TargetCharacter == null)
+        if (TargetCharacter == null || !IsTargetStillValid())
         {
             this.TargetCharacter = FindTargetCharacter();
         }
 
         AttackTarget();
+    }
+
+    protected virtual bool IsTargetStillValid()
+    {
+        return true;
     }
 
     protected abstract Character FindTargetCharacter();
@@ -334,7 +340,11 @@ public abstract class Character : MonoBehaviour, Damageable
         projectile.transform.parent = null;
         if (projectile.TryGetComponent<Projectile>(out Projectile projectileMono))
         {
-            projectileMono.Initialize(DealDamageToEnemy, IsCollisionTarget, this);
+            projectileMono.Initialize(
+                DealDamageToEnemy,
+                IsCollisionTarget,
+                this,
+                canHitMultipleTargets: CanProjectilesHitMultipleTargets);
             projectileMono.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
         }
     }
