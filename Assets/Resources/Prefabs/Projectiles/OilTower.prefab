@@ -9694,7 +9694,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 082a0f12700a64d47b9acc0e3eeab2d5, type: 2}
+  - {fileID: 2100000, guid: 39413f7de42d5f84cb75e27e83ded10a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

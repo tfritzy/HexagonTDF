@@ -31,6 +31,7 @@ public abstract class Character : MonoBehaviour, Damageable
     protected virtual AnimationState WalkAnimation => AnimationState.Walking;
     protected virtual AnimationState IdleAnimation => AnimationState.Idle;
     protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
+    protected virtual float ExplosionRadius => 0;
     protected virtual bool CanProjectilesHitMultipleTargets => false;
     protected Transform projectileStartPosition;
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
@@ -260,7 +261,14 @@ public abstract class Character : MonoBehaviour, Damageable
 
     protected virtual void DealDamageToEnemy(Character attacker, Character target)
     {
-        target.TakeDamage(this.Damage, this);
+        if (this.ExplosionRadius == 0)
+        {
+            target.TakeDamage(this.Damage, this);
+        }
+        else
+        {
+            this.Explode(this, target);
+        }
     }
 
     protected virtual bool IsCollisionTarget(Character attacker, GameObject other)
@@ -364,13 +372,41 @@ public abstract class Character : MonoBehaviour, Damageable
                 this.AttackPhase = AttackPhase.WindingUp;
                 this.CurrentAnimation = this.AttackAnimation;
                 if (this.Rigidbody != null) this.Rigidbody.velocity = Vector3.zero;
-                Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
-                diffVector.y = 0;
-                this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
+                LookTowardsTarget();
             }
 
             lastAttackTime = Time.time;
         }
     }
 
+    protected virtual void LookTowardsTarget()
+    {
+        if (this.TargetCharacter == null)
+        {
+            return;
+        }
+
+        Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
+        diffVector.y = 0;
+        this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
+    }
+
+    private void Explode(Character attacker, Character target)
+    {
+        Collider[] nearby = Physics.OverlapSphere(
+            target.transform.position,
+            this.ExplosionRadius,
+            Constants.Layers.Characters,
+            QueryTriggerInteraction.Collide);
+        foreach (Collider collider in nearby)
+        {
+            if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, collider.gameObject))
+            {
+                if (attacker.Enemies == damageable.Alliance)
+                {
+                    damageable.TakeDamage(Damage, this);
+                }
+            }
+        }
+    }
 }

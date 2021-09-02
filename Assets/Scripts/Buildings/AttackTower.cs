@@ -6,7 +6,6 @@ public abstract class AttackTower : Building, Interactable
     public virtual float ProjectileStartPostionRandomness => 0f;
     protected virtual float ManualPowerAdjustment => 0;
     protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
-    protected virtual float ExplosionRadius => 0;
     protected GameObject Turret;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
     public override int Damage => GetDamage(UpgradeLevel);
@@ -22,7 +21,7 @@ public abstract class AttackTower : Building, Interactable
 
     protected override void Setup()
     {
-        this.Turret = transform.Find("Turret")?.gameObject;
+        this.Turret = Helpers.RecursiveFindChild(this.transform, "Turret")?.gameObject;
         UpgradeLevel = 0;
         UpgradeCost = new ResourceTransaction(GetUpgradeCost());
         base.Setup();
@@ -31,7 +30,7 @@ public abstract class AttackTower : Building, Interactable
     protected override void UpdateLoop()
     {
         base.UpdateLoop();
-        LookAtTarget();
+        LookTowardsTarget();
     }
 
     protected override bool IsTargetStillValid()
@@ -49,16 +48,18 @@ public abstract class AttackTower : Building, Interactable
         return this.BaseRange * (1 + .2f * upgradeLevel);
     }
 
-    protected virtual void LookAtTarget()
+    protected override void LookTowardsTarget()
     {
         if (this.Turret == null || this.TargetCharacter == null)
         {
             return;
         }
 
+        int flip = TargetCharacter.transform.position.x > this.transform.position.x ? -1 : 1;
         Vector3 targetPos = this.TargetCharacter.Position;
         targetPos.y = Turret.transform.position.y;
-        Turret.transform.LookAt(targetPos, Vector3.up);
+        float angle = Vector3.Angle(Vector3.forward, targetPos - this.transform.position) * flip;
+        Turret.transform.localRotation = Quaternion.Euler(0, 0, angle);
     }
 
     protected override void ConfigureProjectile(GameObject projectile)
@@ -110,19 +111,6 @@ public abstract class AttackTower : Building, Interactable
         }
 
         return closest;
-    }
-
-    protected override void DealDamageToEnemy(Character attacker, Character target)
-    {
-        // target can be null on contact with ground.
-        if (ExplosionRadius == 0 && target != null)
-        {
-            target.TakeDamage(Damage, this);
-        }
-        else
-        {
-            Explode(attacker, target);
-        }
     }
 
     protected void SetProjectileVelocity(GameObject projectile)
@@ -200,27 +188,6 @@ public abstract class AttackTower : Building, Interactable
     {
         float dps = ((GetDamage(upgradeLevel) * NumProjectiles * ExpectedNumberOfEnemiesHitByEachProjectile) / GetCooldown(upgradeLevel));
         return (dps / Constants.ENEMY_HEALTH_PER_POWER) * Constants.BALANCE_INTERVAL_SECONDS;
-    }
-
-    private void Explode(Character attacker, Character target)
-    {
-        Collider[] nearby = Physics.OverlapSphere(
-            target.transform.position,
-            this.ExplosionRadius,
-            Constants.Layers.Characters,
-            QueryTriggerInteraction.Collide);
-        foreach (Collider collider in nearby)
-        {
-            if (InterfaceUtility.TryGetInterface<Damageable>(out Damageable damageable, collider.gameObject))
-            {
-                continue;
-            }
-
-            if (attacker.Enemies == damageable.Alliance)
-            {
-                damageable.TakeDamage(Damage, this);
-            }
-        }
     }
 
     private float getRangePowerMultiplier(int upgradeLevel)
