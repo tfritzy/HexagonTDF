@@ -2,22 +2,28 @@ using UnityEngine;
 
 public abstract class AttackTower : Building, Interactable
 {
+    public int UpgradeLevel;
+    public float Rotation;
+    public ResourceTransaction UpgradeCost { get; private set; }
     public virtual int NumProjectiles => 1;
     public virtual float ProjectileStartPostionRandomness => 0f;
-    protected virtual float ManualPowerAdjustment => 0;
-    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
-    protected GameObject Turret;
     public override int StartingHealth => 15; // TODO: Set appropriate value per tower.
     public override int Damage => GetDamage(UpgradeLevel);
     public override float Range => GetRange(UpgradeLevel);
     public override float Power => GetPower(UpgradeLevel);
-    protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
-    public ResourceTransaction UpgradeCost { get; private set; }
-    private GameObject rangeCircle;
-    private Vector3 rangeCircleOriginalScale;
     public override bool IsMelee => false;
-
-    public int UpgradeLevel;
+    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
+    protected virtual float ManualPowerAdjustment => 0;
+    protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
+    protected virtual float RotationVelocityDegreesPerSec => 180;
+    protected GameObject Turret;
+    private Vector3 rangeCircleOriginalScale;
+    private Vector3 FacingDirection => new Vector3(
+        Mathf.Cos((Rotation - 90) * Mathf.Deg2Rad),
+        0,
+        Mathf.Sin((Rotation - 90) * Mathf.Deg2Rad));
+    private GameObject rangeCircle;
+    private Vector3 RotationAxis = Vector3.forward;
 
     protected override void Setup()
     {
@@ -29,8 +35,46 @@ public abstract class AttackTower : Building, Interactable
 
     protected override void UpdateLoop()
     {
+        if (this.IsDead)
+        {
+            return;
+        }
+
+        RotateTowardsTarget();
         base.UpdateLoop();
-        LookTowardsTarget();
+    }
+
+    private void RotateTowardsTarget()
+    {
+        if (this.Turret == null || this.TargetCharacter == null)
+        {
+            return;
+        }
+
+        Vector3 diffVector = TargetCharacter.transform.position - this.Turret.transform.position;
+        diffVector.y = 0;
+        float angleDir = Helpers.AngleDir(FacingDirection, diffVector);
+        Rotation += angleDir * RotationVelocityDegreesPerSec * Time.deltaTime;
+        Turret.transform.localRotation = Quaternion.Euler(RotationAxis * Rotation);
+    }
+
+    protected override bool CanAttack()
+    {
+        if (base.CanAttack() == false)
+        {
+            return false;
+        }
+
+        float angleBetween = Helpers.AngleXZ(
+            FacingDirection,
+            this.Turret.transform.position - TargetCharacter.transform.position);
+        print(angleBetween);
+        if (angleBetween > 10)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     protected override bool IsTargetStillValid()
@@ -46,20 +90,6 @@ public abstract class AttackTower : Building, Interactable
     private float GetRange(int upgradeLevel)
     {
         return this.BaseRange * (1 + .2f * upgradeLevel);
-    }
-
-    protected override void LookTowardsTarget()
-    {
-        if (this.Turret == null || this.TargetCharacter == null)
-        {
-            return;
-        }
-
-        int flip = TargetCharacter.transform.position.x > this.transform.position.x ? -1 : 1;
-        Vector3 targetPos = this.TargetCharacter.Position;
-        targetPos.y = Turret.transform.position.y;
-        float angle = Vector3.Angle(Vector3.forward, targetPos - this.transform.position) * flip;
-        Turret.transform.localRotation = Quaternion.Euler(0, 0, angle);
     }
 
     protected override void ConfigureProjectile(GameObject projectile)

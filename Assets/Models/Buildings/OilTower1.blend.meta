@@ -20,6 +20,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Iron
+    second: {fileID: 2100000, guid: d138521dec202c64090afe9108971c63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: TowerBannerBase
     second: {fileID: 2100000, guid: c14b066e77b428f4db75644ccb37c1dd, type: 2}
   - first:
@@ -36,6 +41,11 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: TowerWood.001
+    second: {fileID: 2100000, guid: 834e582139732ea4cb752b8365982657, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood
     second: {fileID: 2100000, guid: 834e582139732ea4cb752b8365982657, type: 2}
   materials:
     materialImportMode: 2

@@ -33,7 +33,7 @@ public class Barracks : Building
     protected override void Setup()
     {
         base.Setup();
-        this.levelStartTime = Time.time;
+        this.levelStartTime = -Constants.BALANCE_INTERVAL_SECONDS;
         this.exitGridPosition = Managers.Board.GetNextStepInPathToSource(
             Managers.Board.Trebuchet.GridPosition,
             this.GridPosition).Position;
@@ -57,7 +57,7 @@ public class Barracks : Building
             float powerBudget = currentWave;
             System.Random random = new System.Random(currentWave);
 
-            if (currentWave % 2 == 1)
+            if (currentWave % 2 == 0)
             {
                 this.BarracksIndex = Managers.Board.Barracks.IndexOf(this);
                 int roll = random.Next(0, Managers.Board.Barracks.Count);

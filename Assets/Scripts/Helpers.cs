@@ -395,4 +395,30 @@ public static class Helpers
     {
         return (value / 25 + (value % 25 > 12 ? 1 : 0)) * 25;
     }
+
+    public static float AngleDir(Vector3 fwd, Vector3 targetDir)
+    {
+        Vector3 perp = Vector3.Cross(fwd, targetDir);
+        float dir = Vector3.Dot(perp, Vector3.up);
+
+        if (dir > 0.0)
+        {
+            return 1.0f;
+        }
+        else if (dir < 0.0)
+        {
+            return -1.0f;
+        }
+        else
+        {
+            return 0.0f;
+        }
+    }
+
+    public static float AngleXZ(Vector3 forward, Vector3 targetDirection)
+    {
+        forward.y = 0;
+        targetDirection.y = 0;
+        return Vector3.Angle(targetDirection, forward);
+    }
 }

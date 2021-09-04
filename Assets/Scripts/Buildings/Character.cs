@@ -357,9 +357,29 @@ public abstract class Character : MonoBehaviour, Damageable
         }
     }
 
+    protected virtual bool CanAttack()
+    {
+        if (AttackPhase != AttackPhase.Idle)
+        {
+            return false;
+        }
+
+        if (Time.time < lastAttackTime + this.Cooldown)
+        {
+            return false;
+        }
+
+        if (!IsInRangeOfTarget())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     protected void AttackTarget()
     {
-        if (Time.time > lastAttackTime + this.Cooldown && IsInRangeOfTarget() && AttackPhase == AttackPhase.Idle)
+        if (CanAttack())
         {
             if (this.animator == null)
             {
@@ -372,23 +392,10 @@ public abstract class Character : MonoBehaviour, Damageable
                 this.AttackPhase = AttackPhase.WindingUp;
                 this.CurrentAnimation = this.AttackAnimation;
                 if (this.Rigidbody != null) this.Rigidbody.velocity = Vector3.zero;
-                LookTowardsTarget();
             }
 
             lastAttackTime = Time.time;
         }
-    }
-
-    protected virtual void LookTowardsTarget()
-    {
-        if (this.TargetCharacter == null)
-        {
-            return;
-        }
-
-        Vector3 diffVector = TargetCharacter.transform.position - this.transform.position;
-        diffVector.y = 0;
-        this.transform.rotation = Quaternion.LookRotation(diffVector, Vector3.up);
     }
 
     private void Explode(Character attacker, Character target)

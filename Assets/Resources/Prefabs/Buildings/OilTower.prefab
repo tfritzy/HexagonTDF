@@ -142,7 +142,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3375450649372684602}
   m_LocalRotation: {x: -0.0048953025, y: 0.96884805, z: 0.24760465, w: 0.0012510731}
-  m_LocalPosition: {x: 0.023830015, y: 0.5488883, z: -0.494}
+  m_LocalPosition: {x: 0.115, y: 0.548, z: -0.494}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3116196496371224389}
@@ -176,7 +176,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 834e582139732ea4cb752b8365982657, type: 2}
+  - {fileID: 2100000, guid: d138521dec202c64090afe9108971c63, type: 2}
   - {fileID: 2100000, guid: d138521dec202c64090afe9108971c63, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -398,6 +398,7 @@ MonoBehaviour:
   AttackSpeedModifiedPercent: 0
   AttackPhase: 0
   _animationState: 0
+  Rotation: 0
   UpgradeLevel: 0
 --- !u!65 &1503053867769639229
 BoxCollider:

@@ -15,4 +15,5 @@ public class OilTower : AttackTower
     protected override bool CanProjectilesHitMultipleTargets => true;
     public override bool IsMelee => true;
     protected override float ExplosionRadius => .5f;
+    protected override float RotationVelocityDegreesPerSec => 90;
 }
