@@ -20,8 +20,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Highlight
+    second: {fileID: 2100000, guid: 470bd0e3d2f0ee740803bda51063a531, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Iron
     second: {fileID: 2100000, guid: d138521dec202c64090afe9108971c63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Steel
+    second: {fileID: 2100000, guid: 36643397e0083ee43aa0f119ab216d87, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -79,7 +89,7 @@ ModelImporter:
       takeName: Scene
       internalID: 0
       firstFrame: 1
-      lastFrame: 40
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -106,7 +116,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.13483335
+      - time: 0.27181965
         functionName: ReleaseAttack
         data: 
         objectReferenceParameter: {instanceID: 0}

@@ -7,73 +7,67 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4301057783707249758, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_Name
-      value: CFXR Smoke Poof Circle Flat
+    - target: {fileID: 114352090960788102, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: clearBehavior
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
+    - target: {fileID: 468644890304462930, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.70710677
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 468644890304462930, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
+    - target: {fileID: 468644890304462930, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
       propertyPath: m_RenderAlignment
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 7000817145789585468, guid: 74ccf31d718fbea49a5c201d4b7c5af2,
-        type: 3}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90.00001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209169473702292027, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4301057783707249758, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
+      propertyPath: m_Name
+      value: CFXR Smoke Poof Circle Flat
+      objectReference: {fileID: 0}
+    - target: {fileID: 7000817145789585468, guid: 74ccf31d718fbea49a5c201d4b7c5af2, type: 3}
       propertyPath: playOnAwake
       value: 1
       objectReference: {fileID: 0}

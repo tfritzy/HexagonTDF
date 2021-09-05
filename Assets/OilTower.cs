@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class OilTower : AttackTower
 {
+    public GameObject Impact;
     public override BuildingType Type => BuildingType.OilTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Maltov;
@@ -16,4 +17,20 @@ public class OilTower : AttackTower
     public override bool IsMelee => true;
     protected override float ExplosionRadius => .5f;
     protected override float RotationVelocityDegreesPerSec => 90;
+    private GameObject impact;
+
+    protected override void Setup()
+    {
+        base.Setup();
+        impact = Instantiate(Impact, this.transform);
+        Helpers.TriggerAllParticleSystems(impact.transform, false);
+    }
+
+    protected override void DealDamageToEnemy(Character attacker, Character target)
+    {
+        base.DealDamageToEnemy(attacker, target);
+        impact.SetActive(true);
+        this.impact.transform.position = target.transform.position + Vector3.up * .01f;
+        Helpers.TriggerAllParticleSystems(impact.transform, true);
+    }
 }

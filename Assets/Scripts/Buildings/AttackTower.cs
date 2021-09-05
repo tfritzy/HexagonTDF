@@ -19,11 +19,10 @@ public abstract class AttackTower : Building, Interactable
     protected GameObject Turret;
     private Vector3 rangeCircleOriginalScale;
     private Vector3 FacingDirection => new Vector3(
-        Mathf.Cos((Rotation - 90) * Mathf.Deg2Rad),
+        Mathf.Cos((Rotation + 90) * Mathf.Deg2Rad),
         0,
         Mathf.Sin((Rotation - 90) * Mathf.Deg2Rad));
     private GameObject rangeCircle;
-    private Vector3 RotationAxis = Vector3.forward;
 
     protected override void Setup()
     {
@@ -55,7 +54,8 @@ public abstract class AttackTower : Building, Interactable
         diffVector.y = 0;
         float angleDir = Helpers.AngleDir(FacingDirection, diffVector);
         Rotation += angleDir * RotationVelocityDegreesPerSec * Time.deltaTime;
-        Turret.transform.localRotation = Quaternion.Euler(RotationAxis * Rotation);
+        Turret.transform.localRotation = Quaternion.Euler(new Vector3(0, Rotation, 0)
+        );
     }
 
     protected override bool CanAttack()
@@ -67,7 +67,7 @@ public abstract class AttackTower : Building, Interactable
 
         float angleBetween = Helpers.AngleXZ(
             FacingDirection,
-            this.Turret.transform.position - TargetCharacter.transform.position);
+            TargetCharacter.transform.position - this.Turret.transform.position);
         print(angleBetween);
         if (angleBetween > 10)
         {
