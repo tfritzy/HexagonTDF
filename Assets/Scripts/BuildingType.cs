@@ -17,5 +17,6 @@
     Dock,
     Orb,
     Barracks,
-    OilTower
+    HammerTower,
+    BallistaTower,
 }

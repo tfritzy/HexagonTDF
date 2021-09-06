@@ -12,21 +12,23 @@ public abstract class AttackTower : Building, Interactable
     public override float Range => GetRange(UpgradeLevel);
     public override float Power => GetPower(UpgradeLevel);
     public override bool IsMelee => false;
-    protected virtual int ExpectedNumberOfEnemiesHitByEachProjectile => 1;
+    protected virtual float ExpectedNumberOfEnemiesHitByEachProjectile => 1;
     protected virtual float ManualPowerAdjustment => 0;
     protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     protected virtual float RotationVelocityDegreesPerSec => 180;
     protected GameObject Turret;
     private Vector3 rangeCircleOriginalScale;
     private Vector3 FacingDirection => new Vector3(
-        Mathf.Cos((Rotation + 90) * Mathf.Deg2Rad),
+        Mathf.Cos((Rotation + 90 + turretStartRotation.x) * Mathf.Deg2Rad),
         0,
-        Mathf.Sin((Rotation - 90) * Mathf.Deg2Rad));
+        Mathf.Sin((Rotation - 90 - turretStartRotation.z) * Mathf.Deg2Rad));
     private GameObject rangeCircle;
+    private Vector3 turretStartRotation;
 
     protected override void Setup()
     {
         this.Turret = Helpers.RecursiveFindChild(this.transform, "Turret")?.gameObject;
+        this.turretStartRotation = this.Turret?.transform.localRotation.eulerAngles ?? Vector3.zero;
         UpgradeLevel = 0;
         UpgradeCost = new ResourceTransaction(GetUpgradeCost());
         base.Setup();

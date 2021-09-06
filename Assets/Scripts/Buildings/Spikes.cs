@@ -11,7 +11,7 @@ public class Spikes : AttackTower
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Maltov;
     public override bool IsWalkable => true;
-    protected override int ExpectedNumberOfEnemiesHitByEachProjectile => 2;
+    protected override float ExpectedNumberOfEnemiesHitByEachProjectile => 1.5f;
     public override VerticalRegion Region => VerticalRegion.Ground;
     public override bool IsMelee => true;
 

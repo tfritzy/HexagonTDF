@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OilTower : AttackTower
+public class HammerTower : AttackTower
 {
     public GameObject Impact;
-    public override BuildingType Type => BuildingType.OilTower;
+    public override BuildingType Type => BuildingType.HammerTower;
     public override Alliances Alliance => Alliances.Player;
     public override Alliances Enemies => Alliances.Maltov;
     public override float BaseCooldown => AttackSpeed.Slow;
@@ -17,6 +17,7 @@ public class OilTower : AttackTower
     public override bool IsMelee => true;
     protected override float ExplosionRadius => .5f;
     protected override float RotationVelocityDegreesPerSec => 90;
+    protected override float ExpectedNumberOfEnemiesHitByEachProjectile => 1.5f;
     private GameObject impact;
 
     protected override void Setup()

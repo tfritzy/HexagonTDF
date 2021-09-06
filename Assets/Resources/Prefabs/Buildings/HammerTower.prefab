@@ -41,10 +41,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5237982012148883600}
-  - component: {fileID: 6436858763500970753}
   - component: {fileID: 1503053867769639229}
+  - component: {fileID: 1632500108037917580}
   m_Layer: 9
-  m_Name: OilTower
+  m_Name: HammerTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,26 +65,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6436858763500970753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4898469780013808170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c812adef20c6a8f459f96cd4ca6c495d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Body: {fileID: 0}
-  Projectile: {fileID: 8584390120698001487, guid: 6be63d945e0ab764e926f30a80b4bb7e, type: 3}
-  AttackSpeedModifiedPercent: 0
-  AttackPhase: 0
-  _animationState: 0
-  UpgradeLevel: 0
-  Rotation: 0
-  Impact: {fileID: 481947888716730270, guid: b4f04d135faa2bc42b6a131603b9e813, type: 3}
 --- !u!65 &1503053867769639229
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -98,6 +78,26 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.90956, z: 1}
   m_Center: {x: 0, y: 0.9703113, z: 0}
+--- !u!114 &1632500108037917580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4898469780013808170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c812adef20c6a8f459f96cd4ca6c495d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Body: {fileID: 0}
+  Projectile: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
+  UpgradeLevel: 0
+  Rotation: 0
+  Impact: {fileID: 481947888716730270, guid: b4f04d135faa2bc42b6a131603b9e813, type: 3}
 --- !u!1001 &3317222117073135298
 PrefabInstance:
   m_ObjectHideFlags: 0
