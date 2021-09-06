@@ -16,7 +16,7 @@ public class Projectile : MonoBehaviour
     private bool upForceOnDeath;
     private bool isTracking;
     private bool isInitialized;
-    private bool canHitMultipleTargets;
+    private int maxPierceCount;
     private HashSet<GameObject> hits;
 
     void Start()
@@ -38,15 +38,15 @@ public class Projectile : MonoBehaviour
         DealDamageToEnemy damageEnemyHandler,
         IsCollisionTarget isCollisionTarget,
         Character attacker,
-        bool upForceOnDeath = false,
-        bool canHitMultipleTargets = false)
+        int maxPierceCount,
+        bool upForceOnDeath = false)
     {
         this.dealDamageToEnemy = damageEnemyHandler;
         this.isCollisionTarget = isCollisionTarget;
         this.attacker = attacker;
         this.birthTime = Time.time;
         this.upForceOnDeath = upForceOnDeath;
-        this.canHitMultipleTargets = canHitMultipleTargets;
+        this.maxPierceCount = maxPierceCount;
         SetupRigidbody();
         this.isInitialized = true;
     }
@@ -86,7 +86,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        if (hits.Count > 0 && !canHitMultipleTargets)
+        if (hits.Count > this.maxPierceCount)
         {
             return;
         }
@@ -112,7 +112,7 @@ public class Projectile : MonoBehaviour
         DetachParticles(this.explosionParticles);
         DetachParticles(this.trailParticles);
 
-        if (!canHitMultipleTargets)
+        if (hits.Count > maxPierceCount)
         {
             GameObject.Destroy(this.gameObject);
         }

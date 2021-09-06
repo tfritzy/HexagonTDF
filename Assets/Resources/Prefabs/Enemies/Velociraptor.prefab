@@ -153,13 +153,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsJumping: 0
-  _animationState: 0
-  AttackPhase: 0
   GoldTaperAmount: 0
   PositionOffset: {x: 0, y: 0, z: 0}
 --- !u!65 &642570159389141117
@@ -173,8 +172,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.61639667, y: 0.55862904, z: 0.85749567}
-  m_Center: {x: -0.014902234, y: 0.27848864, z: 0.095772326}
+  m_Size: {x: 0.61639667, y: 1.1256461, z: 0.85749567}
+  m_Center: {x: -0.014902234, y: 0.5619972, z: 0.095772326}
 --- !u!54 &1690111639588967495
 Rigidbody:
   m_ObjectHideFlags: 0

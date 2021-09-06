@@ -182,13 +182,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsJumping: 0
-  _animationState: 0
-  AttackPhase: 0
   GoldTaperAmount: 0
   PositionOffset: {x: 0, y: 0, z: 0}
 --- !u!136 &5420920303599549961
@@ -201,8 +200,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.15
-  m_Height: 0.7927327
+  m_Radius: 0.42
+  m_Height: 1.87
   m_Direction: 1
   m_Center: {x: 0, y: 0.323954, z: 0}
 --- !u!54 &5047287489377004975
@@ -1510,7 +1509,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 8c2c2bc72dbb28d408de0baa0ed640e0, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: 091d63ef740bf6446825ff26f59a1154, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 8c2c2bc72dbb28d408de0baa0ed640e0, type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 

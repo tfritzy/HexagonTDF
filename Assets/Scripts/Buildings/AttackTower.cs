@@ -16,12 +16,13 @@ public abstract class AttackTower : Building, Interactable
     protected virtual float ManualPowerAdjustment => 0;
     protected override float CooldownModificationAmount => GetCooldownModificationAmount(UpgradeLevel);
     protected virtual float RotationVelocityDegreesPerSec => 180;
+    protected virtual bool CanProjectilesMoveVertically => true;
     protected GameObject Turret;
     private Vector3 rangeCircleOriginalScale;
     private Vector3 FacingDirection => new Vector3(
-        Mathf.Cos((Rotation) * Mathf.Deg2Rad),
+        Mathf.Sin((Rotation) * Mathf.Deg2Rad),
         0,
-        Mathf.Sin((Rotation) * Mathf.Deg2Rad));
+        Mathf.Cos((Rotation) * Mathf.Deg2Rad));
     private GameObject rangeCircle;
     private Vector3 turretStartRotation;
 
@@ -149,7 +150,12 @@ public abstract class AttackTower : Building, Interactable
     {
         float flightDuration = (this.TargetCharacter.Position - projectile.transform.position).magnitude / ProjectileSpeed;
         Vector3 targetPosition = this.TargetCharacter.Position + this.TargetCharacter.Velocity * flightDuration;
-        projectile.GetComponent<Rigidbody>().velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
+        Vector3 velocity = (targetPosition - projectile.transform.position).normalized * ProjectileSpeed;
+        if (!this.CanProjectilesMoveVertically)
+        {
+            velocity.y = 0;
+        }
+        projectile.GetComponent<Rigidbody>().velocity = velocity;
     }
 
     public void ShowRangeCircle(Transform parent = null)

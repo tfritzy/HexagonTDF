@@ -15,6 +15,7 @@ public class Trebuchet : Unit
     public GameObject ProtectionSpellAnimation;
     protected override float ProjectileSpeed => 20;
     public override bool IsMelee => false;
+    protected override bool DoProjectilesTrack => true;
 
     protected override void Setup()
     {

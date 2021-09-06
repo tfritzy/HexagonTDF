@@ -14,6 +14,7 @@ public class Spellcaster : Enemy
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override float BasePower => 3;
     public override bool IsMelee => false;
+    protected override bool DoProjectilesTrack => true;
 
     private static Dictionary<AttributeType, float> powerToAttributeRatio = new Dictionary<AttributeType, float>()
     {

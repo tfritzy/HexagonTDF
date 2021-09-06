@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Highlight
+    second: {fileID: 2100000, guid: 05e26b75b7014d945848e0eba463fa10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Stone
     second: {fileID: 2100000, guid: 2735f28172287364b8590b31925d34ca, type: 2}
   - first:

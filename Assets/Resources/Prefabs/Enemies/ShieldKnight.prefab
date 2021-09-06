@@ -1755,13 +1755,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
-  AttackSpeedModifiedPercent: 0
   Projectile: {fileID: 0}
+  AttackSpeedModifiedPercent: 0
+  AttackPhase: 0
+  _animationState: 0
   MovementSpeedModification: 0
   MovementSpeed: 0
-  IsJumping: 0
-  _animationState: 0
-  AttackPhase: 0
   GoldTaperAmount: 0
   PositionOffset: {x: 0, y: 0, z: 0}
 --- !u!136 &6056767385436871634
@@ -1774,8 +1773,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.21
-  m_Height: 1.1584177
+  m_Radius: 0.48
+  m_Height: 2.09
   m_Direction: 1
   m_Center: {x: 0, y: 0.6513953, z: 0}
 --- !u!1 &6691257104342826918

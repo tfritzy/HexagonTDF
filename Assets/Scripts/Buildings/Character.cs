@@ -27,12 +27,14 @@ public abstract class Character : MonoBehaviour, Damageable
     public abstract Alliances Enemies { get; }
     public abstract Alliances Alliance { get; }
     protected virtual float ProjectileSpeed => 10;
+    protected virtual int MaxPierceCount => 0;
     protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
     protected virtual AnimationState WalkAnimation => AnimationState.Walking;
     protected virtual AnimationState IdleAnimation => AnimationState.Idle;
     protected virtual AnimationState AttackAnimation => AnimationState.GeneralAttack;
     protected virtual float ExplosionRadius => 0;
     protected virtual bool CanProjectilesHitMultipleTargets => false;
+    protected virtual bool DoProjectilesTrack => false;
     protected Transform projectileStartPosition;
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
@@ -352,8 +354,12 @@ public abstract class Character : MonoBehaviour, Damageable
                 DealDamageToEnemy,
                 IsCollisionTarget,
                 this,
-                canHitMultipleTargets: CanProjectilesHitMultipleTargets);
-            projectileMono.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
+                this.MaxPierceCount);
+
+            if (DoProjectilesTrack)
+            {
+                projectileMono.SetTracking(this.TargetCharacter.gameObject, this.ProjectileSpeed);
+            }
         }
     }
 

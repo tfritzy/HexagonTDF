@@ -12,4 +12,9 @@ public class BallistaTower : AttackTower
     public override float BaseRange => RangeOptions.VeryLong;
     public override VerticalRegion AttackRegion => VerticalRegion.GroundAndAir;
     public override VerticalRegion Region => VerticalRegion.Ground;
+    protected override float ProjectileSpeed => 20;
+    protected override float RotationVelocityDegreesPerSec => 90;
+    protected override int MaxPierceCount => int.MaxValue;
+    protected override float ExpectedNumberOfEnemiesHitByEachProjectile => 2;
+    protected override bool CanProjectilesMoveVertically => false;
 }
