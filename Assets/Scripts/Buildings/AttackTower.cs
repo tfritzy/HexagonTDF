@@ -19,9 +19,9 @@ public abstract class AttackTower : Building, Interactable
     protected GameObject Turret;
     private Vector3 rangeCircleOriginalScale;
     private Vector3 FacingDirection => new Vector3(
-        Mathf.Cos((Rotation + 90 + turretStartRotation.x) * Mathf.Deg2Rad),
+        Mathf.Cos((Rotation) * Mathf.Deg2Rad),
         0,
-        Mathf.Sin((Rotation - 90 - turretStartRotation.z) * Mathf.Deg2Rad));
+        Mathf.Sin((Rotation) * Mathf.Deg2Rad));
     private GameObject rangeCircle;
     private Vector3 turretStartRotation;
 
