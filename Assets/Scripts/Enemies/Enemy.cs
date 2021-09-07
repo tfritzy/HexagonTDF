@@ -140,7 +140,7 @@ public abstract class Enemy : Unit, Interactable
 
     private void RollGemReward()
     {
-        if (UnityEngine.Random.Range(0, 1) <= BASE_GEM_DROP_CHANCE * GameState.LevelPowerMultiplier)
+        if (UnityEngine.Random.Range(0f, 1f) <= BASE_GEM_DROP_CHANCE * GameState.LevelPowerMultiplier)
         {
             GameObject gem = Instantiate(
                 Managers.Prefabs.Gem,

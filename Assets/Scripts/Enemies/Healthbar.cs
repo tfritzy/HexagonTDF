@@ -28,7 +28,7 @@ public class Healthbar : MonoBehaviour
         this.height = 1f;
         if (owner.TryGetComponent<Collider>(out Collider collider))
         {
-            this.height = collider.bounds.extents.y * 2;
+            this.height = collider.bounds.extents.y * 1.5f;
         }
 
         this.FillBar = this.transform.Find("FillBar").transform;

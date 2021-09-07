@@ -103,7 +103,6 @@ public abstract class AttackTower : Building, Interactable
             {
                 base.ConfigureProjectile(projectile);
                 SetProjectileVelocity(projectile.gameObject);
-                projectile.transform.LookAt(this.TargetCharacter.transform, Vector3.up);
             }
 
             // Want first projectile to be perfectly accurate.
@@ -156,6 +155,13 @@ public abstract class AttackTower : Building, Interactable
             velocity.y = 0;
         }
         projectile.GetComponent<Rigidbody>().velocity = velocity;
+
+        Vector3 lookTargetLocation = this.TargetCharacter.transform.position;
+        if (!CanProjectilesMoveVertically)
+        {
+            lookTargetLocation.y = projectile.transform.position.y;
+        }
+        projectile.transform.LookAt(lookTargetLocation, Vector3.up);
     }
 
     public void ShowRangeCircle(Transform parent = null)
