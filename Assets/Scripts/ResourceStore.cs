@@ -26,16 +26,14 @@ public class ResourceStore : MonoBehaviour
 
     void Awake()
     {
-        Resources = new Dictionary<ResourceType, int>()
-        {
-            { ResourceType.Gold, 0},
-        };
-
+        Resources = new Dictionary<ResourceType, int>();
         TextBoxes = new Dictionary<ResourceType, Text>();
         foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
+            Resources[type] = 0;
             Transform container = this.transform.Find(type.ToString());
             TextBoxes[type] = container.Find("Circle").Find("Count Box").Find("Text").GetComponent<Text>();
+            Add(type, 0);
         }
 
         lastCollectionTimes = new Dictionary<ResourceType, float>();

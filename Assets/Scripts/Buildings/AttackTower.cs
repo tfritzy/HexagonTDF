@@ -68,13 +68,16 @@ public abstract class AttackTower : Building, Interactable
             return false;
         }
 
-        float angleBetween = Helpers.AngleXZ(
-            FacingDirection,
-            TargetCharacter.transform.position - this.Turret.transform.position);
-        print(angleBetween);
-        if (angleBetween > 10)
+        if (this.Turret != null)
         {
-            return false;
+            float angleBetween = Helpers.AngleXZ(
+                        FacingDirection,
+                        TargetCharacter.transform.position - this.Turret.transform.position);
+            print(angleBetween);
+            if (angleBetween > 10)
+            {
+                return false;
+            }
         }
 
         return true;
