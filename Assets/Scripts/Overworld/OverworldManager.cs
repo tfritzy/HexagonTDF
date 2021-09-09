@@ -10,10 +10,11 @@ public class OverworldManager : MonoBehaviour
     public GameObject Tile;
     public GameObject City;
     public const int Seed = 2;
+    public List<OverworldFortress> Fortresses;
 
     private Pool pool;
-    private const int NUM_SEGMENTS_SPAWNED_HEIGHT = 30;
-    private const int NUM_SEGMENTS_SPAWNED_WIDTH = 6;
+    public const int NUM_SEGMENTS_SPAWNED_HEIGHT = 30;
+    public const int NUM_SEGMENTS_SPAWNED_WIDTH = 6;
     private float tileWidth;
     private Camera cam;
     private Vector2Int spawnedLowPos;
@@ -38,6 +39,7 @@ public class OverworldManager : MonoBehaviour
         spawnedLowPos.y = 0;
         mapCache = new Dictionary<Vector2Int, OverworldSegment>();
         activeTiles = new Dictionary<Vector2Int, GameObject>();
+        Fortresses = new List<OverworldFortress>();
 
         pool = new Pool(
             new Dictionary<int, GameObject>
@@ -155,15 +157,25 @@ public class OverworldManager : MonoBehaviour
         float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
         float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, pos.y) * variance;
 
-        GameObject city = pool.GetObject((int)ObjectType.City);
-        city.transform.position = tile.transform.position;
-        city.transform.parent = tile.transform;
-        city.GetComponent<OverworldFortress>().Setup(powerMultiplier, pos);
+        GameObject fortress = pool.GetObject((int)ObjectType.City);
+        fortress.transform.position = tile.transform.position;
+        fortress.transform.parent = tile.transform;
+        OverworldFortress fortressScript = fortress.GetComponent<OverworldFortress>();
+        Fortresses.Add(fortressScript);
+        fortressScript.Setup(powerMultiplier, pos);
+        int mapWidth = OverworldManager.NUM_SEGMENTS_SPAWNED_WIDTH;
+        Fortresses.Sort((f1, f2) => f1.Position.y * mapWidth + f1.Position.x - f2.Position.y * mapWidth + f2.Position.x);
     }
 
-    private void ReturnToPool(GameObject gameObject)
+    private void ReturnToPool(GameObject tile)
     {
-        foreach (PoolObject poolObject in gameObject.GetComponentsInChildren<PoolObject>())
+        OverworldFortress fortress = tile.GetComponentInChildren<OverworldFortress>();
+        if (fortress != null)
+        {
+            Fortresses.Remove(fortress);
+        }
+
+        foreach (PoolObject poolObject in tile.GetComponentsInChildren<PoolObject>())
         {
             poolObject.ReturnToPool();
         }

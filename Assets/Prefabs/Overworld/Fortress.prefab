@@ -59,6 +59,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PowerIndicator: {fileID: 6126815932842757773, guid: 51583c143a62a954eaabc8936fe998a9, type: 3}
+  Position: {x: 0, y: 0}
+  Link: {fileID: 2740982880942537531, guid: 037846ecd4aede648aec55055acefa74, type: 3}
 --- !u!1001 &8767634998913843467
 PrefabInstance:
   m_ObjectHideFlags: 0
