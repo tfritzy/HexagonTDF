@@ -47,7 +47,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             }
         },
         new BiomeCriteria{
-            Height = 0.4f,
+            Height = 0.45f,
             Criteria = new BiomeFormationCriterion[]
             {
                 new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .52f},
@@ -214,7 +214,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 }
                 else
                 {
-                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .5f, .08f));
+                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].HeightDiffFromMinReq - 3.1f, .25f));
                 }
 
                 texture.SetPixel(x, y, color);
