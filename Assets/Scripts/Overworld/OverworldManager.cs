@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class OverworldManager : MonoBehaviour
 {
@@ -55,7 +53,8 @@ public class OverworldManager : MonoBehaviour
 
         for (int y = 0; y <= NUM_SEGMENTS_SPAWNED_HEIGHT; y++)
         {
-            for (int x = 0; x < NUM_SEGMENTS_SPAWNED_WIDTH; x++)
+            int xMax = y == NUM_SEGMENTS_SPAWNED_HEIGHT ? 1 : NUM_SEGMENTS_SPAWNED_WIDTH;
+            for (int x = 0; x < xMax; x++)
             {
                 GameObject tile = pool.GetObject((int)ObjectType.Tile);
                 await formatSegment(new Vector2Int(x, y), tile);

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Profiling;
-using UnityEngine.UI;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
     public const int DIMENSIONS = 64;
-    private const float CITY_CHANCE = .15f;
+    private const float CITY_CHANCE = .2f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
@@ -72,12 +68,12 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private Dictionary<Biome, Color> colorMap = new Dictionary<Biome, Color>
     {
-        {Biome.Snow, ColorExtensions.Create("#dee1e3")},
-        {Biome.Mountain, ColorExtensions.Create("#80857e")},
-        {Biome.Forrest, ColorExtensions.Create("#6a7132")},
-        {Biome.Grassland, ColorExtensions.Create("#98a050")},
-        {Biome.Sand, ColorExtensions.Create("#c6ba8a")},
-        {Biome.Water, ColorExtensions.Create("#5f8b8e")},
+        {Biome.Snow, ColorExtensions.Create("#cfd4d8")},
+        {Biome.Mountain, ColorExtensions.Create("#728e9b")},
+        {Biome.Forrest, ColorExtensions.Create("#6a914c")},
+        {Biome.Grassland, ColorExtensions.Create("#7ba659")},
+        {Biome.Sand, ColorExtensions.Create("#e1c59f")},
+        {Biome.Water, ColorExtensions.Create("#597dd2")},
         {Biome.Null, Color.magenta},
     };
 
@@ -212,14 +208,14 @@ public class OverworldTerrainGenerator : MonoBehaviour
             {
                 Color color = colorMap[points[x, y].Biome];
 
-                // if (points[x, y].Biome != Biome.Water)
-                // {
-                //     color = ColorExtensions.VaryBy(color, points[x, y].HeightDiffFromMinReq * .5f);
-                // }
-                // else
-                // {
-                //     color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .3f, .08f));
-                // }
+                if (points[x, y].Biome != Biome.Water)
+                {
+                    // color = ColorExtensions.VaryBy(color, -points[x, y].HeightDiffFromMinReq * .3f);
+                }
+                else
+                {
+                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .5f, .08f));
+                }
 
                 texture.SetPixel(x, y, color);
             }

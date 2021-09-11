@@ -14,6 +14,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     private float powerMultiplier;
     private Text indicatorText;
     private GameObject powerIndicatorInst;
+    private const float lineHeight = .3f;
 
     public void Setup(float powerMultiplier, Vector2Int pos)
     {
@@ -47,7 +48,6 @@ public class OverworldFortress : MonoBehaviour, Interactable
 
         ReliesOn = new List<OverworldFortress>();
         int myIndex = Managers.OverworldManager.Fortresses.IndexOf(this);
-        print(myIndex);
 
         if (myIndex == 0 && Managers.OverworldManager.Fortresses.Count > 2)
         {
@@ -66,19 +66,16 @@ public class OverworldFortress : MonoBehaviour, Interactable
             {
                 if (isLinkValid(targetIndex))
                 {
-                    print(string.Join(", ", Managers.OverworldManager.Fortresses));
                     ReliesOn.Add(Managers.OverworldManager.Fortresses[targetIndex]);
                     LineRenderer link = Instantiate(
                         this.Link,
                         this.transform.position,
-                        new Quaternion(),
+                        this.Link.transform.rotation,
                         this.transform)
                             .GetComponent<LineRenderer>();
                     link.positionCount = 2;
-                    print($"{myIndex} -> {targetIndex}");
-                    print($"{ReliesOn.Last().gameObject.name}");
-                    link.SetPosition(0, this.transform.position);
-                    link.SetPosition(1, ReliesOn.Last().transform.position);
+                    link.SetPosition(0, this.transform.position + Vector3.up * lineHeight);
+                    link.SetPosition(1, ReliesOn.Last().transform.position + Vector3.up * lineHeight);
                 }
             }
         }
