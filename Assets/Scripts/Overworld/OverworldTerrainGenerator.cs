@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class OverworldTerrainGenerator : MonoBehaviour
 {
     public const int DIMENSIONS = 64;
-    private const float CITY_CHANCE = .25f;
+    private const float CITY_CHANCE = .15f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
@@ -212,14 +212,14 @@ public class OverworldTerrainGenerator : MonoBehaviour
             {
                 Color color = colorMap[points[x, y].Biome];
 
-                if (points[x, y].Biome != Biome.Water)
-                {
-                    color = ColorExtensions.VaryBy(color, points[x, y].HeightDiffFromMinReq * .5f);
-                }
-                else
-                {
-                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .3f, .08f));
-                }
+                // if (points[x, y].Biome != Biome.Water)
+                // {
+                //     color = ColorExtensions.VaryBy(color, points[x, y].HeightDiffFromMinReq * .5f);
+                // }
+                // else
+                // {
+                //     color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].Height - .3f, .08f));
+                // }
 
                 texture.SetPixel(x, y, color);
             }

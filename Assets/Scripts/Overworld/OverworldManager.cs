@@ -164,7 +164,8 @@ public class OverworldManager : MonoBehaviour
         Fortresses.Add(fortressScript);
         fortressScript.Setup(powerMultiplier, pos);
         int mapWidth = OverworldManager.NUM_SEGMENTS_SPAWNED_WIDTH;
-        Fortresses.Sort((f1, f2) => f1.Position.y * mapWidth + f1.Position.x - f2.Position.y * mapWidth + f2.Position.x);
+        Fortresses.Sort((f1, f2) => (f2.Position.y * mapWidth + f2.Position.x) - (f1.Position.y * mapWidth + f1.Position.x));
+        fortressScript.CreateLinks();
     }
 
     private void ReturnToPool(GameObject tile)

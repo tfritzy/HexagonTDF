@@ -22,15 +22,10 @@ public class OverworldFortress : MonoBehaviour, Interactable
             InitPowerIndicator();
         }
 
-        foreach (LineRenderer lr in this.GetComponentsInChildren<LineRenderer>())
-        {
-            Destroy(lr.gameObject);
-        }
-
         this.powerMultiplier = powerMultiplier;
         this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
         this.Position = pos;
-        CreateLinks();
+        this.gameObject.name = "Fortress " + this.Position;
     }
 
     private void InitPowerIndicator()
@@ -43,30 +38,48 @@ public class OverworldFortress : MonoBehaviour, Interactable
         this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
     }
 
-    private void CreateLinks()
+    public void CreateLinks()
     {
-        ReliesOn = new List<OverworldFortress>();
-        int myIndex = Managers.OverworldManager.Fortresses.IndexOf(this);
-        List<int> targetIndices = new List<int> { myIndex - 1, myIndex - 2 };
-        if ((int)Position.magnitude % 2 == 1)
+        foreach (LineRenderer lr in this.GetComponentsInChildren<LineRenderer>())
         {
-            targetIndices.RemoveAt(0);
+            Destroy(lr.gameObject);
         }
 
-        foreach (int targetIndex in targetIndices)
+        ReliesOn = new List<OverworldFortress>();
+        int myIndex = Managers.OverworldManager.Fortresses.IndexOf(this);
+        print(myIndex);
+
+        if (myIndex == 0 && Managers.OverworldManager.Fortresses.Count > 2)
         {
-            if (isLinkValid(targetIndex))
+            Managers.OverworldManager.Fortresses[1].CreateLinks();
+            Managers.OverworldManager.Fortresses[2].CreateLinks();
+        }
+        else
+        {
+            List<int> targetIndices = new List<int> { myIndex - 1, myIndex - 2 };
+            if ((int)Position.magnitude % 2 == 1)
             {
-                ReliesOn.Add(Managers.OverworldManager.Fortresses[targetIndex]);
-                LineRenderer link = Instantiate(
-                    this.Link,
-                    this.transform.position,
-                    new Quaternion(),
-                    this.transform)
-                        .GetComponent<LineRenderer>();
-                link.positionCount = 2;
-                link.SetPosition(0, this.transform.position);
-                link.SetPosition(1, ReliesOn.Last().transform.position);
+                targetIndices.RemoveAt(0);
+            }
+
+            foreach (int targetIndex in targetIndices)
+            {
+                if (isLinkValid(targetIndex))
+                {
+                    print(string.Join(", ", Managers.OverworldManager.Fortresses));
+                    ReliesOn.Add(Managers.OverworldManager.Fortresses[targetIndex]);
+                    LineRenderer link = Instantiate(
+                        this.Link,
+                        this.transform.position,
+                        new Quaternion(),
+                        this.transform)
+                            .GetComponent<LineRenderer>();
+                    link.positionCount = 2;
+                    print($"{myIndex} -> {targetIndex}");
+                    print($"{ReliesOn.Last().gameObject.name}");
+                    link.SetPosition(0, this.transform.position);
+                    link.SetPosition(1, ReliesOn.Last().transform.position);
+                }
             }
         }
     }

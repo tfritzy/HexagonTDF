@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Scale: 250
-  Octaves: 6
+  Octaves: 5
   Persistence: 0.55
   Lacunarity: 3
   stuff: {x: 0, y: 0, z: 0}
@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tile: {fileID: 4204665264527942329, guid: 395cc938671107840910e289ebc62a43, type: 3}
   City: {fileID: 8767634999914529545, guid: d9cad4b517b8c7f4d8c00dea92222d9f, type: 3}
+  Fortresses: []
 --- !u!1 &448163340
 GameObject:
   m_ObjectHideFlags: 0
