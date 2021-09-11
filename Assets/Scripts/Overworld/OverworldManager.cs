@@ -11,7 +11,7 @@ public class OverworldManager : MonoBehaviour
     public List<OverworldFortress> Fortresses;
 
     private Pool pool;
-    public const int NUM_SEGMENTS_SPAWNED_HEIGHT = 30;
+    public const int NUM_SEGMENTS_SPAWNED_HEIGHT = 50;
     public const int NUM_SEGMENTS_SPAWNED_WIDTH = 6;
     private float tileWidth;
     private Camera cam;
@@ -70,12 +70,12 @@ public class OverworldManager : MonoBehaviour
             return;
         }
 
-        if (cam.transform.position.z > ((targetLowPos.y + NUM_SEGMENTS_SPAWNED_HEIGHT * .33f) * tileWidth))
+        if (cam.transform.position.z > ((targetLowPos.y + NUM_SEGMENTS_SPAWNED_HEIGHT * .25f) * tileWidth))
         {
             targetLowPos.y += 1;
         }
 
-        if (cam.transform.position.z < ((targetLowPos.y + NUM_SEGMENTS_SPAWNED_HEIGHT * .33f) * tileWidth))
+        if (cam.transform.position.z < ((targetLowPos.y + NUM_SEGMENTS_SPAWNED_HEIGHT * .25f) * tileWidth))
         {
             targetLowPos.y -= 1;
         }

@@ -210,7 +210,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                 if (points[x, y].Biome != Biome.Water)
                 {
-                    // color = ColorExtensions.VaryBy(color, -points[x, y].HeightDiffFromMinReq * .3f);
+                    color = ColorExtensions.VaryBy(color, -points[x, y].HeightDiffFromMinReq * .3f);
                 }
                 else
                 {

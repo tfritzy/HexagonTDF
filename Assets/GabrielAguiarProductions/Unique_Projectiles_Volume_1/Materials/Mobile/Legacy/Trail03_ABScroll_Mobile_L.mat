@@ -81,12 +81,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
-    - _ColorMultiplier: 2.5
+    - _ColorMultiplier: 4.3
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DistortMainTexture: 1
-    - _DistortionUSpeed: -0.3
-    - _DistortionVSpeed: 0
+    - _DistortionUSpeed: -0.12
+    - _DistortionVSpeed: -0.12
     - _DoubleSided: 1
     - _DstBlend: 0
     - _EdgeSoftness: 0
@@ -94,19 +94,19 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GradientPower: 0.5
-    - _GradientUSpeed: -0.6
+    - _GradientPower: 1.2
+    - _GradientUSpeed: 0.13
     - _GradientUSpeed_copy: -0.2
     - _GradientVSpeed: 0
     - _GradientVSpeed_copy: 0
     - _InvFade: 1
-    - _MainTextUSpeed: -2
+    - _MainTextUSpeed: -0.53
     - _MainTextVSpeed: 0
     - _MainTextureUSpeed: -1
     - _MainTextureVSpeed: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseAmount: 0.05
+    - _NoiseAmount: 0.108
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
@@ -119,3 +119,4 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _TintColor: {r: 0.625, g: 0.625, b: 0.625, a: 1}
+  m_BuildTextureStacks: []

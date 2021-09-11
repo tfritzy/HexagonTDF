@@ -14,7 +14,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     private float powerMultiplier;
     private Text indicatorText;
     private GameObject powerIndicatorInst;
-    private const float lineHeight = .3f;
+    private const float lineHeight = 0.68f;
 
     public void Setup(float powerMultiplier, Vector2Int pos)
     {
