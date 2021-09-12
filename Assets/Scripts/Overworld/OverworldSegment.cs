@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class OverworldSegment
 {
     public OverworldMapPoint[,] Points;
     public Texture2D Texture;
-    public bool HasCity;
+    public List<Vector2Int> Fortresses;
     public Vector2Int Coordinates;
 
     public int Width => Points.GetLength(0);

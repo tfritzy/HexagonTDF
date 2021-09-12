@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
-    public const int DIMENSIONS = 64;
+    public const int DIMENSIONS = 2048;
+    private const int SUBDIVISION_SIZE = DIMENSIONS / 16;
     private const float CITY_CHANCE = .2f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
+    private const int FALLOFF_NEAR_START = 350;
+    private const int FALLOFF_FAR_START = DIMENSIONS - FALLOFF_NEAR_START;
 
     public double Scale;
     public int Octaves;
     public double Persistence;
     public double Lacunarity;
-
 
     private struct BiomeFormationCriterion
     {
@@ -64,8 +67,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
         },
     };
 
-    public Vector3 stuff;
-
     private Dictionary<Biome, Color> colorMap = new Dictionary<Biome, Color>
     {
         {Biome.Snow, ColorExtensions.Create("#cfd4d8")},
@@ -77,28 +78,24 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Null, Color.magenta},
     };
 
-    public async Task<OverworldSegment> GetSegment(int xIndex, int yIndex, int Seed, float xSlope = 0, float xB = 1)
+    public async Task<OverworldSegment> GetSegment(int index, int Seed)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
         OverworldSegment segment = new OverworldSegment
         {
-            HasCity = false,
+            Fortresses = new List<Vector2Int>(),
             Points = new OverworldMapPoint[DIMENSIONS, DIMENSIONS],
             Texture = null,
-            Coordinates = new Vector2Int(xIndex, yIndex),
         };
 
-        int xOffset = DIMENSIONS * xIndex;
-        int yOffset = DIMENSIONS * yIndex;
-
         var list = new List<Task>();
-        for (var y = yOffset; y < DIMENSIONS + yOffset; y++)
+        for (var y = 0; y < DIMENSIONS; y++)
         {
             var yCopy = y;
             var t = new Task(() =>
                 {
-                    formatRow(segment.Points, heightNoise, moistureNoise, yCopy, xOffset, yOffset, xSlope, xB);
+                    formatRow(segment.Points, heightNoise, moistureNoise, yCopy);
                 });
             list.Add(t);
             t.Start();
@@ -106,55 +103,63 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         await Task.WhenAll(list);
 
-        float averageHeight = 0;
-        foreach (OverworldMapPoint point in segment.Points)
+        for (int x = 0; x < DIMENSIONS / SUBDIVISION_SIZE; x++)
         {
-            averageHeight += point.Height;
-        }
-        averageHeight /= (DIMENSIONS * DIMENSIONS);
-
-        Vector2Int? cityPosition = GetCityPosition(xIndex, yIndex);
-        if (cityPosition != null && averageHeight > biomeDeterminator[biomeDeterminator.Count - 2].Height + CITY_HEIGHT_CUTOFF_DELTA)
-        {
-            segment.HasCity = true;
+            for (int y = 0; y < DIMENSIONS / SUBDIVISION_SIZE; y++)
+            {
+                if (DoesSegmentHaveFortress(x, y, segment.Points))
+                {
+                    segment.Fortresses.Add(
+                        new Vector2Int(
+                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2,
+                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2));
+                }
+            }
         }
 
         return segment;
     }
 
-    private Vector2Int? GetCityPosition(int xIndex, int yIndex)
+    private bool DoesSegmentHaveFortress(int xSeg, int ySeg, OverworldMapPoint[,] fullMap)
     {
-        int citySeed = xIndex * 3 + yIndex * 7;
-        System.Random random = new System.Random(citySeed);
-        if (random.NextDouble() > CITY_CHANCE)
+        float averageHeight = 0;
+        for (int x = xSeg * SUBDIVISION_SIZE; x < (xSeg + 1) * SUBDIVISION_SIZE; x++)
         {
-            return null;
+            for (int y = ySeg * SUBDIVISION_SIZE; y < (ySeg + 1) * SUBDIVISION_SIZE; y++)
+            {
+                averageHeight += fullMap[x, y].Height;
+            }
+        }
+        averageHeight /= (SUBDIVISION_SIZE * SUBDIVISION_SIZE);
+
+        if (averageHeight > biomeDeterminator[biomeDeterminator.Count - 2].Height + CITY_HEIGHT_CUTOFF_DELTA)
+        {
+            return true;
         }
 
-        return new Vector2Int(random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS), random.Next(CITY_LOW_BOUNDS, CITY_HIGH_BOUNDS));
+        return false;
     }
 
     private void formatRow(
         OverworldMapPoint[,] points,
         OpenSimplexNoise heightNoise,
         OpenSimplexNoise moistureNoise,
-        int y, int xOffset, int yOffset,
-        float xSlope, float xB)
+        int y)
     {
-        for (int x = xOffset; x < DIMENSIONS + xOffset; x++)
+        for (int x = 0; x < DIMENSIONS; x++)
         {
             double xD = x / Scale;
             double yD = y / Scale;
             float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             heightValue = (heightValue + 1) / 2;
-            heightValue *= ((float)(x - xOffset) / (DIMENSIONS) * xSlope + xB);
+            heightValue *= CalculateHeightFalloff(x, y);
 
             float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             moistureValue = (moistureValue + 1) / 2;
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
             Tuple<Biome, float> biomeDetails = GetBiome(heightValue, moistureValue);
-            points[x - xOffset, y - yOffset] = new OverworldMapPoint
+            points[x, y] = new OverworldMapPoint
             {
                 Height = heightValue,
                 Biome = biomeDetails.Item1,
@@ -162,6 +167,23 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 Moisture = moistureValue,
             };
         }
+    }
+
+    private float CalculateHeightFalloff(int x, int y)
+    {
+        int progressAlongFalloff = new int[] {
+            x - FALLOFF_FAR_START,
+            FALLOFF_NEAR_START - x,
+            y - FALLOFF_FAR_START,
+            FALLOFF_NEAR_START - y
+        }.Max();
+
+        if (progressAlongFalloff > 0)
+        {
+            return 1 - (float)progressAlongFalloff / (float)FALLOFF_NEAR_START;
+        }
+
+        return 1f;
     }
 
     private float trimEdgesModification(int x)
@@ -224,5 +246,4 @@ public class OverworldTerrainGenerator : MonoBehaviour
         texture.Apply();
         return texture;
     }
-
 }
