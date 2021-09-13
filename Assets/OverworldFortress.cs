@@ -10,6 +10,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     public Vector2Int Position;
     public List<OverworldFortress> ReliesOn { get; private set; }
     public GameObject Link;
+    public Alliances Alliance;
 
     private float powerMultiplier;
     private Text indicatorText;
@@ -57,7 +58,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
         else
         {
             List<int> targetIndices = new List<int> { myIndex - 1, myIndex - 2 };
-            if ((int)Position.magnitude % 2 == 1)
+            if ((Position.x + Position.y) % 2 == 1)
             {
                 targetIndices.RemoveAt(0);
             }

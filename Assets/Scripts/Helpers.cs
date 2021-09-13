@@ -421,4 +421,28 @@ public static class Helpers
         targetDirection.y = 0;
         return Vector3.Angle(targetDirection, forward);
     }
+
+    public static List<Vector2Int> GetNonHexGridNeighbors(Vector2Int pos, int mapDimensions)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>(8);
+        for (int x = pos.x - 1; x <= pos.x + 1; x++)
+        {
+            for (int y = pos.y - 1; y <= pos.y + 1; y++)
+            {
+                if (x < 0 || x >= mapDimensions || y < 0 || y >= mapDimensions)
+                {
+                    continue;
+                }
+
+                if (x == pos.x && y == pos.y)
+                {
+                    continue;
+                }
+
+                neighbors.Add(new Vector2Int(x, y));
+            }
+        }
+
+        return neighbors;
+    }
 }

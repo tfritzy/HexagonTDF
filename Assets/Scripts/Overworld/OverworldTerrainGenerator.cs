@@ -6,15 +6,17 @@ using UnityEngine;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
-    public const int DIMENSIONS = 2048;
-    private const int SUBDIVISION_SIZE = DIMENSIONS / 16;
+    public const int DIMENSIONS = 1024;
+    private const int SUBDIVISION_SIZE = DIMENSIONS / 8;
     private const float CITY_CHANCE = .2f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
-    private const int FALLOFF_NEAR_START = 350;
+    private const int FALLOFF_NEAR_START = 50;
     private const int FALLOFF_FAR_START = DIMENSIONS - FALLOFF_NEAR_START;
+    private System.Random random;
+    private int Seed;
 
     public double Scale;
     public int Octaves;
@@ -74,14 +76,20 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Forrest, ColorExtensions.Create("#6a914c")},
         {Biome.Grassland, ColorExtensions.Create("#7ba659")},
         {Biome.Sand, ColorExtensions.Create("#e1c59f")},
-        {Biome.Water, ColorExtensions.Create("#597dd2")},
+        {Biome.Water, new Color(0, 0, 0, 0)},
         {Biome.Null, Color.magenta},
     };
 
-    public async Task<OverworldSegment> GetSegment(int index, int Seed)
+    public void Initialize(int seed)
     {
-        OpenSimplexNoise heightNoise = new OpenSimplexNoise(Seed);
-        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(Seed + 1);
+        this.random = new System.Random(seed);
+        this.Seed = seed;
+    }
+
+    public OverworldSegment GetSegment(int index)
+    {
+        OpenSimplexNoise heightNoise = new OpenSimplexNoise(this.Seed);
+        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(this.Seed + 1);
         OverworldSegment segment = new OverworldSegment
         {
             Fortresses = new List<Vector2Int>(),
@@ -101,7 +109,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             t.Start();
         }
 
-        await Task.WhenAll(list);
+        Task.WhenAll(list).Wait();
 
         for (int x = 0; x < DIMENSIONS / SUBDIVISION_SIZE; x++)
         {
@@ -111,8 +119,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 {
                     segment.Fortresses.Add(
                         new Vector2Int(
-                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2,
-                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2));
+                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-50, 50),
+                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-50, 50)));
                 }
             }
         }
@@ -221,7 +229,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     public Texture2D GetTextureOfMap(OverworldMapPoint[,] points)
     {
-        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGB24, false);
+        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
         texture.filterMode = FilterMode.Point;
 
         for (int y = 0; y < points.GetLength(1); y++)
@@ -236,7 +244,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 }
                 else
                 {
-                    color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].HeightDiffFromMinReq - 3.1f, .25f));
+                    // color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].HeightDiffFromMinReq - 3.1f, .25f));
                 }
 
                 texture.SetPixel(x, y, color);
