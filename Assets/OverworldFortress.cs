@@ -40,48 +40,6 @@ public class OverworldFortress : MonoBehaviour, Interactable
         this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
     }
 
-    public void CreateLinks()
-    {
-        foreach (LineRenderer lr in this.GetComponentsInChildren<LineRenderer>())
-        {
-            Destroy(lr.gameObject);
-        }
-
-        ReliesOn = new List<OverworldFortress>();
-        int myIndex = Managers.OverworldManager.Fortresses.IndexOf(this);
-
-        if (myIndex == 0 && Managers.OverworldManager.Fortresses.Count > 2)
-        {
-            Managers.OverworldManager.Fortresses[1].CreateLinks();
-            Managers.OverworldManager.Fortresses[2].CreateLinks();
-        }
-        else
-        {
-            List<int> targetIndices = new List<int> { myIndex - 1, myIndex - 2 };
-            if ((Position.x + Position.y) % 2 == 1)
-            {
-                targetIndices.RemoveAt(0);
-            }
-
-            foreach (int targetIndex in targetIndices)
-            {
-                if (isLinkValid(targetIndex))
-                {
-                    ReliesOn.Add(Managers.OverworldManager.Fortresses[targetIndex]);
-                    LineRenderer link = Instantiate(
-                        this.Link,
-                        this.transform.position,
-                        this.Link.transform.rotation,
-                        this.transform)
-                            .GetComponent<LineRenderer>();
-                    link.positionCount = 2;
-                    link.SetPosition(0, this.transform.position + Vector3.up * lineHeight);
-                    link.SetPosition(1, ReliesOn.Last().transform.position + Vector3.up * lineHeight);
-                }
-            }
-        }
-    }
-
     private bool isLinkValid(int fortressIndex)
     {
         if (fortressIndex < 0 || fortressIndex >= Managers.OverworldManager.Fortresses.Count)

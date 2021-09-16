@@ -13,11 +13,11 @@ namespace DuloGamesEditor.UI
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             bool displayName = property.FindPropertyRelative("DisplayName").boolValue;
-            
+
             EditorGUI.BeginProperty(position, label, property);
 
             position = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-            
+
             property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
             position = new Rect(position.x, position.y + 16f + Spacing, position.width, EditorGUIUtility.singleLineHeight);
 
@@ -48,7 +48,7 @@ namespace DuloGamesEditor.UI
 
                 EditorGUI.PropertyField(position, property.FindPropertyRelative("TextFontColor"), new GUIContent("Font Color"));
                 position = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + Spacing, position.width, EditorGUIUtility.singleLineHeight);
-                
+
                 EditorGUI.PropertyField(position, property.FindPropertyRelative("TextEffects"), new GUIContent("Text Effects"), true);
                 position = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + Spacing, position.width, EditorGUIUtility.singleLineHeight);
 
@@ -69,7 +69,7 @@ namespace DuloGamesEditor.UI
 
             if (!displayName)
                 return base.GetPropertyHeight(property, label) + 20f + (EditorGUIUtility.singleLineHeight * 5f) + (Spacing * 4f) + effectsHeight;
-            
+
             return base.GetPropertyHeight(property, label) + 20f + (EditorGUIUtility.singleLineHeight * 6f) + (Spacing * 5f) + effectsHeight;
         }
     }

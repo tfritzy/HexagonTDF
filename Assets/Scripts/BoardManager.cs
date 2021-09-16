@@ -96,13 +96,6 @@ public class BoardManager : MonoBehaviour
                 BuildHexagon(map.GetPoint(x, y), x - start, y - start);
             }
         }
-
-        // foreach (Vector2Int pos in map.OceanHex)
-        // {
-        //     this.Hexagons[pos.x, pos.y].transform.Find("Hex").gameObject.SetActive(false);
-        // }
-
-        // Managers.EnemySpawner.SetShoreHexes(this.Map.LandableShores);
     }
 
     public void AddBuilding(Building building)

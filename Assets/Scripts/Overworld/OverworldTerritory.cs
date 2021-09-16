@@ -13,6 +13,17 @@ public class OverworldTerritory
             CalculateBounds();
         }
     }
+    private HashSet<Vector2Int> edges;
+    public HashSet<Vector2Int> Edges
+    {
+        get { return edges; }
+        set
+        {
+            edges = value;
+            CalculateOutline();
+        }
+    }
+    public List<Vector2Int> Outline { get; private set; }
     public Vector2Int HighBounds { get; private set; }
     public Vector2Int LowBounds { get; private set; }
     public Vector2 Center { get; private set; }
@@ -57,5 +68,13 @@ public class OverworldTerritory
             LowBounds.x + (float)Size.x / 2,
             LowBounds.y + (float)Size.y / 2
         );
+    }
+
+    private void CalculateOutline()
+    {
+        // foreach (Vector2Int point in edges)
+        // {
+
+        // }
     }
 }
