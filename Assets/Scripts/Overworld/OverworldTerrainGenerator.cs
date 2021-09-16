@@ -13,7 +13,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
     private float halfDimensions = DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
-    private const int FALLOFF_NEAR_START = 50;
+    private const int FALLOFF_NEAR_START = 128;
     private const int FALLOFF_FAR_START = DIMENSIONS - FALLOFF_NEAR_START;
     private System.Random random;
     private int Seed;
@@ -166,12 +166,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
             moistureValue = (moistureValue + 1) / 2;
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
-            Tuple<Biome, float> biomeDetails = GetBiome(heightValue, moistureValue);
+            Biome biome = GetBiome(heightValue, moistureValue);
             points[x, y] = new OverworldMapPoint
             {
                 Height = heightValue,
-                Biome = biomeDetails.Item1,
-                HeightDiffFromMinReq = biomeDetails.Item2,
+                Biome = biome,
                 Moisture = moistureValue,
             };
         }
@@ -180,12 +179,12 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private float CalculateHeightFalloff(int x, int y)
     {
         float progressAlongFalloff = 0;
-        if (x > FALLOFF_NEAR_START && x < FALLOFF_FAR_START)
+        if (x < FALLOFF_NEAR_START || x > FALLOFF_FAR_START)
         {
             progressAlongFalloff = Math.Max(x - FALLOFF_FAR_START, FALLOFF_NEAR_START - x);
         }
 
-        if (y > FALLOFF_NEAR_START && y < FALLOFF_FAR_START)
+        if (y < FALLOFF_NEAR_START || y > FALLOFF_FAR_START)
         {
             progressAlongFalloff = Math.Max(y - FALLOFF_FAR_START, FALLOFF_NEAR_START - y);
         }
@@ -212,7 +211,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
     }
 
-    private Tuple<Biome, float> GetBiome(float height, float moisture)
+    private Biome GetBiome(float height, float moisture)
     {
         foreach (BiomeCriteria criteria in biomeDeterminator)
         {
@@ -222,13 +221,13 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 {
                     if (moisture > criterion.MinMoisture)
                     {
-                        return new Tuple<Biome, float>(criterion.Biome, height - criteria.Height);
+                        return criterion.Biome;
                     }
                 }
             }
         }
 
-        return new Tuple<Biome, float>(Biome.Null, 0);
+        return Biome.Null;
     }
 
     public Texture2D GetTextureOfMap(OverworldMapPoint[,] points)
@@ -242,7 +241,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             {
                 if (points[x, y].Biome != Biome.Water)
                 {
-                    texture.SetPixel(x, y, ColorExtensions.VaryBy(colorMap[points[x, y].Biome], -points[x, y].HeightDiffFromMinReq * .3f));
+                    texture.SetPixel(x, y, colorMap[points[x, y].Biome]);
                 }
             }
         }
