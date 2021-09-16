@@ -40,15 +40,6 @@ public class OverworldFortress : MonoBehaviour, Interactable
         this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
     }
 
-    private bool isLinkValid(int fortressIndex)
-    {
-        if (fortressIndex < 0 || fortressIndex >= Managers.OverworldManager.Fortresses.Count)
-        {
-            return false;
-        }
-
-        return true;
-    }
 
     public bool Interact()
     {

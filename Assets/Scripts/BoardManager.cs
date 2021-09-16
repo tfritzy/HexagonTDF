@@ -69,7 +69,7 @@ public class BoardManager : MonoBehaviour
                     continue;
                 }
 
-                double heightVal = heightNoise.Evaluate((double)x / 5.0, (double)y / 5.0, 1) + 1;
+                double heightVal = heightNoise.Evaluate(x / 5.0f, y / 5.0f, 1) + 1;
                 int hieghtModifier = 0;
                 if (heightVal > 1.35f) hieghtModifier += 1;
                 if (heightVal > 1.6f) hieghtModifier += 1;

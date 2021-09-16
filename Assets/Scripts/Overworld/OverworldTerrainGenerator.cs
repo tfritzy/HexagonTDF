@@ -18,10 +18,10 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private System.Random random;
     private int Seed;
 
-    public double Scale;
+    public float Scale;
     public int Octaves;
-    public double Persistence;
-    public double Lacunarity;
+    public float Persistence;
+    public float Lacunarity;
 
     private struct BiomeFormationCriterion
     {
@@ -156,8 +156,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
     {
         for (int x = 0; x < DIMENSIONS; x++)
         {
-            double xD = x / Scale;
-            double yD = y / Scale;
+            float xD = x / Scale;
+            float yD = y / Scale;
             float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             heightValue = (heightValue + 1) / 2;
             heightValue *= CalculateHeightFalloff(x, y);
@@ -179,12 +179,16 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private float CalculateHeightFalloff(int x, int y)
     {
-        int progressAlongFalloff = new int[] {
-            x - FALLOFF_FAR_START,
-            FALLOFF_NEAR_START - x,
-            y - FALLOFF_FAR_START,
-            FALLOFF_NEAR_START - y
-        }.Max();
+        float progressAlongFalloff = 0;
+        if (x > FALLOFF_NEAR_START && x < FALLOFF_FAR_START)
+        {
+            progressAlongFalloff = Math.Max(x - FALLOFF_FAR_START, FALLOFF_NEAR_START - x);
+        }
+
+        if (y > FALLOFF_NEAR_START && y < FALLOFF_FAR_START)
+        {
+            progressAlongFalloff = Math.Max(y - FALLOFF_FAR_START, FALLOFF_NEAR_START - y);
+        }
 
         if (progressAlongFalloff > 0)
         {
@@ -229,25 +233,17 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     public Texture2D GetTextureOfMap(OverworldMapPoint[,] points)
     {
-        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.ARGB32, false);
+        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGBAHalf, false);
         texture.filterMode = FilterMode.Point;
 
         for (int y = 0; y < points.GetLength(1); y++)
         {
             for (int x = 0; x < points.GetLength(0); x++)
             {
-                Color color = colorMap[points[x, y].Biome];
-
                 if (points[x, y].Biome != Biome.Water)
                 {
-                    color = ColorExtensions.VaryBy(color, -points[x, y].HeightDiffFromMinReq * .3f);
+                    texture.SetPixel(x, y, ColorExtensions.VaryBy(colorMap[points[x, y].Biome], -points[x, y].HeightDiffFromMinReq * .3f));
                 }
-                else
-                {
-                    // color = ColorExtensions.VaryBy(color, Mathf.Max(points[x, y].HeightDiffFromMinReq - 3.1f, .25f));
-                }
-
-                texture.SetPixel(x, y, color);
             }
         }
 

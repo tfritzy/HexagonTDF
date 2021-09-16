@@ -52,7 +52,7 @@ public class OverworldManager : MonoBehaviour
         this.island = generator.GetSegment(0);
         UnityEngine.Profiling.Profiler.EndSample();
         GameObject tile = Instantiate(this.Tile, Vector3.zero, Tile.transform.rotation);
-        UnityEngine.Profiling.Profiler.BeginSample("Generate Texture");
+        UnityEngine.Profiling.Profiler.BeginSample("Generate Terrain Texture");
         tile.GetComponent<Renderer>().material.mainTexture = generator.GetTextureOfMap(this.island.Points);
         tile.transform.localScale = Vector3.one * ISLAND_WORLD_SIZE;
         UnityEngine.Profiling.Profiler.EndSample();
@@ -168,8 +168,10 @@ public class OverworldManager : MonoBehaviour
     };
     private void CreateTerritoryTexture()
     {
-        UnityEngine.Profiling.Profiler.BeginSample("Generate Territory");
+        UnityEngine.Profiling.Profiler.BeginSample("Calculate Territory boundries");
         Dictionary<OverworldFortress, OverworldTerritory> territories = CalculateTerritories(island);
+        UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.BeginSample("Generate Territory Textures");
         GenerateTerritoryTextures(territories);
         UnityEngine.Profiling.Profiler.EndSample();
     }
@@ -182,17 +184,9 @@ public class OverworldManager : MonoBehaviour
             Texture2D texture = new Texture2D(
                 territory.Size.x,
                 territory.Size.y,
-                TextureFormat.ARGB32,
+                TextureFormat.RGBAHalf,
                 false);
             texture.filterMode = FilterMode.Point;
-
-            for (int x = 0; x < territory.Size.x; x++)
-            {
-                for (int y = 0; y < territory.Size.y; y++)
-                {
-                    texture.SetPixel(x, y, allianceColorMap[Alliances.Neutral]);
-                }
-            }
 
             foreach (Vector2Int point in territory.Edges)
             {
