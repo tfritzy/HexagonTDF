@@ -422,7 +422,7 @@ public static class Helpers
         return Vector3.Angle(targetDirection, forward);
     }
 
-    public static List<Vector2Int> GetNonHexGridNeighbors(Vector2Int pos, int mapDimensions)
+    public static void GetNonHexGridNeighbors(Vector2Int pos, int mapDimensions, Func<int, int, bool> forNeighbor)
     {
         List<Vector2Int> neighbors = new List<Vector2Int>(8);
         for (int x = pos.x - 1; x <= pos.x + 1; x++)
@@ -439,10 +439,8 @@ public static class Helpers
                     continue;
                 }
 
-                neighbors.Add(new Vector2Int(x, y));
+                forNeighbor(x, y);
             }
         }
-
-        return neighbors;
     }
 }

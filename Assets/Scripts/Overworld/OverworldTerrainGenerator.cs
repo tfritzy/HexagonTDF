@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
-    public const int DIMENSIONS = 2048;
+    public const int DIMENSIONS = 1536;
     private const int SUBDIVISION_SIZE = DIMENSIONS / 8;
     private const float CITY_CHANCE = .2f;
     private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;

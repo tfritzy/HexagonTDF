@@ -121,20 +121,22 @@ public class OverworldManager : MonoBehaviour
                 Vector2Int current = queue.Dequeue();
                 territoryPoints[fortress].Add(current);
                 bool isBorder = false;
-                foreach (Vector2Int neighbor in Helpers.GetNonHexGridNeighbors(current, dimensions))
+                Helpers.GetNonHexGridNeighbors(current, dimensions, (int x, int y) =>
                 {
-                    if (visited[neighbor.x, neighbor.y] == null && island.Points[neighbor.x, neighbor.y].Biome != Biome.Water)
+                    if (visited[x, y] == null && island.Points[x, y].Biome != Biome.Water)
                     {
-                        queue.Enqueue(neighbor);
-                        visited[neighbor.x, neighbor.y] = fortress;
+                        queue.Enqueue(new Vector2Int(x, y));
+                        visited[x, y] = fortress;
                     }
-                    else if (visited[neighbor.x, neighbor.y] != null &&
-                             visited[neighbor.x, neighbor.y] != fortress ||
-                             island.Points[neighbor.x, neighbor.y].Biome == Biome.Water)
+                    else if (visited[x, y] != null &&
+                             visited[x, y] != fortress ||
+                             island.Points[x, y].Biome == Biome.Water)
                     {
                         isBorder = true;
                     }
-                }
+
+                    return false;
+                });
 
                 if (isBorder)
                 {
