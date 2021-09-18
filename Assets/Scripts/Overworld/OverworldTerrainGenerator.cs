@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,11 @@ using UnityEngine;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
+    public OverworldSegment Segment;
+    public Texture2D Texture;
+    public string GenerationStep;
+    public float GenerationProgress;
+    public bool IsComplete;
     public const int DIMENSIONS = 1536;
     private const int SUBDIVISION_SIZE = DIMENSIONS / 8;
     private const float CITY_CHANCE = .2f;
@@ -22,6 +28,15 @@ public class OverworldTerrainGenerator : MonoBehaviour
     public int Octaves;
     public float Persistence;
     public float Lacunarity;
+
+    private static class States
+    {
+        public const string GENERATING_TERRAIN = "Generating Terrain";
+        public const string LOCATING_FORTRESSES = "Locating Fortresses";
+        public const string GENERATING_TEXTURE = "Generating Island Texture";
+        public const string CALCULATING_TERRITORY_BOUNDS = "Calculating Territory Bounds";
+        public const string GENERATING_TERRITORY_TEXTURES = "Generating Territory Textures";
+    }
 
     private struct BiomeFormationCriterion
     {
@@ -86,46 +101,58 @@ public class OverworldTerrainGenerator : MonoBehaviour
         this.Seed = seed;
     }
 
-    public OverworldSegment GetSegment(int index)
+    public IEnumerator GenerateSegment(int index)
     {
+        IsComplete = false;
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(this.Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(this.Seed + 1);
-        OverworldSegment segment = new OverworldSegment
+        this.Segment = new OverworldSegment
         {
-            Fortresses = new List<Vector2Int>(),
+            FortressIds = new List<string>(),
+            FortressPositions = new Dictionary<string, Vector2Int>(),
             Points = new OverworldMapPoint[DIMENSIONS, DIMENSIONS],
             Texture = null,
         };
+        this.GenerationStep = States.GENERATING_TERRAIN;
 
-        var list = new List<Task>();
-        for (var y = 0; y < DIMENSIONS; y++)
+        for (int y = 0; y < DIMENSIONS; y++)
         {
-            var yCopy = y;
-            var t = new Task(() =>
-                {
-                    formatRow(segment.Points, heightNoise, moistureNoise, yCopy);
-                });
-            list.Add(t);
-            t.Start();
-        }
+            formatRow(Segment.Points, heightNoise, moistureNoise, y);
+            this.GenerationProgress = (float)y / DIMENSIONS;
 
-        Task.WhenAll(list).Wait();
-
-        for (int x = 0; x < DIMENSIONS / SUBDIVISION_SIZE; x++)
-        {
-            for (int y = 0; y < DIMENSIONS / SUBDIVISION_SIZE; y++)
+            if (y % 10 == 0)
             {
-                if (DoesSegmentHaveFortress(x, y, segment.Points))
-                {
-                    segment.Fortresses.Add(
-                        new Vector2Int(
-                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-50, 50),
-                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-50, 50)));
-                }
+                yield return null;
             }
         }
 
-        return segment;
+        int numChunks = DIMENSIONS / SUBDIVISION_SIZE;
+        this.GenerationStep = States.LOCATING_FORTRESSES;
+        int fortressIndex = 0;
+        for (int x = 0; x < numChunks; x++)
+        {
+            for (int y = 0; y < numChunks; y++)
+            {
+                if (DoesSegmentHaveFortress(x, y, Segment.Points))
+                {
+                    string id = $"Fortress-{index}-{fortressIndex}";
+                    fortressIndex += 1;
+                    Segment.FortressIds.Add(id);
+                    Segment.FortressPositions[id] =
+                        new Vector2Int(
+                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-50, 50),
+                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-50, 50));
+                }
+            }
+
+            this.GenerationProgress = (float)x / numChunks;
+            yield return null;
+        }
+
+        yield return GenerateTextureOfMap();
+
+        yield return CalculateTerritories();
+        IsComplete = true;
     }
 
     private bool DoesSegmentHaveFortress(int xSeg, int ySeg, OverworldMapPoint[,] fullMap)
@@ -230,23 +257,116 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return Biome.Null;
     }
 
-    public Texture2D GetTextureOfMap(OverworldMapPoint[,] points)
+    public IEnumerator GenerateTextureOfMap()
     {
-        Texture2D texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGBAHalf, false);
-        texture.filterMode = FilterMode.Point;
+        this.GenerationStep = States.GENERATING_TEXTURE;
+        this.Texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGBAHalf, false);
+        this.Texture.filterMode = FilterMode.Point;
 
-        for (int y = 0; y < points.GetLength(1); y++)
+        for (int y = 0; y < Segment.Points.GetLength(1); y++)
         {
-            for (int x = 0; x < points.GetLength(0); x++)
+            for (int x = 0; x < Segment.Points.GetLength(0); x++)
             {
-                if (points[x, y].Biome != Biome.Water)
+                if (Segment.Points[x, y].Biome != Biome.Water)
                 {
-                    texture.SetPixel(x, y, colorMap[points[x, y].Biome]);
+                    this.Texture.SetPixel(x, y, colorMap[Segment.Points[x, y].Biome]);
                 }
+            }
+
+            if (y % 20 == 0 || y == Segment.Points.GetLength(1))
+            {
+                this.GenerationProgress = (float)y / Segment.Points.GetLength(1);
+                yield return null;
             }
         }
 
-        texture.Apply();
-        return texture;
+        this.Texture.Apply();
+    }
+
+    private IEnumerator CalculateTerritories()
+    {
+        this.GenerationStep = States.CALCULATING_TERRITORY_BOUNDS;
+        int dimensions = OverworldTerrainGenerator.DIMENSIONS;
+        int numPixels = OverworldTerrainGenerator.DIMENSIONS * OverworldTerrainGenerator.DIMENSIONS;
+        var visited = new string[dimensions, dimensions];
+        var edges = new Dictionary<string, HashSet<Vector2Int>>();
+        var queues = new Dictionary<string, Queue<Vector2Int>>();
+        var territoryPoints = new Dictionary<string, List<Vector2Int>>();
+        foreach (string fortressId in Segment.FortressIds)
+        {
+            var queue = new Queue<Vector2Int>();
+            queue.Enqueue(Segment.FortressPositions[fortressId]);
+            queues[fortressId] = queue;
+            visited[Segment.FortressPositions[fortressId].x, Segment.FortressPositions[fortressId].y] = fortressId;
+            edges[fortressId] = new HashSet<Vector2Int>();
+            territoryPoints[fortressId] = new List<Vector2Int>();
+        }
+
+        List<string> finishedFortresses = new List<string>(0);
+        int numIterations = 0;
+        while (queues.Count > 0)
+        {
+            foreach (string fortressId in queues.Keys)
+            {
+                var queue = queues[fortressId];
+
+                if (queue.Count == 0)
+                {
+                    finishedFortresses.Add(fortressId);
+                    continue;
+                }
+
+                Vector2Int current = queue.Dequeue();
+                numIterations += 1;
+                territoryPoints[fortressId].Add(current);
+                bool isBorder = false;
+                Helpers.GetNonHexGridNeighbors(current, dimensions, (int x, int y) =>
+                {
+                    if (visited[x, y] == null && Segment.Points[x, y].Biome != Biome.Water)
+                    {
+                        queue.Enqueue(new Vector2Int(x, y));
+                        visited[x, y] = fortressId;
+                    }
+                    else if (visited[x, y] != null &&
+                             visited[x, y] != fortressId ||
+                             Segment.Points[x, y].Biome == Biome.Water)
+                    {
+                        isBorder = true;
+                    }
+
+                    return false;
+                });
+
+                if (isBorder)
+                {
+                    edges[fortressId].Add(current);
+                }
+            }
+
+            foreach (string fortress in finishedFortresses)
+            {
+                queues.Remove(fortress);
+            }
+            finishedFortresses = new List<string>();
+
+            if (numIterations % 500 == 0)
+            {
+                this.GenerationProgress = (float)numIterations / (numPixels * .5f);
+                yield return null;
+            }
+        }
+
+        this.GenerationStep = States.GENERATING_TERRITORY_TEXTURES;
+        Segment.Territories = new Dictionary<string, OverworldTerritory>();
+        float index = 0;
+        foreach (string fortress in territoryPoints.Keys)
+        {
+            index += 1;
+            this.GenerationProgress = index / Segment.Territories.Count;
+            Segment.Territories[fortress] = new OverworldTerritory();
+            Segment.Territories[fortress].Points = territoryPoints[fortress];
+            Segment.Territories[fortress].Edges = edges[fortress];
+            yield return null;
+        }
     }
 }

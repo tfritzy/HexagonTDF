@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class OverworldManager : MonoBehaviour
     public GameObject City;
     public const int Seed = 2;
     public List<OverworldFortress> Fortresses;
+    public GameObject LoadingWindowPrefab;
 
     private Pool pool;
     private Camera cam;
@@ -17,6 +19,8 @@ public class OverworldManager : MonoBehaviour
     private System.Random Random = new System.Random(Seed);
     private OverworldSegment island;
     private const float ISLAND_WORLD_SIZE = 20;
+    private LoadingWindow loadingWindow;
+    private Dictionary<OverworldFortress, OverworldTerritory> territories;
 
     private enum ObjectType
     {
@@ -24,8 +28,7 @@ public class OverworldManager : MonoBehaviour
         City = 1,
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         generator = this.transform.GetComponent<OverworldTerrainGenerator>();
         generator.Initialize(0);
@@ -41,25 +44,63 @@ public class OverworldManager : MonoBehaviour
                 }
             }
         );
+        this.loadingWindow = Instantiate(
+            LoadingWindowPrefab,
+            Managers.LoadingCanvas.transform.position,
+            new Quaternion(),
+            Managers.LoadingCanvas.transform)
+                .GetComponent<LoadingWindow>();
 
-        SpawnIsland();
-        CreateTerritoryTexture();
+        StartCoroutine("SpawnIsland");
     }
 
-    private void SpawnIsland()
+    void FixedUpdate()
     {
-        UnityEngine.Profiling.Profiler.BeginSample("Generate Terrain");
-        this.island = generator.GetSegment(0);
-        UnityEngine.Profiling.Profiler.EndSample();
-        GameObject tile = Instantiate(this.Tile, Vector3.zero, Tile.transform.rotation);
-        UnityEngine.Profiling.Profiler.BeginSample("Generate Terrain Texture");
-        tile.GetComponent<Renderer>().material.mainTexture = generator.GetTextureOfMap(this.island.Points);
-        tile.transform.localScale = Vector3.one * ISLAND_WORLD_SIZE;
-        UnityEngine.Profiling.Profiler.EndSample();
+        if (this.loadingWindow != null && !this.generator.IsComplete)
+        {
+            this.loadingWindow.SetStatus(generator.GenerationStep, generator.GenerationProgress);
+        }
+    }
 
-        foreach (Vector2Int fortressPos in this.island.Fortresses)
+    private IEnumerator SpawnIsland()
+    {
+        yield return generator.GenerateSegment(0);
+        this.island = generator.Segment;
+        GameObject tile = Instantiate(this.Tile, Vector3.zero, Tile.transform.rotation);
+        tile.GetComponent<Renderer>().material.mainTexture = generator.Texture;
+
+        tile.transform.localScale = Vector3.one * ISLAND_WORLD_SIZE;
+
+        foreach (Vector2Int fortressPos in this.island.FortressPositions.Values)
         {
             SpawnFortress(tile, fortressPos);
+        }
+
+        SpawnTerritories();
+
+        Destroy(this.loadingWindow.gameObject);
+        StopCoroutine("SpawnIsland");
+    }
+
+    private void SpawnTerritories()
+    {
+        bool first = true;
+        foreach (OverworldTerritory territory in this.island.Territories.Values)
+        {
+            GameObject territoryObject = Instantiate(
+                this.Tile,
+                Vector3.zero,
+                this.Tile.transform.rotation);
+            territoryObject.GetComponent<Renderer>().material.mainTexture = territory.Texture;
+            territoryObject.GetComponent<Renderer>().material.renderQueue = 3002;
+            territoryObject.GetComponent<Renderer>().material.color = first ? allianceColorMap[Alliances.Player] : allianceColorMap[Alliances.Maltov];
+            territoryObject.transform.localScale = new Vector3(
+                ((float)territory.Size.x / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
+                ((float)territory.Size.y / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
+                .01f
+            );
+            territoryObject.transform.position = MapPointToWorldPoint(territory.Center);
+            first = false;
         }
     }
 
@@ -79,143 +120,12 @@ public class OverworldManager : MonoBehaviour
         fortressScript.Setup(powerMultiplier, gridPos);
     }
 
-    private Dictionary<OverworldFortress, OverworldTerritory> CalculateTerritories(OverworldSegment island)
-    {
-        int dimensions = OverworldTerrainGenerator.DIMENSIONS;
-        List<Vector2Int> points = new List<Vector2Int>();
-        foreach (OverworldFortress fortress in Fortresses)
-        {
-            points.Add(fortress.Position);
-            fortress.Alliance = Alliances.Maltov;
-        }
-
-        Fortresses[0].Alliance = Alliances.Player;
-
-        var visited = new OverworldFortress[dimensions, dimensions];
-        var territoryPoints = new Dictionary<OverworldFortress, List<Vector2Int>>();
-        var edges = new Dictionary<OverworldFortress, HashSet<Vector2Int>>();
-        var queues = new Dictionary<OverworldFortress, Queue<Vector2Int>>();
-        foreach (OverworldFortress fortress in Fortresses)
-        {
-            var queue = new Queue<Vector2Int>();
-            queue.Enqueue(fortress.Position);
-            queues[fortress] = queue;
-            visited[fortress.Position.x, fortress.Position.y] = fortress;
-            edges[fortress] = new HashSet<Vector2Int>();
-            territoryPoints[fortress] = new List<Vector2Int>();
-        }
-
-        List<OverworldFortress> finishedFortresses = new List<OverworldFortress>(0);
-        while (queues.Count > 0)
-        {
-            foreach (OverworldFortress fortress in queues.Keys)
-            {
-                var queue = queues[fortress];
-
-                if (queue.Count == 0)
-                {
-                    finishedFortresses.Add(fortress);
-                    continue;
-                }
-
-                Vector2Int current = queue.Dequeue();
-                territoryPoints[fortress].Add(current);
-                bool isBorder = false;
-                Helpers.GetNonHexGridNeighbors(current, dimensions, (int x, int y) =>
-                {
-                    if (visited[x, y] == null && island.Points[x, y].Biome != Biome.Water)
-                    {
-                        queue.Enqueue(new Vector2Int(x, y));
-                        visited[x, y] = fortress;
-                    }
-                    else if (visited[x, y] != null &&
-                             visited[x, y] != fortress ||
-                             island.Points[x, y].Biome == Biome.Water)
-                    {
-                        isBorder = true;
-                    }
-
-                    return false;
-                });
-
-                if (isBorder)
-                {
-                    edges[fortress].Add(current);
-                }
-            }
-
-            foreach (OverworldFortress fortress in finishedFortresses)
-            {
-                queues.Remove(fortress);
-            }
-            finishedFortresses = new List<OverworldFortress>();
-        }
-
-        var territories = new Dictionary<OverworldFortress, OverworldTerritory>();
-        foreach (OverworldFortress fortress in territoryPoints.Keys)
-        {
-            territories[fortress] = new OverworldTerritory();
-            territories[fortress].Points = territoryPoints[fortress];
-            territories[fortress].Edges = edges[fortress];
-        }
-
-        return territories;
-    }
-
     private Dictionary<Alliances, Color> allianceColorMap = new Dictionary<Alliances, Color>
     {
         {Alliances.Maltov, ColorExtensions.Create("#77403b")},
         {Alliances.Player, ColorExtensions.Create("#ffdf5a")},
         {Alliances.Neutral, new Color(0, 0, 0, 0)}
     };
-    private void CreateTerritoryTexture()
-    {
-        UnityEngine.Profiling.Profiler.BeginSample("Calculate Territory boundries");
-        Dictionary<OverworldFortress, OverworldTerritory> territories = CalculateTerritories(island);
-        UnityEngine.Profiling.Profiler.EndSample();
-        UnityEngine.Profiling.Profiler.BeginSample("Generate Territory Textures");
-        GenerateTerritoryTextures(territories);
-        UnityEngine.Profiling.Profiler.EndSample();
-    }
-
-    private void GenerateTerritoryTextures(Dictionary<OverworldFortress, OverworldTerritory> territories)
-    {
-        foreach (OverworldFortress fortress in territories.Keys)
-        {
-            OverworldTerritory territory = territories[fortress];
-            Texture2D texture = new Texture2D(
-                territory.Size.x,
-                territory.Size.y,
-                TextureFormat.RGBAHalf,
-                false);
-            texture.filterMode = FilterMode.Point;
-
-            foreach (Vector2Int point in territory.Edges)
-            {
-                if (this.island.Points[point.x, point.y].Biome != Biome.Water)
-                {
-                    texture.SetPixel(
-                        point.x - territory.LowBounds.x,
-                        point.y - territory.LowBounds.y,
-                        allianceColorMap[fortress.Alliance]);
-                }
-            }
-
-            texture.Apply();
-            GameObject territoryObject = Instantiate(
-                this.Tile,
-                Vector3.zero,
-                this.Tile.transform.rotation);
-            territoryObject.GetComponent<Renderer>().material.mainTexture = texture;
-            territoryObject.GetComponent<Renderer>().material.renderQueue = 3002;
-            territoryObject.transform.localScale = new Vector3(
-                ((float)territory.Size.x / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
-                ((float)territory.Size.y / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
-                .01f
-            );
-            territoryObject.transform.position = MapPointToWorldPoint(territory.Center);
-        }
-    }
 
     private Vector3 MapPointToWorldPoint(Vector2Int mapPoint)
     {

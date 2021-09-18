@@ -6,14 +6,25 @@ using UnityEngine.UI;
 
 public class LoadingMenu : MonoBehaviour
 {
+    public string DefaultSceneToLoad;
+
     private AsyncOperation loadingOperation;
     private Image loadingBar;
     private string sceneName;
 
-    void Awake()
+    void Start()
     {
         this.loadingBar = this.transform.Find("LoadingBar").Find("FillBar").GetComponent<Image>();
-        Managers.LoadingMenu.gameObject.SetActive(false); // Update reference in managers and disable self.
+
+        if (!string.IsNullOrEmpty(DefaultSceneToLoad))
+        {
+            LoadScene(DefaultSceneToLoad);
+        }
+        else
+        {
+            Managers.LoadingMenu.gameObject.SetActive(false); // Update reference in managers and disable self.
+        }
+
     }
 
     public void LoadScene(string sceneName)
@@ -23,7 +34,7 @@ public class LoadingMenu : MonoBehaviour
         loadingOperation = SceneManager.LoadSceneAsync(this.sceneName);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (loadingOperation != null)
         {

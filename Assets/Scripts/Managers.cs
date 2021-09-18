@@ -184,6 +184,20 @@ public static class Managers
         }
     }
 
+    private static Canvas loadingCanvas;
+    public static Canvas LoadingCanvas
+    {
+        get
+        {
+            if (loadingCanvas == null)
+            {
+                loadingCanvas = GameObject.Find("LoadingCanvas").GetComponent<Canvas>();
+            }
+
+            return loadingCanvas;
+        }
+    }
+
     private static OverworldManager overworldManager;
     public static OverworldManager OverworldManager
     {

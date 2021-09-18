@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class OverworldTerritory
             CalculateBounds();
         }
     }
+
     private HashSet<Vector2Int> edges;
     public HashSet<Vector2Int> Edges
     {
@@ -20,7 +22,7 @@ public class OverworldTerritory
         set
         {
             edges = value;
-            CalculateOutline();
+            GenerateTexture();
         }
     }
     public List<Vector2Int> Outline { get; private set; }
@@ -28,6 +30,7 @@ public class OverworldTerritory
     public Vector2Int LowBounds { get; private set; }
     public Vector2 Center { get; private set; }
     public Vector2Int Size { get; private set; }
+    public Texture2D Texture { get; private set; }
 
     private void CalculateBounds()
     {
@@ -70,11 +73,23 @@ public class OverworldTerritory
         );
     }
 
-    private void CalculateOutline()
+    private void GenerateTexture()
     {
-        // foreach (Vector2Int point in edges)
-        // {
+        Texture = new Texture2D(
+            Size.x,
+            Size.y,
+            TextureFormat.RGBAHalf,
+            false);
+        Texture.filterMode = FilterMode.Point;
 
-        // }
+        foreach (Vector2Int point in Edges)
+        {
+            Texture.SetPixel(
+                point.x - LowBounds.x,
+                point.y - LowBounds.y,
+                Color.white);
+        }
+
+        Texture.Apply();
     }
 }
