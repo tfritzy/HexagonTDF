@@ -74,7 +74,7 @@ public static class Helpers
             visited.Add(current.Position);
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int testPosition = GetNeighborPosition(map, current.Position, i);
+                Vector2Int testPosition = GetNeighborPosition(current.Position, i, map.GetLength(0));
                 if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
@@ -139,7 +139,7 @@ public static class Helpers
             visited.Add(current.Position);
             for (int i = 0; i < 6; i++)
             {
-                Vector2Int testPosition = GetNeighborPosition(map, current.Position, i);
+                Vector2Int testPosition = GetNeighborPosition(current.Position, i, map.GetLength(0));
                 if (testPosition == Constants.MinVector2Int)
                 {
                     continue;
@@ -216,7 +216,7 @@ public static class Helpers
         visited.Add(position);
         for (int i = 0; i < 6; i++)
         {
-            Vector2Int neighborPos = GetNeighborPosition(map, position, i);
+            Vector2Int neighborPos = GetNeighborPosition(position, i, map.GetLength(0));
             if (neighborPos == Constants.MinVector2Int)
             {
                 continue;
@@ -265,14 +265,14 @@ public static class Helpers
         return Mathf.PerlinNoise(x / scale + seed, y / scale + seed);
     }
 
-    public static bool IsInBounds(HexagonMono[,] map, Vector2Int position)
+    public static bool IsInBounds(Vector2Int position, int dimensions)
     {
-        if (position.x < 0 || position.x >= map.GetLength(0))
+        if (position.x < 0 || position.x >= dimensions)
         {
             return false;
         }
 
-        if (position.y < 0 || position.y >= map.GetLength(1))
+        if (position.y < 0 || position.y >= dimensions)
         {
             return false;
         }
@@ -322,7 +322,7 @@ public static class Helpers
         new Vector2Int(-1, 0)
     };
 
-    public static Vector2Int GetNeighborPosition(HexagonMono[,] map, Vector2Int pos, int index)
+    public static Vector2Int GetNeighborPosition(Vector2Int pos, int index, int dimensions)
     {
         Vector2Int position;
 
@@ -335,7 +335,7 @@ public static class Helpers
             position = pos + oddNeighborPattern[index];
         }
 
-        if (Helpers.IsInBounds(map, position))
+        if (Helpers.IsInBounds(position, dimensions))
         {
             return position;
         }
@@ -409,7 +409,7 @@ public static class Helpers
 
     public static bool IsPosWalkable(Vector2Int startPos, Vector2Int endPos, HexagonMono[,] hexes)
     {
-        return IsInBounds(hexes, startPos) && IsInBounds(hexes, endPos)
+        return IsInBounds(startPos, hexes.GetLength(0)) && IsInBounds(endPos, hexes.GetLength(0))
             && hexes[startPos.x, startPos.y].transform.position.y == hexes[endPos.x, endPos.y].transform.position.y
             && hexes[endPos.x, endPos.y].IsWalkable
             && (Managers.Board.Buildings.ContainsKey(endPos) == false || Managers.Board.Buildings[endPos].IsWalkable);
@@ -446,7 +446,7 @@ public static class Helpers
         return Vector3.Angle(targetDirection, forward);
     }
 
-    public static void GetNonHexGridNeighbors(Vector2Int pos, int mapDimensions, Func<int, int, bool> forNeighbor)
+    public static void GetHexNeighbors(Vector2Int pos, int mapDimensions, Func<int, int, bool> forNeighbor)
     {
         List<Vector2Int> neighbors = new List<Vector2Int>(8);
         for (int x = pos.x - 1; x <= pos.x + 1; x++)

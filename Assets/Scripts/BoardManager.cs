@@ -255,7 +255,7 @@ public class BoardManager : MonoBehaviour
 
     public HexagonMono GetHex(Vector2Int pos)
     {
-        if (Helpers.IsInBounds(this.Hexagons, pos) == false)
+        if (Helpers.IsInBounds(pos, this.Hexagons.GetLength(0)) == false)
         {
             return null;
         }
