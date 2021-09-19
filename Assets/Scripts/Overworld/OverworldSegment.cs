@@ -4,11 +4,10 @@ using UnityEngine;
 public class OverworldSegment
 {
     public OverworldMapPoint[,] Points;
-    public Texture2D Texture;
     public List<string> FortressIds;
     public Dictionary<string, Vector2Int> FortressPositions;
     public Dictionary<string, OverworldTerritory> Territories;
-    public Vector2Int Coordinates;
+    public int Index;
 
     public int Width => Points.GetLength(0);
     public int Height => Points.GetLength(1);

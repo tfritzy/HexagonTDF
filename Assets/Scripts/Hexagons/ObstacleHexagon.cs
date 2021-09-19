@@ -12,7 +12,7 @@ public abstract class ObstacleHexagon : Hexagon
 
     public void GenerateObstacle(Transform hex, Vector2Int hexGridPos)
     {
-        System.Random random = new System.Random(GameState.SelectedSegment.Coordinates.GetHashCode() * 786433 + hexGridPos.GetHashCode() * 3145739);
+        System.Random random = new System.Random(GameState.SelectedSegment.Index * 786433 + hexGridPos.GetHashCode() * 3145739);
         if (random.NextDouble() <= ObstacleChance)
         {
             HasObstacle = true;

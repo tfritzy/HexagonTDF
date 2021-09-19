@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -44,14 +45,8 @@ public class OverworldManager : MonoBehaviour
                 }
             }
         );
-        this.loadingWindow = Instantiate(
-            LoadingWindowPrefab,
-            Managers.LoadingCanvas.transform.position,
-            new Quaternion(),
-            Managers.LoadingCanvas.transform)
-                .GetComponent<LoadingWindow>();
 
-        StartCoroutine("SpawnIsland");
+        StartCoroutine("SpawnIsland", 0);
     }
 
     void FixedUpdate()
@@ -62,36 +57,58 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnIsland()
+    const string ISLANDS_FILE_PATH = "Islands";
+    const string ISLANDS_MESH_FILE_FORMAT = "island_mesh_{0}";
+    const string ISLANDS_DATA_FILE_FORMAT = "island_data_{0}";
+    const string MESH_OBJECT_NAME = "Overworld Map Mesh";
+    private IEnumerator SpawnIsland(int index)
     {
-        if (MeshPersister.TryGetCacheItem("Islands/island_0", out Mesh mesh))
+        if (MeshPersister.TryGetCacheMesh(
+                Path.Combine(ISLANDS_FILE_PATH, string.Format(ISLANDS_MESH_FILE_FORMAT, index.ToString())),
+                out Mesh cachedMesh) &&
+            MeshPersister.TryGetDataFromCache<OverworldSegment>(
+                Path.Combine(ISLANDS_FILE_PATH, string.Format(ISLANDS_DATA_FILE_FORMAT, index.ToString())),
+                out OverworldSegment cachedSegment))
         {
             GameObject map = new GameObject();
             map.transform.SetParent(this.transform);
             map.transform.rotation = this.transform.rotation;
             MeshFilter filter = map.AddComponent<MeshFilter>();
-            filter.mesh = mesh;
+            filter.mesh = cachedMesh;
             MeshRenderer renderer = map.AddComponent<MeshRenderer>();
             renderer.material = Constants.Materials.OverworldColorPalette;
+            this.island = cachedSegment;
         }
         else
         {
-            yield return generator.GenerateSegment(0, "Overworld Map");
+            this.loadingWindow = Instantiate(
+                LoadingWindowPrefab,
+                Managers.LoadingCanvas.transform.position,
+                new Quaternion(),
+                Managers.LoadingCanvas.transform)
+                    .GetComponent<LoadingWindow>();
+
+            yield return generator.GenerateSegment(0, MESH_OBJECT_NAME);
             this.island = generator.Segment;
-
-            var map = this.transform.Find("Overworld Map");
-            MeshPersister.CacheItem("Islands", "island_0", map.GetComponent<MeshFilter>().mesh);
+            MeshPersister.CacheData<OverworldSegment>(
+                ISLANDS_FILE_PATH,
+                string.Format(ISLANDS_DATA_FILE_FORMAT, index.ToString()),
+                this.island);
+            var map = this.transform.Find(MESH_OBJECT_NAME);
+            MeshPersister.CacheMesh(
+                ISLANDS_FILE_PATH,
+                string.Format(ISLANDS_MESH_FILE_FORMAT, index.ToString()),
+                map.GetComponent<MeshFilter>().mesh);
+            Destroy(this.loadingWindow.gameObject);
         }
-
 
         foreach (Vector2Int fortressPos in this.island.FortressPositions.Values)
         {
+
             SpawnFortress(fortressPos);
         }
 
         // SpawnTerritories();
-
-        Destroy(this.loadingWindow.gameObject);
         StopCoroutine("SpawnIsland");
     }
 

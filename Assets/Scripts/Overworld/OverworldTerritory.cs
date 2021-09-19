@@ -21,7 +21,6 @@ public class OverworldTerritory
     public Vector2Int LowBounds { get; private set; }
     public Vector2 Center { get; private set; }
     public Vector2Int Size { get; private set; }
-    public Texture2D Texture { get; private set; }
 
     private void CalculateBounds()
     {

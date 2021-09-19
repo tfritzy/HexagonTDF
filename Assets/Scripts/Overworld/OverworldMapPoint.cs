@@ -1,6 +1,10 @@
+using Newtonsoft.Json;
+
 public class OverworldMapPoint
 {
+    [JsonProperty("H")]
     public float Height;
-    public float Moisture;
+
+    [JsonProperty("B")]
     public Biome Biome;
 }

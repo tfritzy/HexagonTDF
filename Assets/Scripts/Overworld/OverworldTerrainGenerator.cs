@@ -121,7 +121,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             FortressIds = new List<string>(),
             FortressPositions = new Dictionary<string, Vector2Int>(),
             Points = new OverworldMapPoint[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS],
-            Texture = null,
+            Index = index,
         };
         this.GenerationStep = States.GENERATING_TERRAIN;
 
@@ -237,7 +237,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
             {
                 Height = heightValue,
                 Biome = biome,
-                Moisture = moistureValue,
             };
         }
     }

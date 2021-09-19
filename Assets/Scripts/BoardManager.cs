@@ -55,7 +55,7 @@ public class BoardManager : MonoBehaviour
     HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland, Biome.Snow, Biome.Forrest };
     private void SetupMapHeight(OverworldSegment map)
     {
-        OpenSimplexNoise heightNoise = new OpenSimplexNoise(map.Coordinates.GetHashCode());
+        OpenSimplexNoise heightNoise = new OpenSimplexNoise(map.Index);
         for (int y = 0; y < this.Hexagons.GetLength(1); y++)
         {
             for (int x = 0; x < this.Hexagons.GetLength(0); x++)
@@ -114,7 +114,7 @@ public class BoardManager : MonoBehaviour
     {
         this.Buildings = new Dictionary<Vector2Int, Building>();
         this.Barracks = new List<Barracks>();
-        System.Random random = new System.Random(segment.Coordinates.GetHashCode());
+        System.Random random = new System.Random(segment.Index);
         var buildingMap = new Dictionary<Vector2Int, BuildingType>();
 
         Vector2Int castlePosition = new Vector2Int(
