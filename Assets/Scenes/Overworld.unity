@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2d4a03d2c477e419b279ea024981a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Texture: {fileID: 0}
   IsComplete: 0
   Scale: 25
   Octaves: 5

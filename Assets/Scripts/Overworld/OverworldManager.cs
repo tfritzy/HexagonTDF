@@ -104,7 +104,6 @@ public class OverworldManager : MonoBehaviour
 
         foreach (Vector2Int fortressPos in this.island.FortressPositions.Values)
         {
-
             SpawnFortress(fortressPos);
         }
 

@@ -6,13 +6,12 @@ public static class Constants
 {
     public const float HEXAGON_r = 0.866f;
     public const float HEXAGON_R = 1.066f;
-    public const float OVERWORLD_HEXAGON_r = .15f;
-    public const float OVERWORLD_HEXAGON_R = 0.1732f;
+    public const float OVERWORLD_HEXAGON_R = .15f;
     public const int OVERWORLD_DIMENSIONS = 100;
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
-    public const float OverworldHorizontalDistanceBetweenHexagons = OVERWORLD_HEXAGON_R + OVERWORLD_HEXAGON_r / 2;
-    public const float OverworldVerticalDistanceBetweenHexagons = OVERWORLD_HEXAGON_r * 2;
+    public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
+    public static readonly float OverworldVerticalDistanceBetweenHexagons = 2.0f * Mathf.Cos(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
     public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
     public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
     public static Vector3 CenterScreen => new Vector3(Screen.width / 2, Screen.height / 2);

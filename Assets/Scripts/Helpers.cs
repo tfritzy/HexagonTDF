@@ -395,17 +395,16 @@ public static class Helpers
 
     public static Vector3 ToOverworldPosition(int x, int y)
     {
-        return ToWorldPosition(
-            x, y,
-            Constants.OverworldHorizontalDistanceBetweenHexagons,
-            Constants.OverworldVerticalDistanceBetweenHexagons,
-            Constants.OVERWORLD_HEXAGON_r) -
-            ToWorldPosition(
-                Constants.OVERWORLD_DIMENSIONS,
-                Constants.OVERWORLD_DIMENSIONS,
-                Constants.OverworldHorizontalDistanceBetweenHexagons,
-                Constants.OverworldVerticalDistanceBetweenHexagons,
-                Constants.OVERWORLD_HEXAGON_r) / 2f;
+        Vector3 pos = new Vector3(
+            x * Constants.OverworldHorizontalDistanceBetweenHexagons,
+            0,
+            y * Constants.OverworldVerticalDistanceBetweenHexagons);
+        if (x % 2 == 1)
+        {
+            pos.z += Constants.OverworldHorizontalDistanceBetweenHexagons / 2;
+        }
+
+        return pos;
     }
 
     public static bool IsPosWalkable(Vector2Int startPos, Vector2Int endPos, HexagonMono[,] hexes)

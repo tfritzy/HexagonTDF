@@ -158,7 +158,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
             {
                 Vector2Int colorPos = colorAtlasMap[Segment.Points[x, y].Biome];
-                hexGridGenerator.SetUV(x, y, colorPos.y, colorPos.x);
+                hexGridGenerator.SetUV(y, x, colorPos.y, colorPos.x);
             }
 
             this.GenerationProgress = (float)x / Constants.OVERWORLD_DIMENSIONS;
@@ -170,15 +170,17 @@ public class OverworldTerrainGenerator : MonoBehaviour
     {
         int numChunks = Constants.OVERWORLD_DIMENSIONS / SUBDIVISION_SIZE;
         this.GenerationStep = States.LOCATING_FORTRESSES;
+
         for (int x = 0; x < numChunks; x++)
         {
             for (int y = 0; y < numChunks; y++)
             {
                 if (DoesSegmentHaveFortress(x, y, Segment.Points))
                 {
-                    Vector2Int fortressPos = new Vector2Int(
-                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-3, 3),
-                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-3, 3));
+                    Vector2Int fortressPos =
+                        new Vector2Int(
+                                SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2,
+                                SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2);
 
                     if (this.Segment.Points[fortressPos.x, fortressPos.y].Biome != Biome.Water)
                     {
@@ -309,7 +311,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
             var queue = new Queue<Vector2Int>();
             queue.Enqueue(Segment.FortressPositions[fortressId]);
             queues[fortressId] = queue;
-            visited[Segment.FortressPositions[fortressId].x, Segment.FortressPositions[fortressId].y] = fortressId;
+            visited[Segment.FortressPositions[fortressId].x,
+                    Segment.FortressPositions[fortressId].y] = fortressId;
             edges[fortressId] = new HashSet<Vector2Int>();
             territoryPoints[fortressId] = new List<Vector2Int>();
         }

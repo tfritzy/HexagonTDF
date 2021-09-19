@@ -51,10 +51,10 @@ public class HexGridGenerator : MonoBehaviour
         mesh = new Mesh();
         mf.mesh = mesh;
 
-        float vertSpacing = 2.0f * Mathf.Cos(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
-        float horzSpacing = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
+        float vertSpacing = Constants.OverworldVerticalDistanceBetweenHexagons;
+        float horzSpacing = Constants.OverworldHorizontalDistanceBetweenHexagons;
 
-        Vector3 currPos = new Vector3(-columns / 2.0f * horzSpacing, rows / 2.0f * vertSpacing, 0.0f);
+        Vector3 currPos = Vector3.zero;
 
         // Layout vertices for a single hex cell
         Vector3[] hexVerts = new Vector3[6];
@@ -79,12 +79,12 @@ public class HexGridGenerator : MonoBehaviour
                 {
                     vertices[currVert++] = hexVerts[k] + currPos;
                 }
-                currPos.y -= vertSpacing;
+                currPos.y += vertSpacing;
             }
             currPos.x += horzSpacing;
-            currPos.y = rows / 2.0f * vertSpacing;
+            currPos.y = 0;
             if (i % 2 == 0)
-                currPos.y -= vertSpacing / 2.0f;
+                currPos.y += vertSpacing / 2.0f;
             if (i % 2 == 0)
             {
                 this.Progress = (float)i / columns;
