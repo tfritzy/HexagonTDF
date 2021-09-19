@@ -15,16 +15,7 @@ public class OverworldTerritory
         }
     }
 
-    private HashSet<Vector2Int> edges;
-    public HashSet<Vector2Int> Edges
-    {
-        get { return edges; }
-        set
-        {
-            edges = value;
-            GenerateTexture();
-        }
-    }
+    public HashSet<Vector2Int> Edges { get; set; }
     public List<Vector2Int> Outline { get; private set; }
     public Vector2Int HighBounds { get; private set; }
     public Vector2Int LowBounds { get; private set; }
@@ -71,25 +62,5 @@ public class OverworldTerritory
             LowBounds.x + (float)Size.x / 2,
             LowBounds.y + (float)Size.y / 2
         );
-    }
-
-    private void GenerateTexture()
-    {
-        Texture = new Texture2D(
-            Size.x,
-            Size.y,
-            TextureFormat.RGBAHalf,
-            false);
-        Texture.filterMode = FilterMode.Point;
-
-        foreach (Vector2Int point in Edges)
-        {
-            Texture.SetPixel(
-                point.x - LowBounds.x,
-                point.y - LowBounds.y,
-                Color.white);
-        }
-
-        Texture.Apply();
     }
 }

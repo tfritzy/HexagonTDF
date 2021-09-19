@@ -24,7 +24,6 @@ public class LoadingMenu : MonoBehaviour
         {
             Managers.LoadingMenu.gameObject.SetActive(false); // Update reference in managers and disable self.
         }
-
     }
 
     public void LoadScene(string sceneName)

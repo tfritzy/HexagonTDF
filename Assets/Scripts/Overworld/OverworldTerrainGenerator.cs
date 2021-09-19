@@ -7,22 +7,20 @@ using UnityEngine;
 
 public class OverworldTerrainGenerator : MonoBehaviour
 {
+    public Func<string> GetStatus;
+    public Func<float> GetProgress;
     public OverworldSegment Segment;
-    public Texture2D Texture;
-    public string GenerationStep;
-    public float GenerationProgress;
     public bool IsComplete;
-    public const int DIMENSIONS = 1536;
-    private const int SUBDIVISION_SIZE = DIMENSIONS / 8;
-    private const float CITY_CHANCE = .2f;
-    private readonly int CITY_LOW_BOUNDS = DIMENSIONS / 5;
-    private readonly int CITY_HIGH_BOUNDS = DIMENSIONS - (DIMENSIONS / 5);
-    private float halfDimensions = DIMENSIONS / 2f;
+    private const int SUBDIVISION_SIZE = Constants.OVERWORLD_DIMENSIONS / 10;
+    private float halfDimensions = Constants.OVERWORLD_DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
-    private const int FALLOFF_NEAR_START = 128;
-    private const int FALLOFF_FAR_START = DIMENSIONS - FALLOFF_NEAR_START;
+    private const int FALLOFF_NEAR_START = 5;
+    private const int FALLOFF_FAR_START = Constants.OVERWORLD_DIMENSIONS - FALLOFF_NEAR_START;
     private System.Random random;
     private int Seed;
+    private HexGridGenerator hexGridGenerator;
+    private string GenerationStep;
+    private float GenerationProgress;
 
     public float Scale;
     public int Octaves;
@@ -31,11 +29,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private static class States
     {
-        public const string GENERATING_TERRAIN = "Generating Terrain";
-        public const string LOCATING_FORTRESSES = "Locating Fortresses";
-        public const string GENERATING_TEXTURE = "Generating Island Texture";
-        public const string CALCULATING_TERRITORY_BOUNDS = "Calculating Territory Bounds";
-        public const string GENERATING_TERRITORY_TEXTURES = "Generating Territory Textures";
+        public const string GENERATING_TERRAIN = "Generating terrain";
+        public const string LOCATING_FORTRESSES = "Locating fortresses";
+        public const string GENERATING_MESH = "Generating mesh";
+        public const string MAPPING_TO_TEXTURE_ATLAS = "Mapping UVs to texture";
+        public const string CALCULATING_TERRITORY_BOUNDS = "Calculating territory bounds";
     }
 
     private struct BiomeFormationCriterion
@@ -95,14 +93,26 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Null, Color.magenta},
     };
 
+    private Dictionary<Biome, Vector2Int> colorAtlasMap = new Dictionary<Biome, Vector2Int>()
+    {
+        {Biome.Snow, new Vector2Int(1, 2)},
+        {Biome.Mountain, new Vector2Int(0, 2)},
+        {Biome.Forrest, new Vector2Int(0, 0)},
+        {Biome.Grassland, new Vector2Int(0, 1)},
+        {Biome.Sand, new Vector2Int(2, 2)},
+        {Biome.Water, new Vector2Int(1, 0)},
+    };
+
     public void Initialize(int seed)
     {
         this.random = new System.Random(seed);
         this.Seed = seed;
     }
 
-    public IEnumerator GenerateSegment(int index)
+    public IEnumerator GenerateSegment(int index, string containerName)
     {
+        this.GetStatus = () => this.GenerationStep;
+        this.GetProgress = () => this.GenerationProgress;
         IsComplete = false;
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(this.Seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(this.Seed + 1);
@@ -110,49 +120,78 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {
             FortressIds = new List<string>(),
             FortressPositions = new Dictionary<string, Vector2Int>(),
-            Points = new OverworldMapPoint[DIMENSIONS, DIMENSIONS],
+            Points = new OverworldMapPoint[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS],
             Texture = null,
         };
         this.GenerationStep = States.GENERATING_TERRAIN;
 
-        for (int y = 0; y < DIMENSIONS; y++)
+        for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
         {
             formatRow(Segment.Points, heightNoise, moistureNoise, y);
-            this.GenerationProgress = (float)y / DIMENSIONS;
-
             if (y % 10 == 0)
             {
+                this.GenerationProgress = (float)y / Constants.OVERWORLD_DIMENSIONS;
                 yield return null;
             }
         }
 
-        int numChunks = DIMENSIONS / SUBDIVISION_SIZE;
+        yield return GenerateMesh(containerName);
+
+        yield return FindFotressLocations(index);
+
+        yield return CalculateTerritories();
+        IsComplete = true;
+    }
+
+    private IEnumerator GenerateMesh(string containerName)
+    {
+        this.hexGridGenerator = this.GetComponent<HexGridGenerator>().GetComponent<HexGridGenerator>();
+        this.GetStatus = () => this.hexGridGenerator.State;
+        this.GetProgress = () => this.hexGridGenerator.Progress;
+        yield return this.hexGridGenerator.GenerateMesh(Constants.OVERWORLD_DIMENSIONS, containerName);
+
+        this.GetStatus = () => this.GenerationStep;
+        this.GetProgress = () => this.GenerationProgress;
+        this.GenerationStep = States.MAPPING_TO_TEXTURE_ATLAS;
+        for (int x = 0; x < Constants.OVERWORLD_DIMENSIONS; x++)
+        {
+            for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
+            {
+                Vector2Int colorPos = colorAtlasMap[Segment.Points[x, y].Biome];
+                hexGridGenerator.SetUV(x, y, colorPos.y, colorPos.x);
+            }
+
+            this.GenerationProgress = (float)x / Constants.OVERWORLD_DIMENSIONS;
+            yield return null;
+        }
+    }
+
+    private IEnumerator FindFotressLocations(int segmentIndex)
+    {
+        int numChunks = Constants.OVERWORLD_DIMENSIONS / SUBDIVISION_SIZE;
         this.GenerationStep = States.LOCATING_FORTRESSES;
-        int fortressIndex = 0;
         for (int x = 0; x < numChunks; x++)
         {
             for (int y = 0; y < numChunks; y++)
             {
                 if (DoesSegmentHaveFortress(x, y, Segment.Points))
                 {
-                    string id = $"Fortress-{index}-{fortressIndex}";
-                    fortressIndex += 1;
-                    Segment.FortressIds.Add(id);
-                    Segment.FortressPositions[id] =
-                        new Vector2Int(
-                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-50, 50),
-                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-50, 50));
+                    Vector2Int fortressPos = new Vector2Int(
+                            SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-3, 3),
+                            SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-3, 3));
+
+                    if (this.Segment.Points[fortressPos.x, fortressPos.y].Biome != Biome.Water)
+                    {
+                        string id = $"Fortress-{segmentIndex}-{Segment.FortressIds.Count}";
+                        Segment.FortressIds.Add(id);
+                        Segment.FortressPositions[id] = fortressPos;
+                    }
                 }
             }
 
             this.GenerationProgress = (float)x / numChunks;
             yield return null;
         }
-
-        yield return GenerateTextureOfMap();
-
-        yield return CalculateTerritories();
-        IsComplete = true;
     }
 
     private bool DoesSegmentHaveFortress(int xSeg, int ySeg, OverworldMapPoint[,] fullMap)
@@ -181,7 +220,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         OpenSimplexNoise moistureNoise,
         int y)
     {
-        for (int x = 0; x < DIMENSIONS; x++)
+        for (int x = 0; x < Constants.OVERWORLD_DIMENSIONS; x++)
         {
             float xD = x / Scale;
             float yD = y / Scale;
@@ -257,37 +296,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return Biome.Null;
     }
 
-    public IEnumerator GenerateTextureOfMap()
-    {
-        this.GenerationStep = States.GENERATING_TEXTURE;
-        this.Texture = new Texture2D(DIMENSIONS, DIMENSIONS, TextureFormat.RGBAHalf, false);
-        this.Texture.filterMode = FilterMode.Point;
-
-        for (int y = 0; y < Segment.Points.GetLength(1); y++)
-        {
-            for (int x = 0; x < Segment.Points.GetLength(0); x++)
-            {
-                if (Segment.Points[x, y].Biome != Biome.Water)
-                {
-                    this.Texture.SetPixel(x, y, colorMap[Segment.Points[x, y].Biome]);
-                }
-            }
-
-            if (y % 20 == 0 || y == Segment.Points.GetLength(1))
-            {
-                this.GenerationProgress = (float)y / Segment.Points.GetLength(1);
-                yield return null;
-            }
-        }
-
-        this.Texture.Apply();
-    }
-
     private IEnumerator CalculateTerritories()
     {
         this.GenerationStep = States.CALCULATING_TERRITORY_BOUNDS;
-        int dimensions = OverworldTerrainGenerator.DIMENSIONS;
-        int numPixels = OverworldTerrainGenerator.DIMENSIONS * OverworldTerrainGenerator.DIMENSIONS;
+        int dimensions = Constants.OVERWORLD_DIMENSIONS;
+        int numHexes = dimensions * dimensions;
         var visited = new string[dimensions, dimensions];
         var edges = new Dictionary<string, HashSet<Vector2Int>>();
         var queues = new Dictionary<string, Queue<Vector2Int>>();
@@ -351,12 +364,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
             if (numIterations % 500 == 0)
             {
-                this.GenerationProgress = (float)numIterations / (numPixels * .5f);
+                this.GenerationProgress = (float)numIterations / (numHexes * .5f);
                 yield return null;
             }
         }
 
-        this.GenerationStep = States.GENERATING_TERRITORY_TEXTURES;
         Segment.Territories = new Dictionary<string, OverworldTerritory>();
         float index = 0;
         foreach (string fortress in territoryPoints.Keys)

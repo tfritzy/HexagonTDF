@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 
 public class OverworldManager : MonoBehaviour
@@ -18,7 +19,6 @@ public class OverworldManager : MonoBehaviour
     private Dictionary<Vector2Int, GameObject> activeTiles;
     private System.Random Random = new System.Random(Seed);
     private OverworldSegment island;
-    private const float ISLAND_WORLD_SIZE = 20;
     private LoadingWindow loadingWindow;
     private Dictionary<OverworldFortress, OverworldTerritory> territories;
 
@@ -58,63 +58,54 @@ public class OverworldManager : MonoBehaviour
     {
         if (this.loadingWindow != null && !this.generator.IsComplete)
         {
-            this.loadingWindow.SetStatus(generator.GenerationStep, generator.GenerationProgress);
+            this.loadingWindow.SetStatus(generator.GetStatus(), generator.GetProgress());
         }
     }
 
     private IEnumerator SpawnIsland()
     {
-        yield return generator.GenerateSegment(0);
-        this.island = generator.Segment;
-        GameObject tile = Instantiate(this.Tile, Vector3.zero, Tile.transform.rotation);
-        tile.GetComponent<Renderer>().material.mainTexture = generator.Texture;
+        if (MeshPersister.TryGetCacheItem("Islands/island_0", out Mesh mesh))
+        {
+            GameObject map = new GameObject();
+            map.transform.SetParent(this.transform);
+            map.transform.rotation = this.transform.rotation;
+            MeshFilter filter = map.AddComponent<MeshFilter>();
+            filter.mesh = mesh;
+            MeshRenderer renderer = map.AddComponent<MeshRenderer>();
+            renderer.material = Constants.Materials.OverworldColorPalette;
+        }
+        else
+        {
+            yield return generator.GenerateSegment(0, "Overworld Map");
+            this.island = generator.Segment;
 
-        tile.transform.localScale = Vector3.one * ISLAND_WORLD_SIZE;
+            var map = this.transform.Find("Overworld Map");
+            MeshPersister.CacheItem("Islands", "island_0", map.GetComponent<MeshFilter>().mesh);
+        }
+
 
         foreach (Vector2Int fortressPos in this.island.FortressPositions.Values)
         {
-            SpawnFortress(tile, fortressPos);
+            SpawnFortress(fortressPos);
         }
 
-        SpawnTerritories();
+        // SpawnTerritories();
 
         Destroy(this.loadingWindow.gameObject);
         StopCoroutine("SpawnIsland");
     }
 
-    private void SpawnTerritories()
-    {
-        bool first = true;
-        foreach (OverworldTerritory territory in this.island.Territories.Values)
-        {
-            GameObject territoryObject = Instantiate(
-                this.Tile,
-                Vector3.zero,
-                this.Tile.transform.rotation);
-            territoryObject.GetComponent<Renderer>().material.mainTexture = territory.Texture;
-            territoryObject.GetComponent<Renderer>().material.renderQueue = 3002;
-            territoryObject.GetComponent<Renderer>().material.color = first ? allianceColorMap[Alliances.Player] : allianceColorMap[Alliances.Maltov];
-            territoryObject.transform.localScale = new Vector3(
-                ((float)territory.Size.x / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
-                ((float)territory.Size.y / (float)OverworldTerrainGenerator.DIMENSIONS) * (float)ISLAND_WORLD_SIZE,
-                .01f
-            );
-            territoryObject.transform.position = MapPointToWorldPoint(territory.Center);
-            first = false;
-        }
-    }
-
     const float expectedCitiesPerRow = .5f;
     const float powerGainedPerCity = .1f;
-    private void SpawnFortress(GameObject tile, Vector2Int gridPos)
+    private void SpawnFortress(Vector2Int gridPos)
     {
         float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
         // float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, gridPos.y) * variance;
         float powerMultiplier = UnityEngine.Random.Range(.5f, 3f);
 
         GameObject fortress = pool.GetObject((int)ObjectType.City);
-        fortress.transform.position = MapPointToWorldPoint(gridPos);
-        fortress.transform.parent = tile.transform;
+        fortress.transform.position = Helpers.ToOverworldPosition(gridPos);
+        fortress.transform.parent = this.transform;
         OverworldFortress fortressScript = fortress.GetComponent<OverworldFortress>();
         Fortresses.Add(fortressScript);
         fortressScript.Setup(powerMultiplier, gridPos);
@@ -122,23 +113,10 @@ public class OverworldManager : MonoBehaviour
 
     private Dictionary<Alliances, Color> allianceColorMap = new Dictionary<Alliances, Color>
     {
-        {Alliances.Maltov, ColorExtensions.Create("#77403b")},
+        {Alliances.Maltov, ColorExtensions.Create("FF8181")},
         {Alliances.Player, ColorExtensions.Create("#ffdf5a")},
         {Alliances.Neutral, new Color(0, 0, 0, 0)}
     };
-
-    private Vector3 MapPointToWorldPoint(Vector2Int mapPoint)
-    {
-        return MapPointToWorldPoint(new Vector2(mapPoint.x, mapPoint.y));
-    }
-
-    private Vector3 MapPointToWorldPoint(Vector2 mapPoint)
-    {
-        Vector3 offset = ((mapPoint / OverworldTerrainGenerator.DIMENSIONS) - new Vector2(.5f, .5f)) * ISLAND_WORLD_SIZE;
-        offset.z = offset.y;
-        offset.y = 0;
-        return offset;
-    }
 
     private void ReturnToPool(GameObject tile)
     {

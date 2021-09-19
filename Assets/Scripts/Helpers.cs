@@ -371,16 +371,41 @@ public static class Helpers
         return Managers.Board.GetFlightDistanceToTarget(targetPos, sourcePos) <= range;
     }
 
-    public static Vector3 ToWorldPosition(int x, int y)
+    public static Vector3 ToWorldPosition(
+        int x,
+        int y,
+        float horizontalDist = Constants.HorizontalDistanceBetweenHexagons,
+        float verticalDist = Constants.VerticalDistanceBetweenHexagons,
+        float r = Constants.HEXAGON_r)
     {
-        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
-        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
+        float xF = x * horizontalDist;
+        float zF = y * verticalDist + (x % 2 == 1 ? r : 0);
         return new Vector3(xF, 0f, zF);
     }
 
     public static Vector3 ToWorldPosition(Vector2Int position)
     {
         return ToWorldPosition(position.x, position.y);
+    }
+
+    public static Vector3 ToOverworldPosition(Vector2Int position)
+    {
+        return ToOverworldPosition(position.x, position.y);
+    }
+
+    public static Vector3 ToOverworldPosition(int x, int y)
+    {
+        return ToWorldPosition(
+            x, y,
+            Constants.OverworldHorizontalDistanceBetweenHexagons,
+            Constants.OverworldVerticalDistanceBetweenHexagons,
+            Constants.OVERWORLD_HEXAGON_r) -
+            ToWorldPosition(
+                Constants.OVERWORLD_DIMENSIONS,
+                Constants.OVERWORLD_DIMENSIONS,
+                Constants.OverworldHorizontalDistanceBetweenHexagons,
+                Constants.OverworldVerticalDistanceBetweenHexagons,
+                Constants.OVERWORLD_HEXAGON_r) / 2f;
     }
 
     public static bool IsPosWalkable(Vector2Int startPos, Vector2Int endPos, HexagonMono[,] hexes)
