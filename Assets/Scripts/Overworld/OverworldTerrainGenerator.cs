@@ -11,6 +11,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
     public Func<float> GetProgress;
     public OverworldSegment Segment;
     public bool IsComplete;
+    public GameObject territoryBoundsLR;
     private const int SUBDIVISION_SIZE = Constants.OVERWORLD_DIMENSIONS / 10;
     private float halfDimensions = Constants.OVERWORLD_DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
@@ -50,13 +51,13 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
     private List<BiomeCriteria> biomeDeterminator = new List<BiomeCriteria>
     {
-        new BiomeCriteria{
-            Height = .75f,
-            Criteria = new BiomeFormationCriterion[]
-            {
-                new BiomeFormationCriterion {Biome = Biome.Snow, MinMoisture = float.MinValue}
-            }
-        },
+        // new BiomeCriteria{
+        //     Height = .75f,
+        //     Criteria = new BiomeFormationCriterion[]
+        //     {
+        //         new BiomeFormationCriterion {Biome = Biome.Snow, MinMoisture = float.MinValue}
+        //     }
+        // },
         new BiomeCriteria{
             Height = 0.65f,
             Criteria = new BiomeFormationCriterion[]
@@ -146,7 +147,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         yield return FindFotressLocations(index);
 
-        yield return CalculateTerritories();
+        // yield return CalculateTerritories();
         IsComplete = true;
     }
 
@@ -186,8 +187,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 {
                     Vector2Int fortressPos =
                         new Vector2Int(
-                                SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2,
-                                SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2);
+                                SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-5, 5),
+                                SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-5, 5));
 
                     if (this.Segment.Points[fortressPos.x, fortressPos.y].Biome != Biome.Water)
                     {

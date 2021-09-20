@@ -50,7 +50,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     public void Select()
     {
         GameState.LevelPowerMultiplier = this.powerMultiplier;
-        // GameState.SelectedSegment = Managers.OverworldManager.GetSegment(this.Position);
+        GameState.SelectedSegment = Managers.OverworldManager.Island;
         Managers.LoadingMenu.LoadScene("Level");
     }
 

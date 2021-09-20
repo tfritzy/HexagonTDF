@@ -13,19 +13,18 @@ public class OverworldManager : MonoBehaviour
     public const int Seed = 2;
     public List<OverworldFortress> Fortresses;
     public GameObject LoadingWindowPrefab;
+    public OverworldSegment Island;
 
     private Pool pool;
     private Camera cam;
     private bool initialized;
     private Dictionary<Vector2Int, GameObject> activeTiles;
     private System.Random Random = new System.Random(Seed);
-    private OverworldSegment island;
     private LoadingWindow loadingWindow;
     private Dictionary<OverworldFortress, OverworldTerritory> territories;
 
     private enum ObjectType
     {
-        Tile = 0,
         City = 1,
     }
 
@@ -77,7 +76,7 @@ public class OverworldManager : MonoBehaviour
             filter.mesh = cachedMesh;
             MeshRenderer renderer = map.AddComponent<MeshRenderer>();
             renderer.material = Constants.Materials.OverworldColorPalette;
-            this.island = cachedSegment;
+            this.Island = cachedSegment;
         }
         else
         {
@@ -89,11 +88,11 @@ public class OverworldManager : MonoBehaviour
                     .GetComponent<LoadingWindow>();
 
             yield return generator.GenerateSegment(0, MESH_OBJECT_NAME);
-            this.island = generator.Segment;
+            this.Island = generator.Segment;
             MeshPersister.CacheData<OverworldSegment>(
                 ISLANDS_FILE_PATH,
                 string.Format(ISLANDS_DATA_FILE_FORMAT, index.ToString()),
-                this.island);
+                this.Island);
             var map = this.transform.Find(MESH_OBJECT_NAME);
             MeshPersister.CacheMesh(
                 ISLANDS_FILE_PATH,
@@ -102,7 +101,7 @@ public class OverworldManager : MonoBehaviour
             Destroy(this.loadingWindow.gameObject);
         }
 
-        foreach (Vector2Int fortressPos in this.island.FortressPositions.Values)
+        foreach (Vector2Int fortressPos in this.Island.FortressPositions.Values)
         {
             SpawnFortress(fortressPos);
         }
@@ -111,8 +110,6 @@ public class OverworldManager : MonoBehaviour
         StopCoroutine("SpawnIsland");
     }
 
-    const float expectedCitiesPerRow = .5f;
-    const float powerGainedPerCity = .1f;
     private void SpawnFortress(Vector2Int gridPos)
     {
         float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
@@ -125,26 +122,5 @@ public class OverworldManager : MonoBehaviour
         OverworldFortress fortressScript = fortress.GetComponent<OverworldFortress>();
         Fortresses.Add(fortressScript);
         fortressScript.Setup(powerMultiplier, gridPos);
-    }
-
-    private Dictionary<Alliances, Color> allianceColorMap = new Dictionary<Alliances, Color>
-    {
-        {Alliances.Maltov, ColorExtensions.Create("FF8181")},
-        {Alliances.Player, ColorExtensions.Create("#ffdf5a")},
-        {Alliances.Neutral, new Color(0, 0, 0, 0)}
-    };
-
-    private void ReturnToPool(GameObject tile)
-    {
-        OverworldFortress fortress = tile.GetComponentInChildren<OverworldFortress>();
-        if (fortress != null)
-        {
-            Fortresses.Remove(fortress);
-        }
-
-        foreach (PoolObject poolObject in tile.GetComponentsInChildren<PoolObject>())
-        {
-            poolObject.ReturnToPool();
-        }
     }
 }
