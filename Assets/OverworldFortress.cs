@@ -11,23 +11,30 @@ public class OverworldFortress : MonoBehaviour, Interactable
     public List<OverworldFortress> ReliesOn { get; private set; }
     public GameObject Link;
     public Alliances Alliance;
+    public int IslandIndex;
+    public int Id;
 
     private float powerMultiplier;
     private Text indicatorText;
     private GameObject powerIndicatorInst;
     private const float lineHeight = 0.68f;
 
-    public void Setup(float powerMultiplier, Vector2Int pos)
+    public void Setup(float powerMultiplier, Vector2Int pos, int islandIndex, int id)
     {
-        if (powerIndicatorInst == null)
-        {
-            InitPowerIndicator();
-        }
+        this.IslandIndex = islandIndex;
+        this.Id = id;
+        Alliance = Helpers.GetAlliance(islandIndex, id);
+
+        // if (powerIndicatorInst == null)
+        // {
+        //     InitPowerIndicator();
+        // }
+        // this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
 
         this.powerMultiplier = powerMultiplier;
-        this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
         this.Position = pos;
-        this.gameObject.name = "Fortress " + this.Position;
+        this.gameObject.name = "Fortress " + id;
+        SetColor();
     }
 
     private void InitPowerIndicator()
@@ -40,6 +47,24 @@ public class OverworldFortress : MonoBehaviour, Interactable
         this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
     }
 
+    private void SetColor()
+    {
+        transform.Find("Body").GetComponent<MeshRenderer>().materials[1].color = Constants.AllianceColorMap[this.Alliance];
+
+        foreach (ParticleSystem system in this.GetComponentsInChildren<ParticleSystem>())
+        {
+            var main = system.main;
+            main.startColor = Constants.AllianceColorMap[this.Alliance];
+
+            ParticleSystem.Particle[] particles = new ParticleSystem.Particle[system.particleCount];
+            system.GetParticles(particles, system.particleCount, 0);
+            for (int i = 0; i < particles.Length; i++)
+            {
+                particles[i].startColor = Constants.AllianceColorMap[this.Alliance];
+            }
+            system.SetParticles(particles);
+        }
+    }
 
     public bool Interact()
     {

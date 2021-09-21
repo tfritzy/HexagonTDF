@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsComplete: 0
-  territoryBoundsLR: {fileID: 0}
+  territoryBoundsLR: {fileID: 6303605106135231563, guid: f00c7b7f09e132542a92d9b4c4d52423, type: 3}
   Scale: 25
   Octaves: 5
   Persistence: 0.55
@@ -377,7 +377,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519306390}
   m_LocalRotation: {x: 0.5735764, y: 0, z: 0, w: 0.8191521}
-  m_LocalPosition: {x: 0, y: 12, z: -4.523032}
+  m_LocalPosition: {x: 3.5750332, y: 12, z: 4.6615167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

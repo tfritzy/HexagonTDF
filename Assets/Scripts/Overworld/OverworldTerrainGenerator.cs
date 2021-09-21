@@ -15,7 +15,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private const int SUBDIVISION_SIZE = Constants.OVERWORLD_DIMENSIONS / 10;
     private float halfDimensions = Constants.OVERWORLD_DIMENSIONS / 2f;
     private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
-    private const int FALLOFF_NEAR_START = 5;
+    private const int FALLOFF_NEAR_START = (int)(Constants.OVERWORLD_DIMENSIONS * .1);
     private const int FALLOFF_FAR_START = Constants.OVERWORLD_DIMENSIONS - FALLOFF_NEAR_START;
     private System.Random random;
     private int Seed;
@@ -125,10 +125,9 @@ public class OverworldTerrainGenerator : MonoBehaviour
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(this.Seed + 1);
         this.Segment = new OverworldSegment
         {
-            FortressIds = new List<string>(),
-            FortressPositions = new Dictionary<string, Vector2Int>(),
+            FortressIds = new List<int>(),
+            FortressPositions = new Dictionary<int, Vector2Int>(),
             Points = new OverworldMapPoint[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS],
-            FortressAlliances = new Dictionary<string, Alliances>(),
             Index = index,
         };
         this.GenerationStep = States.GENERATING_TERRAIN;
@@ -147,7 +146,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         yield return FindFotressLocations(index);
 
-        // yield return CalculateTerritories();
+        yield return CalculateTerritories();
         IsComplete = true;
     }
 
@@ -192,11 +191,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                     if (this.Segment.Points[fortressPos.x, fortressPos.y].Biome != Biome.Water)
                     {
-                        string id = $"Fortress-{segmentIndex}-{Segment.FortressIds.Count}";
-                        Segment.FortressAlliances[id] =
-                            Segment.FortressIds.Count == 0 ?
-                            Alliances.Player :
-                            Alliances.Maltov;
+                        int id = Segment.FortressIds.Count + 1;
                         Segment.FortressIds.Add(id);
                         Segment.FortressPositions[id] = fortressPos;
 
@@ -315,26 +310,24 @@ public class OverworldTerrainGenerator : MonoBehaviour
         this.GenerationStep = States.CALCULATING_TERRITORY_BOUNDS;
         int dimensions = Constants.OVERWORLD_DIMENSIONS;
         int numHexes = dimensions * dimensions;
-        var visited = new string[dimensions, dimensions];
+        var visited = new int[dimensions, dimensions];
         var edges = new Dictionary<Alliances, HashSet<Vector2Int>>();
-        var queues = new Dictionary<string, Queue<Vector2Int>>();
+        var queues = new Dictionary<int, Queue<Vector2Int>>();
         var territoryPoints = new Dictionary<Alliances, List<Vector2Int>>();
-        foreach (string fortressId in Segment.FortressIds)
+        foreach (int fortressId in Segment.FortressIds)
         {
             var queue = new Queue<Vector2Int>();
             queue.Enqueue(Segment.FortressPositions[fortressId]);
             queues[fortressId] = queue;
             visited[Segment.FortressPositions[fortressId].x,
                     Segment.FortressPositions[fortressId].y] = fortressId;
-            edges[Segment.FortressAlliances[fortressId]] = new HashSet<Vector2Int>();
-            territoryPoints[Segment.FortressAlliances[fortressId]] = new List<Vector2Int>();
         }
 
-        List<string> finishedFortresses = new List<string>(0);
+        List<int> finishedFortresses = new List<int>();
         int numIterations = 0;
         while (queues.Count > 0)
         {
-            foreach (string fortressId in queues.Keys)
+            foreach (int fortressId in queues.Keys)
             {
                 var queue = queues[fortressId];
 
@@ -346,8 +339,14 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                 Vector2Int current = queue.Dequeue();
                 numIterations += 1;
-                territoryPoints[Segment.FortressAlliances[fortressId]].Add(current);
                 bool isBorder = false;
+
+                if (territoryPoints.ContainsKey(Helpers.GetAlliance(Segment.Index, fortressId)) == false)
+                {
+                    territoryPoints[Helpers.GetAlliance(Segment.Index, fortressId)] = new List<Vector2Int>();
+                }
+
+                territoryPoints[Helpers.GetAlliance(Segment.Index, fortressId)].Add(current);
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -356,13 +355,12 @@ public class OverworldTerrainGenerator : MonoBehaviour
                     if (neighbor == Constants.MinVector2Int)
                         continue;
 
-                    if (visited[neighbor.x, neighbor.y] == null && Segment.Points[neighbor.x, neighbor.y].Biome != Biome.Water)
+                    if (visited[neighbor.x, neighbor.y] == 0 && Segment.Points[neighbor.x, neighbor.y].Biome != Biome.Water)
                     {
                         queue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
                         visited[neighbor.x, neighbor.y] = fortressId;
                     }
-                    else if (string.IsNullOrEmpty(visited[neighbor.x, neighbor.y]) == false &&
-                             Segment.FortressAlliances[visited[neighbor.x, neighbor.y]] != Segment.FortressAlliances[fortressId])
+                    else if (visited[neighbor.x, neighbor.y] != 0 && Helpers.GetAlliance(Segment.Index, visited[neighbor.x, neighbor.y]) != Helpers.GetAlliance(Segment.Index, fortressId))
                     {
                         isBorder = true;
                     }
@@ -370,15 +368,20 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                 if (isBorder)
                 {
-                    edges[Segment.FortressAlliances[fortressId]].Add(current);
+                    if (edges.ContainsKey(Helpers.GetAlliance(Segment.Index, fortressId)) == false)
+                    {
+                        edges[Helpers.GetAlliance(Segment.Index, fortressId)] = new HashSet<Vector2Int>();
+                    }
+
+                    edges[Helpers.GetAlliance(Segment.Index, fortressId)].Add(current);
                 }
             }
 
-            foreach (string fortress in finishedFortresses)
+            foreach (int fortress in finishedFortresses)
             {
                 queues.Remove(fortress);
             }
-            finishedFortresses = new List<string>();
+            finishedFortresses = new List<int>();
 
             if (numIterations % 500 == 0)
             {

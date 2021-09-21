@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6240371144906083117
 Transform:
   m_ObjectHideFlags: 0
@@ -14453,7 +14453,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7243491880398810026
 Transform:
   m_ObjectHideFlags: 0
@@ -14462,7 +14462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4330555103044780221}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.641, z: 0}
+  m_LocalPosition: {x: 0, y: 0.742, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8767634999914529014}
@@ -14658,7 +14658,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0, b: 0, a: 1}
+      maxColor: {r: 0.6886792, g: 0.21223444, b: 0.21223444, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -14720,7 +14720,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.6
+      scalar: 0.27
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -19202,7 +19202,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7a99409dca4c8c34d96a864bf40d682d, type: 2}
+  - {fileID: 2100000, guid: 651a834401a41b34b8c8304cf2f85b26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -19223,7 +19223,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_RenderMode: 2
+  m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
   m_MaxParticleSize: 100
@@ -24127,6 +24127,8 @@ MonoBehaviour:
   Position: {x: 0, y: 0}
   Link: {fileID: -6354765806815319352, guid: 037846ecd4aede648aec55055acefa74, type: 3}
   Alliance: 0
+  IslandIndex: 0
+  Id: 0
 --- !u!1001 &8767634998913843467
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24180,7 +24182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4782f0802ee6b704e989292ca111d652, type: 3}
       propertyPath: m_Name
-      value: OverworldCastle
+      value: Body
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4782f0802ee6b704e989292ca111d652, type: 3}

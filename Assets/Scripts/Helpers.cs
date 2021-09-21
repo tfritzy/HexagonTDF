@@ -467,4 +467,21 @@ public static class Helpers
             }
         }
     }
+
+    public static Alliances GetAlliance(int islandIndex, int fortressId)
+    {
+        if (fortressId == 0)
+        {
+            return Alliances.Neutral;
+        }
+
+        if (GameState.Player.DefeatedFortresses[islandIndex].Contains(fortressId))
+        {
+            return Alliances.Player;
+        }
+        else
+        {
+            return Alliances.Maltov;
+        }
+    }
 }

@@ -4,9 +4,8 @@ using UnityEngine;
 public class OverworldSegment
 {
     public OverworldMapPoint[,] Points;
-    public List<string> FortressIds;
-    public Dictionary<string, Vector2Int> FortressPositions;
-    public Dictionary<string, Alliances> FortressAlliances;
+    public List<int> FortressIds;
+    public Dictionary<int, Vector2Int> FortressPositions;
     public Dictionary<Alliances, OverworldTerritory> Territories;
     public int Index;
 

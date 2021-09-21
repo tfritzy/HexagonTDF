@@ -101,16 +101,16 @@ public class OverworldManager : MonoBehaviour
             Destroy(this.loadingWindow.gameObject);
         }
 
-        foreach (Vector2Int fortressPos in this.Island.FortressPositions.Values)
+        foreach (int fortressId in this.Island.FortressIds)
         {
-            SpawnFortress(fortressPos);
+            SpawnFortress(this.Island.FortressPositions[fortressId], fortressId);
         }
 
         // SpawnTerritories();
         StopCoroutine("SpawnIsland");
     }
 
-    private void SpawnFortress(Vector2Int gridPos)
+    private void SpawnFortress(Vector2Int gridPos, int fortressId)
     {
         float variance = 1 + (float)Random.NextDouble() / 2 - .25f;
         // float powerMultiplier = Mathf.Pow(1 + powerGainedPerCity * expectedCitiesPerRow, gridPos.y) * variance;
@@ -121,6 +121,6 @@ public class OverworldManager : MonoBehaviour
         fortress.transform.parent = this.transform;
         OverworldFortress fortressScript = fortress.GetComponent<OverworldFortress>();
         Fortresses.Add(fortressScript);
-        fortressScript.Setup(powerMultiplier, gridPos);
+        fortressScript.Setup(powerMultiplier, gridPos, this.Island.Index, fortressId);
     }
 }
