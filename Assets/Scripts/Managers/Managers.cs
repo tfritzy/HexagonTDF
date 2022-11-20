@@ -72,20 +72,6 @@ public static class Managers
         }
     }
 
-    private static TrebuchetHealthbar trebuchetHealthbar;
-    public static TrebuchetHealthbar TrebuchetHealthbar
-    {
-        get
-        {
-            if (trebuchetHealthbar == null)
-            {
-                trebuchetHealthbar = Canvas.Find("TrebuchetHealthbar").GetComponent<TrebuchetHealthbar>();
-            }
-
-            return trebuchetHealthbar;
-        }
-    }
-
     private static InMemPrefabs prefabs;
     public static InMemPrefabs Prefabs
     {

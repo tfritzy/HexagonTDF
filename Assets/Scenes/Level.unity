@@ -371,15 +371,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6639f4259cf41c4fbc96bf4703f17f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeroReviveEffect: {fileID: 4106687889419873739, guid: 3a4d98053d1232d468bd8cbdb643984f, type: 3}
-  HeroReviveTimer: {fileID: 5797505427367968115, guid: 116e3f1a5b2c2244ab2119ed7de1b61f, type: 3}
-  GemCollectText: {fileID: 0}
-  UnitSelectedRing: {fileID: 8306465173941397544, guid: 59f95c9b575626e4999f9d0d2f7a6099, type: 3}
-  PathRenderer: {fileID: 8643888996409909335, guid: 9e49cedb03ff0f44392579eb79198d3b, type: 3}
-  MoveTargetIndicator: {fileID: 6562410623311374779, guid: 211a71c0aa5c10a499b48bf3555a349f, type: 3}
-  SelectTowerMenu: {fileID: 4900946743011058300, guid: 094c4f7d73db6f8458ce2e150746b09f, type: 3}
-  ConsecrateEffect: {fileID: 5736227985175077343, guid: 366c1fd6527279e4380263f44b668ff6, type: 3}
-  Gem: {fileID: 5779178242862859042, guid: f4407c7fc3e0e504d81cecb5b514ab00, type: 3}
   Trees:
   - {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
   - {fileID: 919132149155446097, guid: b88a4804521b199438f2929a09eab3b6, type: 3}
@@ -560,6 +551,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0339bbf5a53764c918e849f5b15aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 0}
+  fillBar: {fileID: 0}
 --- !u!1001 &246724961
 PrefabInstance:
   m_ObjectHideFlags: 0
