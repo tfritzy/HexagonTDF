@@ -11570,7 +11570,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.5022655, y: 0, z: 0, w: 0.8647135}
-  m_LocalPosition: {x: 8.437382, y: 18.2, z: 6.2397223}
+  m_LocalPosition: {x: 8.437382, y: 30, z: 6.2397223}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -12460,10 +12460,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Trebuchet: {fileID: 0}
-  Barracks: []
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
   RegenerateMap: 0
-  Hero: {fileID: 0}
 --- !u!4 &1096331704
 Transform:
   m_ObjectHideFlags: 0
@@ -12879,7 +12877,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1180087603
 RectTransform:
   m_ObjectHideFlags: 0

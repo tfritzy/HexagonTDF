@@ -12,27 +12,27 @@ public class AbilityButton : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (AbilityIndex >= Managers.Board.Hero.Abilities.Count)
-        {
-            this.gameObject.SetActive(false);
-        }
+        // if (AbilityIndex >= Managers.Board.Hero.Abilities.Count)
+        // {
+        //     this.gameObject.SetActive(false);
+        // }
 
-        abilityStatusMessage = this.transform.Find("AbilityStatusMessage").GetComponent<Text>();
-        cooldown = this.transform.Find("Cooldown").GetComponent<Image>();
+        // abilityStatusMessage = this.transform.Find("AbilityStatusMessage").GetComponent<Text>();
+        // cooldown = this.transform.Find("Cooldown").GetComponent<Image>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Managers.Board.Hero != null)
-        {
-            cooldown.fillAmount = Managers.Board.Hero.Abilities[this.AbilityIndex].RemainingCooldownPercent();
-            abilityStatusMessage.text = Managers.Board.Hero.Abilities[this.AbilityIndex].CurrentStatusMessage();
-        }
+        // if (Managers.Board.Hero != null)
+        // {
+        //     cooldown.fillAmount = Managers.Board.Hero.Abilities[this.AbilityIndex].RemainingCooldownPercent();
+        //     abilityStatusMessage.text = Managers.Board.Hero.Abilities[this.AbilityIndex].CurrentStatusMessage();
+        // }
     }
 
     public void Trigger()
     {
-        Managers.Board.Hero.Abilities[this.AbilityIndex].Cast();
+        // Managers.Board.Hero.Abilities[this.AbilityIndex].Cast();
     }
 }

@@ -23,10 +23,10 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private string GenerationStep;
     private float GenerationProgress;
 
-    public float Scale;
-    public int Octaves;
-    public float Persistence;
-    public float Lacunarity;
+    public const float Scale = 25;
+    public const int Octaves = 5;
+    public const float Persistence = .55f;
+    public const float Lacunarity = 3;
 
     private static class States
     {
@@ -49,7 +49,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         public BiomeFormationCriterion[] Criteria;
     }
 
-    private List<BiomeCriteria> biomeDeterminator = new List<BiomeCriteria>
+    private static List<BiomeCriteria> biomeDeterminator = new List<BiomeCriteria>
     {
         // new BiomeCriteria{
         //     Height = .75f,
@@ -135,7 +135,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
         {
-            formatRow(Segment.Points, heightNoise, moistureNoise, y);
+            formatRow(Segment.Points, heightNoise, moistureNoise, Constants.OVERWORLD_DIMENSIONS, y);
             if (y % 10 == 0)
             {
                 this.GenerationProgress = (float)y / Constants.OVERWORLD_DIMENSIONS;
@@ -149,6 +149,28 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
         // yield return CalculateTerritories();
         IsComplete = true;
+    }
+
+    public static OverworldSegment GenerateSingleSegment(int width, int height, int seed)
+    {
+        OpenSimplexNoise heightNoise = new OpenSimplexNoise(seed);
+        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
+
+        var segment = new OverworldSegment
+        {
+            FortressIds = new List<string>(),
+            FortressPositions = new Dictionary<string, Vector2Int>(),
+            Points = new OverworldMapPoint[width, height],
+            FortressAlliances = new Dictionary<string, Alliances>(),
+            Index = 0,
+        };
+
+        for (int y = 0; y < height; y++)
+        {
+            formatRowForSelfConainedSegment(segment.Points, heightNoise, moistureNoise, width, y);
+        }
+
+        return segment;
     }
 
     private IEnumerator GenerateMesh(string containerName)
@@ -229,13 +251,14 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return false;
     }
 
-    private void formatRow(
+    private static void formatRow(
         OverworldMapPoint[,] points,
         OpenSimplexNoise heightNoise,
         OpenSimplexNoise moistureNoise,
+        int length,
         int y)
     {
-        for (int x = 0; x < Constants.OVERWORLD_DIMENSIONS; x++)
+        for (int x = 0; x < length; x++)
         {
             float xD = x / Scale;
             float yD = y / Scale;
@@ -256,15 +279,41 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
     }
 
-    private float CalculateHeightFalloff(int x, int y)
+    private static void formatRowForSelfConainedSegment(
+        OverworldMapPoint[,] points,
+        OpenSimplexNoise heightNoise,
+        OpenSimplexNoise moistureNoise,
+        int length,
+        int y)
+    {
+        for (int x = 0; x < length; x++)
+        {
+            float xD = x / Scale;
+            float yD = y / Scale;
+            float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+            heightValue += .65f;
+
+            float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+            moistureValue = (moistureValue + 1) / 2;
+            moistureValue = (moistureValue * .6f) + (heightValue * .4f);
+
+            Biome biome = GetBiome(heightValue, moistureValue);
+            points[x, y] = new OverworldMapPoint
+            {
+                Height = heightValue,
+                Biome = biome,
+            };
+        }
+    }
+
+    private static float CalculateHeightFalloff(int x, int y)
     {
         float progressAlongFalloff = 0;
         if (x < FALLOFF_NEAR_START || x > FALLOFF_FAR_START)
         {
             progressAlongFalloff = Math.Max(x - FALLOFF_FAR_START, FALLOFF_NEAR_START - x);
         }
-
-        if (y < FALLOFF_NEAR_START || y > FALLOFF_FAR_START)
+        else if (y < FALLOFF_NEAR_START || y > FALLOFF_FAR_START)
         {
             progressAlongFalloff = Math.Max(y - FALLOFF_FAR_START, FALLOFF_NEAR_START - y);
         }
@@ -275,6 +324,13 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
 
         return 1f;
+    }
+
+    private static float DistFromCenter(int x, int y, OverworldMapPoint[,] points)
+    {
+        float progressAlongX = Mathf.Abs(points.GetLength(0) / 2 - x) / (points.GetLength(0) / 2f);
+        float progressAlongY = Mathf.Abs(points.GetLength(1) / 2 - y) / (points.GetLength(1) / 2f);
+        return Mathf.Max(progressAlongX, progressAlongY);
     }
 
     private float trimEdgesModification(int x)
@@ -291,7 +347,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
     }
 
-    private Biome GetBiome(float height, float moisture)
+    private static Biome GetBiome(float height, float moisture)
     {
         foreach (BiomeCriteria criteria in biomeDeterminator)
         {

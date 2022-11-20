@@ -10,9 +10,9 @@ public abstract class ObstacleHexagon : Hexagon
     public override bool IsBuildable => !HasObstacle;
     public override bool IsWalkable => !HasObstacle;
 
-    public void GenerateObstacle(Transform hex, Vector2Int hexGridPos)
+    public void GenerateObstacle(Transform hex, Vector2Int hexGridPos, int segmentIndex)
     {
-        System.Random random = new System.Random(GameState.SelectedSegment.Index * 786433 + hexGridPos.GetHashCode() * 3145739);
+        System.Random random = new System.Random(segmentIndex * 786433 + hexGridPos.GetHashCode() * 3145739);
         if (random.NextDouble() <= ObstacleChance)
         {
             HasObstacle = true;

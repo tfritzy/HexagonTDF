@@ -35,24 +35,14 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public bool Interact()
     {
-        bool wasInputUsed = Managers.Board.Hero.InformHexWasClicked(this);
-
-        if (wasInputUsed) return true;
-
-        wasInputUsed = Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
-
-        if (wasInputUsed) return true;
-
-        wasInputUsed = Managers.Builder.InformHexWasClicked(this);
-
-        return wasInputUsed;
+        return Managers.Builder.InformHexWasClicked(this);
     }
 
-    public void MaybeSpawnObstacle()
+    public void MaybeSpawnObstacle(int segmentIndex)
     {
         if (hexagon is ObstacleHexagon)
         {
-            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition);
+            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition, segmentIndex);
         }
     }
 

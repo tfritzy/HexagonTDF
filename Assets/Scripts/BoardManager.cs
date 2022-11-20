@@ -5,19 +5,14 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public const int DIMENSIONS = 20;
     public HexagonMono[,] Hexagons;
     public Dictionary<Vector2Int, Building> Buildings;
     public Trebuchet Trebuchet;
-    public List<Barracks> Barracks;
     public string ActiveMapName;
     public bool RegenerateMap;
     public Guid PathingId { get; private set; }
-    public Hero Hero;
     private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
     private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
-    private Vector2Int xVillageRange = new Vector2Int(DIMENSIONS / 2 - DIMENSIONS / 4, DIMENSIONS / 2 + DIMENSIONS / 4);
-    private Vector2Int yVillageRange = new Vector2Int(DIMENSIONS / 2 + DIMENSIONS / 4, DIMENSIONS);
 
     void Awake()
     {
@@ -36,12 +31,18 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        SpawnHexagons(GameState.SelectedSegment);
-        SetupMapHeight(GameState.SelectedSegment);
-        FlattenVillageAndTrebArea();
-        SpawnTrebuchet(GameState.SelectedSegment);
-        SpawnHero(GameState.SelectedSegment);
-        SpawnBuildings(GameState.SelectedSegment);
+        OverworldSegment segment;
+        if (GameState.SelectedSegment == null)
+        {
+            segment = OverworldTerrainGenerator.GenerateSingleSegment(25, 35, UnityEngine.Random.Range(0, 10));
+        }
+        else
+        {
+            segment = GameState.SelectedSegment;
+        }
+
+        SpawnHexagons(segment);
+        SetupMapHeight(segment);
     }
 
     private void CleanupMap()
@@ -78,22 +79,20 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void SpawnHexagons(OverworldSegment map)
+    private void SpawnHexagons(OverworldSegment segment)
     {
-        this.Hexagons = new HexagonMono[DIMENSIONS, DIMENSIONS];
-        int start = map.Height / 2 - DIMENSIONS / 2;
-        int end = map.Height / 2 + DIMENSIONS / 2;
+        this.Hexagons = new HexagonMono[segment.Width, segment.Height];
 
-        for (int y = start; y < end; y++)
+        for (int y = 0; y < segment.Height; y++)
         {
-            for (int x = start; x < end; x++)
+            for (int x = 0; x < segment.Width; x++)
             {
-                if (map.GetPoint(x, y) == null)
+                if (segment.GetPoint(x, y) == null)
                 {
                     continue;
                 }
 
-                BuildHexagon(map.GetPoint(x, y), x - start, y - start);
+                BuildHexagon(segment.GetPoint(x, y), x, y, segment.Index);
             }
         }
     }
@@ -110,53 +109,6 @@ public class BoardManager : MonoBehaviour
         RecalculatePredGrids();
     }
 
-    private void SpawnBuildings(OverworldSegment segment)
-    {
-        this.Buildings = new Dictionary<Vector2Int, Building>();
-        this.Barracks = new List<Barracks>();
-        System.Random random = new System.Random(segment.Index);
-        var buildingMap = new Dictionary<Vector2Int, BuildingType>();
-
-        Vector2Int castlePosition = new Vector2Int(
-            random.Next(xVillageRange.x, xVillageRange.y),
-            random.Next(yVillageRange.x, yVillageRange.y)
-        );
-        buildingMap.Add(castlePosition, BuildingType.Barracks);
-
-        // TODO: Make system for village sizes.
-        int numHouses = random.Next(3, 6);
-        for (int i = 0; i < numHouses; i++)
-        {
-            Vector2Int potentialPos;
-            do
-            {
-                potentialPos = new Vector2Int(
-                    random.Next(xVillageRange.x, xVillageRange.y),
-                    random.Next(yVillageRange.x, yVillageRange.y)
-                );
-            } while (buildingMap.ContainsKey(potentialPos));
-
-            buildingMap.Add(potentialPos, BuildingType.House);
-        }
-
-        foreach (Vector2Int pos in buildingMap.Keys)
-        {
-            Building building = Instantiate(
-                    Prefabs.Buildings[buildingMap[pos]],
-                    Hexagons[pos.x, pos.y].transform.position,
-                    new Quaternion(),
-                    this.transform)
-                    .GetComponent<Building>();
-
-            if (building is Barracks)
-            {
-                this.Barracks.Add((Barracks)building);
-            }
-
-            building.Initialize(pos);
-        }
-    }
-
     private void SpawnTrebuchet(OverworldSegment map)
     {
         Vector2Int pos = new Vector2Int(this.Hexagons.GetLength(0) / 2, 2);
@@ -166,42 +118,6 @@ public class BoardManager : MonoBehaviour
             new Quaternion())
                 .GetComponent<Trebuchet>();
         Trebuchet.SetInitialPosition(pos);
-    }
-
-    private void FlattenVillageAndTrebArea()
-    {
-        for (int y = this.yVillageRange.x; y < this.yVillageRange.y; y++)
-        {
-            for (int x = this.xVillageRange.x; x < this.xVillageRange.y; x++)
-            {
-                Vector3 pos = this.Hexagons[x, y].transform.position;
-                pos.y = 0;
-                this.Hexagons[x, y].transform.position = pos;
-                this.Hexagons[x, y].RemoveObstacle();
-            }
-        }
-
-        for (int y = 0; y < this.yVillageRange.y / 4; y++)
-        {
-            for (int x = this.xVillageRange.x; x < this.xVillageRange.y; x++)
-            {
-                Vector3 pos = this.Hexagons[x, y].transform.position;
-                pos.y = 0;
-                this.Hexagons[x, y].transform.position = pos;
-                this.Hexagons[x, y].RemoveObstacle();
-            }
-        }
-    }
-
-    private void SpawnHero(OverworldSegment map)
-    {
-        Vector2Int pos = this.Trebuchet.GridPosition + Vector2Int.up;
-        this.Hero = Instantiate(
-            Prefabs.Allies[AlliedUnitType.Warrior],
-            Hexagons[pos.x, pos.y].transform.position,
-            new Quaternion())
-                .GetComponent<Hero>();
-        this.Hero.SetInitialPosition(pos);
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
@@ -241,7 +157,7 @@ public class BoardManager : MonoBehaviour
         return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
     }
 
-    private void BuildHexagon(OverworldMapPoint point, int x, int y)
+    private void BuildHexagon(OverworldMapPoint point, int x, int y, int segmentIndex)
     {
         Vector3 position = Helpers.ToWorldPosition(x, y);
         position.y = point.Height;
@@ -250,7 +166,7 @@ public class BoardManager : MonoBehaviour
         hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome));
         this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
-        this.Hexagons[x, y].MaybeSpawnObstacle();
+        this.Hexagons[x, y].MaybeSpawnObstacle(segmentIndex);
     }
 
     public HexagonMono GetHex(Vector2Int pos)

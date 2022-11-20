@@ -220,6 +220,7 @@ public abstract class Enemy : Unit, Interactable
 
     public bool Interact()
     {
-        return Managers.Board.Hero.InformGameObjectWasClicked(this.gameObject);
+        Debug.Log("Clicked on enemy " + this.name);
+        return true;
     }
 }
