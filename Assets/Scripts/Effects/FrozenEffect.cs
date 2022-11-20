@@ -20,21 +20,19 @@ public class FrozenEffect : Effect
     public override void RemoveEffect(Character character)
     {
         base.RemoveEffect(character);
-        if (character is Enemy)
+        if (character.Alliance == this.Owner.Enemies && character.MovementCell != null)
         {
-            Enemy enemy = (Enemy)character;
-            enemy.MovementSpeedModification += modificationAmount;
+            character.MovementCell.MovementSpeedModification += modificationAmount;
             character.SetMaterial(Constants.Materials.Normal);
         }
     }
 
     protected override void ApplyEffect(Character character)
     {
-        if (character is Enemy)
+        if (character.Alliance == this.Owner.Enemies && character.MovementCell != null)
         {
-            Enemy enemy = (Enemy)character;
-            modificationAmount = (enemy.MovementSpeed - enemy.MovementSpeedModification) * SlowAmount;
-            ((Enemy)character).MovementSpeedModification -= modificationAmount;
+            modificationAmount = (character.MovementCell.MovementSpeed - character.MovementCell.MovementSpeedModification) * SlowAmount;
+            character.MovementCell.MovementSpeedModification -= modificationAmount;
             character.SetMaterial(Constants.Materials.Frozen);
         }
     }

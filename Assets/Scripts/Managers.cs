@@ -59,19 +59,6 @@ public static class Managers
         }
     }
 
-    private static Builder builder;
-    public static Builder Builder
-    {
-        get
-        {
-            if (builder == null)
-            {
-                builder = GameObject.Find("Builder").GetComponent<Builder>();
-            }
-            return builder;
-        }
-    }
-
     private static Transform canvas;
     public static Transform Canvas
     {
@@ -110,35 +97,6 @@ public static class Managers
             }
 
             return prefabs;
-        }
-    }
-
-    private static SelectTowerMenu selectTowerMenu;
-    public static SelectTowerMenu SelectTowerMenu
-    {
-        get
-        {
-            if (selectTowerMenu == null)
-            {
-                selectTowerMenu = GameObject.Instantiate(Managers.prefabs.SelectTowerMenu, Canvas).GetComponent<SelectTowerMenu>();
-                selectTowerMenu.Disable();
-            }
-
-            return selectTowerMenu;
-        }
-    }
-
-    private static DebugDetails debugDetails;
-    public static DebugDetails DebugDetails
-    {
-        get
-        {
-            if (debugDetails == null)
-            {
-                debugDetails = Canvas.Find("DebugDetails").GetComponent<DebugDetails>();
-            }
-
-            return debugDetails;
         }
     }
 

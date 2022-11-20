@@ -12459,7 +12459,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cbad0a6491390842a802033be91c186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Trebuchet: {fileID: 0}
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
   RegenerateMap: 0
 --- !u!4 &1096331704

@@ -18,6 +18,6 @@ public class FireDamageEffect : Effect
 
     protected override void ApplyEffect(Character character)
     {
-        character.TakeDamage(this.Damage, this.Owner);
+        character.LifeCell?.TakeDamage(this.Damage, this.Owner);
     }
 }

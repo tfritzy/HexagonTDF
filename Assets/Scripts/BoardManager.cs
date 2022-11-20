@@ -6,13 +6,8 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
     public HexagonMono[,] Hexagons;
-    public Dictionary<Vector2Int, Building> Buildings;
-    public Trebuchet Trebuchet;
     public string ActiveMapName;
     public bool RegenerateMap;
-    public Guid PathingId { get; private set; }
-    private Dictionary<Vector2Int, PredGridPoint[,]> predGridMap;
-    private Dictionary<Vector2Int, PredGridPoint[,]> flightPredGridMap;
 
     void Awake()
     {
@@ -97,64 +92,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void AddBuilding(Building building)
-    {
-        if (Buildings.ContainsKey(building.GridPosition) && Buildings[building.GridPosition] != null)
-        {
-            throw new System.ArgumentException("Cannot build a building on an occupied spot.");
-        }
-
-        Buildings[building.GridPosition] = building;
-
-        RecalculatePredGrids();
-    }
-
-    private void SpawnTrebuchet(OverworldSegment map)
-    {
-        Vector2Int pos = new Vector2Int(this.Hexagons.GetLength(0) / 2, 2);
-        Trebuchet = Instantiate(
-            Prefabs.Allies[AlliedUnitType.Trebuchet],
-            Hexagons[pos.x, pos.y].transform.position,
-            new Quaternion())
-                .GetComponent<Trebuchet>();
-        Trebuchet.SetInitialPosition(pos);
-    }
-
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
     {
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
-    }
-
-    public PredGridPoint GetNextStepInPathToSource(Vector2Int sourceBuilding, Vector2Int currentPos)
-    {
-        return predGridMap[sourceBuilding][currentPos.x, currentPos.y];
-    }
-
-    public int GetFlightDistanceToTarget(Vector2Int building, Vector2Int pos)
-    {
-        return flightPredGridMap[building][pos.x, pos.y].Distance - 1;
-    }
-
-    private void RecalculatePredGrids()
-    {
-        predGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
-
-        predGridMap[Trebuchet.GridPosition] = Helpers.GetPredicessorGridWalking(
-            this.Hexagons,
-            Trebuchet.GridPosition);
-
-
-        flightPredGridMap = new Dictionary<Vector2Int, PredGridPoint[,]>();
-
-        flightPredGridMap[Trebuchet.GridPosition] = Helpers.GetPredecessorGrid(
-            this.Hexagons,
-            Trebuchet.GridPosition,
-            (Vector2Int startPos, Vector2Int testEndPos) => true);
-    }
-
-    public bool IsBuildable(Vector2Int pos)
-    {
-        return Hexagons[pos.x, pos.y].IsBuildable && Buildings.ContainsKey(pos) == false;
     }
 
     private void BuildHexagon(OverworldMapPoint point, int x, int y, int segmentIndex)

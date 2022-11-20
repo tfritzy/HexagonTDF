@@ -104,10 +104,10 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Water, new Vector2Int(2, 0)},
     };
 
-    private Dictionary<Alliances, Vector2Int> allianceAtlasMap = new Dictionary<Alliances, Vector2Int>()
+    private Dictionary<Alliance, Vector2Int> allianceAtlasMap = new Dictionary<Alliance, Vector2Int>()
     {
-        {Alliances.Maltov, new Vector2Int(1, 0)},
-        {Alliances.Player, new Vector2Int(1, 1)},
+        {Alliance.Maltov, new Vector2Int(1, 0)},
+        {Alliance.Player, new Vector2Int(1, 1)},
     };
 
     public void Initialize(int seed)
@@ -128,7 +128,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             FortressIds = new List<string>(),
             FortressPositions = new Dictionary<string, Vector2Int>(),
             Points = new OverworldMapPoint[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS],
-            FortressAlliances = new Dictionary<string, Alliances>(),
+            FortressAlliances = new Dictionary<string, Alliance>(),
             Index = index,
         };
         this.GenerationStep = States.GENERATING_TERRAIN;
@@ -161,7 +161,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             FortressIds = new List<string>(),
             FortressPositions = new Dictionary<string, Vector2Int>(),
             Points = new OverworldMapPoint[width, height],
-            FortressAlliances = new Dictionary<string, Alliances>(),
+            FortressAlliances = new Dictionary<string, Alliance>(),
             Index = 0,
         };
 
@@ -217,8 +217,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
                         string id = $"Fortress-{segmentIndex}-{Segment.FortressIds.Count}";
                         Segment.FortressAlliances[id] =
                             Segment.FortressIds.Count == 0 ?
-                            Alliances.Player :
-                            Alliances.Maltov;
+                            Alliance.Player :
+                            Alliance.Maltov;
                         Segment.FortressIds.Add(id);
                         Segment.FortressPositions[id] = fortressPos;
 
@@ -372,9 +372,9 @@ public class OverworldTerrainGenerator : MonoBehaviour
         int dimensions = Constants.OVERWORLD_DIMENSIONS;
         int numHexes = dimensions * dimensions;
         var visited = new string[dimensions, dimensions];
-        var edges = new Dictionary<Alliances, HashSet<Vector2Int>>();
+        var edges = new Dictionary<Alliance, HashSet<Vector2Int>>();
         var queues = new Dictionary<string, Queue<Vector2Int>>();
-        var territoryPoints = new Dictionary<Alliances, List<Vector2Int>>();
+        var territoryPoints = new Dictionary<Alliance, List<Vector2Int>>();
         foreach (string fortressId in Segment.FortressIds)
         {
             var queue = new Queue<Vector2Int>();
@@ -443,9 +443,9 @@ public class OverworldTerrainGenerator : MonoBehaviour
             }
         }
 
-        Segment.Territories = new Dictionary<Alliances, OverworldTerritory>();
+        Segment.Territories = new Dictionary<Alliance, OverworldTerritory>();
         float index = 0;
-        foreach (Alliances alliance in territoryPoints.Keys)
+        foreach (Alliance alliance in territoryPoints.Keys)
         {
             index += 1;
             this.GenerationProgress = index / Segment.Territories.Count;

@@ -6,8 +6,8 @@ public class OverworldSegment
     public OverworldMapPoint[,] Points;
     public List<string> FortressIds;
     public Dictionary<string, Vector2Int> FortressPositions;
-    public Dictionary<string, Alliances> FortressAlliances;
-    public Dictionary<Alliances, OverworldTerritory> Territories;
+    public Dictionary<string, Alliance> FortressAlliances;
+    public Dictionary<Alliance, OverworldTerritory> Territories;
     public int Index;
 
     public int Width => Points.GetLength(0);

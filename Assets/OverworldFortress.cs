@@ -10,7 +10,7 @@ public class OverworldFortress : MonoBehaviour, Interactable
     public Vector2Int Position;
     public List<OverworldFortress> ReliesOn { get; private set; }
     public GameObject Link;
-    public Alliances Alliance;
+    public Alliance Alliance;
 
     private float powerMultiplier;
     private Text indicatorText;

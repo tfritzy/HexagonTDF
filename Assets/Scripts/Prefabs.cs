@@ -61,23 +61,6 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<EnemyType, GameObject> enemyprojectiles;
-    public static Dictionary<EnemyType, GameObject> EnemyProjectiles
-    {
-        get
-        {
-            if (enemyprojectiles == null)
-            {
-                enemyprojectiles = new Dictionary<EnemyType, GameObject>();
-                foreach (EnemyType enemyType in Enum.GetValues(typeof(EnemyType)))
-                {
-                    enemyprojectiles[enemyType] = Resources.Load<GameObject>("Prefabs/Projectiles/" + enemyType);
-                }
-            }
-            return enemyprojectiles;
-        }
-    }
-
     private static GameObject highlightHex;
     public static GameObject HighlightHex
     {
@@ -88,23 +71,6 @@ public static class Prefabs
                 highlightHex = Resources.Load<GameObject>("Prefabs/Hexagons/HighlightHexagon");
             }
             return highlightHex;
-        }
-    }
-
-    private static Dictionary<EnemyType, Enemy> enemies;
-    public static Dictionary<EnemyType, Enemy> Enemies
-    {
-        get
-        {
-            if (enemies == null)
-            {
-                enemies = new Dictionary<EnemyType, Enemy>();
-                foreach (EnemyType type in Enum.GetValues(typeof(EnemyType)))
-                {
-                    enemies[type] = Resources.Load<GameObject>("Prefabs/Enemies/" + type).GetComponent<Enemy>();
-                }
-            }
-            return enemies;
         }
     }
 

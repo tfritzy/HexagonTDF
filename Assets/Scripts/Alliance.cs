@@ -1,4 +1,4 @@
-public enum Alliances
+public enum Alliance
 {
     Player,
     Maltov,

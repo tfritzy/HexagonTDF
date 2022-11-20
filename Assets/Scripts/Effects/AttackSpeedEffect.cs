@@ -14,12 +14,19 @@ public class AttackSpeedEffect : Effect
 
     protected override void ApplyEffect(Character character)
     {
-        character.AttackSpeedModifiedPercent += percentIncrease;
+        if (character.AttackCell != null)
+        {
+            character.AttackCell.AttackSpeedModifiedPercent += percentIncrease;
+        }
     }
 
     public override void RemoveEffect(Character character)
     {
-        character.AttackSpeedModifiedPercent -= percentIncrease;
+        if (character.AttackCell != null)
+        {
+            character.AttackCell.AttackSpeedModifiedPercent -= percentIncrease;
+        }
+
         base.RemoveEffect(character);
     }
 }
