@@ -5,8 +5,6 @@ public abstract class ResourceCollectionCell : Cell
 {
     public abstract Dictionary<ResourceType, float> SecondsPerResourceCollection {get; }
 
-    private Conveyer Output;
-
     public override void Setup(Character character)
     {
         base.Setup(character);
@@ -15,18 +13,12 @@ public abstract class ResourceCollectionCell : Cell
     public override void Update()
     {
         HarvestResources();
-        LookForOutputHex();
     }
 
     private float lastHarvestCheckTime;
     private Dictionary<ResourceType, float> lastCollectionTimes = new Dictionary<ResourceType, float>();
     private void HarvestResources()
     {
-        if (this.Output == null)
-        {
-            return;
-        }
-
         if (Time.time < lastHarvestCheckTime + .25f)
         {
             return;
@@ -50,26 +42,12 @@ public abstract class ResourceCollectionCell : Cell
 
     private void SpawnResource(ResourceType type)
     {
-        GameObject.Instantiate(Prefabs.GetResource(type), Output.transform.position, new Quaternion());
-    }
-
-    private float lastOutputCheckTime;
-    private void LookForOutputHex()
-    {
-        if (Time.time < lastOutputCheckTime + .5f)
-        {
-            return;
-        }
-        lastOutputCheckTime = Time.time;
-
-        for (int i = 0; i < 6; i++)
-        {
-            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, i);
-            Building building = Managers.Board.GetBuilding(neighbor);
-            if (building?.Type == BuildingType.Conveyor)
-            {
-                this.Output = (Conveyer)building;
-            }
-        }
+        var resourceGO = GameObject.Instantiate(
+            Prefabs.GetResource(type),
+            this.Owner.transform.position,
+            new Quaternion());
+        Resource resource = resourceGO.AddComponent<Resource>();
+        resource.Init(type);
+        this.Owner.ConveyorCell.AddItem(resource);
     }
 }

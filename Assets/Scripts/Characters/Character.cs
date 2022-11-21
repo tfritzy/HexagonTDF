@@ -9,6 +9,7 @@ public abstract class Character : MonoBehaviour
     public abstract AttackCell AttackCell { get; }
     public abstract LifeCell LifeCell { get; }
     public abstract MovementCell MovementCell { get; }
+    public virtual ConveyorCell ConveyorCell => null;
     public abstract ResourceCollectionCell ResourceCollectionCell { get; }
     public Vector2Int GridPosition { get; set; }
     public Transform Body;
@@ -57,6 +58,7 @@ public abstract class Character : MonoBehaviour
             this.LifeCell,
             this.MovementCell,
             this.ResourceCollectionCell,
+            this.ConveyorCell,
         };
         this.Cells.RemoveAll((Cell cell) => cell == null);
         this.Cells.ForEach((Cell cell) => cell.Setup(this));

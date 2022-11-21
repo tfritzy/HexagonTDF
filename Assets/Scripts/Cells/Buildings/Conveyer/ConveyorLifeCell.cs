@@ -1,4 +1,4 @@
-public class ConveyerLifeCell : LifeCell
+public class ConveyorLifeCell : LifeCell
 {
     public override int StartingHealth => 50;
 }
