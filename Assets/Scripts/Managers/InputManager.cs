@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,6 +10,16 @@ public class InputManager : MonoBehaviour
     public bool DisabledByScroll;
     public bool IsFingerHeldDown;
     public static event EventHandler InputWasMade;
+    public InputMode CurrentMode;
+    private BuildInputMode buildInputMode;
+    private GameInputMode gameInputMode;
+
+    void Awake()
+    {
+        this.buildInputMode = new BuildInputMode();
+        this.gameInputMode = new GameInputMode();
+        this.CurrentMode = gameInputMode;
+    }
 
     void Update()
     {
@@ -50,15 +61,10 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        if (RaycastAndInteract(inputPos, Constants.Layers.Characters))
-        {
-            return;
-        }
-
-        RaycastAndInteract(inputPos, Constants.Layers.Hexagons);
+        RaycastAndInteract(inputPos, Constants.Layers.Hexagons | Constants.Layers.Characters);
     }
 
-    private bool RaycastAndInteract(Vector3? inputPos, int layer)
+    private void RaycastAndInteract(Vector3? inputPos, int layer)
     {
         Ray ray = Managers.Camera.ScreenPointToRay(inputPos.Value);
         RaycastHit[] hits = Physics.RaycastAll(
@@ -67,46 +73,16 @@ public class InputManager : MonoBehaviour
             layer,
             QueryTriggerInteraction.Collide);
         Array.Sort(hits, (RaycastHit h1, RaycastHit h2) => h1.distance.CompareTo(h2.distance));
-        foreach (RaycastHit hit in hits)
-        {
-            bool wasConsumed = Interact(hit.collider.gameObject);
-
-            if (!wasConsumed)
-            {
-                wasConsumed = Interact(hit.transform.parent?.gameObject);
-            }
-
-            if (wasConsumed)
-            {
-                InputWasMade?.Invoke(this, null);
-            }
-
-            return wasConsumed;
-        }
-
-        return false;
+        List<HexagonMono> hexes =
+            hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<HexagonMono>())
+            .ToList();
+        List<Character> characters =
+            hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<Character>())
+            .ToList();
+        hexes.RemoveAll((HexagonMono i) => i == null);
+        characters.RemoveAll((Character i) => i == null);
+        this.CurrentMode.Interact(hexes, characters);
     }
-
-    private bool Interact(GameObject gameObject)
-    {
-        if (gameObject == null)
-        {
-            return false;
-        }
-
-        if (InterfaceUtility.TryGetInterface<Interactable>(out Interactable interactable, gameObject))
-        {
-            if (interactable.Interact())
-            {
-                EventHandler handler = InputWasMade;
-                handler?.Invoke(this, null);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 
     private bool IsPointerOverUIObject()
     {
@@ -115,5 +91,17 @@ public class InputManager : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
+    }
+
+    public void SwapInputMode()
+    {
+        if (CurrentMode is BuildInputMode)
+        {
+            CurrentMode = this.gameInputMode;
+        }
+        else
+        {
+            this.CurrentMode = this.buildInputMode;
+        }
     }
 }

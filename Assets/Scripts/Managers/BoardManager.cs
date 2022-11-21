@@ -48,7 +48,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland, Biome.Snow, Biome.Forrest };
+    HashSet<Biome> flatBiomes = new HashSet<Biome> { Biome.Water, Biome.Sand, Biome.Grassland };
     private void SetupMapHeight(OverworldSegment map)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(map.Index);
@@ -69,7 +69,7 @@ public class BoardManager : MonoBehaviour
                 int hieghtModifier = 0;
                 if (heightVal > 1.35f) hieghtModifier += 1;
                 if (heightVal > 1.6f) hieghtModifier += 1;
-                this.Hexagons[x, y].transform.position += hieghtModifier * Vector3.up;
+                this.Hexagons[x, y].transform.position += hieghtModifier * Vector3.up / 2;
             }
         }
     }

@@ -41,10 +41,9 @@ public class OverworldFortress : MonoBehaviour, Interactable
     }
 
 
-    public bool Interact()
+    public void Interact()
     {
         Select();
-        return true;
     }
 
     public void Select()

@@ -33,10 +33,9 @@ public class HexagonMono : MonoBehaviour, Interactable
         SetHexBodyColor();
     }
 
-    public bool Interact()
+    public void Interact()
     {
         Debug.Log("Clicked on hex at pos " + GridPosition);
-        return true;
     }
 
     public void MaybeSpawnObstacle(int segmentIndex)
