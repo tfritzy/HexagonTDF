@@ -38,6 +38,42 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<BuildingType, GameObject> _buildings;
+    public static GameObject GetBuilding(BuildingType buildingType)
+    {
+        if (_buildings == null)
+        {
+            _buildings = new Dictionary<BuildingType, GameObject>();
+        }
+
+        if (_buildings.ContainsKey(buildingType))
+        {
+            return _buildings[buildingType];
+        } else 
+        {
+            _buildings[buildingType] = Resources.Load<GameObject>($"Prefabs/Buildings/{buildingType}");
+            return _buildings[buildingType];
+        }
+    }
+
+    private static Dictionary<ResourceType, GameObject> _resources;
+    public static GameObject GetResource(ResourceType resourceType)
+    {
+        if (_resources == null)
+        {
+            _resources = new Dictionary<ResourceType, GameObject>();
+        }
+
+        if (_resources.ContainsKey(resourceType))
+        {
+            return _resources[resourceType];
+        } else 
+        {
+            _resources[resourceType] = Resources.Load<GameObject>($"Prefabs/Resources/{resourceType}");
+            return _resources[resourceType];
+        }
+    }
+
     public static Hexagon GetHexagonScript(Biome biome)
     {
         switch (biome)
@@ -73,45 +109,6 @@ public static class Prefabs
                 }
             }
             return resourceIcons;
-        }
-    }
-
-    private static GameObject rangeCircle;
-    public static GameObject RangeCircle
-    {
-        get
-        {
-            if (rangeCircle == null)
-            {
-                rangeCircle = Resources.Load<GameObject>("Prefabs/Projectiles/RangeCircle");
-            }
-            return rangeCircle;
-        }
-    }
-
-    private static GameObject damageNumber;
-    public static GameObject DamageNumber
-    {
-        get
-        {
-            if (damageNumber == null)
-            {
-                damageNumber = Resources.Load<GameObject>("Prefabs/UI/DamageNumber");
-            }
-            return damageNumber;
-        }
-    }
-
-    private static GameObject resourceNumber;
-    public static GameObject ResourceNumber
-    {
-        get
-        {
-            if (resourceNumber == null)
-            {
-                resourceNumber = Resources.Load<GameObject>("Prefabs/UI/ResourceNumber");
-            }
-            return resourceNumber;
         }
     }
 

@@ -8,6 +8,7 @@ public static class Constants
     public const float HEXAGON_R = 1.066f;
     public const float OVERWORLD_HEXAGON_R = .15f;
     public const int OVERWORLD_DIMENSIONS = 100;
+    public static RectInt OverworldDimensions = new RectInt(0, 0, OVERWORLD_DIMENSIONS, OVERWORLD_DIMENSIONS);
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
     public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;

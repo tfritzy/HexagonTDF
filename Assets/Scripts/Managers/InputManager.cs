@@ -73,8 +73,9 @@ public class InputManager : MonoBehaviour
             layer,
             QueryTriggerInteraction.Collide);
         Array.Sort(hits, (RaycastHit h1, RaycastHit h2) => h1.distance.CompareTo(h2.distance));
+        
         List<HexagonMono> hexes =
-            hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<HexagonMono>())
+            hits.Select((RaycastHit hit) => hit.collider.transform.parent?.gameObject.GetComponent<HexagonMono>())
             .ToList();
         List<Character> characters =
             hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<Character>())
@@ -103,5 +104,10 @@ public class InputManager : MonoBehaviour
         {
             this.CurrentMode = this.buildInputMode;
         }
+    }
+
+    public void SelectBuilding(string buildingType)
+    {
+        this.buildInputMode.SelectBuildingType(buildingType);
     }
 }

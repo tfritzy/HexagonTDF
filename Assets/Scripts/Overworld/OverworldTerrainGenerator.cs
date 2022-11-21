@@ -407,8 +407,9 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2Int neighbor = Helpers.GetNeighborPosition(current, i, dimensions);
+                    Vector2Int neighbor = Helpers.GetNeighborPosition(current, i);
 
+                    if (!Helpers.IsInBounds(neighbor, Constants.OverworldDimensions))
                     if (neighbor == Constants.MinVector2Int)
                         continue;
 

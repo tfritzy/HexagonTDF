@@ -9,9 +9,9 @@ public abstract class Character : MonoBehaviour
     public abstract AttackCell AttackCell { get; }
     public abstract LifeCell LifeCell { get; }
     public abstract MovementCell MovementCell { get; }
+    public abstract ResourceCollectionCell ResourceCollectionCell { get; }
     public Vector2Int GridPosition { get; set; }
     public Transform Body;
-    public abstract float Power { get; }
     public abstract Alliance Enemies { get; }
     public abstract Alliance Alliance { get; }
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
@@ -56,6 +56,7 @@ public abstract class Character : MonoBehaviour
             this.AttackCell,
             this.LifeCell,
             this.MovementCell,
+            this.ResourceCollectionCell,
         };
         this.Cells.RemoveAll((Cell cell) => cell == null);
         this.Cells.ForEach((Cell cell) => cell.Setup(this));
@@ -69,6 +70,10 @@ public abstract class Character : MonoBehaviour
     protected virtual void UpdateLoop()
     {
         ApplyEffects();
+        foreach (Cell cell in this.Cells)
+        {
+            cell.Update();
+        }
     }
 
     private void ApplyEffects()

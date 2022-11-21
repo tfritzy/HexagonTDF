@@ -46,14 +46,14 @@ public static class Helpers
         return Mathf.PerlinNoise(x / scale + seed, y / scale + seed);
     }
 
-    public static bool IsInBounds(Vector2Int position, int dimensions)
+    public static bool IsInBounds(Vector2Int position, RectInt dimensions)
     {
-        if (position.x < 0 || position.x >= dimensions)
+        if (position.x < dimensions.xMin || position.x >= dimensions.xMax)
         {
             return false;
         }
 
-        if (position.y < 0 || position.y >= dimensions)
+        if (position.y < dimensions.xMin || position.y >= dimensions.yMax)
         {
             return false;
         }
@@ -103,7 +103,7 @@ public static class Helpers
         new Vector2Int(-1, 0)
     };
 
-    public static Vector2Int GetNeighborPosition(Vector2Int pos, int index, int dimensions)
+    public static Vector2Int GetNeighborPosition(Vector2Int pos, int index)
     {
         Vector2Int position;
 
@@ -116,14 +116,7 @@ public static class Helpers
             position = pos + oddNeighborPattern[index];
         }
 
-        if (Helpers.IsInBounds(position, dimensions))
-        {
-            return position;
-        }
-        else
-        {
-            return Constants.MinVector2Int;
-        }
+        return position;
     }
 
     public static Transform RecursiveFindChild(Transform parent, string childName)

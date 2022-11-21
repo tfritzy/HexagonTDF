@@ -8,6 +8,8 @@ public class BoardManager : MonoBehaviour
     public HexagonMono[,] Hexagons;
     public string ActiveMapName;
     public bool RegenerateMap;
+    private Building[,] Buildings;
+    private RectInt Dimensions;
 
     void Awake()
     {
@@ -77,6 +79,8 @@ public class BoardManager : MonoBehaviour
     private void SpawnHexagons(OverworldSegment segment)
     {
         this.Hexagons = new HexagonMono[segment.Width, segment.Height];
+        this.Buildings = new Building[segment.Width, segment.Height];
+        this.Dimensions = new RectInt(0, 0, segment.Width, segment.Height);
 
         for (int y = 0; y < segment.Height; y++)
         {
@@ -111,11 +115,26 @@ public class BoardManager : MonoBehaviour
 
     public HexagonMono GetHex(Vector2Int pos)
     {
-        if (Helpers.IsInBounds(pos, this.Hexagons.GetLength(0)) == false)
+        if (Helpers.IsInBounds(pos, this.Dimensions) == false)
         {
             return null;
         }
 
         return Hexagons[pos.x, pos.y];
+    }
+
+    public Building GetBuilding(Vector2Int pos)
+    {
+        if (!Helpers.IsInBounds(pos, this.Dimensions))
+        {
+            return null;
+        }
+
+        return Buildings[pos.x, pos.y];
+    }
+
+    public void AddBuilding(Vector2Int pos, Building building)
+    {
+        this.Buildings[pos.x, pos.y] = building;
     }
 }
