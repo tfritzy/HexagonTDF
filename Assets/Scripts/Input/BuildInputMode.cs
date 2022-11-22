@@ -43,7 +43,7 @@ public class BuildInputMode : InputMode
         var buildingGO = GameObject.Instantiate(
             Prefabs.GetBuilding(type),
             hex.transform.position,
-            new Quaternion());
+            Prefabs.GetBuilding(type).transform.rotation);
         Building building = buildingGO.GetComponent<Building>();
         building.Init(hex.GridPosition);
         Managers.Board.AddBuilding(hex.GridPosition, building);
