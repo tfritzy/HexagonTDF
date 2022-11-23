@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Resource : MonoBehaviour 
+public class Resource : MonoBehaviour
 {
-    public int Width => resourceWidths[this.Type];
+    public float Width => resourceWidths[this.Type] / 2;
     public ResourceType Type;
 
     public void Init(ResourceType type)
@@ -11,8 +11,8 @@ public class Resource : MonoBehaviour
         this.Type = type;
     }
 
-    private static Dictionary<ResourceType, int> resourceWidths = new Dictionary<ResourceType, int>
+    private static Dictionary<ResourceType, float> resourceWidths = new Dictionary<ResourceType, float>
     {
-        { ResourceType.Log, 40 },
+        { ResourceType.Log, .4f },
     };
 }
