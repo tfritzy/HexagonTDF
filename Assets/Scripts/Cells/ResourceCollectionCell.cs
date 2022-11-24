@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class ResourceCollectionCell : Cell
 {
-    public abstract Dictionary<ResourceType, float> SecondsPerResourceCollection {get; }
+    public abstract Dictionary<ResourceType, float> SecondsPerResourceCollection { get; }
 
     public override void Setup(Character character)
     {
@@ -32,7 +32,8 @@ public abstract class ResourceCollectionCell : Cell
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource])
+            if (this.Owner.ConveyorCell.CanAcceptItem() &&
+                Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource])
             {
                 SpawnResource(resource);
                 lastCollectionTimes[resource] = Time.time;

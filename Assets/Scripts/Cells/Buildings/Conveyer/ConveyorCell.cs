@@ -4,7 +4,6 @@ using UnityEngine;
 public class ConveyorCell : Cell
 {
     private const float VELOCITY = .3f;
-    private float CurrentVelocity;
     private const int SLOTS_ON_BELT = 10;
     private LinkedList<ResourceOnBelt> ItemsOnBelt;
     private ConveyorCell _next;
@@ -24,6 +23,11 @@ public class ConveyorCell : Cell
         get { return _prev; }
         set
         {
+            if (IsSource)
+            {
+                return;
+            }
+
             _prev = value;
             ResetPathPoints();
             ConfigureLines(this);
@@ -32,6 +36,11 @@ public class ConveyorCell : Cell
     private List<Vector3> pointsOnPath;
     private float[] pointProgressCache;
     private float totalPathDistance;
+
+    /// <summary>
+    /// If true this conveyer can only be the start of a line.
+    /// </summary>
+    public bool IsSource { get; private set; }
 
     private class ResourceOnBelt
     {
@@ -42,13 +51,15 @@ public class ConveyorCell : Cell
         public float MaxBoundPercent => ProgressPercent + Resource.WidthPercent;
     }
 
+    public ConveyorCell(bool isSource)
+    {
+        this.IsSource = isSource;
+    }
+
     public override void Setup(Character owner)
     {
         base.Setup(owner);
-        this.CurrentVelocity = VELOCITY;
-
         SetupConveyorDirection();
-
         ItemsOnBelt = new LinkedList<ResourceOnBelt>();
     }
 
@@ -77,7 +88,7 @@ public class ConveyorCell : Cell
                     Vector3 deltaToNextPoint =
                         pointsOnPath[iterRes.CurrentPathPoint + 1] -
                         iterRes.Resource.gameObject.transform.position;
-                    Vector3 moveDelta = deltaToNextPoint.normalized * this.CurrentVelocity * Time.deltaTime;
+                    Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                     iterRes.Resource.gameObject.transform.position += moveDelta;
                     iterRes.ProgressPercent += moveDelta.magnitude / totalPathDistance;
 
@@ -143,15 +154,15 @@ public class ConveyorCell : Cell
 
     private float getProgressOfResource(ResourceOnBelt resource)
     {
+        if (resource.CurrentPathPoint >= pointsOnPath.Count)
+        {
+            return 1f;
+        }
+
         return pointProgressCache[resource.CurrentPathPoint] +
                 (resource.Resource.transform.position - pointsOnPath[resource.CurrentPathPoint])
                     .magnitude / totalPathDistance;
     }
-
-    // private float getProgressAlongRoute(Resource resource)
-    // {
-
-    // }
 
     private void SetupConveyorDirection()
     {
@@ -173,7 +184,8 @@ public class ConveyorCell : Cell
 
             if (building.ConveyorCell.Prev == null &&
                 building.ConveyorCell.Next != this &&
-                building.ResourceCollectionCell == null)
+                building.ResourceCollectionCell == null &&
+                !building.ConveyorCell.IsSource)
             {
                 this.Next = building.ConveyorCell;
                 building.ConveyorCell.Prev = this;
@@ -209,9 +221,10 @@ public class ConveyorCell : Cell
 
     private List<Vector3> GetPointsOnPath()
     {
+        List<Vector3> points;
         if (Prev != null && Next != null)
         {
-            return new List<Vector3>()
+            points = new List<Vector3>()
             {
                 this.Owner.transform.position + (Prev.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
                 this.Owner.transform.position,
@@ -220,25 +233,31 @@ public class ConveyorCell : Cell
         }
         else if (Prev != null && Next == null)
         {
-            return new List<Vector3>()
+            points = new List<Vector3>()
             {
                 this.Owner.transform.position + -(this.Owner.transform.position - Prev.Owner.transform.position).normalized * Constants.HEXAGON_r,
                 this.Owner.transform.position,
-                this.Owner.transform.position + (this.Owner.transform.position - Prev.Owner.transform.position).normalized * Constants.HEXAGON_r,
             };
         }
         else if (Next != null && Prev == null)
         {
-            return new List<Vector3>()
+            points = new List<Vector3>()
             {
-                this.Owner.transform.position + -(Next.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
                 this.Owner.transform.position,
                 this.Owner.transform.position + (Next.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
             };
         }
         else
         {
-            return new List<Vector3>();
+            points = new List<Vector3>();
         }
+
+        // // No intake needed for source conveyer
+        // if (points.Count > 0 && this.IsSource)
+        // {
+        //     points.RemoveAt(0);
+        // }
+
+        return points;
     }
 }

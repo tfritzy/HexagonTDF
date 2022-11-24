@@ -17,7 +17,7 @@ public class Conveyor : Building
     protected override void Setup()
     {
         lifeCell = new ConveyorLifeCell();
-        conveyorCell = new ConveyorCell();
+        conveyorCell = new ConveyorCell(false);
 
         base.Setup();
     }

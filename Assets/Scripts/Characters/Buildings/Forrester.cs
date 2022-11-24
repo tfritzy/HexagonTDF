@@ -16,8 +16,8 @@ public class Forrester : Building
     {
         lifeCell = new ForresterLifeCell();
         resourceCollectionCell = new ForresterResourceCollectionCell();
-        conveyorCell = new ConveyorCell();
-        
+        conveyorCell = new ConveyorCell(true);
+
         base.Setup();
     }
 }
