@@ -74,6 +74,24 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<MaterialType, Material> _materials;
+    public static Material GetMaterial(MaterialType materialType)
+    {
+        if (_materials == null)
+        {
+            _materials = new Dictionary<MaterialType, Material>();
+        }
+
+        if (_materials.ContainsKey(materialType))
+        {
+            return _materials[materialType];
+        } else 
+        {
+            _materials[materialType] = Resources.Load<Material>($"Materials/{materialType}");
+            return _materials[materialType];
+        }
+    }
+
     public static Hexagon GetHexagonScript(Biome biome)
     {
         switch (biome)
