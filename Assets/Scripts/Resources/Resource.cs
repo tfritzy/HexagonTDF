@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Resource : MonoBehaviour
 {
-    public float Width => resourceWidths[this.Type] / 2;
+    public float WidthPercent => resourceWidths[this.Type] / 2;
     public ResourceType Type;
 
     public void Init(ResourceType type)
