@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ConveyorCell : Cell
@@ -42,7 +43,7 @@ public class ConveyorCell : Cell
     /// </summary>
     public bool IsSource { get; private set; }
 
-    private class ResourceOnBelt
+    public class ResourceOnBelt
     {
         public Resource Resource;
         public int CurrentPathPoint;
@@ -133,6 +134,22 @@ public class ConveyorCell : Cell
         float minBound = progress - firstResource.Resource.WidthPercent;
 
         return minBound > 0;
+    }
+
+    public ResourceOnBelt GetFurthestAlongResourceOfType(ResourceType resourceType)
+    {
+        float maxProgress = float.MinValue;
+        ResourceOnBelt maxResource = null;
+        foreach (var resource in ItemsOnBelt)
+        {
+            if (resource.Resource.Type == resourceType && resource.ProgressPercent > maxProgress)
+            {
+                maxProgress = resource.ProgressPercent;
+                maxResource = resource;
+            }
+        }
+
+        return maxResource;
     }
 
     private float GetMinBoundOfNextItem(LinkedListNode<ResourceOnBelt> item)
