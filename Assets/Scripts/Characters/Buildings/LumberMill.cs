@@ -6,16 +6,17 @@ public class LumberMill : Building
     public override Alliance Enemies => Alliance.Maltov;
     public override Alliance Alliance => Alliance.Player;
     public override BuildingType Type => BuildingType.LumberMill;
-    public override ResourceCollectionCell ResourceCollectionCell => resourceCollectionCell;
+    public override ResourceCollectionCell ResourceCollectionCell => null;
+    public override ResourceProcessingCell ResourceProcessingCell => resourceProcessingCell;
     public override ConveyorCell ConveyorCell => conveyorCell;
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
-    private ResourceCollectionCell resourceCollectionCell;
+    private ResourceProcessingCell resourceProcessingCell;
     protected override void Setup()
     {
-        lifeCell = new ForresterLifeCell();
-        resourceCollectionCell = new ForresterResourceCollectionCell();
+        lifeCell = new LumberMillLifeCell();
+        resourceProcessingCell = new LumberMillProcessingCell();
         conveyorCell = new ConveyorCell(true);
 
         base.Setup();

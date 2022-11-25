@@ -50,6 +50,7 @@ public class ConveyorCell : Cell
         public float ProgressPercent;
         public float MinBoundPercent => ProgressPercent - Resource.WidthPercent;
         public float MaxBoundPercent => ProgressPercent + Resource.WidthPercent;
+        public bool IsPaused;
     }
 
     public ConveyorCell(bool isSource)
@@ -83,19 +84,22 @@ public class ConveyorCell : Cell
             ResourceOnBelt iterRes = currentItem.Value;
             if (iterRes.CurrentPathPoint < pointsOnPath.Count - 1)
             {
-                float currentProgress = getProgressOfResource(iterRes);
-                if (currentProgress + iterRes.Resource.WidthPercent < GetMinBoundOfNextItem(currentItem))
+                if (!iterRes.IsPaused)
                 {
-                    Vector3 deltaToNextPoint =
-                        pointsOnPath[iterRes.CurrentPathPoint + 1] -
-                        iterRes.Resource.gameObject.transform.position;
-                    Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
-                    iterRes.Resource.gameObject.transform.position += moveDelta;
-                    iterRes.ProgressPercent += moveDelta.magnitude / totalPathDistance;
-
-                    if (deltaToNextPoint.magnitude < .05f)
+                    float currentProgress = getProgressOfResource(iterRes);
+                    if (currentProgress + iterRes.Resource.WidthPercent < GetMinBoundOfNextItem(currentItem))
                     {
-                        iterRes.CurrentPathPoint += 1;
+                        Vector3 deltaToNextPoint =
+                            pointsOnPath[iterRes.CurrentPathPoint + 1] -
+                            iterRes.Resource.gameObject.transform.position;
+                        Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
+                        iterRes.Resource.gameObject.transform.position += moveDelta;
+                        iterRes.ProgressPercent += moveDelta.magnitude / totalPathDistance;
+
+                        if (deltaToNextPoint.magnitude < .05f)
+                        {
+                            iterRes.CurrentPathPoint += 1;
+                        }
                     }
                 }
             }

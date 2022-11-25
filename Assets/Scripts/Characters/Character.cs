@@ -11,6 +11,7 @@ public abstract class Character : MonoBehaviour
     public abstract MovementCell MovementCell { get; }
     public virtual ConveyorCell ConveyorCell => null;
     public abstract ResourceCollectionCell ResourceCollectionCell { get; }
+    public virtual ResourceProcessingCell ResourceProcessingCell => null;
     public Vector2Int GridPosition { get; set; }
     public Transform Body;
     public abstract Alliance Enemies { get; }
@@ -59,6 +60,7 @@ public abstract class Character : MonoBehaviour
             this.MovementCell,
             this.ResourceCollectionCell,
             this.ConveyorCell,
+            this.ResourceProcessingCell,
         };
         this.Cells.RemoveAll((Cell cell) => cell == null);
         this.Cells.ForEach((Cell cell) => cell.Setup(this));
