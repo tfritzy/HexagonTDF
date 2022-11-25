@@ -72,7 +72,7 @@ public class ConveyorCell : Cell
 
     private void MoveItemsForward()
     {
-        if (ItemsOnBelt.Count == 0)
+        if (ItemsOnBelt.Count == 0 || pointsOnPath == null)
         {
             return;
         }

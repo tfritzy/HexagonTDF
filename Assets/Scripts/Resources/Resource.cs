@@ -14,5 +14,6 @@ public class Resource : MonoBehaviour
     private static Dictionary<ResourceType, float> resourceWidths = new Dictionary<ResourceType, float>
     {
         { ResourceType.Log, .4f },
+        { ResourceType.Sticks, .2f },
     };
 }
