@@ -2,6 +2,7 @@ using UnityEngine;
 
 public abstract class ResourceProcessingCell : Cell
 {
+    public abstract InventoryCell InputInventory { get; }
     public abstract ResourceType OutputResourceType { get; }
     public abstract ResourceType InputResourceType { get; }
     public abstract float SecondsToProcessResource { get; }
@@ -13,14 +14,16 @@ public abstract class ResourceProcessingCell : Cell
         var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputResourceType);
         if (furthestResource != null && furthestResource.ProgressPercent > .2f)
         {
-            if (!isProcessingItem)
+            Resource firstProcessable = InputInventory.GetFirstItem(InputResourceType);
+
+            if (firstProcessable != null && !isProcessingItem)
             {
                 processingStartTime = Time.time;
                 furthestResource.IsPaused = true;
                 isProcessingItem = true;
             }
 
-            if (Time.time > processingStartTime + SecondsToProcessResource)
+            if (isProcessingItem && Time.time > processingStartTime + SecondsToProcessResource)
             {
                 GameObject newResource = GameObject.Instantiate(
                     Prefabs.GetResource(OutputResourceType),
