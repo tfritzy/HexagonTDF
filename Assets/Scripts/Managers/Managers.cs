@@ -46,19 +46,6 @@ public static class Managers
         }
     }
 
-    private static ResourceStore resourceStore;
-    public static ResourceStore ResourceStore
-    {
-        get
-        {
-            if (resourceStore == null)
-            {
-                resourceStore = GameObject.Find("ResourceStore").GetComponent<ResourceStore>();
-            }
-            return resourceStore;
-        }
-    }
-
     private static Transform canvas;
     public static Transform Canvas
     {

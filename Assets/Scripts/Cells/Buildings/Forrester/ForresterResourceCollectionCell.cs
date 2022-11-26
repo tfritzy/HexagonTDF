@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 public class ForresterResourceCollectionCell : ResourceCollectionCell
 {
-    private Dictionary<ResourceType, float> resourceCollection = new Dictionary<ResourceType, float>
+    private Dictionary<ItemType, float> resourceCollection = new Dictionary<ItemType, float>
     {
         {
-            ResourceType.Log,
+            ItemType.Log,
             6
         }
     };
-    public override Dictionary<ResourceType, float> SecondsPerResourceCollection => resourceCollection;
+    public override Dictionary<ItemType, float> SecondsPerResourceCollection => resourceCollection;
 }

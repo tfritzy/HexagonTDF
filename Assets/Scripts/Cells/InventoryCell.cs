@@ -3,22 +3,19 @@ using System.Linq;
 
 public class InventoryCell : Cell
 {
-    private Resource[] Items;
+    private Item[] Items;
     public int Size { get; }
+    public bool IsFull => GetFirstOpenSlot() == -1;
+
+    public override void Update() { }
 
     public InventoryCell(int size)
     {
         this.Size = size;
+        this.Items = new Item[Size];
     }
 
-    public override void Update() { }
-
-    public InventoryCell()
-    {
-        this.Items = new Resource[Size];
-    }
-
-    public Resource GetItemAt(int index)
+    public Item GetItemAt(int index)
     {
         if (index < 0 || index >= Size)
         {
@@ -28,7 +25,7 @@ public class InventoryCell : Cell
         return Items[index];
     }
 
-    public void AddItem(Resource item)
+    public void AddItem(Item item)
     {
         int firstOpenSlot = GetFirstOpenSlot();
         if (firstOpenSlot != -1)
@@ -47,6 +44,11 @@ public class InventoryCell : Cell
         }
     }
 
+    public void RemoveAtIndex(int index)
+    {
+        Items[index] = null;
+    }
+
     private int GetFirstOpenSlot()
     {
         for (int i = 0; i < Items.Length; i++)
@@ -60,16 +62,16 @@ public class InventoryCell : Cell
         return -1;
     }
 
-    public Resource GetFirstItem(ResourceType ofType)
+    public int GetFirstItemIndex(ItemType ofType)
     {
-        foreach (Resource resource in Items)
+        for (int i = 0; i < Items.Length; i++)
         {
-            if (resource.Type == ofType)
+            if (Items[i] != null && Items[i].Type == ofType)
             {
-                return resource;
+                return i;
             }
         }
 
-        return null;
+        return -1;
     }
 }

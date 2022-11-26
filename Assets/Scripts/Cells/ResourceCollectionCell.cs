@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class ResourceCollectionCell : Cell
 {
-    public abstract Dictionary<ResourceType, float> SecondsPerResourceCollection { get; }
+    public abstract Dictionary<ItemType, float> SecondsPerResourceCollection { get; }
 
     public override void Setup(Character character)
     {
@@ -16,7 +16,7 @@ public abstract class ResourceCollectionCell : Cell
     }
 
     private float lastHarvestCheckTime;
-    private Dictionary<ResourceType, float> lastCollectionTimes = new Dictionary<ResourceType, float>();
+    private Dictionary<ItemType, float> lastCollectionTimes = new Dictionary<ItemType, float>();
     private void HarvestResources()
     {
         if (Time.time < lastHarvestCheckTime + .25f)
@@ -25,7 +25,7 @@ public abstract class ResourceCollectionCell : Cell
         }
         lastHarvestCheckTime = Time.time;
 
-        foreach (ResourceType resource in this.SecondsPerResourceCollection.Keys)
+        foreach (ItemType resource in this.SecondsPerResourceCollection.Keys)
         {
             if (!lastCollectionTimes.ContainsKey(resource))
             {
@@ -41,14 +41,16 @@ public abstract class ResourceCollectionCell : Cell
         }
     }
 
-    private void SpawnResource(ResourceType type)
+    private void SpawnResource(ItemType type)
     {
         var resourceGO = GameObject.Instantiate(
             Prefabs.GetResource(type),
             this.Owner.transform.position,
             new Quaternion());
-        Resource resource = resourceGO.AddComponent<Resource>();
-        resource.Init(type);
-        this.Owner.ConveyorCell.AddItem(resource);
+
+        Item item = ItemGenerator.GetItemScript(type);
+        InstantiatedItem itemInst = resourceGO.AddComponent<InstantiatedItem>();
+        itemInst.Init(item);
+        this.Owner.ConveyorCell.AddItem(itemInst);
     }
 }

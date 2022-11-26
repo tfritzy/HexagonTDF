@@ -3,47 +3,66 @@ using UnityEngine;
 public abstract class ResourceProcessingCell : Cell
 {
     public abstract InventoryCell InputInventory { get; }
-    public abstract ResourceType OutputResourceType { get; }
-    public abstract ResourceType InputResourceType { get; }
+    public virtual InventoryCell ProcessingInventory => processingInventory;
+    public abstract ItemType OutputItemType { get; }
+    public abstract ItemType InputItemType { get; }
     public abstract float SecondsToProcessResource { get; }
-    private float processingStartTime;
-    private bool isProcessingItem;
+    private InventoryCell processingInventory;
+    private float? processingStartTime;
+
+    public override void Setup(Character owner)
+    {
+        processingInventory = new InventoryCell(1);
+
+        base.Setup(owner);
+    }
 
     public override void Update()
     {
-        var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputResourceType);
+        var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputItemType);
         if (furthestResource != null && furthestResource.ProgressPercent > .2f)
         {
-            Resource firstProcessable = InputInventory.GetFirstItem(InputResourceType);
-
-            if (firstProcessable != null && !isProcessingItem)
+            if (!InputInventory.IsFull)
             {
-                processingStartTime = Time.time;
-                furthestResource.IsPaused = true;
-                isProcessingItem = true;
+                Item item = furthestResource.ItemInst.Item;
+                InputInventory.AddItem(item);
+                GameObject.Destroy(furthestResource.ItemInst.gameObject);
+                this.Owner.ConveyorCell.RemoveItem(item.Id);
             }
-
-            if (isProcessingItem && Time.time > processingStartTime + SecondsToProcessResource)
+            else
             {
-                GameObject newResource = GameObject.Instantiate(
-                    Prefabs.GetResource(OutputResourceType),
-                    furthestResource.Resource.transform.position,
-                    Prefabs.GetResource(OutputResourceType).transform.rotation
-                );
-                GameObject.Destroy(furthestResource.Resource.gameObject);
-                Resource resource = newResource.AddComponent<Resource>();
-                resource.Init(OutputResourceType);
-                furthestResource.Resource = resource;
-                furthestResource.IsPaused = false;
-
-                isProcessingItem = false;
+                furthestResource.IsPaused = true;
             }
         }
-        else if (isProcessingItem)
+
+        int firstEligableIndex = InputInventory.GetFirstItemIndex(InputItemType);
+        if (firstEligableIndex != -1 && !ProcessingInventory.IsFull)
         {
-            // we should alays enter the first condition if we're processing an item.
-            // If not, the items is gone.
-            isProcessingItem = false;
+            ProcessingInventory.TransferItem(InputInventory, firstEligableIndex);
+        }
+
+        int firstProcessableIndex = ProcessingInventory.GetFirstItemIndex(InputItemType);
+        if (firstProcessableIndex != -1)
+        {
+            if (processingStartTime.HasValue && Time.time - processingStartTime > SecondsToProcessResource)
+            {
+                GameObject newResource = GameObject.Instantiate(
+                    Prefabs.GetResource(OutputItemType),
+                    Vector3.zero,
+                    Prefabs.GetResource(OutputItemType).transform.rotation
+                );
+
+                Item item = ItemGenerator.GetItemScript(OutputItemType);
+                InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
+                itemInst.Init(item);
+                this.Owner.ConveyorCell.AddItem(itemInst, .5f);
+                this.ProcessingInventory.RemoveAtIndex(firstProcessableIndex);
+                processingStartTime = null;
+            }
+            else if (processingStartTime == null)
+            {
+                processingStartTime = Time.time;
+            }
         }
     }
 }

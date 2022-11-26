@@ -26,11 +26,6 @@ public static class Constants
     /// <summary>
     /// How much of each resource 1 power maps to.
     /// </summary>
-    public static Dictionary<ResourceType, float> ResourcePowerMap => resourcePowerMap;
-    private static Dictionary<ResourceType, float> resourcePowerMap = new Dictionary<ResourceType, float>
-        {
-            { ResourceType.Gold, 50},
-        };
 
     public static class FilePaths
     {
@@ -45,13 +40,6 @@ public static class Constants
         public static int Ground = 1 << 11;
         public static int UI = 1 << 5;
     }
-
-    private static Dictionary<ResourceType, Color> resourceColors = new Dictionary<ResourceType, Color>()
-    {
-        { ResourceType.Gold, ColorExtensions.Create("F8C21C")},
-        { ResourceType.Gem, ColorExtensions.Create("1B80E2")},
-    };
-    public static Dictionary<ResourceType, Color> ResourceColors => resourceColors;
 
     public static class Tags
     {

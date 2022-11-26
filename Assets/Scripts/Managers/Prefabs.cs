@@ -56,21 +56,21 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<ResourceType, GameObject> _resources;
-    public static GameObject GetResource(ResourceType resourceType)
+    private static Dictionary<ItemType, GameObject> _resources;
+    public static GameObject GetResource(ItemType ItemType)
     {
         if (_resources == null)
         {
-            _resources = new Dictionary<ResourceType, GameObject>();
+            _resources = new Dictionary<ItemType, GameObject>();
         }
 
-        if (_resources.ContainsKey(resourceType))
+        if (_resources.ContainsKey(ItemType))
         {
-            return _resources[resourceType];
+            return _resources[ItemType];
         } else 
         {
-            _resources[resourceType] = Resources.Load<GameObject>($"Prefabs/Resources/{resourceType}");
-            return _resources[resourceType];
+            _resources[ItemType] = Resources.Load<GameObject>($"Prefabs/Resources/{ItemType}");
+            return _resources[ItemType];
         }
     }
 
@@ -113,17 +113,17 @@ public static class Prefabs
         }
     }
 
-    private static Dictionary<ResourceType, Sprite> resourceIcons;
-    public static Dictionary<ResourceType, Sprite> ResourceIcons
+    private static Dictionary<ItemType, Sprite> resourceIcons;
+    public static Dictionary<ItemType, Sprite> ResourceIcons
     {
         get
         {
             if (resourceIcons == null)
             {
-                resourceIcons = new Dictionary<ResourceType, Sprite>();
-                foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
+                resourceIcons = new Dictionary<ItemType, Sprite>();
+                foreach (ItemType ItemType in Enum.GetValues(typeof(ItemType)))
                 {
-                    resourceIcons[resourceType] = Resources.Load<Sprite>("Icons/" + resourceType);
+                    resourceIcons[ItemType] = Resources.Load<Sprite>("Icons/" + ItemType);
                 }
             }
             return resourceIcons;
