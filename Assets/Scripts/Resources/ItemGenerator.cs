@@ -1,5 +1,5 @@
 public static class ItemGenerator {
-    public static Item GetItemScript(ItemType type)
+    public static Item Make(ItemType type)
     {
         switch (type)
         {

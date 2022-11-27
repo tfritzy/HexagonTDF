@@ -48,9 +48,9 @@ public class ConveyorCell : Cell
     {
         public InstantiatedItem ItemInst;
         public int CurrentPathPoint;
-        public float ProgressPercent;
-        public float MinBoundPercent => ProgressPercent - ItemInst.Item.ConveyerWidth;
-        public float MaxBoundPercent => ProgressPercent + ItemInst.Item.ConveyerWidth;
+        public float ProgressAlongPath;
+        public float MinBound => ProgressAlongPath - ItemInst.Item.Width;
+        public float MaxBound => ProgressAlongPath + ItemInst.Item.Width;
         public bool IsPaused;
     }
 
@@ -88,17 +88,17 @@ public class ConveyorCell : Cell
             {
                 if (!iterRes.IsPaused)
                 {
-                    float currentProgress = getProgressOfResource(iterRes);
-                    if (currentProgress + iterRes.ItemInst.Item.ConveyerWidth < GetMinBoundOfNextItem(currentItem))
+                    float currentProgress = iterRes.ProgressAlongPath;
+                    if (currentProgress + iterRes.ItemInst.Item.Width < GetMinBoundOfNextItem(currentItem))
                     {
                         Vector3 deltaToNextPoint =
                             pointsOnPath[iterRes.CurrentPathPoint + 1] -
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        iterRes.ProgressPercent += moveDelta.magnitude / totalPathDistance;
+                        iterRes.ProgressAlongPath += moveDelta.magnitude;
 
-                        if (deltaToNextPoint.magnitude < .05f)
+                        if (deltaToNextPoint.magnitude < .02f)
                         {
                             iterRes.CurrentPathPoint += 1;
                         }
@@ -107,7 +107,8 @@ public class ConveyorCell : Cell
             }
             else
             {
-                if (this.Next != null && this.Next.CanAcceptItem())
+                if (this.Next != null && 
+                    this.Next.CanAccept(iterRes.ItemInst.Item.Width))
                 {
                     movedOnItem = true;
                     this.Next.AddItem(iterRes.ItemInst);
@@ -125,25 +126,58 @@ public class ConveyorCell : Cell
 
     public void AddItem(InstantiatedItem item, float progress)
     {
-        int currentPoint = 0;
-        for (int i = 1; i < pointsOnPath.Count; i++)
+        var newItem = new ItemOnBelt
         {
-            if (pointProgressCache[i] > progress)
-            {
-                float midpointLength = pointProgressCache[i] - progress;
-                Vector3 toPoint = pointsOnPath[i] - pointsOnPath[i - 1];
-                item.transform.position = pointsOnPath[i - 1] + toPoint.normalized * midpointLength;
-                currentPoint = i - 1;
-            }
+            ItemInst = item,
+            CurrentPathPoint = 0,
+            ProgressAlongPath = progress
+        };
+
+        RecalculateItemPointOnPath(newItem);
+
+        var currentNode = ItemsOnBelt.First;
+        while (currentNode != null && currentNode.Value.ProgressAlongPath < progress)
+        {
+            currentNode = currentNode.Next;
         }
 
-        ItemsOnBelt.AddFirst(
-            new ItemOnBelt { 
-                ItemInst = item,
-                CurrentPathPoint = currentPoint,
-                ProgressPercent = progress 
+        if (currentNode != null)
+        {
+            ItemsOnBelt.AddBefore(currentNode, newItem);
+        } else 
+        {
+            ItemsOnBelt.AddLast(newItem);
+        }
+    }
+
+    private void RecalculateItemPointOnPath(ItemOnBelt item)
+    {
+        int i;
+        int currentPoint = 0;
+        float currentProgress = item.ProgressAlongPath;
+        for (i = 1; i < pointsOnPath.Count; i++)
+        {
+            if (pointProgressCache[i] >= currentProgress && pointProgressCache[i - 1] <= currentProgress)
+            {
+                float midpointLength = pointProgressCache[i] - currentProgress;
+                Vector3 toPoint = pointsOnPath[i] - pointsOnPath[i - 1];
+                item.ItemInst.transform.position = pointsOnPath[i - 1] + toPoint.normalized * midpointLength;
+                currentPoint = i - 1;
+                break;
             }
-        );
+        }
+        
+        if (i == pointsOnPath.Count && currentPoint == 0)
+        {
+            // If we iterated to the end without finding an option, 
+            // it means the progress is greater than any actual point.
+            item.CurrentPathPoint = pointsOnPath.Count - 1;
+            item.ProgressAlongPath = 1f;
+        } else
+        {
+            item.CurrentPathPoint = currentPoint;
+            item.ProgressAlongPath = currentProgress;
+        }
     }
 
     public void AddItem(InstantiatedItem item)
@@ -151,7 +185,7 @@ public class ConveyorCell : Cell
         ItemsOnBelt.AddFirst(new ItemOnBelt { ItemInst = item, CurrentPathPoint = 0 });
     }
 
-    public bool CanAcceptItem()
+    public bool CanAccept(float itemWidth)
     {
         if (ItemsOnBelt.Count == 0)
         {
@@ -159,10 +193,11 @@ public class ConveyorCell : Cell
         }
 
         ItemOnBelt firstResource = ItemsOnBelt.First.Value;
-        float progress = getProgressOfResource(firstResource);
-        float minBound = progress - firstResource.ItemInst.Item.ConveyerWidth;
 
-        return minBound > 0;
+        // Items get added with their center at the start of the path,
+        // so we need to check if there's enough space there to fit
+        // half the item's size.
+        return firstResource.MinBound > itemWidth;
     }
 
     public ItemOnBelt GetFurthestAlongResourceOfType(ItemType ItemType)
@@ -171,9 +206,9 @@ public class ConveyorCell : Cell
         ItemOnBelt maxResource = null;
         foreach (var resource in ItemsOnBelt)
         {
-            if (resource.ItemInst.Item.Type == ItemType && resource.ProgressPercent > maxProgress)
+            if (resource.ItemInst.Item.Type == ItemType && resource.ProgressAlongPath > maxProgress)
             {
-                maxProgress = resource.ProgressPercent;
+                maxProgress = resource.ProgressAlongPath;
                 maxResource = resource;
             }
         }
@@ -191,7 +226,7 @@ public class ConveyorCell : Cell
                 ItemsOnBelt.Remove(node);
                 return;
             }
-            
+
             node = node.Next;
         }
     }
@@ -201,28 +236,16 @@ public class ConveyorCell : Cell
         if (item.Next != null)
         {
             ItemOnBelt resource = item.Next.Value;
-            return resource.MinBoundPercent;
+            return resource.MinBound;
         }
 
         if (this.Next != null && this.Next.ItemsOnBelt.First != null)
         {
             ItemOnBelt resource = this.Next.ItemsOnBelt.First.Value;
-            return resource.MinBoundPercent + 1;
+            return resource.MinBound + totalPathDistance;
         }
 
         return int.MaxValue;
-    }
-
-    private float getProgressOfResource(ItemOnBelt resource)
-    {
-        if (resource.CurrentPathPoint >= pointsOnPath.Count)
-        {
-            return 1f;
-        }
-
-        return pointProgressCache[resource.CurrentPathPoint] +
-                (resource.ItemInst.transform.position - pointsOnPath[resource.CurrentPathPoint])
-                    .magnitude / totalPathDistance;
     }
 
     private void SetupConveyorDirection()
@@ -274,8 +297,23 @@ public class ConveyorCell : Cell
         float cumulativeProgress = 0f;
         for (int i = 1; i < pointsOnPath.Count; i++)
         {
-            cumulativeProgress += (pointsOnPath[i] - pointsOnPath[i - 1]).magnitude / totalPathDistance;
+            cumulativeProgress += (pointsOnPath[i] - pointsOnPath[i - 1]).magnitude;
             pointProgressCache[i] = cumulativeProgress;
+        }
+
+        if (ItemsOnBelt != null && ItemsOnBelt.Count > 0)
+        {
+            foreach (var item in ItemsOnBelt)
+            {
+                RecalculateItemPointOnPath(item);
+            }
+
+            List<ItemOnBelt> itemList = ItemsOnBelt.ToList();
+            itemList.Sort(
+                (ItemOnBelt item1, ItemOnBelt item2) => 
+                    (int)(item1.ProgressAlongPath * 100) - 
+                    (int)(item2.ProgressAlongPath * 100));
+            ItemsOnBelt = new LinkedList<ItemOnBelt>(itemList);
         }
     }
 
@@ -317,12 +355,6 @@ public class ConveyorCell : Cell
         {
             points = new List<Vector3>();
         }
-
-        // // No intake needed for source conveyer
-        // if (points.Count > 0 && this.IsSource)
-        // {
-        //     points.RemoveAt(0);
-        // }
 
         return points;
     }

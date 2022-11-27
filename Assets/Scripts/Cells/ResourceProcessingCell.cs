@@ -20,7 +20,7 @@ public abstract class ResourceProcessingCell : Cell
     public override void Update()
     {
         var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputItemType);
-        if (furthestResource != null && furthestResource.ProgressPercent > .2f)
+        if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
         {
             if (!InputInventory.IsFull)
             {
@@ -52,11 +52,11 @@ public abstract class ResourceProcessingCell : Cell
                     Prefabs.GetResource(OutputItemType).transform.rotation
                 );
 
-                Item item = ItemGenerator.GetItemScript(OutputItemType);
+                Item item = ItemGenerator.Make(OutputItemType);
                 InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
                 itemInst.Init(item);
                 this.Owner.ConveyorCell.AddItem(itemInst, .5f);
-                this.ProcessingInventory.RemoveAtIndex(firstProcessableIndex);
+                this.ProcessingInventory.RemoveAt(firstProcessableIndex);
                 processingStartTime = null;
             }
             else if (processingStartTime == null)

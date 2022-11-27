@@ -15,7 +15,7 @@ public class InventoryCell : Cell
         this.Items = new Item[Size];
     }
 
-    public Item GetItemAt(int index)
+    public Item ItemAt(int index)
     {
         if (index < 0 || index >= Size)
         {
@@ -44,7 +44,7 @@ public class InventoryCell : Cell
         }
     }
 
-    public void RemoveAtIndex(int index)
+    public void RemoveAt(int index)
     {
         Items[index] = null;
     }
@@ -54,6 +54,19 @@ public class InventoryCell : Cell
         for (int i = 0; i < Items.Length; i++)
         {
             if (Items[i] == null)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int FirstItemIndex()
+    {
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i] != null)
             {
                 return i;
             }

@@ -4,7 +4,7 @@ public abstract class Item
 {
     public Guid Id;
     public abstract ItemType Type {get;}
-    public virtual float ConveyerWidth => .5f;
+    public virtual float Width => .2f;
 
     public Item()
     {

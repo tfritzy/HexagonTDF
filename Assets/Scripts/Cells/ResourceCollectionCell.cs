@@ -4,9 +4,13 @@ using UnityEngine;
 public abstract class ResourceCollectionCell : Cell
 {
     public abstract Dictionary<ItemType, float> SecondsPerResourceCollection { get; }
+    public virtual InventoryCell Inventory => outputInventory;
+    private InventoryCell outputInventory;
 
     public override void Setup(Character character)
     {
+        outputInventory = new InventoryCell(3);
+
         base.Setup(character);
     }
 
@@ -32,23 +36,33 @@ public abstract class ResourceCollectionCell : Cell
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (this.Owner.ConveyorCell.CanAcceptItem() &&
+            if (!this.Inventory.IsFull &&
                 Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource])
             {
-                SpawnResource(resource);
+                Item item = ItemGenerator.Make(resource);
+                this.Inventory.AddItem(item);
                 lastCollectionTimes[resource] = Time.time;
+            }
+
+            int firstItemIndex = this.Inventory.FirstItemIndex();
+            if (firstItemIndex != -1 && 
+                this.Owner.ConveyorCell.CanAccept(
+                    this.Inventory.ItemAt(firstItemIndex).Width))
+            {
+                Item itemToPlace = this.Inventory.ItemAt(firstItemIndex);
+                SpawnItem(itemToPlace);
+                this.Inventory.RemoveAt(firstItemIndex);
             }
         }
     }
 
-    private void SpawnResource(ItemType type)
+    private void SpawnItem(Item item)
     {
         var resourceGO = GameObject.Instantiate(
-            Prefabs.GetResource(type),
+            Prefabs.GetResource(item.Type),
             this.Owner.transform.position,
             new Quaternion());
 
-        Item item = ItemGenerator.GetItemScript(type);
         InstantiatedItem itemInst = resourceGO.AddComponent<InstantiatedItem>();
         itemInst.Init(item);
         this.Owner.ConveyorCell.AddItem(itemInst);
