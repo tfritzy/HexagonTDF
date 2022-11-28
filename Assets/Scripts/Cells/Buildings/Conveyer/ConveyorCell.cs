@@ -162,6 +162,7 @@ public class ConveyorCell : Cell
                 float midpointLength = pointProgressCache[i] - currentProgress;
                 Vector3 toPoint = pointsOnPath[i] - pointsOnPath[i - 1];
                 item.ItemInst.transform.position = pointsOnPath[i - 1] + toPoint.normalized * midpointLength;
+                item.ItemInst.transform.LookAt(pointsOnPath[i]);
                 currentPoint = i - 1;
                 break;
             }

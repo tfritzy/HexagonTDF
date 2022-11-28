@@ -33,15 +33,15 @@ public abstract class LifeCell : Cell
 
         this.Health = StartingHealth;
 
-        if (this.healthbar == null)
-        {
-            this.healthbar = GameObject.Instantiate(Prefabs.Healthbar,
-                        new Vector3(10000, 10000),
-                        new Quaternion(),
-                        Managers.Canvas).GetComponent<Healthbar>();
-            this.healthbar.SetOwner(this.Owner.Body);
-            this.healthbar.enabled = false;
-        }
+        // if (this.healthbar == null)
+        // {
+        //     this.healthbar = GameObject.Instantiate(Prefabs.Healthbar,
+        //                 new Vector3(10000, 10000),
+        //                 new Quaternion(),
+        //                 Managers.Canvas).GetComponent<Healthbar>();
+        //     this.healthbar.SetOwner(this.Owner.Body);
+        //     this.healthbar.enabled = false;
+        // }
 
         damageTimings = new List<TakeDamageTiming>();
     }

@@ -1,0 +1,40 @@
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.UIElements;
+
+public class BuildDrawer : UIPage
+{
+    private List<Button> BuildingButtons;
+    private const string BUTTON_SELECTED_CLASS = ".grid-button-selected";
+
+    public BuildDrawer(VisualElement root) : base(root)
+    {
+        BuildingButtons = new List<Button>();
+        int i = 0;
+        Button currentButton = root.Q<Button>($"Build_{i}");
+        do
+        {
+            BuildingButtons.Add(currentButton);
+            i += 1;
+            currentButton = root.Q<Button>($"Build_{i}");
+        }
+        while (currentButton != null);
+
+        BuildingButtons[0].clicked += () => SelectBuilding(BuildingButtons[0], BuildingType.Forrester);
+        BuildingButtons[1].clicked += () => SelectBuilding(BuildingButtons[1], BuildingType.LumberMill);
+        BuildingButtons[2].clicked += () => SelectBuilding(BuildingButtons[2], BuildingType.Conveyor);
+    }
+
+    private void SelectBuilding(Button button, BuildingType buildingType)
+    {
+        Debug.Log($"Selecting button {button.name} with type {buildingType}");
+
+        Managers.InputManager.BuildMode.SelectBuildingType(buildingType);
+        button.AddToClassList(BUTTON_SELECTED_CLASS);
+
+        foreach (Button iterButton in BuildingButtons)
+        {
+            iterButton.RemoveFromClassList(BUTTON_SELECTED_CLASS);
+        }
+    }
+}

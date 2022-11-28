@@ -19,10 +19,10 @@ public class OverworldFortress : MonoBehaviour, Interactable
 
     public void Setup(float powerMultiplier, Vector2Int pos)
     {
-        if (powerIndicatorInst == null)
-        {
-            InitPowerIndicator();
-        }
+        // if (powerIndicatorInst == null)
+        // {
+        //     InitPowerIndicator();
+        // }
 
         this.powerMultiplier = powerMultiplier;
         this.indicatorText.text = ((int)(powerMultiplier * 10)).ToString();
@@ -30,15 +30,15 @@ public class OverworldFortress : MonoBehaviour, Interactable
         this.gameObject.name = "Fortress " + this.Position;
     }
 
-    private void InitPowerIndicator()
-    {
-        powerIndicatorInst = Instantiate(PowerIndicator, Managers.Canvas);
-        powerIndicatorInst.transform.SetParent(Managers.Canvas);
-        UIElementFollowObject follow = powerIndicatorInst.GetComponent<UIElementFollowObject>();
-        follow.ObjectToFollow = this.gameObject;
-        follow.Offset = new Vector3(0, 1f, 0);
-        this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
-    }
+    // private void InitPowerIndicator()
+    // {
+    //     powerIndicatorInst = Instantiate(PowerIndicator, Managers.Canvas);
+    //     powerIndicatorInst.transform.SetParent(Managers.Canvas);
+    //     UIElementFollowObject follow = powerIndicatorInst.GetComponent<UIElementFollowObject>();
+    //     follow.ObjectToFollow = this.gameObject;
+    //     follow.Offset = new Vector3(0, 1f, 0);
+    //     this.indicatorText = powerIndicatorInst.transform.Find("Text").GetComponent<Text>();
+    // }
 
 
     public void Interact()

@@ -46,19 +46,6 @@ public static class Managers
         }
     }
 
-    private static Transform canvas;
-    public static Transform Canvas
-    {
-        get
-        {
-            if (canvas == null)
-            {
-                canvas = GameObject.Find("Canvas").transform;
-            }
-            return canvas;
-        }
-    }
-
     private static InMemPrefabs prefabs;
     public static InMemPrefabs Prefabs
     {
@@ -70,34 +57,6 @@ public static class Managers
             }
 
             return prefabs;
-        }
-    }
-
-    private static PauseMenu pauseMenu;
-    public static PauseMenu PauseMenu
-    {
-        get
-        {
-            if (pauseMenu == null)
-            {
-                pauseMenu = Canvas.Find("PauseMenu").GetComponent<PauseMenu>();
-            }
-
-            return pauseMenu;
-        }
-    }
-
-    private static GameObject attackTowerBuildMenu;
-    public static GameObject AttackTowerBuildMenu
-    {
-        get
-        {
-            if (attackTowerBuildMenu == null)
-            {
-                attackTowerBuildMenu = Managers.Canvas.Find("AttackTowerBuildMenu").gameObject;
-            }
-
-            return attackTowerBuildMenu;
         }
     }
 
@@ -154,6 +113,20 @@ public static class Managers
             }
 
             return _inputManager;
+        }
+    }
+
+    private static UI _ui;
+    public static UI UI
+    {
+        get
+        {
+            if (_ui == null)
+            {
+                _ui = GameObject.Find("UI").GetComponent<UI>();
+            }
+
+            return _ui;
         }
     }
 }

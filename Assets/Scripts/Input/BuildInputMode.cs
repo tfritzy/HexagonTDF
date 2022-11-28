@@ -9,7 +9,7 @@ public class BuildInputMode : InputMode
 
     public override void Interact(List<HexagonMono> hexes, List<Character> characters)
     {
-        Debug.Log($"Build input mode interacts with {hexes.Count} hexes and {characters.Count} characters");
+        Debug.Log($"Build input mode interacts with {hexes.Count} hexes and {characters.Count} characters. I have build mode {SelectedBuildingType}");
 
         if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
         {

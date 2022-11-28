@@ -5,39 +5,33 @@ using UnityEngine.UIElements;
 
 public class UI : MonoBehaviour
 {
-    private VisualElement buildDrawer;
-    private VisualElement actionDrawer;
+    private Dictionary<Page, UIPage> Pages;
 
     void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
-        buildDrawer = root.Q<VisualElement>("BuildDrawer");
-        actionDrawer = root.Q<VisualElement>("ActionDrawer");
+        Pages = new Dictionary<Page, UIPage>()
+        {
+            {Page.ActionDrawer, new ActionDrawer(root.Q<VisualElement>("ActionDrawer"))},
+            {Page.BuildDrawer, new BuildDrawer(root.Q<VisualElement>("BuildDrawer"))},
+        };
 
-        InitActionDrawer();
-        InitBuildDrawer();
-
-        buildDrawer.style.display = DisplayStyle.None;
+        ShowPage(Page.ActionDrawer);
     }
 
-    private void InitActionDrawer()
+    public void ShowPage(Page page)
     {
-        Button buildMenuButton = actionDrawer.Q<Button>("OpenBuildDrawer");
-        buildMenuButton.clicked += OpenBuildMode;
-    }
-
-    private void InitBuildDrawer()
-    {
-        buildDrawer.Q<Button>("Build_0").clicked += () => Managers.InputManager.BuildMode.SelectBuildingType(BuildingType.Forrester);
-        buildDrawer.Q<Button>("Build_1").clicked += () => Managers.InputManager.BuildMode.SelectBuildingType(BuildingType.LumberMill);
-        buildDrawer.Q<Button>("Build_2").clicked += () => Managers.InputManager.BuildMode.SelectBuildingType(BuildingType.Conveyor);
-    }
-
-    private void OpenBuildMode()
-    {
-        Managers.InputManager.OpenBuildMode();
-        buildDrawer.style.display = DisplayStyle.Flex;
-        actionDrawer.style.display = DisplayStyle.None;
+        foreach (Page iterPage in Pages.Keys)
+        {
+            if (iterPage == page)
+            {
+                Pages[iterPage].Show();
+            }
+            else
+            {
+                Pages[iterPage].Hide();
+            }
+        }
     }
 }
