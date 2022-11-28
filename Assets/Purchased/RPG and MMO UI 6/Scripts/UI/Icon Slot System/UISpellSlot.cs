@@ -108,7 +108,7 @@ namespace DuloGames.UI
         private bool IsInPrefabStage()
         {
 #if UNITY_2018_3_OR_NEWER
-                return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
+                return UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
 #else
                 return false;
 #endif

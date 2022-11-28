@@ -17,15 +17,9 @@ public class BuildInputMode : InputMode
         }
     }
 
-    public void SelectBuildingType(string type)
+    public void SelectBuildingType(BuildingType type)
     {
-        if (Enum.TryParse<BuildingType>(type, out BuildingType parsedType))
-        {
-            this.SelectedBuildingType = parsedType;
-        } else 
-        {
-            Debug.LogWarning("Tried to set the builder's selected type to unknown value " + type);
-        }
+        this.SelectedBuildingType = type;
     }
 
     private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)

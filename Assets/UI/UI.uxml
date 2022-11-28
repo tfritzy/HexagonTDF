@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="ActionDrawer" src="project://database/Assets/UI/ActionDrawer.uxml?fileID=9197481963319205126&amp;guid=2392ef8d69659e44fb0372e9a29ce115&amp;type=3#ActionDrawer" />
+    <ui:Template name="BuildMenu" src="project://database/Assets/UI/BuildMenu.uxml?fileID=9197481963319205126&amp;guid=e2d8046498af45641b4265c9f90934cc&amp;type=3#BuildMenu" />
+    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
+    <ui:Instance template="ActionDrawer" name="ActionDrawer" style="position: absolute; left: 0; right: 0; bottom: 0;" />
+    <ui:Instance template="BuildMenu" name="BuildDrawer" style="position: absolute; left: 0; right: 0; bottom: 0;" />
+</ui:UXML>

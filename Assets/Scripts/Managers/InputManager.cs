@@ -11,14 +11,14 @@ public class InputManager : MonoBehaviour
     public bool IsFingerHeldDown;
     public static event EventHandler InputWasMade;
     public InputMode CurrentMode;
-    private BuildInputMode buildInputMode;
-    private GameInputMode gameInputMode;
+    public BuildInputMode BuildMode;
+    public GameInputMode GameMode;
 
     void Awake()
     {
-        this.buildInputMode = new BuildInputMode();
-        this.gameInputMode = new GameInputMode();
-        this.CurrentMode = gameInputMode;
+        this.BuildMode = new BuildInputMode();
+        this.GameMode = new GameInputMode();
+        this.CurrentMode = GameMode;
     }
 
     void Update()
@@ -98,16 +98,16 @@ public class InputManager : MonoBehaviour
     {
         if (CurrentMode is BuildInputMode)
         {
-            CurrentMode = this.gameInputMode;
+            CurrentMode = this.GameMode;
         }
         else
         {
-            this.CurrentMode = this.buildInputMode;
+            this.CurrentMode = this.BuildMode;
         }
     }
 
-    public void SelectBuilding(string buildingType)
+    public void OpenBuildMode()
     {
-        this.buildInputMode.SelectBuildingType(buildingType);
+        this.CurrentMode = this.BuildMode;
     }
 }

@@ -143,5 +143,17 @@ public static class Managers
         }
     }
 
+    private static InputManager _inputManager;
+    public static InputManager InputManager
+    {
+        get
+        {
+            if (_inputManager == null)
+            {
+                _inputManager = GameObject.Find("InputManager").GetComponent<InputManager>();
+            }
 
+            return _inputManager;
+        }
+    }
 }
