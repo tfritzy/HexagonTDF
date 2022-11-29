@@ -6,9 +6,11 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     private Dictionary<Page, UIPage> Pages;
+    private Stack<Page> History;
 
     void OnEnable()
     {
+        History = new Stack<Page>();
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         Pages = new Dictionary<Page, UIPage>()
@@ -22,6 +24,8 @@ public class UI : MonoBehaviour
 
     public void ShowPage(Page page)
     {
+        History.Push(page);
+
         foreach (Page iterPage in Pages.Keys)
         {
             if (iterPage == page)
@@ -33,5 +37,11 @@ public class UI : MonoBehaviour
                 Pages[iterPage].Hide();
             }
         }
+    }
+
+    public void Back()
+    {
+        this.History.Pop();
+        ShowPage(History.Peek());
     }
 }

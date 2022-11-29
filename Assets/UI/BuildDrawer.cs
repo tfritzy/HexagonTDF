@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-public class BuildDrawer : UIPage
+public class BuildDrawer : Drawer
 {
     private List<Button> BuildingButtons;
     private const string BUTTON_SELECTED_CLASS = "grid-button-selected";

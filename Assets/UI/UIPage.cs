@@ -7,6 +7,7 @@ public abstract class UIPage
     public UIPage(VisualElement root)
     {
         this.Root = root;
+        InitBackButton();
     }
 
     public void Show()
@@ -17,5 +18,14 @@ public abstract class UIPage
     public void Hide()
     {
         Root.style.display = DisplayStyle.None;
+    }
+
+    private void InitBackButton()
+    {
+        Button backButton = this.Root.Q<Button>("Back");
+        if (backButton != null)
+        {
+            backButton.clicked += Managers.UI.Back;
+        }
     }
 }

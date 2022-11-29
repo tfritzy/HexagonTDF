@@ -1,6 +1,6 @@
 using UnityEngine.UIElements;
 
-public class ActionDrawer : UIPage
+public class ActionDrawer : Drawer
 {
     public ActionDrawer(VisualElement root) : base (root)
     {
