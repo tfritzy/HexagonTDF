@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 public class BuildDrawer : UIPage
 {
     private List<Button> BuildingButtons;
-    private const string BUTTON_SELECTED_CLASS = ".grid-button-selected";
+    private const string BUTTON_SELECTED_CLASS = "grid-button-selected";
 
     public BuildDrawer(VisualElement root) : base(root)
     {
@@ -30,11 +30,11 @@ public class BuildDrawer : UIPage
         Debug.Log($"Selecting button {button.name} with type {buildingType}");
 
         Managers.InputManager.BuildMode.SelectBuildingType(buildingType);
-        button.AddToClassList(BUTTON_SELECTED_CLASS);
 
         foreach (Button iterButton in BuildingButtons)
         {
             iterButton.RemoveFromClassList(BUTTON_SELECTED_CLASS);
         }
+        button.AddToClassList(BUTTON_SELECTED_CLASS);
     }
 }

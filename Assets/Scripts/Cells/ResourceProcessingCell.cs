@@ -55,7 +55,7 @@ public abstract class ResourceProcessingCell : Cell
                 Item item = ItemGenerator.Make(OutputItemType);
                 InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
                 itemInst.Init(item);
-                this.Owner.ConveyorCell.AddItem(itemInst, .5f);
+                this.Owner.ConveyorCell.AddItem(itemInst, 1.2f); // TODO: some specific placement.
                 this.ProcessingInventory.RemoveAt(firstProcessableIndex);
                 processingStartTime = null;
             }

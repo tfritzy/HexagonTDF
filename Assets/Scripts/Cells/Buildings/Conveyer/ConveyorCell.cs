@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ConveyorCell : Cell
 {
-    private const float VELOCITY = .3f;
+    private const float VELOCITY = .5f;
     private const int SLOTS_ON_BELT = 10;
     private LinkedList<ItemOnBelt> ItemsOnBelt;
     private ConveyorCell _next;
@@ -96,6 +96,7 @@ public class ConveyorCell : Cell
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
+                        iterRes.ItemInst.transform.LookAt(pointsOnPath[iterRes.CurrentPathPoint + 1]);
                         iterRes.ProgressAlongPath += moveDelta.magnitude;
 
                         if (deltaToNextPoint.magnitude < .02f)
@@ -162,7 +163,6 @@ public class ConveyorCell : Cell
                 float midpointLength = pointProgressCache[i] - currentProgress;
                 Vector3 toPoint = pointsOnPath[i] - pointsOnPath[i - 1];
                 item.ItemInst.transform.position = pointsOnPath[i - 1] + toPoint.normalized * midpointLength;
-                item.ItemInst.transform.LookAt(pointsOnPath[i]);
                 currentPoint = i - 1;
                 break;
             }

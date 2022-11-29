@@ -76,10 +76,10 @@
 }
 
 .grid-button-selected {
-    border-left-color: rgba(255, 218, 124, 255);
-    border-right-color: rgba(255, 218, 124, 255);
-    border-top-color: rgba(255, 218, 124, 255);
-    border-bottom-color: rgba(255, 218, 124, 255);
+    border-left-color: rgb(255, 236, 160);
+    border-right-color: rgb(255, 236, 160);
+    border-top-color: rgb(255, 236, 160);
+    border-bottom-color: rgb(255, 236, 160);
     border-left-width: 1px;
     border-right-width: 1px;
     border-top-width: 1px;
