@@ -7,6 +7,8 @@ public static class ItemGenerator {
                 return new Log();
             case (ItemType.Sticks):
                 return new Stick();
+            case (ItemType.Rock):
+                return new Rock();
             default:
                 throw new System.Exception("Unknown item type: " + type);
         }

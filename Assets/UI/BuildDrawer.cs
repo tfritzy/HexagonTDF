@@ -23,6 +23,7 @@ public class BuildDrawer : Drawer
         BuildingButtons[0].clicked += () => SelectBuilding(BuildingButtons[0], BuildingType.Forrester);
         BuildingButtons[1].clicked += () => SelectBuilding(BuildingButtons[1], BuildingType.LumberMill);
         BuildingButtons[2].clicked += () => SelectBuilding(BuildingButtons[2], BuildingType.Conveyor);
+        BuildingButtons[3].clicked += () => SelectBuilding(BuildingButtons[3], BuildingType.Miner);
     }
 
     private void SelectBuilding(Button button, BuildingType buildingType)

@@ -4,4 +4,5 @@ public enum BuildingType
     Forrester,
     LumberMill,
     Conveyor,
+    Miner,
 }
