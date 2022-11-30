@@ -45,34 +45,6 @@
     border-bottom-width: 1px;
 }
 
-.back-button {
-    right: 15px;
-    top: -90px;
-    width: 75px;
-    position: absolute;
-    height: 75px;
-    border-top-left-radius: 50px;
-    border-bottom-left-radius: 50px;
-    border-top-right-radius: 50px;
-    border-bottom-right-radius: 50px;
-    background-image: url('project://database/Assets/UI/Images/Icons/BackArrow.png?fileID=2800000&guid=65a8c8d2156442e4c81940434d7106d3&type=3#BackArrow');
-    -unity-background-scale-mode: stretch-to-fill;
-    background-color: rgb(85, 33, 26);
-    border-left-color: rgb(111, 105, 84);
-    border-right-color: rgb(111, 105, 84);
-    border-top-color: rgb(111, 105, 84);
-    border-bottom-color: rgb(111, 105, 84);
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    -unity-background-image-tint-color: rgb(236, 188, 179);
-}
-
 .grid {
     flex-direction: row;
     flex-wrap: wrap;
@@ -126,4 +98,32 @@
     font-size: 18px;
     padding-bottom: 5px;
     color: rgb(186, 180, 174);
+}
+
+.floating-circle-button {
+    right: 15px;
+    top: -90px;
+    width: 75px;
+    position: absolute;
+    height: 75px;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    background-image: url('project://database/Assets/UI/Images/Icons/BackArrow.png?fileID=2800000&guid=65a8c8d2156442e4c81940434d7106d3&type=3#BackArrow');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: rgb(85, 33, 26);
+    border-left-color: rgb(111, 105, 84);
+    border-right-color: rgb(111, 105, 84);
+    border-top-color: rgb(111, 105, 84);
+    border-bottom-color: rgb(111, 105, 84);
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    -unity-background-image-tint-color: rgb(236, 188, 179);
 }

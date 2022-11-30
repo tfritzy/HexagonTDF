@@ -25,6 +25,7 @@ public class UI : MonoBehaviour
 
     public void ShowPage(Page page)
     {
+        Debug.Log("Show page " + page);
         History.Push(page);
 
         foreach (Page iterPage in Pages.Keys)

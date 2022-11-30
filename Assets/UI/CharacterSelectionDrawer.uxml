@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
     <ui:VisualElement name="Drawer" class="drawer">
-        <ui:Button display-tooltip-when-elided="true" class="back-button" />
+        <ui:Button display-tooltip-when-elided="true" name="Close" class="floating-circle-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/x.png?fileID=2800000&amp;guid=c8a537e928f7ebf43b0bd8ac75454aad&amp;type=3#x&apos;);" />
         <ui:VisualElement name="VerticalGroup" style="width: 100%;">
             <ui:Label tabindex="-1" text="Saw mill" display-tooltip-when-elided="true" name="CharacterName" class="heading-1" style="-unity-text-align: upper-center;" />
             <ui:VisualElement name="Inventories" style="flex-direction: row; width: 100%;" />

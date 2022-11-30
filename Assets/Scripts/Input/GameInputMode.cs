@@ -10,6 +10,7 @@ public class GameInputMode : InputMode
         if (characters.Count > 0)
         {
             selectedCharacter = characters[0];
+            Managers.UI.ShowPage(Page.CharacterSelectionDrawer);
             UpdateSelectedCharacterUI();
         }
 
@@ -40,8 +41,7 @@ public class GameInputMode : InputMode
                 cells.Add(character.ResourceProcessingCell.OutputInventory);
             }
 
-            drawer.Update(selectedCharacter.name, cells);
-            Managers.UI.ShowPage(Page.CharacterSelectionDrawer);
+            drawer.Update(selectedCharacter.Name, cells);
         }
     }
 }

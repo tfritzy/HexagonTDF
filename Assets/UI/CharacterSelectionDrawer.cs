@@ -14,6 +14,8 @@ public class CharacterSelectionDrawer : Drawer
         
         this.InventoryContainer = root.Q<VisualElement>("Inventories");
         Inventories = new List<InventoryUI>();
+
+        root.Q<Button>("Close").clicked += () => Managers.UI.ShowPage(Page.ActionDrawer);
     }
 
     public void Update(string characterName, List<InventoryCell> currentInventories)
@@ -27,11 +29,17 @@ public class CharacterSelectionDrawer : Drawer
             InventoryContainer.Add(inventoryUI);
         }
 
-        for (int i = 0; i < currentInventories.Count; i++)
+        int i;
+        for (i = 0; i < currentInventories.Count; i++)
         {
             Inventories[i].Update(currentInventories[i]);
+            Inventories[i].style.display = DisplayStyle.Flex;
         }
 
-        // TODO: disable extra inventories.
+        while (i < Inventories.Count)
+        {
+            Inventories[i].style.display = DisplayStyle.None;
+            i += 1;
+        }
     }
 }

@@ -8,6 +8,8 @@ public class Miner : Building
     public override BuildingType Type => BuildingType.Miner;
     public override ResourceCollectionCell ResourceCollectionCell => resourceCollectionCell;
     public override ConveyorCell ConveyorCell => conveyorCell;
+    public override string Name => charName;
+    private const string charName = "Mine";
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;

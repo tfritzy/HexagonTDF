@@ -11,6 +11,8 @@ public class Conveyor : Building
     public override ConveyorCell ConveyorCell => conveyorCell;
     public override Alliance Enemies => Alliance.Maltov;
     public override Alliance Alliance => Alliance.Player;
+    public override string Name => charName;
+    private const string charName = "Conveyor";
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;

@@ -12,8 +12,7 @@
             <ui:Button text="&#10;" display-tooltip-when-elided="true" name="Build_7" class="grid-icon grid-button" />
             <ui:Button display-tooltip-when-elided="true" name="Build_8" class="grid-icon grid-button" />
             <ui:Button display-tooltip-when-elided="true" name="Build_9" class="grid-icon grid-button" />
-            <ui:Button display-tooltip-when-elided="true" name="Build_10" class="grid-icon grid-button" />
         </ui:GroupBox>
-        <ui:Button name="Back" class="back-button" />
+        <ui:Button name="Back" class="floating-circle-button" />
     </ui:GroupBox>
 </ui:UXML>

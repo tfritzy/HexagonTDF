@@ -9,6 +9,8 @@ public class LumberMill : Building
     public override ResourceCollectionCell ResourceCollectionCell => null;
     public override ResourceProcessingCell ResourceProcessingCell => resourceProcessingCell;
     public override ConveyorCell ConveyorCell => conveyorCell;
+    public override string Name => charName;
+    private const string charName = "Lumber mill";
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;

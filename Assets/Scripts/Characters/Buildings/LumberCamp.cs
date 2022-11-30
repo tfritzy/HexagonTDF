@@ -8,6 +8,8 @@ public class LumberCamp : Building
     public override BuildingType Type => BuildingType.LumberCamp;
     public override ResourceCollectionCell ResourceCollectionCell => resourceCollectionCell;
     public override ConveyorCell ConveyorCell => conveyorCell;
+    public override string Name => charName;
+    private const string charName = "Lumber camp";
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;

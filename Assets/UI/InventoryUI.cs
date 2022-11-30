@@ -36,11 +36,17 @@ public class InventoryUI : VisualElement {
             itemsContainer.Add(slot);
         }
 
-        for (int i = 0; i < inventoryCell.Size; i++)
+        int i;
+        for (i = 0; i < inventoryCell.Size; i++)
         {
             itemSlots[i].Update(inventoryCell.ItemAt(i));
+            itemSlots[i].style.display = DisplayStyle.Flex;
         }
 
-        // TODO: disable extra slots.
+        while (i < itemSlots.Count)
+        {
+            itemSlots[i].style.display = DisplayStyle.None;
+            i += 1;
+        }
     }
 }

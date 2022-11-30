@@ -16,6 +16,7 @@ public abstract class Character : MonoBehaviour
     public Transform Body;
     public abstract Alliance Enemies { get; }
     public abstract Alliance Alliance { get; }
+    public abstract string Name { get; }
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
     private Rigidbody rb;

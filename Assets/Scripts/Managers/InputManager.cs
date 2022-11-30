@@ -19,6 +19,10 @@ public class InputManager : MonoBehaviour
         this.BuildMode = new BuildInputMode();
         this.GameMode = new GameInputMode();
         this.CurrentMode = GameMode;
+
+#if UNITY_EDITOR
+        Cursor.visible = true;
+#endif
     }
 
     void Update()
