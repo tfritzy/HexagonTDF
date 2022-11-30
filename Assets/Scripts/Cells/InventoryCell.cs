@@ -6,13 +6,15 @@ public class InventoryCell : Cell
     private Item[] Items;
     public int Size { get; }
     public bool IsFull => GetFirstOpenSlot() == -1;
+    public string Name { get; private set; }
 
     public override void Update() { }
 
-    public InventoryCell(int size)
+    public InventoryCell(int size, string name)
     {
         this.Size = size;
         this.Items = new Item[Size];
+        this.Name = name;
     }
 
     public Item ItemAt(int index)
@@ -31,6 +33,9 @@ public class InventoryCell : Cell
         if (firstOpenSlot != -1)
         {
             this.Items[firstOpenSlot] = item;
+        } else
+        {
+            throw new System.Exception("There's no room.");
         }
     }
 

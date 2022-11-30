@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
+    <ui:VisualElement name="Drawer" class="drawer">
+        <ui:Button display-tooltip-when-elided="true" class="back-button" />
+        <ui:VisualElement name="VerticalGroup" style="width: 100%;">
+            <ui:Label tabindex="-1" text="Saw mill" display-tooltip-when-elided="true" name="CharacterName" class="heading-1" style="-unity-text-align: upper-center;" />
+            <ui:VisualElement name="Inventories" style="flex-direction: row; width: 100%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

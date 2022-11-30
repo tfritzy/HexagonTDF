@@ -37,6 +37,8 @@ public class InputManager : MonoBehaviour
         {
             DisabledByScroll = false;
         }
+
+        this.CurrentMode.Update();
     }
 
     private void ShootRayCast()
@@ -94,20 +96,13 @@ public class InputManager : MonoBehaviour
         return results.Count > 0;
     }
 
-    public void SwapInputMode()
-    {
-        if (CurrentMode is BuildInputMode)
-        {
-            CurrentMode = this.GameMode;
-        }
-        else
-        {
-            this.CurrentMode = this.BuildMode;
-        }
-    }
-
     public void OpenBuildMode()
     {
         this.CurrentMode = this.BuildMode;
+    }
+
+    public void SetGameInputMode()
+    {
+        this.CurrentMode = this.GameMode;
     }
 }

@@ -2,22 +2,47 @@ using UnityEngine;
 
 public abstract class ResourceProcessingCell : Cell
 {
-    public abstract InventoryCell InputInventory { get; }
+    public virtual InventoryCell InputInventory => inputInventory;
     public virtual InventoryCell ProcessingInventory => processingInventory;
+    public virtual InventoryCell OutputInventory => outputInventory;
     public abstract ItemType OutputItemType { get; }
     public abstract ItemType InputItemType { get; }
     public abstract float SecondsToProcessResource { get; }
+    private InventoryCell inputInventory;
     private InventoryCell processingInventory;
+    private InventoryCell outputInventory;
     private float? processingStartTime;
+    private float itemWidth;
+    private const float ITEM_SPAWN_PROGRESS = 1.2f;
 
     public override void Setup(Character owner)
     {
-        processingInventory = new InventoryCell(1);
+        inputInventory = new InventoryCell(3, "Input");
+        processingInventory = new InventoryCell(1, "Processing");
+        outputInventory = new InventoryCell(3, "Output");
+        
+        this.itemWidth = ItemGenerator.Make(OutputItemType).Width;
 
         base.Setup(owner);
     }
 
+
+    float lastUpdateTime;
     public override void Update()
+    {
+        if (Time.time - lastUpdateTime < .25f)
+        {
+            return;
+        }
+        lastUpdateTime = Time.time;
+
+        PickupFromConveyor();
+        TransferToProcessing();
+        TransferToOutput();
+        PlaceOutputOnConveyor();
+    }
+
+    private void PickupFromConveyor()
     {
         var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputItemType);
         if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
@@ -34,17 +59,42 @@ public abstract class ResourceProcessingCell : Cell
                 furthestResource.IsPaused = true;
             }
         }
+    }
 
+    private void TransferToProcessing()
+    {
         int firstEligableIndex = InputInventory.GetFirstItemIndex(InputItemType);
         if (firstEligableIndex != -1 && !ProcessingInventory.IsFull)
         {
             ProcessingInventory.TransferItem(InputInventory, firstEligableIndex);
         }
+    }
 
+    private void TransferToOutput()
+    {
         int firstProcessableIndex = ProcessingInventory.GetFirstItemIndex(InputItemType);
-        if (firstProcessableIndex != -1)
+        if (firstProcessableIndex != -1 && !outputInventory.IsFull)
         {
             if (processingStartTime.HasValue && Time.time - processingStartTime > SecondsToProcessResource)
+            {
+                Item item = ItemGenerator.Make(OutputItemType);
+                this.ProcessingInventory.RemoveAt(firstProcessableIndex);
+                this.OutputInventory.AddItem(item);
+                this.processingStartTime = null;
+            }
+            else if (processingStartTime == null)
+            {
+                processingStartTime = Time.time;
+            }
+        }
+    }
+
+    private void PlaceOutputOnConveyor()
+    {
+        int firstOutputIndex = OutputInventory.FirstItemIndex();
+        if (firstOutputIndex != -1)
+        {
+            if (this.Owner.ConveyorCell.CanAccept(this.itemWidth, ITEM_SPAWN_PROGRESS))
             {
                 GameObject newResource = GameObject.Instantiate(
                     Prefabs.GetResource(OutputItemType),
@@ -52,16 +102,11 @@ public abstract class ResourceProcessingCell : Cell
                     Prefabs.GetResource(OutputItemType).transform.rotation
                 );
 
-                Item item = ItemGenerator.Make(OutputItemType);
+                Item item = OutputInventory.ItemAt(firstOutputIndex);
                 InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
                 itemInst.Init(item);
                 this.Owner.ConveyorCell.AddItem(itemInst, 1.2f); // TODO: some specific placement.
-                this.ProcessingInventory.RemoveAt(firstProcessableIndex);
-                processingStartTime = null;
-            }
-            else if (processingStartTime == null)
-            {
-                processingStartTime = Time.time;
+                this.OutputInventory.RemoveAt(firstOutputIndex);
             }
         }
     }

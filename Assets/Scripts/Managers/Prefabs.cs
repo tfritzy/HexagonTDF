@@ -74,6 +74,25 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<ItemType, Sprite> _resourceIcons;
+    public static Sprite GetResourceIcon(ItemType ItemType)
+    {
+        if (_resourceIcons == null)
+        {
+            _resourceIcons = new Dictionary<ItemType, Sprite>();
+        }
+
+        if (_resourceIcons.ContainsKey(ItemType))
+        {
+            return _resourceIcons[ItemType];
+        } else 
+        {
+            _resourceIcons[ItemType] = Resources.Load<Sprite>($"Icons/Resources/{ItemType}");
+            return _resourceIcons[ItemType];
+        }
+    }
+
+
     private static Dictionary<MaterialType, Material> _materials;
     public static Material GetMaterial(MaterialType materialType)
     {

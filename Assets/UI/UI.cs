@@ -17,6 +17,7 @@ public class UI : MonoBehaviour
         {
             {Page.ActionDrawer, new ActionDrawer(root.Q<VisualElement>("ActionDrawer"))},
             {Page.BuildDrawer, new BuildDrawer(root.Q<VisualElement>("BuildDrawer"))},
+            {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
         };
 
         ShowPage(Page.ActionDrawer);
@@ -43,5 +44,10 @@ public class UI : MonoBehaviour
     {
         this.History.Pop();
         ShowPage(History.Peek());
+    }
+
+    public UIPage GetPage(Page page)
+    {
+        return Pages[page];
     }
 }

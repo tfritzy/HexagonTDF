@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
+    <ui:VisualElement name="VerticalGroup">
+        <ui:Label tabindex="-1" text="Input storage" display-tooltip-when-elided="true" name="InventoryName" class="heading-2" style="-unity-text-align: upper-center;" />
+        <ui:VisualElement name="Items" class="grid" style="justify-content: center;">
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class ForresterResourceCollectionCell : ResourceCollectionCell
+public class LumberCampResourceCollectionCell : ResourceCollectionCell
 {
     private Dictionary<ItemType, float> resourceCollection = new Dictionary<ItemType, float>
     {

@@ -155,15 +155,14 @@ public class ConveyorCell : Cell
     {
         int i;
         int currentPoint = 0;
-        float currentProgress = item.ProgressAlongPath;
         for (i = 1; i < pointsOnPath.Count; i++)
         {
-            if (pointProgressCache[i] >= currentProgress && pointProgressCache[i - 1] <= currentProgress)
+            if (pointProgressCache[i] >= item.ProgressAlongPath && pointProgressCache[i - 1] <= item.ProgressAlongPath)
             {
-                float midpointLength = pointProgressCache[i] - currentProgress;
-                Vector3 toPoint = pointsOnPath[i] - pointsOnPath[i - 1];
-                item.ItemInst.transform.position = pointsOnPath[i - 1] + toPoint.normalized * midpointLength;
                 currentPoint = i - 1;
+                Vector3 delta = pointsOnPath[i] - pointsOnPath[currentPoint];
+                Vector3 currentPos = pointsOnPath[currentPoint] + delta.normalized * (item.ProgressAlongPath - pointProgressCache[currentPoint]);
+                item.ItemInst.transform.position = currentPos;
                 break;
             }
         }
@@ -177,7 +176,6 @@ public class ConveyorCell : Cell
         } else
         {
             item.CurrentPathPoint = currentPoint;
-            item.ProgressAlongPath = currentProgress;
         }
     }
 
@@ -186,7 +184,7 @@ public class ConveyorCell : Cell
         ItemsOnBelt.AddFirst(new ItemOnBelt { ItemInst = item, CurrentPathPoint = 0 });
     }
 
-    public bool CanAccept(float itemWidth)
+    public bool CanAccept(float itemWidth, float atProgress = 0)
     {
         if (ItemsOnBelt.Count == 0)
         {
@@ -198,7 +196,7 @@ public class ConveyorCell : Cell
         // Items get added with their center at the start of the path,
         // so we need to check if there's enough space there to fit
         // half the item's size.
-        return firstResource.MinBound > itemWidth;
+        return firstResource.MinBound > atProgress + itemWidth;
     }
 
     public ItemOnBelt GetFurthestAlongResourceOfType(ItemType ItemType)

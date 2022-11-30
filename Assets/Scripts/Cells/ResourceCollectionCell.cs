@@ -9,7 +9,7 @@ public abstract class ResourceCollectionCell : Cell
 
     public override void Setup(Character character)
     {
-        outputInventory = new InventoryCell(3);
+        outputInventory = new InventoryCell(3, "Inventory");
 
         base.Setup(character);
     }

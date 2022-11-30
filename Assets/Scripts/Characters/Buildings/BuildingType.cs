@@ -1,7 +1,7 @@
 public enum BuildingType
 {
     Invalid,
-    Forrester,
+    LumberCamp,
     LumberMill,
     Conveyor,
     Miner,

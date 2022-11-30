@@ -8,7 +8,7 @@ public class LumberMillProcessingCell : ResourceProcessingCell
 
     public override void Setup(Character owner)
     {
-        inventoryCell = new InventoryCell(3);
+        inventoryCell = new InventoryCell(3, "Inventory");
 
         base.Setup(owner);
     }

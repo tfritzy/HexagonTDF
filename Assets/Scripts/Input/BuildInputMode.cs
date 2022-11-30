@@ -42,4 +42,8 @@ public class BuildInputMode : InputMode
         building.Init(hex.GridPosition);
         Managers.Board.AddBuilding(hex.GridPosition, building);
     }
+
+    public override void Update()
+    {
+    }
 }

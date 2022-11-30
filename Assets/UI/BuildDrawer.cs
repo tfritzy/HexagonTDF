@@ -20,12 +20,15 @@ public class BuildDrawer : Drawer
         }
         while (currentButton != null);
 
-        BuildingButtons[0].clicked += () => SelectBuilding(BuildingButtons[0], BuildingType.Forrester);
+        BuildingButtons[0].clicked += () => SelectBuilding(BuildingButtons[0], BuildingType.LumberCamp);
         BuildingButtons[1].clicked += () => SelectBuilding(BuildingButtons[1], BuildingType.LumberMill);
         BuildingButtons[2].clicked += () => SelectBuilding(BuildingButtons[2], BuildingType.Conveyor);
         BuildingButtons[3].clicked += () => SelectBuilding(BuildingButtons[3], BuildingType.Miner);
-    }
 
+        Button backButton = this.Root.Q<Button>("Back");
+        backButton.clicked += GoBack;
+    }
+    
     private void SelectBuilding(Button button, BuildingType buildingType)
     {
         Debug.Log($"Selecting button {button.name} with type {buildingType}");
@@ -37,5 +40,11 @@ public class BuildDrawer : Drawer
             iterButton.RemoveFromClassList(BUTTON_SELECTED_CLASS);
         }
         button.AddToClassList(BUTTON_SELECTED_CLASS);
+    }
+
+    private void GoBack()
+    {
+        Managers.UI.Back();
+        Managers.InputManager.SetGameInputMode();
     }
 }
