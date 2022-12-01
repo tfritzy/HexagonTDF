@@ -8,6 +8,7 @@ public abstract class ResourceProcessingCell : Cell
     public abstract ItemType OutputItemType { get; }
     public abstract ItemType InputItemType { get; }
     public abstract float SecondsToProcessResource { get; }
+    public abstract float PercentOfInputConsumedPerOutput { get; }
     private InventoryCell inputInventory;
     private InventoryCell processingInventory;
     private InventoryCell outputInventory;
@@ -20,7 +21,7 @@ public abstract class ResourceProcessingCell : Cell
         inputInventory = new InventoryCell(3, "Input");
         processingInventory = new InventoryCell(1, "Processing");
         outputInventory = new InventoryCell(3, "Output");
-        
+
         this.itemWidth = ItemGenerator.Make(OutputItemType).Width;
 
         base.Setup(owner);
@@ -38,7 +39,7 @@ public abstract class ResourceProcessingCell : Cell
 
         PickupFromConveyor();
         TransferToProcessing();
-        TransferToOutput();
+        Process();
         PlaceOutputOnConveyor();
     }
 
@@ -70,7 +71,7 @@ public abstract class ResourceProcessingCell : Cell
         }
     }
 
-    private void TransferToOutput()
+    private void Process()
     {
         int firstProcessableIndex = ProcessingInventory.GetFirstItemIndex(InputItemType);
         if (firstProcessableIndex != -1 && !outputInventory.IsFull)
@@ -78,9 +79,17 @@ public abstract class ResourceProcessingCell : Cell
             if (processingStartTime.HasValue && Time.time - processingStartTime > SecondsToProcessResource)
             {
                 Item item = ItemGenerator.Make(OutputItemType);
-                this.ProcessingInventory.RemoveAt(firstProcessableIndex);
-                this.OutputInventory.AddItem(item);
                 this.processingStartTime = null;
+                this.OutputInventory.AddItem(item);
+
+                if (processingInventory.ItemAt(firstProcessableIndex).RemainingPercent >= PercentOfInputConsumedPerOutput)
+                {
+                    processingInventory.ItemAt(firstProcessableIndex).RemainingPercent -= PercentOfInputConsumedPerOutput;
+                }
+                else
+                {
+                    this.ProcessingInventory.RemoveAt(firstProcessableIndex);
+                }
             }
             else if (processingStartTime == null)
             {
