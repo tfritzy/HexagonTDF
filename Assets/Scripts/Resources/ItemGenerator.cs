@@ -5,8 +5,8 @@ public static class ItemGenerator {
         {
             case (ItemType.Log):
                 return new Log();
-            case (ItemType.Sticks):
-                return new Stick();
+            case (ItemType.ArrowShaft):
+                return new ArrowShaft();
             case (ItemType.Rock):
                 return new Rock();
             case (ItemType.ArrowHead):
