@@ -1,7 +1,5 @@
 public class Miner : Building
 {
-    public override BrainCell BrainCell => null;
-    public override AttackCell AttackCell => null;
     public override LifeCell LifeCell => lifeCell;
     public override Alliance Enemies => Alliance.Maltov;
     public override Alliance Alliance => Alliance.Player;

@@ -5,8 +5,8 @@
             <ui:Button text="&#10;" display-tooltip-when-elided="true" name="Build_0" class="grid-icon grid-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/wood-axe.png?fileID=2800000&amp;guid=4151734b37ca92643b3fdb8f4bb3a6bb&amp;type=3#wood-axe&apos;);" />
             <ui:Button display-tooltip-when-elided="true" name="Build_1" class="grid-icon grid-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/circular-sawblade.png?fileID=2800000&amp;guid=ece09e76fdde2a047837f091d7ea669e&amp;type=3#circular-sawblade&apos;);" />
             <ui:Button display-tooltip-when-elided="true" name="Build_2" class="grid-icon grid-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/zig-arrow.png?fileID=2800000&amp;guid=3d859d53a6956d04f865f3c420883a0b&amp;type=3#zig-arrow&apos;);" />
-            <ui:Button display-tooltip-when-elided="true" name="Build_3" class="grid-icon grid-button" />
-            <ui:Button display-tooltip-when-elided="true" name="Build_4" class="grid-icon grid-button" />
+            <ui:Button display-tooltip-when-elided="true" name="Build_3" class="grid-icon grid-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/war-pick.png?fileID=2800000&amp;guid=fe95fea583f7e9f43b7836c7fed3e378&amp;type=3#war-pick&apos;);" />
+            <ui:Button display-tooltip-when-elided="true" name="Build_4" class="grid-icon grid-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/stone-mason.png?fileID=2800000&amp;guid=9704f27f14856b14a95f06e679fb61c6&amp;type=3#stone-mason&apos;);" />
             <ui:Button display-tooltip-when-elided="true" name="Build_5" class="grid-icon grid-button" />
             <ui:Button display-tooltip-when-elided="true" name="Build_6" class="grid-icon grid-button" />
             <ui:Button text="&#10;" display-tooltip-when-elided="true" name="Build_7" class="grid-icon grid-button" />

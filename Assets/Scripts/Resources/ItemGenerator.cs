@@ -9,6 +9,8 @@ public static class ItemGenerator {
                 return new Stick();
             case (ItemType.Rock):
                 return new Rock();
+            case (ItemType.ArrowHead):
+                return new ArrowHead();
             default:
                 throw new System.Exception("Unknown item type: " + type);
         }

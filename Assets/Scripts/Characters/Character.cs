@@ -5,12 +5,12 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public abstract BrainCell BrainCell { get; }
-    public abstract AttackCell AttackCell { get; }
+    public virtual BrainCell BrainCell => null;
+    public virtual AttackCell AttackCell => null;
     public abstract LifeCell LifeCell { get; }
-    public abstract MovementCell MovementCell { get; }
+    public virtual MovementCell MovementCell => null;
     public virtual ConveyorCell ConveyorCell => null;
-    public abstract ResourceCollectionCell ResourceCollectionCell { get; }
+    public virtual ResourceCollectionCell ResourceCollectionCell => null;
     public virtual ResourceProcessingCell ResourceProcessingCell => null;
     public Vector2Int GridPosition { get; set; }
     public Transform Body;
