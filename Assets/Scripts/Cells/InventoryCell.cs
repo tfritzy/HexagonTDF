@@ -7,7 +7,8 @@ public class InventoryCell : Cell
     public int Size { get; }
     public string Name { get; private set; }
 
-    public class Slot {
+    public class Slot
+    {
         public Item Item;
         public ItemType? ReservedFor;
     };
@@ -20,7 +21,7 @@ public class InventoryCell : Cell
         this.Slots = new Slot[Size];
         this.Name = name;
 
-        for(int i = 0; i < Size; i++)
+        for (int i = 0; i < Size; i++)
         {
             this.Slots[i] = new Slot();
         }
@@ -52,7 +53,8 @@ public class InventoryCell : Cell
         if (firstOpenSlot != -1)
         {
             this.Slots[firstOpenSlot].Item = item;
-        } else
+        }
+        else
         {
             throw new System.Exception("There's no room.");
         }
@@ -83,7 +85,7 @@ public class InventoryCell : Cell
     {
         for (int i = 0; i < Slots.Length; i++)
         {
-            if (Slots[i].Item == null && 
+            if (Slots[i].Item == null &&
                (Slots[i].ReservedFor == null || Slots[i].ReservedFor == forItem))
             {
                 return i;
@@ -93,7 +95,24 @@ public class InventoryCell : Cell
         return -1;
     }
 
-    public int FirstItemIndex()
+    public int[] FirstIndeciesOf(ItemType[] items)
+    {
+        int[] indecies = new int[items.Length];
+        for (int i = 0; i < items.Length; i++)
+        {
+            indecies[i] = -1;
+        }
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            indecies[i] = FirstIndexOfItem(items[i]);
+        }
+
+        return indecies;
+    }
+
+
+    public int FirstNonEmptyIndex()
     {
         for (int i = 0; i < Slots.Length; i++)
         {
@@ -106,7 +125,7 @@ public class InventoryCell : Cell
         return -1;
     }
 
-    public int GetFirstItemIndex(ItemType ofType)
+    public int FirstIndexOfItem(ItemType ofType)
     {
         for (int i = 0; i < Slots.Length; i++)
         {

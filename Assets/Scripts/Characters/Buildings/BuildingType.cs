@@ -6,4 +6,5 @@ public enum BuildingType
     Conveyor,
     Miner,
     StoneCarver,
+    Assembler,
 }

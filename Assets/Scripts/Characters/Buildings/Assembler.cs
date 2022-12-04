@@ -1,7 +1,9 @@
 public class Assembler : Building
 {
-    public override BuildingType Type => throw new System.NotImplementedException();
-    public override LifeCell LifeCell => throw new System.NotImplementedException();
+    public override BuildingType Type => BuildingType.Assembler;
+    public override LifeCell LifeCell => lifeCell;
+    public override ResourceProcessingCell ResourceProcessingCell => assemblingCell;
+    public override ConveyorCell ConveyorCell => conveyorCell;
     public override Alliance Enemies => Alliance.Maltov;
     public override Alliance Alliance => Alliance.Player;
     public override string Name => charName;
@@ -9,11 +11,13 @@ public class Assembler : Building
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
+    private ResourceProcessingCell assemblingCell;
     
     protected override void Setup()
     {
         lifeCell = new AssemblerLifeCell();
         conveyorCell = new ConveyorCell(false);
+        assemblingCell = new AssemblerProcessingCell();
 
         base.Setup();
     }

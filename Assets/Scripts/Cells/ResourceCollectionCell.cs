@@ -44,7 +44,7 @@ public abstract class ResourceCollectionCell : Cell
                 lastCollectionTimes[resource] = Time.time;
             }
 
-            int firstItemIndex = this.Inventory.FirstItemIndex();
+            int firstItemIndex = this.Inventory.FirstNonEmptyIndex();
             if (firstItemIndex != -1 && 
                 this.Owner.ConveyorCell.CanAccept(
                     this.Inventory.ItemAt(firstItemIndex).Width))

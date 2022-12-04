@@ -1,7 +1,8 @@
 public enum ItemType
 {
     Log,
-    ArrowShaft,
     Rock,
+    ArrowShaft,
     ArrowHead,
+    Arrow
 }
