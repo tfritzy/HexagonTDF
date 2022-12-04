@@ -39,7 +39,7 @@ public class InventoryUI : VisualElement {
         int i;
         for (i = 0; i < inventoryCell.Size; i++)
         {
-            itemSlots[i].Update(inventoryCell.ItemAt(i));
+            itemSlots[i].Update(inventoryCell.SlotAt(i));
             itemSlots[i].style.display = DisplayStyle.Flex;
         }
 

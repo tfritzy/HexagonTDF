@@ -2,25 +2,26 @@ using UnityEngine;
 
 public abstract class ResourceProcessingCell : Cell
 {
-    public virtual InventoryCell InputInventory => inputInventory;
-    public virtual InventoryCell ProcessingInventory => processingInventory;
-    public virtual InventoryCell OutputInventory => outputInventory;
+    public virtual InventoryCell InputInventory => _inputInventory;
+    public virtual InventoryCell ProcessingInventory => _processingInventory;
+    public virtual InventoryCell OutputInventory => _outputInventory;
     public abstract ItemType OutputItemType { get; }
     public abstract ItemType InputItemType { get; }
     public abstract float SecondsToProcessResource { get; }
     public abstract float PercentOfInputConsumedPerOutput { get; }
-    private InventoryCell inputInventory;
-    private InventoryCell processingInventory;
-    private InventoryCell outputInventory;
+    private InventoryCell _inputInventory;
+    private InventoryCell _processingInventory;
+    private InventoryCell _outputInventory;
     private float? processingStartTime;
     private float itemWidth;
     private const float ITEM_SPAWN_PROGRESS = 1.2f;
 
     public override void Setup(Character owner)
     {
-        inputInventory = new InventoryCell(3, "Input");
-        processingInventory = new InventoryCell(1, "Processing");
-        outputInventory = new InventoryCell(3, "Output");
+        _inputInventory = new InventoryCell(3, "Input");
+        _processingInventory = new InventoryCell(1, "Processing");
+        _outputInventory = new InventoryCell(3, "Output");
+        InputInventory.MakeSlotReserved(0, ItemType.ArrowShaft);
 
         this.itemWidth = ItemGenerator.Make(OutputItemType).Width;
 
@@ -48,7 +49,8 @@ public abstract class ResourceProcessingCell : Cell
         var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(InputItemType);
         if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
         {
-            if (!InputInventory.IsFull)
+            if (furthestResource.ItemInst.Item.Type == InputItemType && 
+                InputInventory.CanAcceptItem(InputItemType))
             {
                 Item item = furthestResource.ItemInst.Item;
                 InputInventory.AddItem(item);
@@ -65,7 +67,7 @@ public abstract class ResourceProcessingCell : Cell
     private void TransferToProcessing()
     {
         int firstEligableIndex = InputInventory.GetFirstItemIndex(InputItemType);
-        if (firstEligableIndex != -1 && !ProcessingInventory.IsFull)
+        if (firstEligableIndex != -1 && ProcessingInventory.CanAcceptItem(InputInventory.ItemAt(firstEligableIndex).Type))
         {
             ProcessingInventory.TransferItem(InputInventory, firstEligableIndex);
         }
@@ -73,8 +75,8 @@ public abstract class ResourceProcessingCell : Cell
 
     private void Process()
     {
-        int firstProcessableIndex = ProcessingInventory.GetFirstItemIndex(InputItemType);
-        if (firstProcessableIndex != -1 && !outputInventory.IsFull)
+        int firstItem = ProcessingInventory.GetFirstItemIndex(InputItemType);
+        if (firstItem != -1 && OutputInventory.CanAcceptItem(ProcessingInventory.ItemAt(firstItem).Type))
         {
             if (processingStartTime.HasValue && Time.time - processingStartTime > SecondsToProcessResource)
             {
@@ -82,13 +84,13 @@ public abstract class ResourceProcessingCell : Cell
                 this.processingStartTime = null;
                 this.OutputInventory.AddItem(item);
 
-                if (processingInventory.ItemAt(firstProcessableIndex).RemainingPercent >= PercentOfInputConsumedPerOutput)
+                if (ProcessingInventory.ItemAt(firstItem).RemainingPercent >= PercentOfInputConsumedPerOutput)
                 {
-                    processingInventory.ItemAt(firstProcessableIndex).RemainingPercent -= PercentOfInputConsumedPerOutput;
+                    ProcessingInventory.ItemAt(firstItem).RemainingPercent -= PercentOfInputConsumedPerOutput;
                 }
                 else
                 {
-                    this.ProcessingInventory.RemoveAt(firstProcessableIndex);
+                    this.ProcessingInventory.RemoveAt(firstItem);
                 }
             }
             else if (processingStartTime == null)

@@ -36,8 +36,8 @@ public abstract class ResourceCollectionCell : Cell
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (!this.Inventory.IsFull &&
-                Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource])
+            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] && 
+                this.Inventory.CanAcceptItem(resource))
             {
                 Item item = ItemGenerator.Make(resource);
                 this.Inventory.AddItem(item);

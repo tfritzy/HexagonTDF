@@ -4,6 +4,8 @@ using UnityEngine.UIElements;
 public class InventorySlotUI : Button
 {
     private Item renderedItem;
+    private ItemType? renderedReservedFor;
+    private const string DISABLED_ICON = "disabled-item-background";
 
     public InventorySlotUI()
     {
@@ -11,20 +13,30 @@ public class InventorySlotUI : Button
         this.clicked += () => Debug.Log("Click button");
     }
 
-    public void Update(Item item)
+    public void Update(InventoryCell.Slot slot)
     {
-        if (item != renderedItem)
+        if (slot.Item != renderedItem || this.renderedReservedFor != slot.ReservedFor)
         {
-            if (item != null)
+            if (slot.Item != null)
             {
-                this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(item.Type));
+                this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.Item.Type));
+                this.RemoveFromClassList(DISABLED_ICON);
             }
             else
             {
-                this.style.backgroundImage = null;
+                if (slot.ReservedFor != null)
+                {
+                    this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.ReservedFor.Value));
+                    this.AddToClassList(DISABLED_ICON);
+                }
+                else
+                {
+                    this.style.backgroundImage = null;
+                }
             }
         }
-        
-        this.renderedItem = item;
+
+        this.renderedReservedFor = slot.ReservedFor;
+        this.renderedItem = slot.Item;
     }
 }

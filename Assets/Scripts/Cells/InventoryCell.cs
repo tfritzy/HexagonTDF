@@ -3,18 +3,37 @@ using System.Linq;
 
 public class InventoryCell : Cell
 {
-    private Item[] Items;
+    private Slot[] Slots;
     public int Size { get; }
-    public bool IsFull => GetFirstOpenSlot() == -1;
     public string Name { get; private set; }
+
+    public class Slot {
+        public Item Item;
+        public ItemType? ReservedFor;
+    };
 
     public override void Update() { }
 
     public InventoryCell(int size, string name)
     {
         this.Size = size;
-        this.Items = new Item[Size];
+        this.Slots = new Slot[Size];
         this.Name = name;
+
+        for(int i = 0; i < Size; i++)
+        {
+            this.Slots[i] = new Slot();
+        }
+    }
+
+    public Slot SlotAt(int index)
+    {
+        if (index < 0 || index >= Size)
+        {
+            return null;
+        }
+
+        return Slots[index];
     }
 
     public Item ItemAt(int index)
@@ -24,15 +43,15 @@ public class InventoryCell : Cell
             return null;
         }
 
-        return Items[index];
+        return Slots[index].Item;
     }
 
     public void AddItem(Item item)
     {
-        int firstOpenSlot = GetFirstOpenSlot();
+        int firstOpenSlot = GetFirstOpenSlot(item.Type);
         if (firstOpenSlot != -1)
         {
-            this.Items[firstOpenSlot] = item;
+            this.Slots[firstOpenSlot].Item = item;
         } else
         {
             throw new System.Exception("There's no room.");
@@ -41,24 +60,31 @@ public class InventoryCell : Cell
 
     public void TransferItem(InventoryCell fromInventory, int itemIndex)
     {
-        int firstOpenSlot = GetFirstOpenSlot();
+        Item itemBeingTransfered = fromInventory.ItemAt(itemIndex);
+        int firstOpenSlot = GetFirstOpenSlot(itemBeingTransfered.Type);
         if (firstOpenSlot != -1)
         {
-            this.Items[firstOpenSlot] = fromInventory.Items[itemIndex];
-            fromInventory.Items[itemIndex] = null;
+            this.Slots[firstOpenSlot].Item = fromInventory.Slots[itemIndex].Item;
+            fromInventory.Slots[itemIndex].Item = null;
         }
     }
 
     public void RemoveAt(int index)
     {
-        Items[index] = null;
+        Slots[index].Item = null;
     }
 
-    private int GetFirstOpenSlot()
+    public bool CanAcceptItem(ItemType itemType)
     {
-        for (int i = 0; i < Items.Length; i++)
+        return GetFirstOpenSlot(itemType) != -1;
+    }
+
+    private int GetFirstOpenSlot(ItemType forItem)
+    {
+        for (int i = 0; i < Slots.Length; i++)
         {
-            if (Items[i] == null)
+            if (Slots[i].Item == null && 
+               (Slots[i].ReservedFor == null || Slots[i].ReservedFor == forItem))
             {
                 return i;
             }
@@ -69,9 +95,9 @@ public class InventoryCell : Cell
 
     public int FirstItemIndex()
     {
-        for (int i = 0; i < Items.Length; i++)
+        for (int i = 0; i < Slots.Length; i++)
         {
-            if (Items[i] != null)
+            if (Slots[i].Item != null)
             {
                 return i;
             }
@@ -82,14 +108,19 @@ public class InventoryCell : Cell
 
     public int GetFirstItemIndex(ItemType ofType)
     {
-        for (int i = 0; i < Items.Length; i++)
+        for (int i = 0; i < Slots.Length; i++)
         {
-            if (Items[i] != null && Items[i].Type == ofType)
+            if (Slots[i].Item != null && Slots[i].Item.Type == ofType)
             {
                 return i;
             }
         }
 
         return -1;
+    }
+
+    public void MakeSlotReserved(int index, ItemType itemType)
+    {
+        this.Slots[index].ReservedFor = itemType;
     }
 }
