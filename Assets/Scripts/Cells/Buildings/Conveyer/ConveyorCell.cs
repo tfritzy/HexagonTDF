@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class ConveyorCell : Cell
 {
-    private const float VELOCITY = .5f;
-    private const int SLOTS_ON_BELT = 10;
-    private LinkedList<ItemOnBelt> ItemsOnBelt;
+
+    /// <summary>
+    /// If true this conveyer can only be the start of a line.
+    /// </summary>
+    public bool IsSource { get; private set; }
     private ConveyorCell _next;
     public ConveyorCell Next
     {
@@ -15,34 +17,19 @@ public class ConveyorCell : Cell
         set
         {
             _next = value;
-            ResetPathPoints();
-            ConfigureLines(this);
         }
     }
-    private ConveyorCell _prev;
-    public ConveyorCell Prev
-    {
-        get { return _prev; }
-        set
-        {
-            if (IsSource)
-            {
-                return;
-            }
 
-            _prev = value;
-            ResetPathPoints();
-            ConfigureLines(this);
-        }
-    }
-    private List<Vector3> pointsOnPath;
-    private float[] pointProgressCache;
-    private float totalPathDistance;
+    // private List<Vector3> pointsOnPath;
+    // private float[] pointProgressCache;
+    // private float totalPathDistance;
+    private const float VELOCITY = .5f;
 
-    /// <summary>
-    /// If true this conveyer can only be the start of a line.
-    /// </summary>
-    public bool IsSource { get; private set; }
+    // A map of side of a hex to a list of items moving along that path.
+    public Dictionary<HexSide, Belt> InputBelts { get; private set; }
+
+    // The items on the way out.
+    public Belt OutputBelt { get; private set; }
 
     public class ItemOnBelt
     {
@@ -54,6 +41,28 @@ public class ConveyorCell : Cell
         public bool IsPaused;
     }
 
+    public class Belt
+    {
+        public LinkedList<ItemOnBelt> Items;
+        public List<Vector3> Points;
+        public float TotalLength { get; private set; }
+        public HexSide Side;
+
+        public Belt(LinkedList<ItemOnBelt> items, List<Vector3> points, HexSide side)
+        {
+            this.Items = items;
+            this.Points = points;
+            this.Side = side;
+
+            float totalLength = 0f;
+            for (int i = 1; i < points.Count; i++)
+            {
+                totalLength += (points[i] - points[i - 1]).magnitude;
+            }
+            this.TotalLength = totalLength;
+        }
+    }
+
     public ConveyorCell(bool isSource)
     {
         this.IsSource = isSource;
@@ -62,41 +71,48 @@ public class ConveyorCell : Cell
     public override void Setup(Character owner)
     {
         base.Setup(owner);
+        InputBelts = new Dictionary<HexSide, Belt>();
+        OutputBelt = null;
         SetupConveyorDirection();
-        ItemsOnBelt = new LinkedList<ItemOnBelt>();
-        ResetPathPoints();
     }
 
     public override void Update()
     {
-        MoveItemsForward();
+        foreach (HexSide side in InputBelts.Keys)
+        {
+            MoveItemsForward(InputBelts[side], OutputBelt);
+        }
+
+        Belt nextPath = null;
+        this.Next?.InputBelts.TryGetValue(this.GetOppositeSide(OutputBelt.Side), out nextPath);
+        MoveItemsForward(OutputBelt, nextPath);
     }
 
-    private void MoveItemsForward()
+    private void MoveItemsForward(Belt belt, Belt nextBelt)
     {
-        if (ItemsOnBelt.Count == 0 || pointsOnPath == null)
+        if (belt == null || belt.Points.Count == 0)
         {
             return;
         }
 
         bool movedOnItem = false;
-        LinkedListNode<ItemOnBelt> currentItem = ItemsOnBelt.First;
+        LinkedListNode<ItemOnBelt> currentItem = belt.Items.First;
         while (currentItem != null)
         {
             ItemOnBelt iterRes = currentItem.Value;
-            if (iterRes.CurrentPathPoint < pointsOnPath.Count - 1)
+            if (iterRes.CurrentPathPoint < belt.Points.Count - 1)
             {
                 if (!iterRes.IsPaused)
                 {
                     float currentProgress = iterRes.ProgressAlongPath;
-                    if (currentProgress + iterRes.ItemInst.Item.Width < GetMinBoundOfNextItem(currentItem))
+                    if (currentProgress + iterRes.ItemInst.Item.Width < GetMinBoundOfNextItem(currentItem, nextBelt))
                     {
                         Vector3 deltaToNextPoint =
-                            pointsOnPath[iterRes.CurrentPathPoint + 1] -
+                            belt.Points[iterRes.CurrentPathPoint + 1] -
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        iterRes.ItemInst.transform.LookAt(pointsOnPath[iterRes.CurrentPathPoint + 1]);
+                        iterRes.ItemInst.transform.LookAt(belt.Points[iterRes.CurrentPathPoint + 1]);
                         iterRes.ProgressAlongPath += moveDelta.magnitude;
 
                         if (deltaToNextPoint.magnitude < .02f)
@@ -108,11 +124,13 @@ public class ConveyorCell : Cell
             }
             else
             {
-                if (this.Next != null && 
-                    this.Next.CanAccept(iterRes.ItemInst.Item.Width))
+                if (nextBelt != null && CanAccept(nextBelt, iterRes.ItemInst.Item.Width))
                 {
                     movedOnItem = true;
-                    this.Next.AddItem(iterRes.ItemInst);
+                    nextBelt.Items.AddFirst(iterRes);
+                    iterRes.CurrentPathPoint = 0;
+                    iterRes.ProgressAlongPath = 0f;
+                    break;
                 }
             }
 
@@ -121,89 +139,73 @@ public class ConveyorCell : Cell
 
         if (movedOnItem)
         {
-            ItemsOnBelt.RemoveLast();
+            belt.Items.RemoveLast();
         }
     }
 
-    public void AddItem(InstantiatedItem item, float progress)
+    public void AddItem(HexSide fromSide, InstantiatedItem inst)
+    {
+        if (!InputBelts.ContainsKey(fromSide))
+        {
+            throw new System.Exception("Tried to add an item on a side which is not configured as an input side.");
+        }
+
+        AddItem(InputBelts[fromSide], inst);
+    }
+
+    public void AddItem(Belt toBelt, InstantiatedItem inst)
     {
         var newItem = new ItemOnBelt
         {
-            ItemInst = item,
+            ItemInst = inst,
             CurrentPathPoint = 0,
-            ProgressAlongPath = progress
+            ProgressAlongPath = 0f,
         };
 
-        RecalculateItemPointOnPath(newItem);
-
-        var currentNode = ItemsOnBelt.First;
-        while (currentNode != null && currentNode.Value.ProgressAlongPath < progress)
+        var firstItem = toBelt.Items.First;
+        if (firstItem != null && firstItem.Value.MinBound < inst.Item.Width)
         {
-            currentNode = currentNode.Next;
+            throw new System.Exception("Tried to add an item to the belt which overlaps with an existing item.");
         }
 
-        if (currentNode != null)
-        {
-            ItemsOnBelt.AddBefore(currentNode, newItem);
-        } else 
-        {
-            ItemsOnBelt.AddLast(newItem);
-        }
+        toBelt.Items.AddFirst(newItem);
     }
 
-    private void RecalculateItemPointOnPath(ItemOnBelt item)
+    public bool CanAccept(HexSide side, float itemWidth)
     {
-        int i;
-        int currentPoint = 0;
-        for (i = 1; i < pointsOnPath.Count; i++)
+        if (!InputBelts.ContainsKey(side))
         {
-            if (pointProgressCache[i] >= item.ProgressAlongPath && pointProgressCache[i - 1] <= item.ProgressAlongPath)
-            {
-                currentPoint = i - 1;
-                Vector3 delta = pointsOnPath[i] - pointsOnPath[currentPoint];
-                Vector3 currentPos = pointsOnPath[currentPoint] + delta.normalized * (item.ProgressAlongPath - pointProgressCache[currentPoint]);
-                item.ItemInst.transform.position = currentPos;
-                break;
-            }
+            return false;
         }
-        
-        if (i == pointsOnPath.Count && currentPoint == 0)
-        {
-            // If we iterated to the end without finding an option, 
-            // it means the progress is greater than any actual point.
-            item.CurrentPathPoint = pointsOnPath.Count - 1;
-            item.ProgressAlongPath = 1f;
-        } else
-        {
-            item.CurrentPathPoint = currentPoint;
-        }
+
+        return CanAccept(InputBelts[side], itemWidth);
     }
 
-    public void AddItem(InstantiatedItem item)
+    public bool CanAccept(Belt belt, float itemWidth)
     {
-        ItemsOnBelt.AddFirst(new ItemOnBelt { ItemInst = item, CurrentPathPoint = 0 });
-    }
+        if (belt?.Items == null)
+        {
+            return false;
+        }
 
-    public bool CanAccept(float itemWidth, float atProgress = 0)
-    {
-        if (ItemsOnBelt.Count == 0)
+        if (belt.Items.Count == 0)
         {
             return true;
         }
 
-        ItemOnBelt firstResource = ItemsOnBelt.First.Value;
+        ItemOnBelt firstResource = belt.Items.First.Value;
 
         // Items get added with their center at the start of the path,
         // so we need to check if there's enough space there to fit
         // half the item's size.
-        return firstResource.MinBound > atProgress + itemWidth;
+        return firstResource.MinBound > itemWidth;
     }
 
-    public ItemOnBelt GetFurthestAlongResourceOfType(ItemType ItemType)
+    public ItemOnBelt GetFurthestAlongResourceOfType(Belt belt, ItemType ItemType)
     {
         float maxProgress = float.MinValue;
         ItemOnBelt maxResource = null;
-        foreach (var resource in ItemsOnBelt)
+        foreach (var resource in belt.Items)
         {
             if (resource.ItemInst.Item.Type == ItemType && resource.ProgressAlongPath > maxProgress)
             {
@@ -215,22 +217,24 @@ public class ConveyorCell : Cell
         return maxResource;
     }
 
-    public void RemoveItem(Guid itemId)
+    public void RemoveItem(Belt belt, Guid itemId)
     {
-        var node = ItemsOnBelt.First;
+        var node = belt.Items.First;
         while (node != null)
         {
             if (node.Value.ItemInst.Item.Id == itemId)
             {
-                ItemsOnBelt.Remove(node);
+                belt.Items.Remove(node);
                 return;
             }
 
             node = node.Next;
         }
+
+        throw new System.Exception($"Tried to remove item with id {itemId} from this belt, but it wasn't there.");
     }
 
-    private float GetMinBoundOfNextItem(LinkedListNode<ItemOnBelt> item)
+    private float GetMinBoundOfNextItem(LinkedListNode<ItemOnBelt> item, Belt nextBelt)
     {
         if (item.Next != null)
         {
@@ -238,10 +242,10 @@ public class ConveyorCell : Cell
             return resource.MinBound;
         }
 
-        if (this.Next != null && this.Next.ItemsOnBelt.First != null)
+        if (nextBelt?.Items.First != null)
         {
-            ItemOnBelt resource = this.Next.ItemsOnBelt.First.Value;
-            return resource.MinBound + totalPathDistance;
+            ItemOnBelt resource = nextBelt.Items.First.Value;
+            return resource.MinBound + nextBelt.TotalLength;
         }
 
         return int.MaxValue;
@@ -261,100 +265,173 @@ public class ConveyorCell : Cell
 
             if (building.ConveyorCell.Next == null)
             {
-                this.Prev = building.ConveyorCell;
-                building.ConveyorCell.Next = this;
+                LinkConveyors(building.ConveyorCell, this);
             }
 
-            if (building.ConveyorCell.Prev == null &&
-                building.ConveyorCell.Next != this &&
+            if (building.ConveyorCell.Next != this &&
                 building.ResourceCollectionCell == null &&
                 !building.ConveyorCell.IsSource)
             {
-                this.Next = building.ConveyorCell;
-                building.ConveyorCell.Prev = this;
+                LinkConveyors(this, building.ConveyorCell);
             }
         }
     }
 
-    private void ResetPathPoints()
+    private void LinkConveyors(ConveyorCell source, ConveyorCell target)
     {
-        pointsOnPath = GetPointsOnPath();
+        HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
+        HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
 
-        if (pointsOnPath.Count == 0)
+        // todo: recalculate positions of existing items on output belt.
+        source.OutputBelt = new Belt(
+            new LinkedList<ItemOnBelt>(),
+            GetOutputPath(sourceOutputSide, source.Owner.transform.position),
+            sourceOutputSide);
+
+        if (target.InputBelts == null)
         {
-            return;
+            target.InputBelts = new Dictionary<HexSide, Belt>();
         }
+        target.InputBelts[targetInputSide] = new Belt(
+            new LinkedList<ItemOnBelt>(), 
+            GetInputPath(targetInputSide, target.Owner.transform.position),
+            targetInputSide);
+        source.Next = target;
 
-        totalPathDistance = 0f;
-        for (int i = 1; i < pointsOnPath.Count; i++)
-        {
-            totalPathDistance += (pointsOnPath[i] - pointsOnPath[i - 1]).magnitude;
-        }
-
-        pointProgressCache = new float[pointsOnPath.Count];
-        pointProgressCache[0] = 0;
-        float cumulativeProgress = 0f;
-        for (int i = 1; i < pointsOnPath.Count; i++)
-        {
-            cumulativeProgress += (pointsOnPath[i] - pointsOnPath[i - 1]).magnitude;
-            pointProgressCache[i] = cumulativeProgress;
-        }
-
-        if (ItemsOnBelt != null && ItemsOnBelt.Count > 0)
-        {
-            foreach (var item in ItemsOnBelt)
-            {
-                RecalculateItemPointOnPath(item);
-            }
-
-            List<ItemOnBelt> itemList = ItemsOnBelt.ToList();
-            itemList.Sort(
-                (ItemOnBelt item1, ItemOnBelt item2) => 
-                    (int)(item1.ProgressAlongPath * 100) - 
-                    (int)(item2.ProgressAlongPath * 100));
-            ItemsOnBelt = new LinkedList<ItemOnBelt>(itemList);
-        }
+        ConfigureLines(source);
+        ConfigureLines(target);
     }
 
-    private void ConfigureLines(ConveyorCell conveyor)
+    private static void ConfigureLines(ConveyorCell conveyor)
     {
-        conveyor.Owner.GetComponent<LineRenderer>().positionCount = this.pointsOnPath.Count;
-        conveyor.Owner.GetComponent<LineRenderer>().SetPositions(this.pointsOnPath.ToArray());
+        List<Vector3> points = new List<Vector3>();
+        if (conveyor.InputBelts != null && conveyor.InputBelts.Values.Count != 0)
+        {
+            points.AddRange(conveyor.InputBelts.Values.First().Points);
+        }
+
+        if (conveyor.OutputBelt?.Points.Count > 0)
+        {
+            points.AddRange(conveyor.OutputBelt.Points);
+        }
+        
+        conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;
+        conveyor.Owner.GetComponent<LineRenderer>().SetPositions(points.ToArray());
     }
 
-    private List<Vector3> GetPointsOnPath()
+    private static List<Vector3> GetPathForAngle(float angle, bool reversed = false)
     {
-        List<Vector3> points;
-        if (Prev != null && Next != null)
+        // The world is setup so that a hexagon's north is in the positive x direction.
+        angle += 90;
+
+        List<Vector3> points = new List<Vector3>
         {
-            points = new List<Vector3>()
-            {
-                this.Owner.transform.position + (Prev.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
-                this.Owner.transform.position,
-                this.Owner.transform.position + (Next.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
-            };
-        }
-        else if (Prev != null && Next == null)
+            new Vector3(
+                    Mathf.Cos(angle * Mathf.Deg2Rad),
+                    0,
+                    Mathf.Sin(angle * Mathf.Deg2Rad)) * Constants.HEXAGON_r,
+            Vector3.zero,
+        };
+
+        if (reversed)
         {
-            points = new List<Vector3>()
-            {
-                this.Owner.transform.position + -(this.Owner.transform.position - Prev.Owner.transform.position).normalized * Constants.HEXAGON_r,
-                this.Owner.transform.position,
-            };
-        }
-        else if (Next != null && Prev == null)
-        {
-            points = new List<Vector3>()
-            {
-                this.Owner.transform.position,
-                this.Owner.transform.position + (Next.Owner.transform.position - this.Owner.transform.position).normalized * Constants.HEXAGON_r,
-            };
-        }
-        else
-        {
-            points = new List<Vector3>();
+            points.Reverse();
         }
 
         return points;
+    }
+
+    private static List<Vector3> GetPointsForSide(HexSide side)
+    {
+        switch (side)
+        {
+            case (HexSide.North):
+                return new List<Vector3> {Vector3.zero, new Vector3(0, 0, Constants.HEXAGON_r)};
+            case (HexSide.NorthEast):
+                return new List<Vector3> {Vector3.zero, new Vector3(.75f, 0, .43f)};
+            case (HexSide.SouthEast):
+                return new List<Vector3> {Vector3.zero, new Vector3(.75f, 0, -.43f)};
+            case (HexSide.South):
+                return new List<Vector3> {Vector3.zero, new Vector3(0, 0, -Constants.HEXAGON_r)};
+            case (HexSide.SouthWest):
+                return new List<Vector3> {Vector3.zero, new Vector3(-.75f, 0, -.43f)};
+            case (HexSide.NorthWest):
+                return new List<Vector3> {Vector3.zero, new Vector3(-.75f, 0, .43f)};
+            default: throw new Exception("Unknown side: " + side);
+        }
+    }
+
+    private static List<Vector3> GetInputPath(HexSide side, Vector3 center)
+    {
+        List<Vector3> points = GetPointsForSide(side);
+        points.Reverse();
+        Debug.Log(string.Join(",", points));
+        for (int i = 0; i < points.Count; i++)
+        {
+            points[i] = points[i] + center;
+        }
+
+        return points;
+    }
+    
+    private static List<Vector3> GetOutputPath(HexSide side, Vector3 center)
+    {
+        List<Vector3> points = GetPointsForSide(side);
+        for (int i = 0; i < points.Count; i++)
+        {
+            points[i] = points[i] + center;
+        }
+
+        return points;
+    }
+
+    private static HexSide CalculateHexSide(Vector3 sourcePos, Vector3 targetPos)
+    {
+        Vector3 delta = targetPos - sourcePos;
+        delta.y = 0;
+        float angle = Vector3.Angle(Vector3.forward, delta);
+        if (targetPos.x > sourcePos.x)
+        {
+            if (angle < 30)
+                return HexSide.North;
+            else if (angle < 90)
+                return HexSide.NorthEast;
+            else if (angle < 150)
+                return HexSide.SouthEast;
+            else
+                return HexSide.South;
+        }
+        else
+        {
+            if (angle < 30)
+                return HexSide.North;
+            else if (angle < 90)
+                return HexSide.NorthWest;
+            else if (angle < 150)
+                return HexSide.SouthWest;
+            else
+                return HexSide.South;
+        }
+    }
+
+    private HexSide GetOppositeSide(HexSide side)
+    {
+        switch (side)
+        {
+            case (HexSide.North):
+                return HexSide.South;
+            case (HexSide.NorthEast):
+                return HexSide.SouthWest;
+            case (HexSide.SouthEast):
+                return HexSide.NorthWest;
+            case (HexSide.South):
+                return HexSide.North;
+            case (HexSide.SouthWest):
+                return HexSide.NorthEast;
+            case (HexSide.NorthWest):
+                return HexSide.SouthEast;
+            default:
+                throw new Exception("Unknown side: " + side);
+        }
     }
 }

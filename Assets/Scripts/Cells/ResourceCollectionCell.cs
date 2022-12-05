@@ -47,6 +47,7 @@ public abstract class ResourceCollectionCell : Cell
             int firstItemIndex = this.Inventory.FirstNonEmptyIndex();
             if (firstItemIndex != -1 && 
                 this.Owner.ConveyorCell.CanAccept(
+                    this.Owner.ConveyorCell.OutputBelt,
                     this.Inventory.ItemAt(firstItemIndex).Width))
             {
                 Item itemToPlace = this.Inventory.ItemAt(firstItemIndex);
@@ -65,6 +66,6 @@ public abstract class ResourceCollectionCell : Cell
 
         InstantiatedItem itemInst = resourceGO.AddComponent<InstantiatedItem>();
         itemInst.Init(item);
-        this.Owner.ConveyorCell.AddItem(itemInst);
+        this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.OutputBelt, itemInst);
     }
 }

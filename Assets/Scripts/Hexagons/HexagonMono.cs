@@ -90,13 +90,11 @@ public class HexagonMono : MonoBehaviour, Interactable
             materialCache[this.hexagon.Biome] = new Dictionary<int, Material[]>();
         }
 
-        this.colorVaryIndex = Random.Range(-2, 3);
+        this.colorVaryIndex = Random.Range(1, 4);
         
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
             Color ColorAfterVariance = ColorExtensions.VaryBy(this.hexagon.BaseColor, this.colorVaryIndex * this.hexagon.MaxColorVariance);
-            Debug.Log(colorVaryIndex);
-            Debug.Log(ColorAfterVariance);
 
             Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
             Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);

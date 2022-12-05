@@ -4,5 +4,5 @@ public class Grass : Hexagon
 {
     public override Biome Biome => Biome.Grassland;
     public override bool IsBuildable => true;
-    public override Color BaseColor => ColorExtensions.Create("#3f7f59");
+    public override Color BaseColor => ColorExtensions.Create("#729372");
 }

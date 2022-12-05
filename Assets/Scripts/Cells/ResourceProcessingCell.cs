@@ -51,21 +51,25 @@ public abstract class ResourceProcessingCell : Cell
     {
         foreach (ItemType itemType in inputItems)
         {
-            var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(itemType);
-            if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
+            foreach (ConveyorCell.Belt belt in this.Owner.ConveyorCell.InputBelts.Values)
             {
-                if (furthestResource.ItemInst.Item.Type == itemType && InputInventory.CanAcceptItem(itemType))
+                var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(belt, itemType);
+                if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
                 {
-                    Item item = furthestResource.ItemInst.Item;
-                    InputInventory.AddItem(item);
-                    GameObject.Destroy(furthestResource.ItemInst.gameObject);
-                    this.Owner.ConveyorCell.RemoveItem(item.Id);
-                }
-                else
-                {
-                    furthestResource.IsPaused = true;
+                    if (furthestResource.ItemInst.Item.Type == itemType && InputInventory.CanAcceptItem(itemType))
+                    {
+                        Item item = furthestResource.ItemInst.Item;
+                        InputInventory.AddItem(item);
+                        GameObject.Destroy(furthestResource.ItemInst.gameObject);
+                        this.Owner.ConveyorCell.RemoveItem(belt, item.Id);
+                    }
+                    else
+                    {
+                        furthestResource.IsPaused = true;
+                    }
                 }
             }
+
         }
     }
 
@@ -116,7 +120,7 @@ public abstract class ResourceProcessingCell : Cell
         int outputIndex = OutputInventory.FirstNonEmptyIndex();
         if (outputIndex != -1)
         {
-            if (this.Owner.ConveyorCell.CanAccept(this.itemWidth, ITEM_SPAWN_PROGRESS))
+            if (this.Owner.ConveyorCell.CanAccept(this.Owner.ConveyorCell.OutputBelt, this.itemWidth))
             {
                 GameObject newResource = GameObject.Instantiate(
                     Prefabs.GetResource(OutputItemType),
@@ -127,7 +131,7 @@ public abstract class ResourceProcessingCell : Cell
                 Item item = OutputInventory.ItemAt(outputIndex);
                 InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
                 itemInst.Init(item);
-                this.Owner.ConveyorCell.AddItem(itemInst, 1.2f); // TODO: some specific placement.
+                this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.OutputBelt, itemInst);
                 this.OutputInventory.RemoveAt(outputIndex);
             }
         }
