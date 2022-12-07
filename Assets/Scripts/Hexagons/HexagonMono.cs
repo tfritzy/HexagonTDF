@@ -104,7 +104,7 @@ public class HexagonMono : MonoBehaviour, Interactable
             
             Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
             Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.07f));
+            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
             darkerTexture.Apply();
             newHighlight.mainTexture = darkerTexture;
 

@@ -14,19 +14,19 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 1, g: 1, b: 1, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 250
-  m_AmbientSkyColor: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
+  m_AmbientSkyColor: {r: 0.754717, g: 0.63509136, b: 0.5102646, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0.95
+  m_AmbientIntensity: 0.61
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.44455323, g: 0.51546407, b: 0.6981132, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 59573b088aaea0442bf29e0a0e9d1339, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 1005745528}
   m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 0}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -168,23 +168,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Trees:
-  - {fileID: 919132149155446097, guid: 125f6c061d9027844903fb881ba7e32d, type: 3}
-  - {fileID: 919132149155446097, guid: b88a4804521b199438f2929a09eab3b6, type: 3}
+  - {fileID: 919132149155446097, guid: ebf00eedfbcdd964fa922d8bcd7d5f33, type: 3}
+  - {fileID: 919132149155446097, guid: 169e073b9ca217a40bdee34955c212fa, type: 3}
   DeadTrees:
-  - {fileID: 919132149155446097, guid: c5f63746db324a0438a3445a1008b0f7, type: 3}
   - {fileID: 919132149155446097, guid: 2fc91e17e7b6abd4585011c7444e4154, type: 3}
+  - {fileID: 919132149155446097, guid: b9971b7cbdd06d44ca89da185357ee6f, type: 3}
   StoneColumns:
-  - {fileID: 919132149155446097, guid: 90f2b2c38674d3849a7d4d546dd919d5, type: 3}
-  - {fileID: 919132149155446097, guid: 84e59c1df73fe034e83087ff78297463, type: 3}
-  - {fileID: 919132149155446097, guid: 2334180e589ad1047ada0365e0bb8d35, type: 3}
+  - {fileID: 919132149155446097, guid: 5c9e30ba32ed7724cb56a84ffbb23f6a, type: 3}
+  - {fileID: 919132149155446097, guid: 50d872a3fa52fe940a864aacead9df78, type: 3}
+  - {fileID: 919132149155446097, guid: ecb78167d1145384b938568986ea89b9, type: 3}
   Cacti:
-  - {fileID: 919132149155446097, guid: 4d5561c046d654d4283d993509188312, type: 3}
-  - {fileID: 919132149155446097, guid: c932742c43392d84abec91c29aba1c7c, type: 3}
-  - {fileID: 919132149155446097, guid: 4a9d104a10d19974892ca172424d85b9, type: 3}
-  - {fileID: 919132149155446097, guid: 051310dd71c0df84f9ce309b731d2c6e, type: 3}
-  - {fileID: 919132149155446097, guid: 04f16fb225530354caba6b314d57e22a, type: 3}
-  - {fileID: 919132149155446097, guid: 2fa14c62d446d0846ae9dcc93b4e5a4d, type: 3}
-  - {fileID: 919132149155446097, guid: 88c18536bb7f0a5408410f05c04f732e, type: 3}
+  - {fileID: 919132149155446097, guid: d8666bcf4de94a14ab6f4f748a864b4f, type: 3}
+  - {fileID: 919132149155446097, guid: 4a853ffe2fabcac40b888a5a59272ec3, type: 3}
+  - {fileID: 919132149155446097, guid: 800ba5fdfef933947a57ba403b11252c, type: 3}
+  - {fileID: 919132149155446097, guid: b1e90cbb8d8a6f9498368e81ec555982, type: 3}
+  - {fileID: 919132149155446097, guid: 22b08800b2eb0c946a26da8a1900df43, type: 3}
+  - {fileID: 919132149155446097, guid: 02e1068130a97cf4892dfa33149f341d, type: 3}
 --- !u!1 &280419869
 GameObject:
   m_ObjectHideFlags: 0

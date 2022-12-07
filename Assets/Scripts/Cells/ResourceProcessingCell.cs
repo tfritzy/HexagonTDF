@@ -124,7 +124,7 @@ public abstract class ResourceProcessingCell : Cell
             {
                 GameObject newResource = GameObject.Instantiate(
                     Prefabs.GetResource(OutputItemType),
-                    Vector3.zero,
+                    this.Owner.ConveyorCell.OutputBelt.Points[0],
                     Prefabs.GetResource(OutputItemType).transform.rotation
                 );
 

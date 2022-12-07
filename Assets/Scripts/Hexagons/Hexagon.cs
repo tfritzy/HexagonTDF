@@ -6,6 +6,6 @@ public abstract class Hexagon
     public abstract bool IsBuildable { get; }
     public virtual bool IsWalkable => IsBuildable;
     public abstract Color BaseColor { get; }
-    public virtual Material Material => Constants.Materials.TintableHex;
-    public float MaxColorVariance => .02f;
+    public virtual Material Material => Constants.Materials.Normal;
+    public float MaxColorVariance => .04f;
 }

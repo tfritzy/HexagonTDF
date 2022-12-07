@@ -127,3 +127,7 @@
     margin-bottom: 0;
     -unity-background-image-tint-color: rgb(236, 188, 179);
 }
+
+.disabled-item-background {
+    -unity-background-image-tint-color: rgba(236, 188, 179, 0.54);
+}
