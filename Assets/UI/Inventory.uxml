@@ -3,7 +3,7 @@
     <ui:VisualElement name="VerticalGroup">
         <ui:Label tabindex="-1" text="Input storage" display-tooltip-when-elided="true" name="InventoryName" class="heading-2" style="-unity-text-align: upper-center;" />
         <ui:VisualElement name="Items" class="grid" style="justify-content: center;">
-            <ui:Button display-tooltip-when-elided="true" class="grid-button" />
+            <ui:Button display-tooltip-when-elided="true" text="15" class="grid-button" />
             <ui:Button display-tooltip-when-elided="true" class="grid-button" />
             <ui:Button display-tooltip-when-elided="true" class="grid-button" />
             <ui:Button display-tooltip-when-elided="true" class="grid-button" />

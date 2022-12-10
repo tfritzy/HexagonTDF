@@ -23,7 +23,7 @@ public class ConveyorCell : Cell
     // private List<Vector3> pointsOnPath;
     // private float[] pointProgressCache;
     // private float totalPathDistance;
-    private const float VELOCITY = .5f;
+    private const float VELOCITY = .75f;
 
     // A map of side of a hex to a list of items moving along that path.
     public Dictionary<HexSide, Belt> InputBelts { get; private set; }
@@ -269,6 +269,7 @@ public class ConveyorCell : Cell
             }
 
             if (building.ConveyorCell.Next != this &&
+                building.ConveyorCell.Next == null &&
                 building.ResourceCollectionCell == null &&
                 !building.ConveyorCell.IsSource)
             {

@@ -52,7 +52,18 @@ public class InventoryCell : Cell
         int firstOpenSlot = GetFirstOpenSlot(item.Type);
         if (firstOpenSlot != -1)
         {
-            this.Slots[firstOpenSlot].Item = item;
+            if (Slots[firstOpenSlot].Item == null)
+            {
+                this.Slots[firstOpenSlot].Item = item;
+            }
+            else if (Slots[firstOpenSlot].Item.Quantity < Slots[firstOpenSlot].Item.MaxStackSize)
+            {
+                this.Slots[firstOpenSlot].Item.Quantity += 1;
+            }
+            else
+            {
+                throw new System.Exception("There's no room.");
+            }
         }
         else
         {
@@ -73,7 +84,19 @@ public class InventoryCell : Cell
 
     public void RemoveAt(int index)
     {
-        Slots[index].Item = null;
+        if (Slots[index] == null)
+        {
+            return;
+        }
+
+        if (Slots[index].Item.Quantity > 1)
+        {
+            Slots[index].Item.Quantity -= 1;
+        }
+        else
+        {
+            Slots[index].Item = null;
+        }
     }
 
     public bool CanAcceptItem(ItemType itemType)
@@ -87,6 +110,13 @@ public class InventoryCell : Cell
         {
             if (Slots[i].Item == null &&
                (Slots[i].ReservedFor == null || Slots[i].ReservedFor == forItem))
+            {
+                return i;
+            }
+
+            if (Slots[i].Item != null &&
+                Slots[i].Item.Type == forItem &&
+                Slots[i].Item.Quantity < Slots[i].Item.MaxStackSize)
             {
                 return i;
             }

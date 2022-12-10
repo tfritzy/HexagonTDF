@@ -15,7 +15,6 @@ public abstract class ResourceProcessingCell : Cell
     private float? processingStartTime;
     private float itemWidth;
     private ItemType[] inputItems;
-    private const float ITEM_SPAWN_PROGRESS = 1.2f;
 
     public override void Setup(Character owner)
     {
@@ -92,9 +91,7 @@ public abstract class ResourceProcessingCell : Cell
         {
             if (processingStartTime.HasValue && Time.time - processingStartTime > SecondsToProcessResource)
             {
-                Item item = ItemGenerator.Make(OutputItemType);
                 this.processingStartTime = null;
-                this.OutputInventory.AddItem(item);
 
                 foreach (int index in firstItems)
                 {
@@ -107,6 +104,9 @@ public abstract class ResourceProcessingCell : Cell
                         this.ProcessingInventory.RemoveAt(index);
                     }
                 }
+
+                Item item = ItemGenerator.Make(OutputItemType);
+                this.OutputInventory.AddItem(item);
             }
             else if (processingStartTime == null)
             {
