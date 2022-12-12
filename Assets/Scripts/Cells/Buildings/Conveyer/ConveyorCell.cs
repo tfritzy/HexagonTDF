@@ -255,7 +255,7 @@ public class ConveyorCell : Cell
     {
         for (int i = 0; i < 6; i++)
         {
-            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, i);
+            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
             Building building = Managers.Board.GetBuilding(neighbor);
 
             if (building == null || building.ConveyorCell == null)
@@ -294,7 +294,7 @@ public class ConveyorCell : Cell
             target.InputBelts = new Dictionary<HexSide, Belt>();
         }
         target.InputBelts[targetInputSide] = new Belt(
-            new LinkedList<ItemOnBelt>(), 
+            new LinkedList<ItemOnBelt>(),
             GetInputPath(targetInputSide, target.Owner.transform.position),
             targetInputSide);
         source.Next = target;
@@ -315,7 +315,7 @@ public class ConveyorCell : Cell
         {
             points.AddRange(conveyor.OutputBelt.Points);
         }
-        
+
         conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;
         conveyor.Owner.GetComponent<LineRenderer>().SetPositions(points.ToArray());
     }
@@ -347,17 +347,17 @@ public class ConveyorCell : Cell
         switch (side)
         {
             case (HexSide.North):
-                return new List<Vector3> {Vector3.zero, new Vector3(0, 0, Constants.HEXAGON_r)};
+                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, Constants.HEXAGON_r) };
             case (HexSide.NorthEast):
-                return new List<Vector3> {Vector3.zero, new Vector3(.75f, 0, .43f)};
+                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, .43f) };
             case (HexSide.SouthEast):
-                return new List<Vector3> {Vector3.zero, new Vector3(.75f, 0, -.43f)};
+                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, -.43f) };
             case (HexSide.South):
-                return new List<Vector3> {Vector3.zero, new Vector3(0, 0, -Constants.HEXAGON_r)};
+                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, -Constants.HEXAGON_r) };
             case (HexSide.SouthWest):
-                return new List<Vector3> {Vector3.zero, new Vector3(-.75f, 0, -.43f)};
+                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, -.43f) };
             case (HexSide.NorthWest):
-                return new List<Vector3> {Vector3.zero, new Vector3(-.75f, 0, .43f)};
+                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, .43f) };
             default: throw new Exception("Unknown side: " + side);
         }
     }
@@ -374,7 +374,7 @@ public class ConveyorCell : Cell
 
         return points;
     }
-    
+
     private static List<Vector3> GetOutputPath(HexSide side, Vector3 center)
     {
         List<Vector3> points = GetPointsForSide(side);

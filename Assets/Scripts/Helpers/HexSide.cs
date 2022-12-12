@@ -1,9 +1,10 @@
 // Sides of a flat top hexagon.
-public enum HexSide {
-    North,
-    NorthEast,
-    SouthEast,
-    South,
+public enum HexSide
+{
     SouthWest,
+    South,
+    SouthEast,
+    NorthEast,
+    North,
     NorthWest,
 };

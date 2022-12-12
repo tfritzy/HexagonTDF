@@ -273,7 +273,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             Biome biome = GetBiome(heightValue, moistureValue);
             points[x, y] = new OverworldMapPoint
             {
-                Height = heightValue,
+                Height = (int)(heightValue * 5),
                 Biome = biome,
             };
         }
@@ -300,7 +300,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
             Biome biome = GetBiome(heightValue, moistureValue);
             points[x, y] = new OverworldMapPoint
             {
-                Height = heightValue,
+                Height = (int)(heightValue * 5),
                 Biome = biome,
             };
         }
@@ -407,11 +407,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2Int neighbor = Helpers.GetNeighborPosition(current, i);
+                    Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
 
                     if (!Helpers.IsInBounds(neighbor, Constants.OverworldDimensions))
-                    if (neighbor == Constants.MinVector2Int)
-                        continue;
+                        if (neighbor == Constants.MinVector2Int)
+                            continue;
 
                     if (visited[neighbor.x, neighbor.y] == null && Segment.Points[neighbor.x, neighbor.y].Biome != Biome.Water)
                     {

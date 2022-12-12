@@ -207,7 +207,7 @@
 			{
 				return _OutlineColor;
 			}
-				ENDCG
+			ENDCG
 		}// End Outline Pass
 
 		// Shadow casting

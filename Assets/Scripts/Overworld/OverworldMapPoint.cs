@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 public class OverworldMapPoint
 {
     [JsonProperty("H")]
-    public float Height;
+    public int Height;
 
     [JsonProperty("B")]
     public Biome Biome;

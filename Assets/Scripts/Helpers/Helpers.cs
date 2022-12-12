@@ -103,17 +103,22 @@ public static class Helpers
         new Vector2Int(-1, 0)
     };
 
-    public static Vector2Int GetNeighborPosition(Vector2Int pos, int index)
+    public static Vector2Int GetNeighborPosition(int x, int y, HexSide direction)
+    {
+        return GetNeighborPosition(new Vector2Int(x, y), direction);
+    }
+
+    public static Vector2Int GetNeighborPosition(Vector2Int pos, HexSide direction)
     {
         Vector2Int position;
 
         if (pos.x % 2 == 0)
         {
-            position = pos + evenNeighborPattern[index];
+            position = pos + evenNeighborPattern[(int)direction];
         }
         else
         {
-            position = pos + oddNeighborPattern[index];
+            position = pos + oddNeighborPattern[(int)direction];
         }
 
         return position;

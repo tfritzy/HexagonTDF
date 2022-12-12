@@ -8,6 +8,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     public bool IsBuildable { get { return hexagon.IsBuildable; } }
     public bool IsWalkable { get { return hexagon.IsWalkable; } }
     public Vector2Int GridPosition;
+    public int Height;
 
     protected int colorVaryIndex;
     protected Hexagon hexagon;
@@ -28,7 +29,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     protected virtual void Setup()
     {
-        this.hexMesh = transform.Find("Hex")?.GetComponent<MeshRenderer>();
+        this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
     }
@@ -91,26 +92,27 @@ public class HexagonMono : MonoBehaviour, Interactable
         }
 
         this.colorVaryIndex = Random.Range(1, 4);
-        
+
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
             Color ColorAfterVariance = ColorExtensions.VaryBy(this.hexagon.BaseColor, this.colorVaryIndex * this.hexagon.MaxColorVariance);
+            this.hexMesh.material.color = ColorAfterVariance;
 
-            Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
-            Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            newTexture.SetPixel(0, 0, ColorAfterVariance);
-            newTexture.Apply();
-            newBase.mainTexture = newTexture;
-            
-            Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
-            Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
-            darkerTexture.Apply();
-            newHighlight.mainTexture = darkerTexture;
+            // Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            // Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            // newTexture.SetPixel(0, 0, ColorAfterVariance);
+            // newTexture.Apply();
+            // newBase.mainTexture = newTexture;
 
-            materialCache[this.hexagon.Biome][this.colorVaryIndex] = new Material[] {newBase, newHighlight};
+            // Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            // Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            // darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
+            // darkerTexture.Apply();
+            // newHighlight.mainTexture = darkerTexture;
+
+            // materialCache[this.hexagon.Biome][this.colorVaryIndex] = new Material[] { newBase/*, newHighlight*/ };
         }
 
-        this.hexMesh.materials = materialCache[this.hexagon.Biome][this.colorVaryIndex];
+        // this.hexMesh.materials = materialCache[this.hexagon.Biome][this.colorVaryIndex];
     }
 }

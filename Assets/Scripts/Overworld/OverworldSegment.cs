@@ -13,6 +13,11 @@ public class OverworldSegment
     public int Width => Points.GetLength(0);
     public int Height => Points.GetLength(1);
 
+    public OverworldMapPoint GetPoint(Vector2Int pos)
+    {
+        return GetPoint(pos.x, pos.y);
+    }
+
     public OverworldMapPoint GetPoint(int x, int y)
     {
         if (x < 0 || x >= Width || y < 0 || y >= Height)

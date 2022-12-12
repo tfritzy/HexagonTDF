@@ -49,7 +49,8 @@ public static class Prefabs
         if (_buildings.ContainsKey(buildingType))
         {
             return _buildings[buildingType];
-        } else 
+        }
+        else
         {
             _buildings[buildingType] = Resources.Load<GameObject>($"Prefabs/Buildings/{buildingType}");
             return _buildings[buildingType];
@@ -67,7 +68,8 @@ public static class Prefabs
         if (_resources.ContainsKey(ItemType))
         {
             return _resources[ItemType];
-        } else 
+        }
+        else
         {
             _resources[ItemType] = Resources.Load<GameObject>($"Prefabs/Resources/{ItemType}");
             return _resources[ItemType];
@@ -85,7 +87,8 @@ public static class Prefabs
         if (_resourceIcons.ContainsKey(ItemType))
         {
             return _resourceIcons[ItemType];
-        } else 
+        }
+        else
         {
             _resourceIcons[ItemType] = Resources.Load<Sprite>($"Icons/Resources/{ItemType}");
             return _resourceIcons[ItemType];
@@ -104,7 +107,8 @@ public static class Prefabs
         if (_materials.ContainsKey(materialType))
         {
             return _materials[materialType];
-        } else 
+        }
+        else
         {
             _materials[materialType] = Resources.Load<Material>($"Materials/{materialType}");
             return _materials[materialType];
