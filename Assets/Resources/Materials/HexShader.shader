@@ -35,11 +35,11 @@ Shader "Lit/Diffuse With Shadows"
             {
                 if(ao == 0)
                 {
-                    return 0.7;
+                    return 0.6;
                 }
                 if(ao == 1)
                 {
-                    return .8;
+                    return .85;
                 }
                 if(ao == 2)
                 {

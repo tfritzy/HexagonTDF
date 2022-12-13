@@ -96,23 +96,25 @@ public class HexagonMono : MonoBehaviour, Interactable
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
             Color ColorAfterVariance = ColorExtensions.VaryBy(this.hexagon.BaseColor, this.colorVaryIndex * this.hexagon.MaxColorVariance);
-            this.hexMesh.material.color = ColorAfterVariance;
-
-            // Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            newBase.color = ColorAfterVariance;
             // Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             // newTexture.SetPixel(0, 0, ColorAfterVariance);
             // newTexture.Apply();
             // newBase.mainTexture = newTexture;
 
-            // Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
+            newHighlight.color = ColorExtensions.VaryBy(ColorAfterVariance, -.15f);
             // Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             // darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
             // darkerTexture.Apply();
             // newHighlight.mainTexture = darkerTexture;
 
-            // materialCache[this.hexagon.Biome][this.colorVaryIndex] = new Material[] { newBase/*, newHighlight*/ };
+            materialCache[this.hexagon.Biome][this.colorVaryIndex] = new Material[] { newBase, newHighlight };
         }
 
-        // this.hexMesh.materials = materialCache[this.hexagon.Biome][this.colorVaryIndex];
+        var materials = materialCache[this.hexagon.Biome][this.colorVaryIndex];
+        this.hexMesh.material = materials[0];
+        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material = materials[1];
     }
 }

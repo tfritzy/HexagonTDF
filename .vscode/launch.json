@@ -7,7 +7,13 @@
         {
             "name": "Unity Editor",
             "type": "unity",
-            "path": "/C:/development/HexagonLandscape/Library/EditorInstance.json",
+            "path": "/E:/development/HexagonLandscape/Library/EditorInstance.json",
+            "request": "launch"
+        },
+        {
+            "name": "Unity Editor",
+            "type": "unity",
+            "path": "${workspaceFolder}/Library/EditorInstance.json",
             "request": "launch"
         },
         {
