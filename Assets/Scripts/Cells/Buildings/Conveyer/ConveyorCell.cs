@@ -10,6 +10,7 @@ public class ConveyorCell : Cell
     /// If true this conveyer can only be the start of a line.
     /// </summary>
     public bool IsSource { get; private set; }
+    public bool IsTermination { get; private set; }
     private ConveyorCell _next;
     public ConveyorCell Next
     {
@@ -63,9 +64,10 @@ public class ConveyorCell : Cell
         }
     }
 
-    public ConveyorCell(bool isSource)
+    public ConveyorCell(bool isSource = false, bool isTermination = false)
     {
         this.IsSource = isSource;
+        this.IsTermination = isTermination;
     }
 
     public override void Setup(Character owner)
@@ -263,7 +265,8 @@ public class ConveyorCell : Cell
                 continue;
             }
 
-            if (building.ConveyorCell.Next == null)
+            if (building.ConveyorCell.Next == null &&
+                !(building.ConveyorCell != null && building.ConveyorCell.IsTermination))
             {
                 LinkConveyors(building.ConveyorCell, this);
             }

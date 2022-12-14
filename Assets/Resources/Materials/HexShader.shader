@@ -15,6 +15,8 @@ Shader "Lit/Diffuse With Shadows"
             #pragma fragment frag
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
+            // make fog work
+            #pragma multi_compile_fog
 
             // compile shader into multiple variants, with and without shadows
             // (we don't care about any lightmaps yet, so skip these variants)
@@ -65,6 +67,7 @@ Shader "Lit/Diffuse With Shadows"
                 fixed3 diff : COLOR0;
                 fixed3 ambient : COLOR1;
                 float4 pos : SV_POSITION;
+                UNITY_FOG_COORDS(2)
             };
             v2f vert (appdata v)
             {
@@ -76,7 +79,8 @@ Shader "Lit/Diffuse With Shadows"
                 o.diff = nl * _LightColor0.rgb * AOToOcclusion(vertexAO(v.sides.x, v.sides.y));
                 o.ambient = ShadeSH9(half4(worldNormal,1));
                 // compute shadows data
-                TRANSFER_SHADOW(o)
+                TRANSFER_SHADOW(o);
+                UNITY_TRANSFER_FOG(o,o.pos);
                 return o;
             }
 
@@ -91,7 +95,8 @@ Shader "Lit/Diffuse With Shadows"
                 // darken light's illumination with shadow, keep ambient intact
                 fixed3 lighting = i.diff * shadow + i.ambient;
                 col.rgb *= lighting;
-                
+                // apply fog
+                UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
             }
             ENDCG

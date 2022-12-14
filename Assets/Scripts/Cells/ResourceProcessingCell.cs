@@ -27,9 +27,9 @@ public abstract class ResourceProcessingCell : Cell
         _processingInventory = new InventoryCell(inputItems.Length, "Processing");
         _outputInventory = new InventoryCell(4, "Output");
 
-        this.pickupCell = new ItemPickupCell(inputItems, this.InputInventory);
         InitReservedSlots();
         base.Setup(owner);
+        pickupCell = new ItemPickupCell(this.Owner.ConveyorCell, inputItems, this.InputInventory);
     }
 
 

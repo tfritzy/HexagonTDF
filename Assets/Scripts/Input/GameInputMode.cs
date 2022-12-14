@@ -41,6 +41,11 @@ public class GameInputMode : InputMode
                 cells.Add(character.ResourceProcessingCell.OutputInventory);
             }
 
+            if (character.InventoryCell != null)
+            {
+                cells.Add(character.InventoryCell);
+            }
+
             drawer.Update(selectedCharacter.Name, cells);
         }
     }
