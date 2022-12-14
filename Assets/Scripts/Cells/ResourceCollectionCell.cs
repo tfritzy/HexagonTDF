@@ -36,7 +36,7 @@ public abstract class ResourceCollectionCell : Cell
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] && 
+            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] &&
                 this.Inventory.CanAcceptItem(resource))
             {
                 Item item = ItemGenerator.Make(resource);
@@ -45,7 +45,7 @@ public abstract class ResourceCollectionCell : Cell
             }
 
             int firstItemIndex = this.Inventory.FirstNonEmptyIndex();
-            if (firstItemIndex != -1 && 
+            if (firstItemIndex != -1 &&
                 this.Owner.ConveyorCell.CanAccept(
                     this.Owner.ConveyorCell.OutputBelt,
                     this.Inventory.ItemAt(firstItemIndex).Width))

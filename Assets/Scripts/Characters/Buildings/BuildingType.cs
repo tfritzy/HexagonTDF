@@ -7,4 +7,5 @@ public enum BuildingType
     Miner,
     StoneCarver,
     Assembler,
+    GuardTower,
 }

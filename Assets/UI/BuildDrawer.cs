@@ -26,11 +26,12 @@ public class BuildDrawer : Drawer
         BuildingButtons[3].clicked += () => SelectBuilding(BuildingButtons[3], BuildingType.Miner);
         BuildingButtons[4].clicked += () => SelectBuilding(BuildingButtons[4], BuildingType.StoneCarver);
         BuildingButtons[5].clicked += () => SelectBuilding(BuildingButtons[5], BuildingType.Assembler);
+        BuildingButtons[6].clicked += () => SelectBuilding(BuildingButtons[6], BuildingType.GuardTower);
 
         Button backButton = this.Root.Q<Button>("Back");
         backButton.clicked += GoBack;
     }
-    
+
     private void SelectBuilding(Button button, BuildingType buildingType)
     {
         Debug.Log($"Selecting button {button.name} with type {buildingType}");

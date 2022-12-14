@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
+    // TODO: Add a GetCell<T> so we can stop this madness
     public virtual BrainCell BrainCell => null;
     public virtual AttackCell AttackCell => null;
     public abstract LifeCell LifeCell { get; }
@@ -12,7 +13,11 @@ public abstract class Character : MonoBehaviour
     public virtual ConveyorCell ConveyorCell => null;
     public virtual ResourceCollectionCell ResourceCollectionCell => null;
     public virtual ResourceProcessingCell ResourceProcessingCell => null;
-    public Vector2Int GridPosition { get; set; }
+    public virtual ItemPickupCell ItemPickupCell => null;
+    public virtual InventoryCell InventoryCell => null;
+
+    public Vector2Int GridPosition
+    { get; set; }
     public Transform Body;
     public abstract Alliance Enemies { get; }
     public abstract Alliance Alliance { get; }
@@ -62,6 +67,8 @@ public abstract class Character : MonoBehaviour
             this.ResourceCollectionCell,
             this.ConveyorCell,
             this.ResourceProcessingCell,
+            this.ItemPickupCell,
+            this.InventoryCell,
         };
         this.Cells.RemoveAll((Cell cell) => cell == null);
         this.Cells.ForEach((Cell cell) => cell.Setup(this));

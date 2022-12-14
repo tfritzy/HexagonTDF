@@ -15,6 +15,7 @@ public abstract class ResourceProcessingCell : Cell
     private float? processingStartTime;
     private float itemWidth;
     private ItemType[] inputItems;
+    private ItemPickupCell pickupCell;
 
     public override void Setup(Character owner)
     {
@@ -25,8 +26,9 @@ public abstract class ResourceProcessingCell : Cell
         _inputInventory = new InventoryCell(4, "Input");
         _processingInventory = new InventoryCell(inputItems.Length, "Processing");
         _outputInventory = new InventoryCell(4, "Output");
-        InitReservedSlots();
 
+        this.pickupCell = new ItemPickupCell(inputItems, this.InputInventory);
+        InitReservedSlots();
         base.Setup(owner);
     }
 
@@ -40,36 +42,10 @@ public abstract class ResourceProcessingCell : Cell
         }
         lastUpdateTime = Time.time;
 
-        PickupFromConveyor();
+        this.pickupCell.Update();
         TransferToProcessing();
         Process();
         PlaceOutputOnConveyor();
-    }
-
-    private void PickupFromConveyor()
-    {
-        foreach (ItemType itemType in inputItems)
-        {
-            foreach (ConveyorCell.Belt belt in this.Owner.ConveyorCell.InputBelts.Values)
-            {
-                var furthestResource = this.Owner.ConveyorCell.GetFurthestAlongResourceOfType(belt, itemType);
-                if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
-                {
-                    if (furthestResource.ItemInst.Item.Type == itemType && InputInventory.CanAcceptItem(itemType))
-                    {
-                        Item item = furthestResource.ItemInst.Item;
-                        InputInventory.AddItem(item);
-                        GameObject.Destroy(furthestResource.ItemInst.gameObject);
-                        this.Owner.ConveyorCell.RemoveItem(belt, item.Id);
-                    }
-                    else
-                    {
-                        furthestResource.IsPaused = true;
-                    }
-                }
-            }
-
-        }
     }
 
     private void TransferToProcessing()
