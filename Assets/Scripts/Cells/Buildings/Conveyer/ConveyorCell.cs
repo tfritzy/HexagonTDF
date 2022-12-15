@@ -102,6 +102,15 @@ public class ConveyorCell : Cell
         while (currentItem != null)
         {
             ItemOnBelt iterRes = currentItem.Value;
+
+            if (currentItem.Value.ItemInst == null)
+            {
+                Debug.LogWarning("Removing item from belt that wasn't properly disposed");
+                belt.Items.Remove(currentItem);
+                currentItem = currentItem.Next;
+                continue;
+            }
+
             if (iterRes.CurrentPathPoint < belt.Points.Count - 1)
             {
                 if (!iterRes.IsPaused)
@@ -219,6 +228,11 @@ public class ConveyorCell : Cell
         return maxResource;
     }
 
+    public ItemOnBelt GetFurthestAlongResource(Belt belt)
+    {
+        return belt.Items.Last?.Value;
+    }
+
     public void RemoveItem(Belt belt, Guid itemId)
     {
         var node = belt.Items.First;
@@ -317,6 +331,11 @@ public class ConveyorCell : Cell
         if (conveyor.OutputBelt?.Points.Count > 0)
         {
             points.AddRange(conveyor.OutputBelt.Points);
+        }
+
+        for (int i = 0; i < points.Count; i++)
+        {
+            points[i] += Vector3.up * .2f;
         }
 
         conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;

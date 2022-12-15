@@ -91,24 +91,24 @@ public class HexagonMono : MonoBehaviour, Interactable
             materialCache[this.hexagon.Biome] = new Dictionary<int, Material[]>();
         }
 
-        this.colorVaryIndex = Random.Range(1, 4);
+        this.colorVaryIndex = 0; //Random.Range(1, 4);
 
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
             Color ColorAfterVariance = ColorExtensions.VaryBy(this.hexagon.BaseColor, this.colorVaryIndex * this.hexagon.MaxColorVariance);
             Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
             newBase.color = ColorAfterVariance;
-            // Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            // newTexture.SetPixel(0, 0, ColorAfterVariance);
-            // newTexture.Apply();
-            // newBase.mainTexture = newTexture;
+            // // Texture2D newTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            // // newTexture.SetPixel(0, 0, ColorAfterVariance);
+            // // newTexture.Apply();
+            // // newBase.mainTexture = newTexture;
 
-            Material newHighlight = new Material(Prefabs.GetMaterial(MaterialType.Base));
-            newHighlight.color = ColorExtensions.VaryBy(ColorAfterVariance, -.15f);
-            // Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            // darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
-            // darkerTexture.Apply();
-            // newHighlight.mainTexture = darkerTexture;
+            Material newHighlight = this.transform.Find("hex/border").GetComponent<MeshRenderer>().material;
+            newHighlight.color = ColorExtensions.VaryBy(ColorAfterVariance, -.03f);
+            // // Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            // // darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
+            // // darkerTexture.Apply();
+            // // newHighlight.mainTexture = darkerTexture;
 
             materialCache[this.hexagon.Biome][this.colorVaryIndex] = new Material[] { newBase, newHighlight };
         }

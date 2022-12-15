@@ -12,7 +12,7 @@ public class Assembler : Building
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
     private ResourceProcessingCell assemblingCell;
-    
+
     protected override void Setup()
     {
         lifeCell = new AssemblerLifeCell();

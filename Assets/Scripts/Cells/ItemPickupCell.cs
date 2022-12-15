@@ -42,6 +42,12 @@ public class ItemPickupCell : Cell
                         intoInventory.AddItem(item);
                         conveyorCell.RemoveItem(belt, item.Id);
                         GameObject.Destroy(furthestResource.ItemInst.gameObject);
+
+                        var newFurthest = conveyorCell.GetFurthestAlongResource(belt);
+                        if (newFurthest != null && newFurthest.ProgressAlongPath > .2f)
+                        {
+                            newFurthest.IsPaused = true;
+                        }
                     }
                     else
                     {

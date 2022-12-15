@@ -59,6 +59,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: hex
       objectReference: {fileID: 0}
+    - target: {fileID: 6318142969715813900, guid: 814af914f78801246a41152df3f8257e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6693858825201169590, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -69,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6693858825201169590, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.07
+      value: -0.237
       objectReference: {fileID: 0}
     - target: {fileID: 6693858825201169590, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_LocalPosition.z

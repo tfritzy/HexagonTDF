@@ -28,25 +28,8 @@ public class GameInputMode : InputMode
         {
             CharacterSelectionDrawer drawer = (CharacterSelectionDrawer)Managers.UI.GetPage(Page.CharacterSelectionDrawer);
             Character character = selectedCharacter;
-            List<InventoryCell> cells = new List<InventoryCell>();
-            if (character.ResourceCollectionCell != null)
-            {
-                cells.Add(character.ResourceCollectionCell.Inventory);
-            }
 
-            if (character.ResourceProcessingCell != null)
-            {
-                cells.Add(character.ResourceProcessingCell.InputInventory);
-                cells.Add(character.ResourceProcessingCell.ProcessingInventory);
-                cells.Add(character.ResourceProcessingCell.OutputInventory);
-            }
-
-            if (character.InventoryCell != null)
-            {
-                cells.Add(character.InventoryCell);
-            }
-
-            drawer.Update(selectedCharacter.Name, cells);
+            drawer.Update(selectedCharacter.Name, selectedCharacter);
         }
     }
 }

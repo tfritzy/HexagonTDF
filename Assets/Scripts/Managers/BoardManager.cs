@@ -12,6 +12,7 @@ public class BoardManager : MonoBehaviour
     private RectInt Dimensions;
     private const float HEX_HEIGHT = .5f;
     private OverworldSegment CurrentSegment;
+    private const int WaterHeight = 2;
 
     void Awake()
     {
@@ -32,7 +33,7 @@ public class BoardManager : MonoBehaviour
     {
         if (GameState.SelectedSegment == null)
         {
-            CurrentSegment = OverworldTerrainGenerator.GenerateSingleSegment(25, 35, UnityEngine.Random.Range(0, 10));
+            CurrentSegment = OverworldTerrainGenerator.GenerateSingleSegment(25, 25, UnityEngine.Random.Range(0, 10));
         }
         else
         {
@@ -87,8 +88,12 @@ public class BoardManager : MonoBehaviour
         this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
         this.Hexagons[x, y].Height = point.Height;
         this.Hexagons[x, y].name = point.Height.ToString();
-        this.Hexagons[x, y].MaybeSpawnObstacle(segmentIndex);
         this.SetSideData(go, point.Height, x, y);
+
+        if (point.Height > WaterHeight)
+        {
+            this.Hexagons[x, y].MaybeSpawnObstacle(segmentIndex);
+        }
     }
 
     // Injects side data into the hex to be used for ambient occlusion
@@ -199,5 +204,11 @@ public class BoardManager : MonoBehaviour
     public void AddBuilding(Vector2Int pos, Building building)
     {
         this.Buildings[pos.x, pos.y] = building;
+    }
+
+    public void DestroyBuilding(Building building)
+    {
+        this.Buildings[building.GridPosition.x, building.GridPosition.y] = null;
+        Destroy(building.gameObject);
     }
 }
