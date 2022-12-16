@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
+    <ui:VisualElement name="BuildConfirmation" style="flex-direction: row; justify-content: center; align-items: auto; position: absolute;">
+        <ui:Button display-tooltip-when-elided="true" text="Cancel" name="Cancel" class="wide-button" style="margin-right: 25px;" />
+        <ui:Button text="Build" name="Confirm" class="wide-button" />
+    </ui:VisualElement>
+</ui:UXML>

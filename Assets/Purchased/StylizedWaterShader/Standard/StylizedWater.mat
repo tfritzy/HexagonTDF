@@ -59,7 +59,7 @@ Material:
     - _MainFoamOpacity: 0.195
     - _MainFoamScale: 1
     - _MainFoamSpeed: 0.2
-    - _Opacity: 0.377
+    - _Opacity: 0.251
     - _OpacityDepth: -49.71
     - _RealTimeReflection: 0
     - _ReflectionsIntensity: 1.33
@@ -79,7 +79,7 @@ Material:
     - _WaveDistortionIntensity: 0.59
     - _WavesAmplitude: 3.74
     - _WavesDirection: 77
-    - _WavesIntensity: 1.97
+    - _WavesIntensity: 0.1
     - _WavesSpeed: 1
     m_Colors:
     - _DepthGradient1: {r: 0.4156825, g: 0.6392157, b: 0.9058824, a: 1}

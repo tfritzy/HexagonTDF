@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     private Dictionary<Page, UIPage> Pages;
+    private Dictionary<Hoverer, UIHoverer> Hoverers;
     private Stack<Page> History;
 
     void OnEnable()
@@ -18,6 +19,11 @@ public class UI : MonoBehaviour
             {Page.ActionDrawer, new ActionDrawer(root.Q<VisualElement>("ActionDrawer"))},
             {Page.BuildDrawer, new BuildDrawer(root.Q<VisualElement>("BuildDrawer"))},
             {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
+        };
+
+        Hoverers = new Dictionary<Hoverer, UIHoverer>()
+        {
+            {Hoverer.BuildConfirmation, new BuildConfirmation(root.Q<VisualElement>("BuildConfirmation"))}
         };
 
         ShowPage(Page.ActionDrawer);
@@ -38,6 +44,18 @@ public class UI : MonoBehaviour
                 Pages[iterPage].Hide();
             }
         }
+    }
+
+    public UIHoverer ShowHoverer(Hoverer hoverer, Transform target)
+    {
+        Hoverers[hoverer].SetTarget(target);
+        Hoverers[hoverer].Show();
+        return Hoverers[hoverer];
+    }
+
+    public void HideHoverer(UIHoverer hoverer)
+    {
+        hoverer.Hide();
     }
 
     public void Back()

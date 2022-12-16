@@ -72,6 +72,11 @@ public class InputManager : MonoBehaviour
 
     private void RaycastAndInteract(Vector3? inputPos, int layer)
     {
+        if (Helpers.IsPointerOverUI())
+        {
+            return;
+        }
+
         Ray ray = Managers.Camera.ScreenPointToRay(inputPos.Value);
         RaycastHit[] hits = Physics.RaycastAll(
             ray,
@@ -79,7 +84,7 @@ public class InputManager : MonoBehaviour
             layer,
             QueryTriggerInteraction.Collide);
         Array.Sort(hits, (RaycastHit h1, RaycastHit h2) => h1.distance.CompareTo(h2.distance));
-        
+
         List<HexagonMono> hexes =
             hits.Select((RaycastHit hit) => hit.collider.transform.parent?.gameObject.GetComponent<HexagonMono>())
             .ToList();
