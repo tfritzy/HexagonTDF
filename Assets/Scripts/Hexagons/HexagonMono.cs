@@ -104,7 +104,7 @@ public class HexagonMono : MonoBehaviour, Interactable
             // // newBase.mainTexture = newTexture;
 
             Material newHighlight = this.transform.Find("hex/border").GetComponent<MeshRenderer>().material;
-            newHighlight.color = ColorExtensions.VaryBy(ColorAfterVariance, -.03f);
+            newHighlight.color = ColorExtensions.VaryBy(ColorAfterVariance, -.1f);
             // // Texture2D darkerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             // // darkerTexture.SetPixel(0, 0, ColorExtensions.VaryBy(ColorAfterVariance, -.15f));
             // // darkerTexture.Apply();
