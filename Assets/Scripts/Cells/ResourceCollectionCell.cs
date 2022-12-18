@@ -4,6 +4,8 @@ using UnityEngine;
 public abstract class ResourceCollectionCell : Cell
 {
     public abstract Dictionary<ItemType, float> SecondsPerResourceCollection { get; }
+    public abstract Dictionary<Biome, ItemType> BiomesCollectedFrom { get; }
+    public virtual int CollectionRange => 1;
     public virtual InventoryCell Inventory => outputInventory;
     private InventoryCell outputInventory;
 

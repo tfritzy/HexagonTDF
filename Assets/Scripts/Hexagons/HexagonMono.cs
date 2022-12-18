@@ -15,6 +15,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected List<MeshRenderer> meshRenderers;
 
     private MeshRenderer hexMesh;
+    private MeshRenderer border;
     private static Dictionary<Biome, Dictionary<int, Material[]>> materialCache;
 
     public void SetType(Hexagon hexagon)
@@ -30,6 +31,7 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected virtual void Setup()
     {
         this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
+        this.border = this.hexMesh.transform.Find("border").GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
     }
@@ -58,6 +60,11 @@ public class HexagonMono : MonoBehaviour, Interactable
     public void SetMaterial(Material material)
     {
         this.hexMesh.material = material;
+    }
+
+    public void SetBorderMaterial(Material material)
+    {
+        this.border.material = material;
     }
 
     public void ResetMaterial()

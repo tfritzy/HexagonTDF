@@ -10,4 +10,13 @@ public class MinerResourceCollectionCell : ResourceCollectionCell
         }
     };
     public override Dictionary<ItemType, float> SecondsPerResourceCollection => resourceCollection;
+
+    private Dictionary<Biome, ItemType> _biomeCollection = new Dictionary<Biome, ItemType>
+    {
+        {
+            Biome.Mountain,
+            ItemType.Rock
+        }
+    };
+    public override Dictionary<Biome, ItemType> BiomesCollectedFrom => _biomeCollection;
 }

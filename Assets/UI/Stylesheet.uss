@@ -152,5 +152,13 @@
     width: 200px;
     height: 75px;
     font-size: 35px;
-    color: rgba(217, 217, 217, 255);
+    color: rgb(217, 217, 217);
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

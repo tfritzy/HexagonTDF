@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class UIHoverer
+public abstract class UIHoverer
 {
-    protected VisualElement Root;
+    public VisualElement Root;
+    public abstract Hoverer Type { get; }
     private Transform Target;
 
     private static Vector3 Down = new Vector3(0, 1, 0);
@@ -12,7 +13,7 @@ public class UIHoverer
     public UIHoverer(VisualElement root)
     {
         this.Root = root;
-        Hide();
+        // Hide();
     }
 
     public void Show()
@@ -44,6 +45,6 @@ public class UIHoverer
             Managers.Camera);
         Root.transform.position = ((Vector3)newPosition) +
             Left * (Root.layout.width / 2) +
-            Down * (Root.layout.height + Root.layout.height / 5);
+            Down * (Root.layout.height / 2);
     }
 }

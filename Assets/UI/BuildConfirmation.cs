@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 
 public class BuildConfirmation : UIHoverer
 {
+    public override Hoverer Type => Hoverer.BuildConfirmation;
     private Action onConfirm;
     private Action onCancel;
     private Button ConfirmButton { get; set; }
@@ -10,11 +11,23 @@ public class BuildConfirmation : UIHoverer
 
     public BuildConfirmation(VisualElement root) : base(root)
     {
-        ConfirmButton = root.Q<Button>("Confirm");
-        CancelButton = root.Q<Button>("Cancel");
+        root.style.position = new StyleEnum<Position>(Position.Absolute);
 
+        ConfirmButton = new Button();
+        ConfirmButton.AddToClassList("wide-button");
         ConfirmButton.clicked += Confirm;
+        ConfirmButton.text = "Build";
+        ConfirmButton.style.display = DisplayStyle.Flex;
+        root.Add(ConfirmButton);
+
+        CancelButton = new Button();
+        CancelButton.AddToClassList("wide-button");
         CancelButton.clicked += Cancel;
+        CancelButton.text = "Cancel";
+        CancelButton.style.display = DisplayStyle.Flex;
+        root.Add(CancelButton);
+
+        this.Show();
     }
 
     public void Init(Action onConfirm, Action onCancel)

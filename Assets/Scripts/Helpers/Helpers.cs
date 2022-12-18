@@ -229,4 +229,26 @@ public static class Helpers
             }
         }
     }
+
+    public static List<Vector2Int> GetHexesInRange(Vector2Int startPos, int range)
+    {
+        if (range > 1)
+        {
+            throw new NotImplementedException("Sorry I'm lazy");
+        }
+
+        if (range == 0)
+        {
+            return new List<Vector2Int> { startPos };
+        }
+        else
+        {
+            List<Vector2Int> hexes = new List<Vector2Int>();
+            for (int i = 0; i < 6; i++)
+            {
+                hexes.Add(GetNeighborPosition(startPos, (HexSide)i));
+            }
+            return hexes;
+        }
+    }
 }
