@@ -6,28 +6,21 @@ public class BuildConfirmation : UIHoverer
     public override Hoverer Type => Hoverer.BuildConfirmation;
     private Action onConfirm;
     private Action onCancel;
-    private Button ConfirmButton { get; set; }
-    private Button CancelButton { get; set; }
-
-    public BuildConfirmation(VisualElement root) : base(root)
+    public BuildConfirmation()
     {
-        root.style.position = new StyleEnum<Position>(Position.Absolute);
+        this.style.position = new StyleEnum<Position>(Position.Absolute);
 
-        ConfirmButton = new Button();
-        ConfirmButton.AddToClassList("wide-button");
-        ConfirmButton.clicked += Confirm;
-        ConfirmButton.text = "Build";
-        ConfirmButton.style.display = DisplayStyle.Flex;
-        root.Add(ConfirmButton);
+        var confirmButton = new Button();
+        confirmButton.AddToClassList("wide-button");
+        confirmButton.clicked += Confirm;
+        confirmButton.text = "Build";
+        this.Add(confirmButton);
 
-        CancelButton = new Button();
-        CancelButton.AddToClassList("wide-button");
-        CancelButton.clicked += Cancel;
-        CancelButton.text = "Cancel";
-        CancelButton.style.display = DisplayStyle.Flex;
-        root.Add(CancelButton);
-
-        this.Show();
+        var cancelButton = new Button();
+        cancelButton.AddToClassList("wide-button");
+        cancelButton.clicked += Cancel;
+        cancelButton.text = "Cancel";
+        this.Add(cancelButton);
     }
 
     public void Init(Action onConfirm, Action onCancel)

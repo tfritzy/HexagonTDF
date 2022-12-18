@@ -12,7 +12,7 @@ public class StoneCarver : Building
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
     private ResourceProcessingCell resourceProcessingCell;
-    protected override void Setup()
+    public override void Setup()
     {
         lifeCell = new StoneCarverLifeCell();
         resourceProcessingCell = new StoneCarverResourceProcessingCell();

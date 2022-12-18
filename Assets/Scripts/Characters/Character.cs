@@ -52,7 +52,7 @@ public abstract class Character : MonoBehaviour
         Setup();
     }
 
-    protected virtual void Setup()
+    public virtual void Setup()
     {
         this.Collider = this.GetComponent<Collider>();
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();

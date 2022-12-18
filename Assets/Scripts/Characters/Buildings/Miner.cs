@@ -12,7 +12,7 @@ public class Miner : Building
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
     private ResourceCollectionCell resourceCollectionCell;
-    protected override void Setup()
+    public override void Setup()
     {
         lifeCell = new MinerLifeCell();
         resourceCollectionCell = new MinerResourceCollectionCell();

@@ -6,13 +6,14 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     private Dictionary<Page, UIPage> Pages;
-    private Dictionary<Hoverer, UIHoverer> Hoverers;
+    private Dictionary<Hoverer, Stack<UIHoverer>> Hoverers;
     private Stack<Page> History;
+    private VisualElement root;
 
     void OnEnable()
     {
         History = new Stack<Page>();
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        root = GetComponent<UIDocument>().rootVisualElement;
 
         Pages = new Dictionary<Page, UIPage>()
         {
@@ -21,9 +22,9 @@ public class UI : MonoBehaviour
             {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
         };
 
-        Hoverers = new Dictionary<Hoverer, UIHoverer>()
+        Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>()
         {
-            {Hoverer.BuildConfirmation, new BuildConfirmation(root.Q<VisualElement>("BuildConfirmation"))}
+            {Hoverer.BuildConfirmation, new Stack<UIHoverer>()}
         };
 
         ShowPage(Page.ActionDrawer);
@@ -48,14 +49,38 @@ public class UI : MonoBehaviour
 
     public UIHoverer ShowHoverer(Hoverer hoverer, Transform target)
     {
-        Hoverers[hoverer].SetTarget(target);
-        Hoverers[hoverer].Show();
-        return Hoverers[hoverer];
+        UIHoverer toShow;
+        if (Hoverers[hoverer].Count > 0)
+        {
+            toShow = Hoverers[hoverer].Pop();
+            toShow.Show();
+        }
+        else
+        {
+            toShow = BuildHoverer(hoverer);
+        }
+        toShow.SetTarget(target);
+        toShow.Update();
+        return toShow;
+    }
+
+    private UIHoverer BuildHoverer(Hoverer hoverer)
+    {
+        switch (hoverer)
+        {
+            case (Hoverer.BuildConfirmation):
+                BuildConfirmation confirmation = new BuildConfirmation();
+                root.Add(confirmation);
+                return confirmation;
+            default:
+                throw new System.Exception("Unknown hoverer: " + hoverer);
+        }
     }
 
     public void HideHoverer(UIHoverer hoverer)
     {
         hoverer.Hide();
+        Hoverers[hoverer.Type].Push(hoverer);
     }
 
     public void Back()

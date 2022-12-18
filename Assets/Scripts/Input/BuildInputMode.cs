@@ -11,6 +11,7 @@ public class BuildInputMode : InputMode
 
     private BuildConfirmation previewHoverer;
     private GameObject previewBuilding;
+    private Vector2Int previewPosition;
 
     public enum BuildInputState
     {
@@ -40,13 +41,49 @@ public class BuildInputMode : InputMode
             return;
         }
 
+        if (this.State == BuildInputState.PreviewingBuilding)
+        {
+            ExitPreviewState();
+        }
+
         this.CreatePreviewBuilding(hex, type);
-        this.previewHoverer = (BuildConfirmation)Managers.UI.ShowHoverer(Hoverer.BuildConfirmation, this.previewBuilding.transform);
+        this.HighlightResourceHexes(hex, type);
+        this.previewPosition = hex.GridPosition;
+        this.previewHoverer = (BuildConfirmation)Managers.UI.ShowHoverer(
+            Hoverer.BuildConfirmation,
+            this.previewBuilding.transform);
         ((BuildConfirmation)previewHoverer).Init(
             () => BuildBuilding(hex, type),
             () => ExitPreviewState()
         );
         this.State = BuildInputState.PreviewingBuilding;
+    }
+
+    private void HighlightResourceHexes(HexagonMono hex, BuildingType type)
+    {
+        var building = this.previewBuilding.GetComponent<Building>();
+        if (building.ResourceCollectionCell == null)
+        {
+            return;
+        }
+
+        foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, 1))
+        {
+            var iHex = Managers.Board.GetHex(pos);
+
+            if (building.ResourceCollectionCell.BiomesCollectedFrom.ContainsKey(iHex.Biome))
+            {
+                iHex.SetBorderMaterial(Prefabs.GetMaterial(MaterialType.Gold));
+            }
+        }
+    }
+
+    private void ResetHighlightedHexes(Vector2Int centerPos)
+    {
+        foreach (Vector2Int pos in Helpers.GetHexesInRange(centerPos, 1))
+        {
+            Managers.Board.GetHex(pos)?.ResetMaterial();
+        }
     }
 
     private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)
@@ -66,6 +103,7 @@ public class BuildInputMode : InputMode
             hex.transform.position,
             Prefabs.GetBuilding(type).transform.rotation);
         Building building = previewBuilding.GetComponent<Building>();
+        building.GetComponent<Building>().Setup();
         building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
     }
 
@@ -73,6 +111,7 @@ public class BuildInputMode : InputMode
     {
         GameObject.Destroy(previewBuilding);
         Managers.UI.HideHoverer(this.previewHoverer);
+        ResetHighlightedHexes(this.previewPosition);
         this.State = BuildInputState.Default;
     }
 

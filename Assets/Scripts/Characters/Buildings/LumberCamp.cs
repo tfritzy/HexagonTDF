@@ -12,7 +12,7 @@ public class LumberCamp : Building
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
     private ResourceCollectionCell resourceCollectionCell;
-    protected override void Setup()
+    public override void Setup()
     {
         lifeCell = new LumberCampLifeCell();
         resourceCollectionCell = new LumberCampResourceCollectionCell();

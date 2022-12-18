@@ -13,7 +13,7 @@ public class Conveyor : Building
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
-    protected override void Setup()
+    public override void Setup()
     {
         lifeCell = new ConveyorLifeCell();
         conveyorCell = new ConveyorCell(false);

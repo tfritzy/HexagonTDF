@@ -3,7 +3,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class InventoryUI : VisualElement {
+public class InventoryUI : VisualElement
+{
     private Label NameLabel;
     private VisualElement itemsContainer;
     private List<InventorySlotUI> itemSlots;

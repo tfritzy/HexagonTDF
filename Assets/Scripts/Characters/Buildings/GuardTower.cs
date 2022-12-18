@@ -15,7 +15,7 @@ public class GuardTower : Building
     private InventoryCell _inventoryCell;
     private ConveyorCell _conveyorCell;
 
-    protected override void Setup()
+    public override void Setup()
     {
         _lifeCell = new GuardTowerLifeCell();
         _inventoryCell = new InventoryCell(8);
