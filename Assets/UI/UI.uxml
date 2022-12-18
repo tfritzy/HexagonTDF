@@ -2,10 +2,8 @@
     <ui:Template name="ActionDrawer" src="project://database/Assets/UI/ActionDrawer.uxml?fileID=9197481963319205126&amp;guid=2392ef8d69659e44fb0372e9a29ce115&amp;type=3#ActionDrawer" />
     <ui:Template name="BuildMenu" src="project://database/Assets/UI/BuildDrawer.uxml?fileID=9197481963319205126&amp;guid=e2d8046498af45641b4265c9f90934cc&amp;type=3#BuildDrawer" />
     <ui:Template name="CharacterSelectionDrawer" src="project://database/Assets/UI/CharacterSelectionDrawer.uxml?fileID=9197481963319205126&amp;guid=e3f8da50d807fd04382f0754fd6747f3&amp;type=3#CharacterSelectionDrawer" />
-    <ui:Template name="BuildConfirmation" src="project://database/Assets/UI/BuildConfirmation.uxml?fileID=9197481963319205126&amp;guid=e49173272b94c2d418c69fe54e22680e&amp;type=3#BuildConfirmation" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
     <ui:Instance template="ActionDrawer" name="ActionDrawer" style="position: absolute; left: 0; right: 0; bottom: 0;" />
     <ui:Instance template="BuildMenu" name="BuildDrawer" style="position: absolute; left: 0; right: 0; bottom: 0;" />
     <ui:Instance template="CharacterSelectionDrawer" name="CharacterSelectionDrawer" style="left: 0; right: 0; bottom: 0; position: absolute;" />
-    <ui:Instance template="BuildConfirmation" name="BuildConfirmationContainer" style="position: absolute;" />
 </ui:UXML>

@@ -9,7 +9,8 @@ public class BuildInputMode : InputMode
     public BuildingType SelectedBuildingType;
     public BuildInputState State { get; private set; }
 
-    private BuildConfirmation previewHoverer;
+    private BuildConfirmation buildConfirmation;
+    private ResourceCollectionIndicator resourceCollectionIndicator;
     private GameObject previewBuilding;
     private Vector2Int previewPosition;
 
@@ -49,10 +50,10 @@ public class BuildInputMode : InputMode
         this.CreatePreviewBuilding(hex, type);
         this.HighlightResourceHexes(hex, type);
         this.previewPosition = hex.GridPosition;
-        this.previewHoverer = (BuildConfirmation)Managers.UI.ShowHoverer(
+        this.buildConfirmation = (BuildConfirmation)Managers.UI.ShowHoverer(
             Hoverer.BuildConfirmation,
             this.previewBuilding.transform);
-        ((BuildConfirmation)previewHoverer).Init(
+        ((BuildConfirmation)buildConfirmation).Init(
             () => BuildBuilding(hex, type),
             () => ExitPreviewState()
         );
@@ -66,6 +67,19 @@ public class BuildInputMode : InputMode
         {
             return;
         }
+
+        this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
+            Hoverer.ResourceCollectionIndicator,
+            this.previewBuilding.transform);
+
+        var collectionRates = new Dictionary<ItemType, float>()
+        {
+            {
+                building.ResourceCollectionCell.BiomesCollectedFrom.Values.First(),
+                building.ResourceCollectionCell.SecondsPerResourceCollection[building.ResourceCollectionCell.BiomesCollectedFrom.Values.First()]
+            },
+        };
+        this.resourceCollectionIndicator.Init(collectionRates);
 
         foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, 1))
         {
@@ -110,7 +124,8 @@ public class BuildInputMode : InputMode
     private void ExitPreviewState()
     {
         GameObject.Destroy(previewBuilding);
-        Managers.UI.HideHoverer(this.previewHoverer);
+        Managers.UI.HideHoverer(this.buildConfirmation);
+        Managers.UI.HideHoverer(this.resourceCollectionIndicator);
         ResetHighlightedHexes(this.previewPosition);
         this.State = BuildInputState.Default;
     }
@@ -135,9 +150,5 @@ public class BuildInputMode : InputMode
 
     public override void Update()
     {
-        if (this.State == BuildInputState.PreviewingBuilding)
-        {
-            this.previewHoverer.Update();
-        }
     }
 }

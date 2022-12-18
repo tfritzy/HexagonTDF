@@ -1,5 +1,5 @@
 public enum Hoverer
 {
     BuildConfirmation,
-    CollectFromHexIndicator,
+    ResourceCollectionIndicator,
 }

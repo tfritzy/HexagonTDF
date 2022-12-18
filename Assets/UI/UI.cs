@@ -9,6 +9,12 @@ public class UI : MonoBehaviour
     private Dictionary<Hoverer, Stack<UIHoverer>> Hoverers;
     private Stack<Page> History;
     private VisualElement root;
+    private List<UIHoverer> LentHoverers = new List<UIHoverer>();
+
+    [SerializeField]
+    private VisualTreeAsset BuildConfirmationPrefab;
+    [SerializeField]
+    private VisualTreeAsset ResourceCollectionIndicatorPrefab;
 
     void OnEnable()
     {
@@ -24,10 +30,19 @@ public class UI : MonoBehaviour
 
         Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>()
         {
-            {Hoverer.BuildConfirmation, new Stack<UIHoverer>()}
+            {Hoverer.BuildConfirmation, new Stack<UIHoverer>()},
+            {Hoverer.ResourceCollectionIndicator, new Stack<UIHoverer>()}
         };
 
         ShowPage(Page.ActionDrawer);
+    }
+
+    void Update()
+    {
+        foreach (UIHoverer hoverer in LentHoverers)
+        {
+            hoverer.Update();
+        }
     }
 
     public void ShowPage(Page page)
@@ -60,27 +75,33 @@ public class UI : MonoBehaviour
             toShow = BuildHoverer(hoverer);
         }
         toShow.SetTarget(target);
-        toShow.Update();
+        LentHoverers.Add(toShow);
         return toShow;
-    }
-
-    private UIHoverer BuildHoverer(Hoverer hoverer)
-    {
-        switch (hoverer)
-        {
-            case (Hoverer.BuildConfirmation):
-                BuildConfirmation confirmation = new BuildConfirmation();
-                root.Add(confirmation);
-                return confirmation;
-            default:
-                throw new System.Exception("Unknown hoverer: " + hoverer);
-        }
     }
 
     public void HideHoverer(UIHoverer hoverer)
     {
         hoverer.Hide();
         Hoverers[hoverer.Type].Push(hoverer);
+        LentHoverers.Remove(hoverer);
+    }
+
+    private UIHoverer BuildHoverer(Hoverer hoverer)
+    {
+        VisualElement clone;
+        switch (hoverer)
+        {
+            case (Hoverer.BuildConfirmation):
+                BuildConfirmation confirmation = new BuildConfirmation();
+                root.Add(confirmation);
+                return confirmation;
+            case (Hoverer.ResourceCollectionIndicator):
+                ResourceCollectionIndicator ci = new ResourceCollectionIndicator();
+                root.Add(ci);
+                return ci;
+            default:
+                throw new System.Exception("Unknown hoverer: " + hoverer);
+        }
     }
 
     public void Back()

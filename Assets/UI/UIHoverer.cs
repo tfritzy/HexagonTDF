@@ -4,10 +4,20 @@ using UnityEngine.UIElements;
 public abstract class UIHoverer : VisualElement
 {
     public abstract Hoverer Type { get; }
+    // Offset position around target in terms of percent of element size.
+    public abstract Vector2 Offset { get; }
     private Transform Target;
+    private int UpdateAfter1Frame = 0;
 
-    private static Vector3 Down = new Vector3(0, 1, 0);
-    private static Vector3 Left = new Vector3(-1, 0);
+    private static Vector3 Down = new Vector3(0, 1);
+    private static Vector3 Right = new Vector3(1, 0);
+
+    public UIHoverer()
+    {
+        this.style.position = new StyleEnum<Position>(Position.Absolute);
+        this.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
+        Update();
+    }
 
     public void Show()
     {
@@ -37,9 +47,17 @@ public abstract class UIHoverer : VisualElement
             Target.position,
             Managers.Camera);
         this.transform.position = ((Vector3)newPosition) +
-            Left * (this.layout.width / 2) +
-            Down * (this.layout.height / 2);
+            Right * (this.layout.width * Offset.x) +
+            Down * (this.layout.height * Offset.y);
 
-        this.MarkDirtyRepaint();
+        if (UpdateAfter1Frame == 1)
+        {
+            this.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
+        }
+
+        if (UpdateAfter1Frame < 3)
+        {
+            UpdateAfter1Frame += 1;
+        }
     }
 }
