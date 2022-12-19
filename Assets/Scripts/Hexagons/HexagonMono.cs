@@ -98,7 +98,7 @@ public class HexagonMono : MonoBehaviour, Interactable
             materialCache[this.hexagon.Biome] = new Dictionary<int, Material[]>();
         }
 
-        this.colorVaryIndex = 0; //Random.Range(1, 4);
+        this.colorVaryIndex = Random.Range(0, 3);
 
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
@@ -122,6 +122,6 @@ public class HexagonMono : MonoBehaviour, Interactable
 
         var materials = materialCache[this.hexagon.Biome][this.colorVaryIndex];
         this.hexMesh.material = materials[0];
-        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material = materials[1];
+        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material.color = ColorExtensions.VaryBy(this.hexagon.BaseColor, -.1f);
     }
 }
