@@ -16,7 +16,7 @@ public class LumberMill : Building
     {
         lifeCell = new LumberMillLifeCell();
         resourceProcessingCell = new LumberMillProcessingCell();
-        conveyorCell = new ConveyorCell(false);
+        conveyorCell = new ConveyorCell();
 
         base.Setup();
     }

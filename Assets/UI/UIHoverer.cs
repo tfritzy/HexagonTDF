@@ -43,9 +43,9 @@ public abstract class UIHoverer : VisualElement
         }
 
         Vector2 newPosition = RuntimePanelUtils.CameraTransformWorldToPanel(
-            this.panel,
-            Target.position,
-            Managers.Camera);
+                this.panel,
+                Target.position,
+                Managers.Camera);
         this.transform.position = ((Vector3)newPosition) +
             Right * (this.layout.width * Offset.x) +
             Down * (this.layout.height * Offset.y);

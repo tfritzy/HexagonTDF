@@ -126,6 +126,7 @@ public class BuildInputMode : InputMode
             hex.transform.position,
             Prefabs.GetBuilding(type).transform.rotation);
         Building building = previewBuilding.GetComponent<Building>();
+        building.Disabled = true;
         building.Init(hex.GridPosition);
         building.Setup();
         building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);

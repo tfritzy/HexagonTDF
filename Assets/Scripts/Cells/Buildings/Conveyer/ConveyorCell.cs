@@ -269,6 +269,11 @@ public class ConveyorCell : Cell
 
     private void SetupConveyorDirection()
     {
+        if (Owner.Disabled)
+        {
+            return;
+        }
+
         for (int i = 0; i < 6; i++)
         {
             Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);

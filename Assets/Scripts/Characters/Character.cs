@@ -15,9 +15,9 @@ public abstract class Character : MonoBehaviour
     public virtual ResourceProcessingCell ResourceProcessingCell => null;
     public virtual ItemPickupCell ItemPickupCell => null;
     public virtual InventoryCell InventoryCell => null;
+    public bool Disabled;
 
-    public Vector2Int GridPosition
-    { get; set; }
+    public Vector2Int GridPosition { get; set; }
     public Transform Body;
     public abstract Alliance Enemies { get; }
     public abstract Alliance Alliance { get; }
@@ -79,8 +79,13 @@ public abstract class Character : MonoBehaviour
         UpdateLoop();
     }
 
-    protected virtual void UpdateLoop()
+    protected void UpdateLoop()
     {
+        if (this.Disabled)
+        {
+            return;
+        }
+
         ApplyEffects();
         foreach (Cell cell in this.Cells)
         {

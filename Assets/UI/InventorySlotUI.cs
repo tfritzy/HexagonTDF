@@ -6,7 +6,8 @@ public class InventorySlotUI : Button
     private Item renderedItem;
     private ItemType? renderedReservedFor;
     private int? renderedQuantity;
-    private const string DISABLED_ICON = "disabled-item-background";
+    private Color tintColor = ColorExtensions.Create("#ECBCB3");
+    private Color emptyColor = ColorExtensions.Create("#ECBCB3", 128);
 
     public InventorySlotUI()
     {
@@ -24,14 +25,14 @@ public class InventorySlotUI : Button
             {
                 this.text = slot.Item.Quantity > 1 ? slot.Item.Quantity.ToString() : "";
                 this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.Item.Type));
-                this.RemoveFromClassList(DISABLED_ICON);
+                this.style.unityBackgroundImageTintColor = new StyleColor(tintColor);
             }
             else
             {
                 if (slot.ReservedFor != null)
                 {
                     this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.ReservedFor.Value));
-                    this.AddToClassList(DISABLED_ICON);
+                    this.style.unityBackgroundImageTintColor = new StyleColor(emptyColor);
                 }
                 else
                 {
