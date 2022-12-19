@@ -8,6 +8,7 @@ public class ResourceCollectionRow : VisualElement
     public ResourceCollectionRow()
     {
         this.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+        this.style.alignItems = new StyleEnum<Align>(Align.Center);
 
         amountResource = new Label();
         amountResource.AddToClassList("small-outlined-text");
