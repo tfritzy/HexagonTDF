@@ -168,7 +168,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Trees:
-  - {fileID: 919132149155446097, guid: ebf00eedfbcdd964fa922d8bcd7d5f33, type: 3}
   - {fileID: 919132149155446097, guid: 169e073b9ca217a40bdee34955c212fa, type: 3}
   DeadTrees:
   - {fileID: 919132149155446097, guid: b9971b7cbdd06d44ca89da185357ee6f, type: 3}

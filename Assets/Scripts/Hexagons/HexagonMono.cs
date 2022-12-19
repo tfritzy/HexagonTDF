@@ -98,7 +98,8 @@ public class HexagonMono : MonoBehaviour, Interactable
             materialCache[this.hexagon.Biome] = new Dictionary<int, Material[]>();
         }
 
-        this.colorVaryIndex = Random.Range(0, 3);
+        System.Random random = new System.Random(GridPosition.x * 7 + GridPosition.y * 31);
+        this.colorVaryIndex = random.Next(0, 3);
 
         if (!materialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {

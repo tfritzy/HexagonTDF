@@ -56,14 +56,14 @@ public abstract class ResourceCollectionCell : Cell
         }
         lastHarvestCheckTime = Time.time;
 
-        foreach (ItemType resource in this.BaseSecondsPerResource.Keys)
+        foreach (ItemType resource in this.SecondsPerResourceCollection.Keys)
         {
             if (!lastCollectionTimes.ContainsKey(resource))
             {
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (Time.time - lastCollectionTimes[resource] > BaseSecondsPerResource[resource] &&
+            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] &&
                 this.Inventory.CanAcceptItem(resource))
             {
                 Item item = ItemGenerator.Make(resource);

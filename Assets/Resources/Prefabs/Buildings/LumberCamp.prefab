@@ -5,13 +5,17 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1087157668119065083, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 56e0103ae7785954489e653d6db12f23, type: 2}
+    - target: {fileID: 4154692406967396742, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b97f1e1ec4a4bfe4aba717b76462696f, type: 2}
     - target: {fileID: 7893943749769452295, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
       propertyPath: m_Name
       value: LumberCamp
@@ -62,7 +66,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2392763494621243339, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7893943749769452295, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 743657502707327587}
   m_SourcePrefab: {fileID: 100100000, guid: a5854f0f52242fc46955a57ae8316e94, type: 3}
 --- !u!1 &3966687089127078549 stripped
 GameObject:

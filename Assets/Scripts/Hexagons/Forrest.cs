@@ -13,13 +13,15 @@ public class Forrest : ObstacleHexagon
 
     public override GameObject GetObstacle(System.Random random)
     {
-        if (random.NextDouble() <= liveTreeChance)
-        {
-            return Managers.Prefabs.Trees[random.Next(0, Managers.Prefabs.Trees.Length)];
-        }
-        else
-        {
-            return Managers.Prefabs.DeadTrees[random.Next(0, Managers.Prefabs.DeadTrees.Length)];
-        }
+        return Managers.Prefabs.Trees[random.Next(0, Managers.Prefabs.Trees.Length)];
+
+        // if (random.NextDouble() <= liveTreeChance)
+        // {
+        //     return Managers.Prefabs.Trees[random.Next(0, Managers.Prefabs.Trees.Length)];
+        // }
+        // else
+        // {
+        //     return Managers.Prefabs.DeadTrees[random.Next(0, Managers.Prefabs.DeadTrees.Length)];
+        // }
     }
 }

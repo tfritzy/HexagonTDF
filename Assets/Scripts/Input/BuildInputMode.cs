@@ -26,7 +26,14 @@ public class BuildInputMode : InputMode
 
         if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
         {
-            OpenBuildConfirmation(hexes.First(), SelectedBuildingType);
+            if (Prefabs.GetBuilding(SelectedBuildingType).GetComponent<Building>().RequiresConfirmationToBuild)
+            {
+                OpenBuildConfirmation(hexes.First(), SelectedBuildingType);
+            }
+            else
+            {
+                BuildBuilding(hexes.First(), SelectedBuildingType);
+            }
         }
     }
 
@@ -81,6 +88,11 @@ public class BuildInputMode : InputMode
         foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, building.ResourceCollectionCell.CollectionRange))
         {
             var iHex = Managers.Board.GetHex(pos);
+
+            if (iHex == null)
+            {
+                continue;
+            }
 
             if (building.ResourceCollectionCell.BiomesCollectedFrom.ContainsKey(iHex.Biome))
             {
