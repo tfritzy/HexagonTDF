@@ -68,20 +68,17 @@ public class BuildInputMode : InputMode
             return;
         }
 
-        this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
-            Hoverer.ResourceCollectionIndicator,
-            this.previewBuilding.transform);
 
-        var collectionRates = new Dictionary<ItemType, float>()
+        if (building.ResourceCollectionCell.SecondsPerResourceCollection.Count > 0)
         {
-            {
-                building.ResourceCollectionCell.BiomesCollectedFrom.Values.First(),
-                building.ResourceCollectionCell.SecondsPerResourceCollection[building.ResourceCollectionCell.BiomesCollectedFrom.Values.First()]
-            },
-        };
-        this.resourceCollectionIndicator.Init(collectionRates);
+            this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
+                Hoverer.ResourceCollectionIndicator,
+                this.previewBuilding.transform);
 
-        foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, 1))
+            this.resourceCollectionIndicator.Init(building.ResourceCollectionCell.SecondsPerResourceCollection);
+        }
+
+        foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, building.ResourceCollectionCell.CollectionRange))
         {
             var iHex = Managers.Board.GetHex(pos);
 
@@ -117,7 +114,8 @@ public class BuildInputMode : InputMode
             hex.transform.position,
             Prefabs.GetBuilding(type).transform.rotation);
         Building building = previewBuilding.GetComponent<Building>();
-        building.GetComponent<Building>().Setup();
+        building.Init(hex.GridPosition);
+        building.Setup();
         building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
     }
 

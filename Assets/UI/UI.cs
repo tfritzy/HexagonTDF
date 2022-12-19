@@ -81,6 +81,11 @@ public class UI : MonoBehaviour
 
     public void HideHoverer(UIHoverer hoverer)
     {
+        if (hoverer == null)
+        {
+            return;
+        }
+
         hoverer.Hide();
         Hoverers[hoverer.Type].Push(hoverer);
         LentHoverers.Remove(hoverer);

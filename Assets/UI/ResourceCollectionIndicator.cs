@@ -8,7 +8,7 @@ public class ResourceCollectionIndicator : UIHoverer
     public override Vector2 Offset => _offset;
     private Vector2 _offset = new Vector2(.5f, -.5f);
     private VisualElement verticalGroup;
-    private List<VisualElement> horizontalGroups = new List<VisualElement>();
+    private List<ResourceCollectionRow> horizontalGroups = new List<ResourceCollectionRow>();
 
     public ResourceCollectionIndicator()
     {
@@ -20,9 +20,8 @@ public class ResourceCollectionIndicator : UIHoverer
     {
         VisualElement horizontalGroup = new VisualElement();
         horizontalGroup.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
-
         Label amountResource = new Label();
-        amountResource.text = collectionRate.ToString("n2");
+        amountResource.text = collectionRate.ToString("n2") + "s /";
         amountResource.AddToClassList("small-outlined-text");
         horizontalGroup.Add(amountResource);
 
@@ -31,19 +30,23 @@ public class ResourceCollectionIndicator : UIHoverer
         icon.AddToClassList("resource-collection-hoverer--inline-icon");
         horizontalGroup.Add(icon);
 
-        Label perSecond = new Label();
-        perSecond.text = "/s";
-        perSecond.AddToClassList("small-outlined-text");
-        horizontalGroup.Add(perSecond);
-
         return horizontalGroup;
     }
 
     public void Init(Dictionary<ItemType, float> collectionRates)
     {
+        int i = 0;
         foreach (ItemType itemType in collectionRates.Keys)
         {
-            verticalGroup.Add(MakeResourceRow(itemType, collectionRates[itemType]));
+            if (horizontalGroups.Count <= i)
+            {
+                var row = new ResourceCollectionRow();
+                horizontalGroups.Add(row);
+                verticalGroup.Add(row);
+            }
+
+            horizontalGroups[i].Setup(itemType, collectionRates[itemType]);
+            i += 1;
         }
     }
 }

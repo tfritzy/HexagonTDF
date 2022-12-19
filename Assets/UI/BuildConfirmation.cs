@@ -6,7 +6,7 @@ public class BuildConfirmation : UIHoverer
 {
     public override Hoverer Type => Hoverer.BuildConfirmation;
     public override Vector2 Offset => _offset;
-    private Vector2 _offset = new Vector2(-.5f, 1f);
+    private Vector2 _offset = new Vector2(-.5f, .5f);
 
     private Action onConfirm;
     private Action onCancel;

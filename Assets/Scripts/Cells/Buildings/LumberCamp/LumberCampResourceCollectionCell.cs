@@ -9,7 +9,7 @@ public class LumberCampResourceCollectionCell : ResourceCollectionCell
             6
         }
     };
-    public override Dictionary<ItemType, float> SecondsPerResourceCollection => resourceCollection;
+    public override Dictionary<ItemType, float> BaseSecondsPerResource => resourceCollection;
 
     private Dictionary<Biome, ItemType> _biomeCollection = new Dictionary<Biome, ItemType>
     {

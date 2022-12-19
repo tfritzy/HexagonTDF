@@ -3,7 +3,9 @@ using UnityEngine;
 
 public abstract class ResourceCollectionCell : Cell
 {
-    public abstract Dictionary<ItemType, float> SecondsPerResourceCollection { get; }
+    public abstract Dictionary<ItemType, float> BaseSecondsPerResource { get; }
+    public Dictionary<ItemType, float> SecondsPerResourceCollection => _secondsPerResource;
+    private Dictionary<ItemType, float> _secondsPerResource;
     public abstract Dictionary<Biome, ItemType> BiomesCollectedFrom { get; }
     public virtual int CollectionRange => 1;
     public virtual InventoryCell Inventory => outputInventory;
@@ -11,14 +13,37 @@ public abstract class ResourceCollectionCell : Cell
 
     public override void Setup(Character character)
     {
-        outputInventory = new InventoryCell(3, "Inventory");
-
         base.Setup(character);
+        outputInventory = new InventoryCell(3, "Inventory");
+        InitCollectionRates();
     }
 
     public override void Update()
     {
         HarvestResources();
+    }
+
+    private void InitCollectionRates()
+    {
+        _secondsPerResource = new Dictionary<ItemType, float>();
+        foreach (Vector2Int pos in Helpers.GetHexesInRange(this.Owner.GridPosition, this.CollectionRange))
+        {
+            var hex = Managers.Board.GetHex(pos);
+
+            if (hex != null && BiomesCollectedFrom.ContainsKey(hex.Biome))
+            {
+                ItemType collectedItem = BiomesCollectedFrom[hex.Biome];
+
+                if (!SecondsPerResourceCollection.ContainsKey(collectedItem))
+                {
+                    SecondsPerResourceCollection[collectedItem] = BaseSecondsPerResource[collectedItem];
+                }
+                else
+                {
+                    SecondsPerResourceCollection[collectedItem] *= .75f;
+                }
+            }
+        }
     }
 
     private float lastHarvestCheckTime;
@@ -31,14 +56,14 @@ public abstract class ResourceCollectionCell : Cell
         }
         lastHarvestCheckTime = Time.time;
 
-        foreach (ItemType resource in this.SecondsPerResourceCollection.Keys)
+        foreach (ItemType resource in this.BaseSecondsPerResource.Keys)
         {
             if (!lastCollectionTimes.ContainsKey(resource))
             {
                 lastCollectionTimes[resource] = 0f;
             }
 
-            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] &&
+            if (Time.time - lastCollectionTimes[resource] > BaseSecondsPerResource[resource] &&
                 this.Inventory.CanAcceptItem(resource))
             {
                 Item item = ItemGenerator.Make(resource);
