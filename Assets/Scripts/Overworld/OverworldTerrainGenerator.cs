@@ -23,10 +23,10 @@ public class OverworldTerrainGenerator : MonoBehaviour
     private string GenerationStep;
     private float GenerationProgress;
 
-    public const float Scale = 25;
+    public const float Scale = 50;
     public const int Octaves = 5;
     public const float Persistence = .55f;
-    public const float Lacunarity = 3;
+    public const float Lacunarity = 10;
 
     private static class States
     {
@@ -66,11 +66,18 @@ public class OverworldTerrainGenerator : MonoBehaviour
             }
         },
         new BiomeCriteria{
-            Height = 0.45f,
+            Height = 0.4f,
             Criteria = new BiomeFormationCriterion[]
             {
-                new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .52f},
-                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .45f},
+                new BiomeFormationCriterion {Biome = Biome.Forrest, MinMoisture = .1f},
+                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .1f},
+                new BiomeFormationCriterion {Biome = Biome.Grassland, MinMoisture = .1f},
+            }
+        },
+        new BiomeCriteria{
+            Height = 0.3f,
+            Criteria = new BiomeFormationCriterion[]
+            {
                 new BiomeFormationCriterion {Biome = Biome.Sand, MinMoisture = float.MinValue},
             }
         },
@@ -91,7 +98,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {Biome.Grassland, ColorExtensions.Create("#7ba659")},
         {Biome.Sand, ColorExtensions.Create("#e1c59f")},
         {Biome.Water, new Color(0, 0, 0, 0)},
-        {Biome.Null, Color.magenta},
+        {Biome.Invalid, Color.magenta},
     };
 
     private Dictionary<Biome, Vector2Int> colorAtlasMap = new Dictionary<Biome, Vector2Int>()
@@ -165,9 +172,10 @@ public class OverworldTerrainGenerator : MonoBehaviour
             Index = 0,
         };
 
+        System.Random random = new System.Random(seed);
         for (int y = 0; y < height; y++)
         {
-            formatRowForSelfConainedSegment(segment.Points, heightNoise, moistureNoise, width, y);
+            formatRowForSelfConainedSegment(segment.Points, heightNoise, moistureNoise, width, y, random);
         }
 
         return segment;
@@ -251,7 +259,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         return false;
     }
 
-    private static void formatRow(
+    private void formatRow(
         OverworldMapPoint[,] points,
         OpenSimplexNoise heightNoise,
         OpenSimplexNoise moistureNoise,
@@ -266,11 +274,12 @@ public class OverworldTerrainGenerator : MonoBehaviour
             heightValue = (heightValue + 1) / 2;
             heightValue *= CalculateHeightFalloff(x, y);
 
-            float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-            moistureValue = (moistureValue + 1) / 2;
-            moistureValue = (moistureValue * .6f) + (heightValue * .4f);
+            float moistureValue = 1f;
+            // float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+            // moistureValue = (moistureValue + 1) / 2;
+            // moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
-            Biome biome = GetBiome(heightValue, moistureValue);
+            Biome biome = GetBiome(heightValue, moistureValue, this.random);
             points[x, y] = new OverworldMapPoint
             {
                 Height = (int)(heightValue * 5),
@@ -284,20 +293,26 @@ public class OverworldTerrainGenerator : MonoBehaviour
         OpenSimplexNoise heightNoise,
         OpenSimplexNoise moistureNoise,
         int length,
-        int y)
+        int y,
+        System.Random random)
     {
         for (int x = 0; x < length; x++)
         {
             float xD = x / Scale;
             float yD = y / Scale;
-            float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-            heightValue += .65f;
+            float heightValue = .8f + ((float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity) - .5f) * .75f;
+            // float xDistFromCenter = Mathf.Abs(x - points.GetLength(0) / 2) / (points.GetLength(0) / 2f);
+            // float yDistFromCenter = Mathf.Abs(y - points.GetLength(1) / 2) / (points.GetLength(1) / 2f);
+            // float maxDist = 1 - Math.Max(xDistFromCenter, yDistFromCenter);
+            // heightValue *= maxDist;
+            // Debug.Log(heightValue + "," + maxDist);
 
             float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
             moistureValue = (moistureValue + 1) / 2;
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
-            Biome biome = GetBiome(heightValue, moistureValue);
+            Biome biome = GetBiome(heightValue, moistureValue, random);
+            Debug.Log(biome + ", " + heightValue);
             points[x, y] = new OverworldMapPoint
             {
                 Height = (int)(heightValue * 5),
@@ -347,23 +362,29 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
     }
 
-    private static Biome GetBiome(float height, float moisture)
+    private static Biome GetBiome(float height, float moisture, System.Random random)
     {
         foreach (BiomeCriteria criteria in biomeDeterminator)
         {
+            List<Biome> matches = new List<Biome>();
             if (height > criteria.Height)
             {
                 foreach (BiomeFormationCriterion criterion in criteria.Criteria)
                 {
                     if (moisture > criterion.MinMoisture)
                     {
-                        return criterion.Biome;
+                        matches.Add(criterion.Biome);
                     }
                 }
             }
+
+            if (matches.Count > 0)
+            {
+                return matches[random.Next(0, matches.Count)];
+            }
         }
 
-        return Biome.Null;
+        return Biome.Invalid;
     }
 
     private IEnumerator CalculateTerritories()

@@ -10,9 +10,8 @@ public class BoardManager : MonoBehaviour
     public bool RegenerateMap;
     private Building[,] Buildings;
     private RectInt Dimensions;
-    private const float HEX_HEIGHT = .5f;
+    private const float HEX_HEIGHT = .35f;
     private OverworldSegment CurrentSegment;
-    private const int WaterHeight = 2;
 
     void Awake()
     {
@@ -33,7 +32,7 @@ public class BoardManager : MonoBehaviour
     {
         if (GameState.SelectedSegment == null)
         {
-            CurrentSegment = OverworldTerrainGenerator.GenerateSingleSegment(25, 25, UnityEngine.Random.Range(0, 10));
+            CurrentSegment = OverworldTerrainGenerator.GenerateSingleSegment(50, 50, UnityEngine.Random.Range(0, 1000));
         }
         else
         {
@@ -89,11 +88,7 @@ public class BoardManager : MonoBehaviour
         this.Hexagons[x, y].Height = point.Height;
         this.Hexagons[x, y].name = point.Height.ToString();
         this.SetSideData(go, point.Height, x, y);
-
-        if (point.Height > WaterHeight)
-        {
-            this.Hexagons[x, y].MaybeSpawnObstacle(segmentIndex);
-        }
+        this.Hexagons[x, y].MaybeSpawnObstacle(segmentIndex);
     }
 
     // Injects side data into the hex to be used for ambient occlusion
