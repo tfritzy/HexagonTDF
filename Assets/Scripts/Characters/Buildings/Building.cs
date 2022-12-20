@@ -8,11 +8,6 @@ public abstract class Building : Character
     public virtual bool RequiresConfirmationToBuild => true;
     public virtual List<HexSide> ExtraSize => new List<HexSide>();
 
-    public void Init(Vector2Int gridPos)
-    {
-        this.GridPosition = gridPos;
-    }
-
     public Vector3 GetWorldPosition()
     {
         Vector3 center = Helpers.ToWorldPosition(this.GridPosition);

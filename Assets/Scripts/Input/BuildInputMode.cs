@@ -124,6 +124,7 @@ public class BuildInputMode : InputMode
         Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
         building.Setup();
         building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
+        this.previewBuilding = building.gameObject;
     }
 
     private void ExitPreviewState()

@@ -13,8 +13,8 @@ public static class Constants
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
     public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
     public static readonly float OverworldVerticalDistanceBetweenHexagons = 2.0f * Mathf.Cos(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
-    public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue, int.MinValue);
-    public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue, int.MaxValue);
+    public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue / 2, int.MinValue / 2);
+    public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue / 2, int.MaxValue / 2);
     public static Vector3 CenterScreen => new Vector3(Screen.width / 2, Screen.height / 2);
     public const float ENEMY_HEALTH_PER_POWER = 50;
     public const float ENEMY_DEFAULT_MOVEMENTSPEED = 1f;

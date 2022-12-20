@@ -9,8 +9,10 @@ public class BoardManager : MonoBehaviour
     public string ActiveMapName;
     private Building[,] Buildings;
     private RectInt Dimensions;
+    private Vector2Int Center => this.Dimensions.max / 2;
     private const float HEX_HEIGHT = .35f;
     private Hexagon[,] CurrentSegment;
+    public Navigation Navigation;
 
     void Awake()
     {
@@ -26,23 +28,22 @@ public class BoardManager : MonoBehaviour
 
         SpawnTownHall();
         SpawnHexagons();
+
+        Navigation = new Navigation(this.Dimensions.max, Center);
+        Navigation.ReacalculatePath(this.CurrentSegment);
     }
 
     private void SpawnTownHall()
     {
         // flatten area
-        Vector2Int center = new Vector2Int(
-            CurrentSegment.GetLength(0) / 2,
-            CurrentSegment.GetLength(1) / 2);
-
-        var points = new List<Vector2Int> { center };
+        var points = new List<Vector2Int> { Center };
         for (int i = 0; i < 6; i++)
         {
-            points.Add(Helpers.GetNeighborPosition(center, (HexSide)i));
+            points.Add(Helpers.GetNeighborPosition(Center, (HexSide)i));
         }
 
         float averageHeight = 0;
-        List<Biome> biomesThatArentWater = new List<Biome> { CurrentSegment[center.x, center.y].Biome };
+        List<Biome> biomesThatArentWater = new List<Biome> { CurrentSegment[Center.x, Center.y].Biome };
         foreach (Vector2Int point in points)
         {
             averageHeight += CurrentSegment[point.x, point.y].Height;
@@ -64,8 +65,8 @@ public class BoardManager : MonoBehaviour
             CurrentSegment[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
         }
 
-        Building building = InstantiateBuilding(center, BuildingType.TownHall);
-        AddBuilding(center, building);
+        Building building = InstantiateBuilding(Center, BuildingType.TownHall);
+        AddBuilding(Center, building);
     }
 
     public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
@@ -75,7 +76,7 @@ public class BoardManager : MonoBehaviour
             Vector3.zero,
             Prefabs.GetBuilding(type).transform.rotation);
         Building building = buildingGO.GetComponent<Building>();
-        building.Init(pos);
+        building.GridPosition = pos;
         buildingGO.transform.position = building.GetWorldPosition();
         return building;
     }

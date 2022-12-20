@@ -57,6 +57,7 @@ public abstract class Character : MonoBehaviour
         this.Collider = this.GetComponent<Collider>();
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
+        this.GridPosition = Helpers.ToGridPosition(this.transform.position);
 
         this.Cells = new List<Cell>()
         {

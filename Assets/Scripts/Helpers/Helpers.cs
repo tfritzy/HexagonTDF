@@ -44,12 +44,17 @@ public static class Helpers
 
     public static bool IsInBounds(Vector2Int position, RectInt dimensions)
     {
-        if (position.x < dimensions.xMin || position.x >= dimensions.xMax)
+        return IsInBounds(position, dimensions.max);
+    }
+
+    public static bool IsInBounds(Vector2Int position, Vector2Int dimensions)
+    {
+        if (position.x < 0 || position.x >= dimensions.x)
         {
             return false;
         }
 
-        if (position.y < dimensions.xMin || position.y >= dimensions.yMax)
+        if (position.y < 0 || position.y >= dimensions.y)
         {
             return false;
         }
@@ -141,21 +146,23 @@ public static class Helpers
         return null;
     }
 
-    public static Vector3 ToWorldPosition(
-        int x,
-        int y,
-        float horizontalDist = Constants.HorizontalDistanceBetweenHexagons,
-        float verticalDist = Constants.VerticalDistanceBetweenHexagons,
-        float r = Constants.HEXAGON_r)
+    public static Vector3 ToWorldPosition(int x, int y)
     {
-        float xF = x * horizontalDist;
-        float zF = y * verticalDist + (x % 2 == 1 ? r : 0);
+        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
+        float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
         return new Vector3(xF, 0f, zF);
     }
 
     public static Vector3 ToWorldPosition(Vector2Int position)
     {
         return ToWorldPosition(position.x, position.y);
+    }
+
+    public static Vector2Int ToGridPosition(Vector3 pos)
+    {
+        int x = Mathf.RoundToInt(pos.x / Constants.HorizontalDistanceBetweenHexagons);
+        int y = Mathf.RoundToInt(pos.y / Constants.VerticalDistanceBetweenHexagons - (x % 2 == 1 ? Constants.HEXAGON_r : 0));
+        return new Vector2Int(x, y);
     }
 
     public static Vector3 ToOverworldPosition(Vector2Int position)
