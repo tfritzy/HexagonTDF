@@ -9,7 +9,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 {
     public Func<string> GetStatus;
     public Func<float> GetProgress;
-    public OverworldSegment Segment;
+    public Hexagon[,] Segment;
     public bool IsComplete;
     public GameObject territoryBoundsLR;
     private const int SUBDIVISION_SIZE = Constants.OVERWORLD_DIMENSIONS / 10;
@@ -123,59 +123,16 @@ public class OverworldTerrainGenerator : MonoBehaviour
         this.Seed = seed;
     }
 
-    public IEnumerator GenerateSegment(int index, string containerName)
-    {
-        this.GetStatus = () => this.GenerationStep;
-        this.GetProgress = () => this.GenerationProgress;
-        IsComplete = false;
-        OpenSimplexNoise heightNoise = new OpenSimplexNoise(this.Seed);
-        OpenSimplexNoise moistureNoise = new OpenSimplexNoise(this.Seed + 1);
-        this.Segment = new OverworldSegment
-        {
-            FortressIds = new List<string>(),
-            FortressPositions = new Dictionary<string, Vector2Int>(),
-            Points = new OverworldMapPoint[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS],
-            FortressAlliances = new Dictionary<string, Alliance>(),
-            Index = index,
-        };
-        this.GenerationStep = States.GENERATING_TERRAIN;
-
-        for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
-        {
-            formatRow(Segment.Points, heightNoise, moistureNoise, Constants.OVERWORLD_DIMENSIONS, y);
-            if (y % 10 == 0)
-            {
-                this.GenerationProgress = (float)y / Constants.OVERWORLD_DIMENSIONS;
-                yield return null;
-            }
-        }
-
-        yield return GenerateMesh(containerName);
-
-        yield return FindFotressLocations(index);
-
-        // yield return CalculateTerritories();
-        IsComplete = true;
-    }
-
-    public static OverworldSegment GenerateSingleSegment(int width, int height, int seed)
+    public static Hexagon[,] GenerateSingleSegment(int width, int height, int seed)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
 
-        var segment = new OverworldSegment
-        {
-            FortressIds = new List<string>(),
-            FortressPositions = new Dictionary<string, Vector2Int>(),
-            Points = new OverworldMapPoint[width, height],
-            FortressAlliances = new Dictionary<string, Alliance>(),
-            Index = 0,
-        };
-
+        var segment = new Hexagon[width, height];
         System.Random random = new System.Random(seed);
         for (int y = 0; y < height; y++)
         {
-            formatRowForSelfConainedSegment(segment.Points, heightNoise, moistureNoise, width, y, random);
+            formatRowForSelfConainedSegment(segment, heightNoise, moistureNoise, width, y, random);
         }
 
         return segment;
@@ -195,7 +152,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {
             for (int y = 0; y < Constants.OVERWORLD_DIMENSIONS; y++)
             {
-                Vector2Int colorPos = colorAtlasMap[Segment.Points[x, y].Biome];
+                Vector2Int colorPos = colorAtlasMap[Segment[x, y].Biome];
                 hexGridGenerator.SetUV(y, x, colorPos.y, colorPos.x);
             }
 
@@ -204,92 +161,8 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
     }
 
-    private IEnumerator FindFotressLocations(int segmentIndex)
-    {
-        int numChunks = Constants.OVERWORLD_DIMENSIONS / SUBDIVISION_SIZE;
-        this.GenerationStep = States.LOCATING_FORTRESSES;
-
-        for (int x = 0; x < numChunks; x++)
-        {
-            for (int y = 0; y < numChunks; y++)
-            {
-                if (DoesSegmentHaveFortress(x, y, Segment.Points))
-                {
-                    Vector2Int fortressPos =
-                        new Vector2Int(
-                                SUBDIVISION_SIZE * x + SUBDIVISION_SIZE / 2 + random.Next(-5, 5),
-                                SUBDIVISION_SIZE * y + SUBDIVISION_SIZE / 2 + random.Next(-5, 5));
-
-                    if (this.Segment.Points[fortressPos.x, fortressPos.y].Biome != Biome.Water)
-                    {
-                        string id = $"Fortress-{segmentIndex}-{Segment.FortressIds.Count}";
-                        Segment.FortressAlliances[id] =
-                            Segment.FortressIds.Count == 0 ?
-                            Alliance.Player :
-                            Alliance.Maltov;
-                        Segment.FortressIds.Add(id);
-                        Segment.FortressPositions[id] = fortressPos;
-
-                    }
-                }
-            }
-
-            this.GenerationProgress = (float)x / numChunks;
-            yield return null;
-        }
-    }
-
-    private bool DoesSegmentHaveFortress(int xSeg, int ySeg, OverworldMapPoint[,] fullMap)
-    {
-        float averageHeight = 0;
-        for (int x = xSeg * SUBDIVISION_SIZE; x < (xSeg + 1) * SUBDIVISION_SIZE; x++)
-        {
-            for (int y = ySeg * SUBDIVISION_SIZE; y < (ySeg + 1) * SUBDIVISION_SIZE; y++)
-            {
-                averageHeight += fullMap[x, y].Height;
-            }
-        }
-        averageHeight /= (SUBDIVISION_SIZE * SUBDIVISION_SIZE);
-
-        if (averageHeight > biomeDeterminator[biomeDeterminator.Count - 2].Height + CITY_HEIGHT_CUTOFF_DELTA)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private void formatRow(
-        OverworldMapPoint[,] points,
-        OpenSimplexNoise heightNoise,
-        OpenSimplexNoise moistureNoise,
-        int length,
-        int y)
-    {
-        for (int x = 0; x < length; x++)
-        {
-            float xD = x / Scale;
-            float yD = y / Scale;
-            float heightValue = (float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-            heightValue = (heightValue + 1) / 2;
-            heightValue *= CalculateHeightFalloff(x, y);
-
-            float moistureValue = 1f;
-            // float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-            // moistureValue = (moistureValue + 1) / 2;
-            // moistureValue = (moistureValue * .6f) + (heightValue * .4f);
-
-            Biome biome = GetBiome(heightValue, moistureValue, this.random);
-            points[x, y] = new OverworldMapPoint
-            {
-                Height = (int)(heightValue * 5),
-                Biome = biome,
-            };
-        }
-    }
-
     private static void formatRowForSelfConainedSegment(
-        OverworldMapPoint[,] points,
+        Hexagon[,] points,
         OpenSimplexNoise heightNoise,
         OpenSimplexNoise moistureNoise,
         int length,
@@ -313,11 +186,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
 
             Biome biome = GetBiome(heightValue, moistureValue, random);
             Debug.Log(biome + ", " + heightValue);
-            points[x, y] = new OverworldMapPoint
-            {
-                Height = (int)(heightValue * 5),
-                Biome = biome,
-            };
+            points[x, y] = Prefabs.GetHexagonScript(biome, (int)(heightValue * 5));
         }
     }
 
@@ -385,102 +254,5 @@ public class OverworldTerrainGenerator : MonoBehaviour
         }
 
         return Biome.Invalid;
-    }
-
-    private IEnumerator CalculateTerritories()
-    {
-        this.GenerationStep = States.CALCULATING_TERRITORY_BOUNDS;
-        int dimensions = Constants.OVERWORLD_DIMENSIONS;
-        int numHexes = dimensions * dimensions;
-        var visited = new string[dimensions, dimensions];
-        var edges = new Dictionary<Alliance, HashSet<Vector2Int>>();
-        var queues = new Dictionary<string, Queue<Vector2Int>>();
-        var territoryPoints = new Dictionary<Alliance, List<Vector2Int>>();
-        foreach (string fortressId in Segment.FortressIds)
-        {
-            var queue = new Queue<Vector2Int>();
-            queue.Enqueue(Segment.FortressPositions[fortressId]);
-            queues[fortressId] = queue;
-            visited[Segment.FortressPositions[fortressId].x,
-                    Segment.FortressPositions[fortressId].y] = fortressId;
-            edges[Segment.FortressAlliances[fortressId]] = new HashSet<Vector2Int>();
-            territoryPoints[Segment.FortressAlliances[fortressId]] = new List<Vector2Int>();
-        }
-
-        List<string> finishedFortresses = new List<string>(0);
-        int numIterations = 0;
-        while (queues.Count > 0)
-        {
-            foreach (string fortressId in queues.Keys)
-            {
-                var queue = queues[fortressId];
-
-                if (queue.Count == 0)
-                {
-                    finishedFortresses.Add(fortressId);
-                    continue;
-                }
-
-                Vector2Int current = queue.Dequeue();
-                numIterations += 1;
-                territoryPoints[Segment.FortressAlliances[fortressId]].Add(current);
-                bool isBorder = false;
-
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
-
-                    if (!Helpers.IsInBounds(neighbor, Constants.OverworldDimensions))
-                        if (neighbor == Constants.MinVector2Int)
-                            continue;
-
-                    if (visited[neighbor.x, neighbor.y] == null && Segment.Points[neighbor.x, neighbor.y].Biome != Biome.Water)
-                    {
-                        queue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
-                        visited[neighbor.x, neighbor.y] = fortressId;
-                    }
-                    else if (string.IsNullOrEmpty(visited[neighbor.x, neighbor.y]) == false &&
-                             Segment.FortressAlliances[visited[neighbor.x, neighbor.y]] != Segment.FortressAlliances[fortressId])
-                    {
-                        isBorder = true;
-                    }
-                }
-
-                if (isBorder)
-                {
-                    edges[Segment.FortressAlliances[fortressId]].Add(current);
-                }
-            }
-
-            foreach (string fortress in finishedFortresses)
-            {
-                queues.Remove(fortress);
-            }
-            finishedFortresses = new List<string>();
-
-            if (numIterations % 500 == 0)
-            {
-                this.GenerationProgress = (float)numIterations / (numHexes * .5f);
-                yield return null;
-            }
-        }
-
-        Segment.Territories = new Dictionary<Alliance, OverworldTerritory>();
-        float index = 0;
-        foreach (Alliance alliance in territoryPoints.Keys)
-        {
-            index += 1;
-            this.GenerationProgress = index / Segment.Territories.Count;
-            Segment.Territories[alliance] = new OverworldTerritory();
-            Segment.Territories[alliance].Edges = edges[alliance];
-
-            foreach (Vector2Int edge in edges[alliance])
-            {
-                Vector2Int colorPos = allianceAtlasMap[alliance];
-                this.hexGridGenerator.SetUV(edge.y, edge.x, colorPos.y, colorPos.x);
-            }
-
-            yield return null;
-        }
     }
 }

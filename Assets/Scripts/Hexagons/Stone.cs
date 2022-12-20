@@ -2,6 +2,10 @@
 
 public class Mountain : ObstacleHexagon
 {
+    public Mountain(int height) : base(height)
+    {
+    }
+
     public override Biome Biome => Biome.Mountain;
     public override Color BaseColor => ColorExtensions.Create("#44627B");
     public override float ObstacleChance => .04f;

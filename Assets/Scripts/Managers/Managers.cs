@@ -88,20 +88,6 @@ public static class Managers
         }
     }
 
-    private static OverworldManager overworldManager;
-    public static OverworldManager OverworldManager
-    {
-        get
-        {
-            if (overworldManager == null)
-            {
-                overworldManager = GameObject.Find("OverworldManager").GetComponent<OverworldManager>();
-            }
-
-            return overworldManager;
-        }
-    }
-
     private static InputManager _inputManager;
     public static InputManager InputManager
     {

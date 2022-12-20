@@ -41,11 +41,11 @@ public class HexagonMono : MonoBehaviour, Interactable
         Debug.Log("Clicked on hex at pos " + GridPosition);
     }
 
-    public void MaybeSpawnObstacle(int segmentIndex)
+    public void MaybeSpawnObstacle()
     {
         if (hexagon is ObstacleHexagon)
         {
-            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition, segmentIndex);
+            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition);
         }
     }
 

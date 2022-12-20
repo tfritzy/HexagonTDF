@@ -11,6 +11,10 @@ public class Forrest : ObstacleHexagon
     public override float NumObstacles => 8;
     private const float liveTreeChance = .8f;
 
+    public Forrest(int height) : base(height)
+    {
+    }
+
     public override GameObject GetObstacle(System.Random random)
     {
         return Managers.Prefabs.Trees[random.Next(0, Managers.Prefabs.Trees.Length)];

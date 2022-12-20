@@ -8,12 +8,17 @@ public abstract class ObstacleHexagon : Hexagon
     public virtual float NumObstacles => 1;
     protected bool HasObstacle;
     private GameObject Obstacle;
+
+    protected ObstacleHexagon(int height) : base(height)
+    {
+    }
+
     public override bool IsBuildable => !HasObstacle;
     public override bool IsWalkable => !HasObstacle;
 
-    public void GenerateObstacle(Transform hex, Vector2Int hexGridPos, int segmentIndex)
+    public void GenerateObstacle(Transform hex, Vector2Int hexGridPos)
     {
-        System.Random random = new System.Random(segmentIndex * 786433 + hexGridPos.GetHashCode() * 3145739);
+        System.Random random = new System.Random(hexGridPos.GetHashCode());
         if (random.NextDouble() <= ObstacleChance)
         {
             HasObstacle = true;

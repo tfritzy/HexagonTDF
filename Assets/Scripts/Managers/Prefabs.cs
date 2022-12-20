@@ -115,20 +115,20 @@ public static class Prefabs
         }
     }
 
-    public static Hexagon GetHexagonScript(Biome biome)
+    public static Hexagon GetHexagonScript(Biome biome, int height)
     {
         switch (biome)
         {
             case (Biome.Sand):
-                return new Sand();
+                return new Sand(height);
             case (Biome.Forrest):
-                return new Forrest();
+                return new Forrest(height);
             case (Biome.Grassland):
-                return new Grassland();
+                return new Grassland(height);
             case (Biome.Mountain):
-                return new Mountain();
+                return new Mountain(height);
             case (Biome.Snow):
-                return new Snow();
+                return new Snow(height);
             case (Biome.Water):
                 return new Water();
             default:

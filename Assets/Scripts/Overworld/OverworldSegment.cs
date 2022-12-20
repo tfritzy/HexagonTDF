@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class OverworldSegment
 {
-    public OverworldMapPoint[,] Points;
+    public Hexagon[,] Points;
     public List<string> FortressIds;
     public Dictionary<string, Vector2Int> FortressPositions;
     public Dictionary<string, Alliance> FortressAlliances;
@@ -13,12 +13,12 @@ public class OverworldSegment
     public int Width => Points.GetLength(0);
     public int Height => Points.GetLength(1);
 
-    public OverworldMapPoint GetPoint(Vector2Int pos)
+    public Hexagon GetPoint(Vector2Int pos)
     {
         return GetPoint(pos.x, pos.y);
     }
 
-    public OverworldMapPoint GetPoint(int x, int y)
+    public Hexagon GetPoint(int x, int y)
     {
         if (x < 0 || x >= Width || y < 0 || y >= Height)
         {
