@@ -7,7 +7,6 @@ public class BoardManager : MonoBehaviour
 {
     public HexagonMono[,] Hexagons;
     public string ActiveMapName;
-    public bool RegenerateMap;
     private Building[,] Buildings;
     private RectInt Dimensions;
     private const float HEX_HEIGHT = .35f;
@@ -16,16 +15,6 @@ public class BoardManager : MonoBehaviour
     void Awake()
     {
         SpawnMap();
-    }
-
-    void Update()
-    {
-        if (RegenerateMap)
-        {
-            CleanupMap();
-            SpawnMap();
-            RegenerateMap = false;
-        }
     }
 
     private void SpawnMap()
@@ -39,7 +28,64 @@ public class BoardManager : MonoBehaviour
             CurrentSegment = GameState.SelectedSegment;
         }
 
+        this.Buildings = new Building[CurrentSegment.Width, CurrentSegment.Height];
+        this.Dimensions = new RectInt(0, 0, CurrentSegment.Width, CurrentSegment.Height);
+
+        SpawnTownHall();
         SpawnHexagons();
+    }
+
+    private void SpawnTownHall()
+    {
+        // flatten area
+        Vector2Int center = new Vector2Int(
+            CurrentSegment.Points.GetLength(0) / 2,
+            CurrentSegment.Points.GetLength(1) / 2);
+
+        var points = new List<Vector2Int> { center };
+        for (int i = 0; i < 6; i++)
+        {
+            points.Add(Helpers.GetNeighborPosition(center, (HexSide)i));
+        }
+
+        float averageHeight = 0;
+        List<Biome> biomesThatArentWater = new List<Biome> { CurrentSegment.GetPoint(center).Biome };
+        foreach (Vector2Int point in points)
+        {
+            averageHeight += CurrentSegment.GetPoint(point).Height;
+
+            if (CurrentSegment.GetPoint(point).Biome != Biome.Water)
+            {
+                biomesThatArentWater.Add(CurrentSegment.GetPoint(point).Biome);
+            }
+        }
+
+        averageHeight /= 7;
+        int newHeight = (int)Mathf.Round(averageHeight);
+        Biome mostCommonHex = biomesThatArentWater
+            .GroupBy(q => q)
+            .OrderByDescending(gp => gp.Count())
+            .First().Key;
+        foreach (Vector2Int point in points)
+        {
+            CurrentSegment.GetPoint(point).Height = newHeight;
+            CurrentSegment.GetPoint(point).Biome = mostCommonHex;
+        }
+
+        Building building = InstantiateBuilding(center, BuildingType.TownHall);
+        AddBuilding(center, building);
+    }
+
+    public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
+    {
+        var buildingGO = GameObject.Instantiate(
+            Prefabs.GetBuilding(type),
+            Vector3.zero,
+            Prefabs.GetBuilding(type).transform.rotation);
+        Building building = buildingGO.GetComponent<Building>();
+        building.Init(pos);
+        buildingGO.transform.position = building.GetWorldPosition();
+        return building;
     }
 
     private void CleanupMap()
@@ -53,8 +99,6 @@ public class BoardManager : MonoBehaviour
     private void SpawnHexagons()
     {
         this.Hexagons = new HexagonMono[CurrentSegment.Width, CurrentSegment.Height];
-        this.Buildings = new Building[CurrentSegment.Width, CurrentSegment.Height];
-        this.Dimensions = new RectInt(0, 0, CurrentSegment.Width, CurrentSegment.Height);
 
         for (int y = 0; y < CurrentSegment.Height; y++)
         {
@@ -199,11 +243,25 @@ public class BoardManager : MonoBehaviour
     public void AddBuilding(Vector2Int pos, Building building)
     {
         this.Buildings[pos.x, pos.y] = building;
+
+        foreach (HexSide side in building.ExtraSize)
+        {
+            Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+            this.Buildings[extraPos.x, extraPos.y] = building;
+        }
+
     }
 
     public void DestroyBuilding(Building building)
     {
         this.Buildings[building.GridPosition.x, building.GridPosition.y] = null;
+
+        foreach (HexSide side in building.ExtraSize)
+        {
+            Vector2Int extraPos = Helpers.GetNeighborPosition(building.GridPosition, side);
+            this.Buildings[extraPos.x, extraPos.y] = null;
+        }
+
         Destroy(building.gameObject);
     }
 }

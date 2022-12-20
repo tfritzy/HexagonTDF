@@ -121,13 +121,7 @@ public class BuildInputMode : InputMode
             GameObject.Destroy(previewBuilding);
         }
 
-        previewBuilding = GameObject.Instantiate(
-            Prefabs.GetBuilding(type),
-            hex.transform.position,
-            Prefabs.GetBuilding(type).transform.rotation);
-        Building building = previewBuilding.GetComponent<Building>();
-        building.Disabled = true;
-        building.Init(hex.GridPosition);
+        Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
         building.Setup();
         building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
     }
@@ -148,12 +142,7 @@ public class BuildInputMode : InputMode
             return;
         }
 
-        var buildingGO = GameObject.Instantiate(
-            Prefabs.GetBuilding(type),
-            hex.transform.position,
-            Prefabs.GetBuilding(type).transform.rotation);
-        Building building = buildingGO.GetComponent<Building>();
-        building.Init(hex.GridPosition);
+        Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
         Managers.Board.AddBuilding(hex.GridPosition, building);
 
         ExitPreviewState();

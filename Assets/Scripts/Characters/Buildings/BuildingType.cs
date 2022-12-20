@@ -8,4 +8,5 @@ public enum BuildingType
     StoneCarver,
     Assembler,
     GuardTower,
+    TownHall,
 }

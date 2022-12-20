@@ -611,7 +611,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
-  m_LocalPosition: {x: 31.51991, y: 15, z: 44.578384}
+  m_LocalPosition: {x: 37.166386, y: 15, z: 34.056038}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -794,7 +794,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActiveMapName: cd4b05957bb94874a266e36686c7200a
-  RegenerateMap: 0
 --- !u!4 &1096331704
 Transform:
   m_ObjectHideFlags: 0
