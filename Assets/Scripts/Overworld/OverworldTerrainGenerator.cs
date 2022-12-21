@@ -185,7 +185,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
             moistureValue = (moistureValue * .6f) + (heightValue * .4f);
 
             Biome biome = GetBiome(heightValue, moistureValue, random);
-            Debug.Log(biome + ", " + heightValue);
             points[x, y] = Prefabs.GetHexagonScript(biome, (int)(heightValue * 5));
         }
     }

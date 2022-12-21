@@ -150,7 +150,8 @@ public static class Helpers
     {
         float xF = x * Constants.HorizontalDistanceBetweenHexagons;
         float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        return new Vector3(xF, 0f, zF);
+        float yF = Managers.Board.Board[x, y].Height * Constants.HEXAGON_HEIGHT;
+        return new Vector3(xF, yF, zF);
     }
 
     public static Vector3 ToWorldPosition(Vector2Int position)
@@ -161,7 +162,7 @@ public static class Helpers
     public static Vector2Int ToGridPosition(Vector3 pos)
     {
         int x = Mathf.RoundToInt(pos.x / Constants.HorizontalDistanceBetweenHexagons);
-        int y = Mathf.RoundToInt(pos.y / Constants.VerticalDistanceBetweenHexagons - (x % 2 == 1 ? Constants.HEXAGON_r : 0));
+        int y = Mathf.RoundToInt((pos.z - (x % 2 == 1 ? Constants.HEXAGON_r : 0)) / Constants.VerticalDistanceBetweenHexagons);
         return new Vector2Int(x, y);
     }
 

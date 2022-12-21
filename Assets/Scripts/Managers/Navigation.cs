@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Navigation
 {
+    public List<Vector2Int> Terminations { get; private set; }
     private NavMapPoint[,] NavMap;
     private Vector2Int townHallPos;
     private Vector2Int dimensions;
@@ -12,6 +13,7 @@ public class Navigation
     {
         public int Distance;
         public Vector2Int Next;
+        public bool IsTermination;
     }
 
     public Navigation(Vector2Int boardSize, Vector2Int townHallPos)
@@ -51,6 +53,24 @@ public class Navigation
                     queue.Enqueue(neighbor);
                     navMap[neighbor.x, neighbor.y].Distance = navMap[current.x, current.y].Distance + 1;
                     navMap[neighbor.x, neighbor.y].Next = current;
+                    navMap[current.x, current.y].IsTermination = false;
+                }
+            }
+        }
+
+        Terminations = new List<Vector2Int>();
+        for (int x = 0; x < dimensions.x; x++)
+        {
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                if (navMap[x, y].Distance == int.MaxValue / 2)
+                {
+                    navMap[x, y].IsTermination = false;
+                }
+
+                if (navMap[x, y].IsTermination)
+                {
+                    Terminations.Add(new Vector2Int(x, y));
                 }
             }
         }
@@ -70,6 +90,7 @@ public class Navigation
                 {
                     Distance = int.MaxValue / 2,
                     Next = Constants.MaxVector2Int,
+                    IsTermination = true,
                 };
             }
         }

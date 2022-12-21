@@ -5,13 +5,12 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public HexagonMono[,] Hexagons;
+    public Hexagon[,] Board;
+    public HexagonMono[,] HexagonMonos;
     public string ActiveMapName;
     private Building[,] Buildings;
-    private RectInt Dimensions;
+    public RectInt Dimensions;
     private Vector2Int Center => this.Dimensions.max / 2;
-    private const float HEX_HEIGHT = .35f;
-    private Hexagon[,] CurrentSegment;
     public Navigation Navigation;
 
     void Awake()
@@ -21,16 +20,16 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        CurrentSegment = OverworldTerrainGenerator.GenerateSingleSegment(50, 50, UnityEngine.Random.Range(0, 1000));
+        this.Board = OverworldTerrainGenerator.GenerateSingleSegment(50, 50, UnityEngine.Random.Range(0, 1000));
 
-        this.Buildings = new Building[CurrentSegment.GetLength(0), CurrentSegment.GetLength(1)];
-        this.Dimensions = new RectInt(0, 0, CurrentSegment.GetLength(0), CurrentSegment.GetLength(1));
+        this.Buildings = new Building[Board.GetLength(0), Board.GetLength(1)];
+        this.Dimensions = new RectInt(0, 0, Board.GetLength(0), Board.GetLength(1));
 
         SpawnTownHall();
         SpawnHexagons();
 
         Navigation = new Navigation(this.Dimensions.max, Center);
-        Navigation.ReacalculatePath(this.CurrentSegment);
+        Navigation.ReacalculatePath(this.Board);
     }
 
     private void SpawnTownHall()
@@ -43,14 +42,14 @@ public class BoardManager : MonoBehaviour
         }
 
         float averageHeight = 0;
-        List<Biome> biomesThatArentWater = new List<Biome> { CurrentSegment[Center.x, Center.y].Biome };
+        List<Biome> biomesThatArentWater = new List<Biome> { Board[Center.x, Center.y].Biome };
         foreach (Vector2Int point in points)
         {
-            averageHeight += CurrentSegment[point.x, point.y].Height;
+            averageHeight += Board[point.x, point.y].Height;
 
-            if (CurrentSegment[point.x, point.y].Biome != Biome.Water)
+            if (Board[point.x, point.y].Biome != Biome.Water)
             {
-                biomesThatArentWater.Add(CurrentSegment[point.x, point.y].Biome);
+                biomesThatArentWater.Add(Board[point.x, point.y].Biome);
             }
         }
 
@@ -62,7 +61,7 @@ public class BoardManager : MonoBehaviour
             .First().Key;
         foreach (Vector2Int point in points)
         {
-            CurrentSegment[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
+            Board[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
         }
 
         Building building = InstantiateBuilding(Center, BuildingType.TownHall);
@@ -83,7 +82,7 @@ public class BoardManager : MonoBehaviour
 
     private void CleanupMap()
     {
-        foreach (HexagonMono hexagon in this.Hexagons)
+        foreach (HexagonMono hexagon in this.HexagonMonos)
         {
             Destroy(hexagon?.gameObject);
         }
@@ -91,13 +90,13 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnHexagons()
     {
-        this.Hexagons = new HexagonMono[CurrentSegment.GetLength(0), CurrentSegment.GetLength(1)];
+        this.HexagonMonos = new HexagonMono[Board.GetLength(0), Board.GetLength(1)];
 
-        for (int y = 0; y < CurrentSegment.GetLength(1); y++)
+        for (int y = 0; y < Board.GetLength(1); y++)
         {
-            for (int x = 0; x < CurrentSegment.GetLength(0); x++)
+            for (int x = 0; x < Board.GetLength(0); x++)
             {
-                if (CurrentSegment[x, y] == null)
+                if (Board[x, y] == null)
                 {
                     continue;
                 }
@@ -114,16 +113,16 @@ public class BoardManager : MonoBehaviour
 
     private void BuildHexagon(int x, int y)
     {
-        Hexagon point = CurrentSegment[x, y];
+        Hexagon point = Board[x, y];
         Vector3 position = Helpers.ToWorldPosition(x, y);
-        position.y = point.Height * HEX_HEIGHT;
+        position.y = point.Height * Constants.HEXAGON_HEIGHT;
         GameObject go = Instantiate(Prefabs.Hexagons[point.Biome], position, new Quaternion(), this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome, point.Height));
-        this.Hexagons[x, y] = go.GetComponent<HexagonMono>();
-        this.Hexagons[x, y].GridPosition = new Vector2Int(x, y);
-        this.Hexagons[x, y].Height = point.Height;
-        this.Hexagons[x, y].name = point.Height.ToString();
+        this.HexagonMonos[x, y] = go.GetComponent<HexagonMono>();
+        this.HexagonMonos[x, y].GridPosition = new Vector2Int(x, y);
+        this.HexagonMonos[x, y].Height = point.Height;
+        this.HexagonMonos[x, y].name = point.Biome + "," + point.Height.ToString();
         this.SetSideData(go, point.Height, x, y);
     }
 
@@ -206,7 +205,7 @@ public class BoardManager : MonoBehaviour
                 continue;
             }
 
-            Hexagon point = CurrentSegment[n.x, n.y];
+            Hexagon point = Board[n.x, n.y];
             if (point.Height > height)
             {
                 return 1.0f;
@@ -223,7 +222,7 @@ public class BoardManager : MonoBehaviour
             return null;
         }
 
-        return Hexagons[pos.x, pos.y];
+        return HexagonMonos[pos.x, pos.y];
     }
 
     public Building GetBuilding(Vector2Int pos)

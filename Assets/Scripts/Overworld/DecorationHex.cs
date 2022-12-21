@@ -10,8 +10,6 @@ public class DecorationHex : MonoBehaviour
 
     void Start()
     {
-        return;
-
         if (DecorationOptions.Length == 0)
         {
             return;

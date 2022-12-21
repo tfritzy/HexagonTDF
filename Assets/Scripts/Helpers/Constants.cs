@@ -6,6 +6,7 @@ public static class Constants
 {
     public const float HEXAGON_r = 0.866f;
     public const float HEXAGON_R = 1.066f;
+    public const float HEXAGON_HEIGHT = .35f;
     public const float OVERWORLD_HEXAGON_R = .15f;
     public const int OVERWORLD_DIMENSIONS = 50;
     public static RectInt OverworldDimensions = new RectInt(0, 0, OVERWORLD_DIMENSIONS, OVERWORLD_DIMENSIONS);

@@ -12,9 +12,14 @@ public class CharacterBrainCell : BrainCell
     private void WalkTowardsTownHall()
     {
         Vector2Int nextPos = Managers.Board.Navigation.GetNextPos(this.Owner.GridPosition);
+        if (!Helpers.IsInBounds(nextPos, Managers.Board.Dimensions))
+        {
+            return;
+        }
+
         Vector3 diff = Helpers.ToWorldPosition(nextPos) - this.Owner.transform.position;
 
-        if (diff.magnitude < .01f)
+        if (diff.magnitude < .1f)
         {
             this.Owner.GridPosition = nextPos;
         }

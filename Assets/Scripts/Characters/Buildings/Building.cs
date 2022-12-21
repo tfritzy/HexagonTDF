@@ -17,6 +17,7 @@ public abstract class Building : Character
         }
 
         center /= ExtraSize.Count + 1;
+        center.y = Managers.Board.Board[this.GridPosition.x, this.GridPosition.y].Height * Constants.HEXAGON_HEIGHT;
 
         return center;
     }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Mountain : ObstacleHexagon
+public class Mountain : Hexagon
 {
     public Mountain(int height) : base(height)
     {
@@ -8,11 +8,6 @@ public class Mountain : ObstacleHexagon
 
     public override Biome Biome => Biome.Mountain;
     public override Color BaseColor => ColorExtensions.Create("#44627B");
-    public override float ObstacleChance => .04f;
-    public override float SizeVarience => .25f;
-
-    public override GameObject GetObstacle(System.Random random)
-    {
-        return Managers.Prefabs.StoneColumns[Random.Range(0, Managers.Prefabs.StoneColumns.Length)];
-    }
+    public override bool IsBuildable => true;
+    public override bool IsWalkable => true;
 }

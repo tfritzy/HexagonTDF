@@ -4,7 +4,7 @@ public abstract class Hexagon
 {
     public abstract Biome Biome { get; }
     public abstract bool IsBuildable { get; }
-    public virtual bool IsWalkable => IsBuildable;
+    public abstract bool IsWalkable { get; }
     public abstract Color BaseColor { get; }
     public float MaxColorVariance => .015f;
     public int Height;

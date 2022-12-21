@@ -41,22 +41,6 @@ public class HexagonMono : MonoBehaviour, Interactable
         Debug.Log("Clicked on hex at pos " + GridPosition);
     }
 
-    public void MaybeSpawnObstacle()
-    {
-        if (hexagon is ObstacleHexagon)
-        {
-            ((ObstacleHexagon)hexagon).GenerateObstacle(this.transform, this.GridPosition);
-        }
-    }
-
-    public void RemoveObstacle()
-    {
-        if (this.hexagon is ObstacleHexagon)
-        {
-            ((ObstacleHexagon)this.hexagon).RemoveObstacle();
-        }
-    }
-
     public void SetMaterial(Material material)
     {
         this.hexMesh.material = material;
