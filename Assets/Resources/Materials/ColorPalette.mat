@@ -94,11 +94,11 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.023
     - _GlossyReflections: 1
-    - _HighIntensity: 3.45
+    - _HighIntensity: 3.32
     - _LightIntensity: 0.332
     - _LightScalar: 1.3
     - _LineThickness: 0.35
-    - _LowIntensity: 2.5
+    - _LowIntensity: 1.89
     - _Metallic: 0.365
     - _Mode: 0
     - _NoiseAmount: 0.1

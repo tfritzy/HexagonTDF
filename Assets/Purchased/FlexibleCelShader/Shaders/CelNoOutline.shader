@@ -44,6 +44,9 @@
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
+			// make fog work
+			#pragma multi_compile_fog
+
 
 			#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 			#include "AutoLight.cginc"
@@ -57,6 +60,7 @@
 				float3 worldBitangent : TEXCOORD4;
 				float4 worldPos : TEXCOORD5;
 				float4 pos : SV_POSITION;
+				UNITY_FOG_COORDS(6)
 			};
 
 			v2f vert(appdata_tan v)
@@ -74,6 +78,8 @@
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				o.worldTangent = UnityObjectToWorldNormal(v.tangent);
 				o.worldBitangent = cross(o.worldTangent, o.worldNormal);
+				
+				UNITY_TRANSFER_FOG(o,o.pos);
 				
 				// Compute shadows data
 				TRANSFER_SHADOW(o);
@@ -163,9 +169,12 @@
 				eIntensity = max(eIntensity, emmision.b);
 				col = emmision*eIntensity + col*(1 - eIntensity);
 
+				// apply fog
+				UNITY_APPLY_FOG(i.fogCoord, col);
+
 				return col;
 			}
-				
+			
 			ENDCG
 		} // End Main Pass
 

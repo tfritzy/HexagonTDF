@@ -43,6 +43,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			// make fog work
+			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc"
 
@@ -55,6 +57,7 @@
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
+				UNITY_FOG_COORDS(1)
 			};
 
 			float _OutlineSize;
@@ -65,13 +68,18 @@
 				half3 worldNormal = UnityObjectToWorldNormal(v.normal);
 				worldPos.xyz = worldPos.xyz + worldNormal * _OutlineSize * 0.001;
 				o.vertex = mul(UNITY_MATRIX_VP, worldPos);
+				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
 
 			float4 _OutlineColor;
 			fixed4 frag(v2f i) : SV_Target
 			{
-				return _OutlineColor;
+				fixed4 col = _OutlineColor;
+
+				// apply fog
+				UNITY_APPLY_FOG(i.fogCoord, col);
+				return col;
 			}
 
 			ENDCG

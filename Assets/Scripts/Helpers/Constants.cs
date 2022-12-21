@@ -15,7 +15,7 @@ public static class Constants
     public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
     public static readonly float OverworldVerticalDistanceBetweenHexagons = 2.0f * Mathf.Cos(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
     public static readonly Vector2Int MinVector2Int = new Vector2Int(int.MinValue / 2, int.MinValue / 2);
-    public static readonly Vector2Int MaxVector2Int = new Vector2Int(int.MaxValue / 2, int.MaxValue / 2);
+    public static readonly Vector2Int MaxVector2Int = new Vector2Int(MAX_ISH, MAX_ISH);
     public static Vector3 CenterScreen => new Vector3(Screen.width / 2, Screen.height / 2);
     public const float ENEMY_HEALTH_PER_POWER = 50;
     public const float ENEMY_DEFAULT_MOVEMENTSPEED = 1f;
@@ -23,6 +23,8 @@ public static class Constants
     public const float BALANCE_INTERVAL_SECONDS = 15f;
     public const float HARD_DIFFICULTY_ADJUSTMENT = .8f;
     public const int BASE_CITY_META_POWER = 10;
+    public const int MAX_ISH = int.MaxValue;
+    public const int MIN_ISH = int.MinValue;
 
     /// <summary>
     /// How much of each resource 1 power maps to.

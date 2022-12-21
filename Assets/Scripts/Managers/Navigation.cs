@@ -63,7 +63,7 @@ public class Navigation
         {
             for (int y = 0; y < dimensions.y; y++)
             {
-                if (navMap[x, y].Distance == int.MaxValue / 2)
+                if (navMap[x, y].Distance == Constants.MAX_ISH)
                 {
                     navMap[x, y].IsTermination = false;
                 }
@@ -88,7 +88,7 @@ public class Navigation
             {
                 distance[x, y] = new NavMapPoint
                 {
-                    Distance = int.MaxValue / 2,
+                    Distance = Constants.MAX_ISH,
                     Next = Constants.MaxVector2Int,
                     IsTermination = true,
                 };
