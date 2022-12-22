@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterBrainCell : BrainCell
 {
-    private const float MOVEMENT_SPEED = 1f;
+    private const float MOVEMENT_SPEED = 2f;
     private const int MAX_EXTRA_NON_IDEAL_DIST = 10;
     protected virtual float FindTargetRadius => 5f;
 
@@ -51,13 +51,26 @@ public class CharacterBrainCell : BrainCell
             this.Owner.GridPosition = nextPos;
         }
 
-        this.Owner.Rigidbody.velocity = diff.normalized * MOVEMENT_SPEED;
+        this.Owner.Rigidbody.velocity = Vector3.Lerp(
+            this.Owner.Rigidbody.velocity,
+            diff.normalized * MOVEMENT_SPEED,
+            Time.deltaTime);
     }
 
     private void AttackTarget()
     {
-        Vector3 moveDir = FirstUnobstructedDirection(this.Target.transform.position - this.Owner.transform.position);
-        this.Owner.Rigidbody.velocity = moveDir.normalized * MOVEMENT_SPEED;
+        Vector3? moveDir = FirstUnobstructedDirection(this.Target.transform.position - this.Owner.transform.position);
+        if (moveDir != null)
+        {
+            this.Owner.Rigidbody.velocity = Vector3.Lerp(
+                this.Owner.Rigidbody.velocity,
+                moveDir.Value.normalized * MOVEMENT_SPEED,
+                Time.deltaTime * 3);
+        }
+        else
+        {
+            this.Owner.Rigidbody.velocity = Vector3.zero;
+        }
     }
 
     private float lastTargetCheckTime;
@@ -80,59 +93,81 @@ public class CharacterBrainCell : BrainCell
         }
     }
 
+
+    struct DesirableDirection
+    {
+        public float Weight;
+        public Vector3 Vector;
+        public float Angle;
+    };
     private const int NumSteps = 12;
     private const int AngleStep = 360 / NumSteps;
-    float[] weights = new float[NumSteps];
-    private Vector3 FirstUnobstructedDirection(Vector3 desiredDirection)
+    DesirableDirection[] directions = new DesirableDirection[NumSteps];
+    private const float DESIRED_DISTANCE = .35f;
+    private Vector3? FirstUnobstructedDirection(Vector3 desiredDirection)
     {
         desiredDirection.Normalize();
         for (int i = 0; i < NumSteps; i++)
         {
-            int angle = i * AngleStep;
-            Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
-            weights[i] = Vector3.Dot(desiredDirection, v);
+            directions[i].Angle = i * AngleStep;
+            directions[i].Vector = Quaternion.AngleAxis(directions[i].Angle, Vector3.up) * desiredDirection;
+            directions[i].Weight = Vector3.Dot(desiredDirection, directions[i].Vector);
         }
 
-        Collider[] nearbyCharacters = Physics.OverlapSphere(this.Owner.Position, 1f, Constants.Layers.Characters);
+        Collider[] nearbyCharacters = Physics.OverlapSphere(this.Owner.Position, DESIRED_DISTANCE, Constants.Layers.Characters);
         foreach (Collider hit in nearbyCharacters)
         {
-            if (hit.gameObject == this.Owner)
+            if (hit.gameObject == this.Owner.gameObject)
             {
                 continue;
             }
 
             Vector3 toCharacter = hit.transform.position - this.Owner.transform.position;
-            float distToCharacter = toCharacter.magnitude;
-            float distScalingFactor = Mathf.Abs(distToCharacter - 1f);
+            float percentDistToCharacter = toCharacter.magnitude / DESIRED_DISTANCE;
+
+            if (hit.gameObject == this.Target.gameObject)
+            {
+                if (percentDistToCharacter < .5f)
+                {
+                    // We're happy where we are and don't need to move anywhere.
+                    return null;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            toCharacter.Normalize();
+            float distScalingFactor = Mathf.Abs(percentDistToCharacter - 1f) * 5;
 
             // Decrease desire to walk in the direction of a nearby character.
             for (int i = 0; i < NumSteps; i++)
             {
-                int angle = i * AngleStep;
-                Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
-                weights[i] -= Vector3.Dot(toCharacter, v) * distScalingFactor;
+                directions[i].Weight -= Vector3.Dot(toCharacter, directions[i].Vector) * distScalingFactor;
             }
         }
 
-        for (int i = 0; i < NumSteps; i++)
-        {
-            int angle = i * AngleStep;
-            Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
-            Debug.DrawLine(this.Owner.transform.position, this.Owner.transform.position + v * weights[i], Color.green, .01f);
-        }
+        // for (int i = 0; i < NumSteps; i++)
+        // {
+        //     int angle = i * AngleStep;
+        //     Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
+        //     float weight = (directions[i].Weight + 1) / 2;
+        //     Debug.DrawLine(this.Owner.transform.position, this.Owner.transform.position + v * weight, Color.green, .01f);
+        // }
 
-        int mostDesiredAngle = -1;
+        int mostDesired = -1;
         float mostDesiredWeight = float.MinValue;
         for (int i = 0; i < NumSteps; i++)
         {
             int angle = i * AngleStep;
-            if (weights[i] > mostDesiredWeight)
+            if (directions[i].Weight > mostDesiredWeight)
             {
-                mostDesiredWeight = weights[i];
-                mostDesiredAngle = angle;
+                mostDesiredWeight = directions[i].Weight;
+                mostDesired = i;
             }
         }
 
-        return Quaternion.AngleAxis(mostDesiredAngle * 10, Vector3.up) * desiredDirection;
+        return directions[mostDesired].Vector;
     }
 }
