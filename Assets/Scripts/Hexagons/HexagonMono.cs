@@ -152,8 +152,6 @@ public class HexagonMono : MonoBehaviour, Interactable
             }
         }
 
-        Debug.Log(key);
-
         if (aoMeshCache == null)
         {
             aoMeshCache = new Dictionary<int, Mesh>();

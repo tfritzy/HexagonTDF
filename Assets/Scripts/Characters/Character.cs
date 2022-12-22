@@ -35,7 +35,7 @@ public abstract class Character : MonoBehaviour
         }
     }
 
-    protected Rigidbody Rigidbody
+    public Rigidbody Rigidbody
     {
         get
         {
@@ -58,6 +58,7 @@ public abstract class Character : MonoBehaviour
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
         this.GridPosition = Helpers.ToGridPosition(this.transform.position);
+        this.Rigidbody.constraints = RigidbodyConstraints.FreezePositionY;
 
         this.Cells = new List<Cell>()
         {

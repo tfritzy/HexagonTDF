@@ -5,7 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1786452249379563666, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
@@ -62,7 +62,17 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 417817cc6ab73c44889025f4084a8973, type: 2}
     m_RemovedComponents:
     - {fileID: 3118257004248704947, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
+    - {fileID: 3144847903234834199, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
+    - {fileID: 3257243250668540285, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1786452249379563668, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7466576023748230619}
+    - targetCorrespondingSourceObject: {fileID: 1786452249379563668, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8193260204029712841}
   m_SourcePrefab: {fileID: 100100000, guid: 282d09541fa2f6a4f963c8aaee4f07a5, type: 3}
 --- !u!1 &1495054093228391200 stripped
 GameObject:
@@ -81,4 +91,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9d887a1f3d7c44fabfaa4887f5ed1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Disabled: 0
   Body: {fileID: 0}
+--- !u!136 &8193260204029712841
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1495054093228391200}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.59
+  m_Height: 3.14
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.47, z: 0}

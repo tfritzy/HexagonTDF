@@ -40,8 +40,11 @@ public static class Constants
         public static int Default = 1 << 0;
         public static int Hexagons = 1 << 8;
         public static int Characters = 1 << 9;
+        public static int Buildings = 1 << BuildingsLayerIndex;
         public static int Ground = 1 << 11;
         public static int UI = 1 << 5;
+
+        public const int BuildingsLayerIndex = 10;
     }
 
     public static class Tags

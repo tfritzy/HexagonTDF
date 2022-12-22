@@ -8,6 +8,12 @@ public abstract class Building : Character
     public virtual bool RequiresConfirmationToBuild => true;
     public virtual List<HexSide> ExtraSize => new List<HexSide>();
 
+    public override void Setup()
+    {
+        base.Setup();
+        this.gameObject.layer = Constants.Layers.BuildingsLayerIndex;
+    }
+
     public Vector3 GetWorldPosition()
     {
         Vector3 center = Helpers.ToWorldPosition(this.GridPosition);

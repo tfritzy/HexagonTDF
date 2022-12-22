@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 677926251997840687}
   - component: {fileID: 7067786466673538828}
   - component: {fileID: 5789796903112242421}
-  - component: {fileID: 8533289270119747432}
+  - component: {fileID: 768535312633994190}
   m_Layer: 9
   m_Name: Miner
   m_TagString: Untagged
@@ -272,9 +272,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db112ac9bcc3a784fb2c209e4df58866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Disabled: 0
   Body: {fileID: 0}
---- !u!65 &8533289270119747432
-BoxCollider:
+--- !u!136 &768535312633994190
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -288,12 +289,14 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.97549653, y: 1.0124785, z: 1.0060034}
-  m_Center: {x: -0.0122516155, y: 0.5023231, z: 0.0030020177}
+  serializedVersion: 2
+  m_Radius: 0.59
+  m_Height: 3.14
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.47, z: 0}
 --- !u!1 &8422486489848334723
 GameObject:
   m_ObjectHideFlags: 0
@@ -305,7 +308,6 @@ GameObject:
   - component: {fileID: 332869724002854580}
   - component: {fileID: 4099271924387690501}
   - component: {fileID: 1455430244363628799}
-  - component: {fileID: 8938167414750149423}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -378,24 +380,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8938167414750149423
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8422486489848334723}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
