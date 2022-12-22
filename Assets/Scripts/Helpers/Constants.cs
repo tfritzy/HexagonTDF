@@ -37,14 +37,14 @@ public static class Constants
 
     public static class Layers
     {
-        public static int Default = 1 << 0;
-        public static int Hexagons = 1 << 8;
-        public static int Characters = 1 << 9;
-        public static int Buildings = 1 << BuildingsLayerIndex;
-        public static int Ground = 1 << 11;
-        public static int UI = 1 << 5;
+        public const int Default = 1 << 0;
+        public const int Hexagons = 1 << 8;
+        public const int Buildings = 1 << BuildingsLayerIndex;
+        public const int Units = 1 << 10;
+        public const int UI = 1 << 5;
+        public const int Characters = Buildings | Units;
 
-        public const int BuildingsLayerIndex = 10;
+        public const int BuildingsLayerIndex = 9;
     }
 
     public static class Tags

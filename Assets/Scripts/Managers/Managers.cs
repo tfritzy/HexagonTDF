@@ -39,7 +39,7 @@ public static class Managers
         {
             if (boardManager == null)
             {
-                boardManager = GameObject.Find("BoardManager").GetComponent<BoardManager>();
+                boardManager = GameObject.Find("BoardManager")?.GetComponent<BoardManager>();
             }
 
             return boardManager;

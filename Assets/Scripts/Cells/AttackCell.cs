@@ -42,7 +42,7 @@ public abstract class AttackCell : Cell
         Collider[] nearby = Physics.OverlapSphere(
             target.transform.position,
             this.ExplosionRadius,
-            Constants.Layers.Characters,
+            Constants.Layers.Units,
             QueryTriggerInteraction.Collide);
         foreach (Collider collider in nearby)
         {

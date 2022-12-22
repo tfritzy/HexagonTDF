@@ -58,7 +58,13 @@ public abstract class Character : MonoBehaviour
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
         this.GridPosition = Helpers.ToGridPosition(this.transform.position);
-        this.Rigidbody.constraints = RigidbodyConstraints.FreezePositionY;
+        if (this.Rigidbody != null)
+        {
+            this.Rigidbody.constraints =
+                RigidbodyConstraints.FreezePositionY |
+                RigidbodyConstraints.FreezeRotationX |
+                RigidbodyConstraints.FreezeRotationZ;
+        }
 
         this.Cells = new List<Cell>()
         {
