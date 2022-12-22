@@ -3,6 +3,7 @@ using UnityEngine;
 public class CharacterBrainCell : BrainCell
 {
     private const float MOVEMENT_SPEED = 1f;
+    private const int MAX_EXTRA_NON_IDEAL_DIST = 10;
 
     public override void Update()
     {
@@ -11,7 +12,18 @@ public class CharacterBrainCell : BrainCell
 
     private void WalkTowardsTownHall()
     {
-        Vector2Int nextPos = Managers.Board.Navigation.GetNextPos(this.Owner.GridPosition);
+        Vector2Int nextPos;
+        int dist = Managers.Board.Navigation.GetDistanceToTownHall(this.Owner.GridPosition);
+        int idealDist = Managers.Board.Navigation.GetIdealDistanceToTownHall(this.Owner.GridPosition);
+        if (dist > idealDist + MAX_EXTRA_NON_IDEAL_DIST)
+        {
+            nextPos = Managers.Board.Navigation.GetIdealNextPos(this.Owner.GridPosition);
+        }
+        else
+        {
+            nextPos = Managers.Board.Navigation.GetNextPos(this.Owner.GridPosition);
+        }
+
         if (!Helpers.IsInBounds(nextPos, Managers.Board.Dimensions))
         {
             return;

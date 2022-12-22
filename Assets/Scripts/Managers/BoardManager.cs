@@ -25,14 +25,15 @@ public class BoardManager : MonoBehaviour
         this.Buildings = new Building[Board.GetLength(0), Board.GetLength(1)];
         this.Dimensions = new RectInt(0, 0, Board.GetLength(0), Board.GetLength(1));
 
-        SpawnTownHall();
+        TownHall townHall = SpawnTownHall();
+        Navigation = new Navigation(this.Dimensions.max, townHall);
+        AddBuilding(townHall.GridPosition, townHall);
         SpawnHexagons();
 
-        Navigation = new Navigation(this.Dimensions.max, Center);
-        Navigation.ReacalculatePath(this.Board);
+        this.Navigation.ReacalculateIdealPath(Board, Buildings);
     }
 
-    private void SpawnTownHall()
+    private TownHall SpawnTownHall()
     {
         // flatten area
         var points = new List<Vector2Int> { Center };
@@ -64,8 +65,7 @@ public class BoardManager : MonoBehaviour
             Board[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
         }
 
-        Building building = InstantiateBuilding(Center, BuildingType.TownHall);
-        AddBuilding(Center, building);
+        return (TownHall)InstantiateBuilding(Center, BuildingType.TownHall);
     }
 
     public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
@@ -156,6 +156,7 @@ public class BoardManager : MonoBehaviour
             this.Buildings[extraPos.x, extraPos.y] = building;
         }
 
+        Navigation.ReacalculatePath(this.Board, this.Buildings);
     }
 
     public void DestroyBuilding(Building building)
@@ -167,6 +168,8 @@ public class BoardManager : MonoBehaviour
             Vector2Int extraPos = Helpers.GetNeighborPosition(building.GridPosition, side);
             this.Buildings[extraPos.x, extraPos.y] = null;
         }
+
+        Navigation.ReacalculatePath(this.Board, this.Buildings);
 
         Destroy(building.gameObject);
     }

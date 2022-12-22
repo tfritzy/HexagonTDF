@@ -6,7 +6,8 @@ public class Navigation
 {
     public List<Vector2Int> Terminations { get; private set; }
     private NavMapPoint[,] NavMap;
-    private Vector2Int townHallPos;
+    private NavMapPoint[,] IdealNavMap;
+    private TownHall townHall;
     private Vector2Int dimensions;
 
     struct NavMapPoint
@@ -16,24 +17,57 @@ public class Navigation
         public bool IsTermination;
     }
 
-    public Navigation(Vector2Int boardSize, Vector2Int townHallPos)
+    public Navigation(Vector2Int boardSize, TownHall townHall)
     {
-        NavMap = new NavMapPoint[boardSize.x, boardSize.y];
-        this.townHallPos = townHallPos;
+        this.NavMap = new NavMapPoint[boardSize.x, boardSize.y];
+        this.IdealNavMap = new NavMapPoint[boardSize.x, boardSize.y];
+        this.townHall = townHall;
         this.dimensions = boardSize;
+    }
+
+    public int GetDistanceToTownHall(Vector2Int pos)
+    {
+        return NavMap[pos.x, pos.y].Distance;
+    }
+
+    public int GetIdealDistanceToTownHall(Vector2Int pos)
+    {
+        return IdealNavMap[pos.x, pos.y].Distance;
     }
 
     public Vector2Int GetNextPos(Vector2Int currentPos)
     {
         return NavMap[currentPos.x, currentPos.y].Next;
     }
+    public Vector2Int GetIdealNextPos(Vector2Int currentPos)
+    {
+        return IdealNavMap[currentPos.x, currentPos.y].Next;
+    }
 
-    public void ReacalculatePath(Hexagon[,] segment)
+
+    public void ReacalculatePath(Hexagon[,] segment, Building[,] bulidings)
+    {
+        Search(this.NavMap, segment, bulidings);
+    }
+
+    public void ReacalculateIdealPath(Hexagon[,] segment, Building[,] bulidings)
+    {
+        Search(this.IdealNavMap, segment, bulidings, ignorePlayerObstacles: true);
+    }
+
+    private void Search(NavMapPoint[,] navMap, Hexagon[,] segment, Building[,] bulidings, bool ignorePlayerObstacles = false)
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        NavMapPoint[,] navMap = InitNavMap(segment);
-        navMap[townHallPos.x, townHallPos.y].Distance = 0;
-        queue.Enqueue(this.townHallPos);
+        InitNavMap(navMap, segment);
+        navMap[townHall.GridPosition.x, townHall.GridPosition.y].Distance = 0;
+        queue.Enqueue(this.townHall.GridPosition);
+
+        foreach (HexSide side in townHall.ExtraSize)
+        {
+            Vector2Int point = Helpers.GetNeighborPosition(townHall.GridPosition, side);
+            navMap[point.x, point.y].Distance = 0;
+            queue.Enqueue(point);
+        }
 
         while (queue.Count > 0)
         {
@@ -44,6 +78,11 @@ public class Navigation
                 Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
                 if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
                     !segment[neighbor.x, neighbor.y].IsWalkable)
+                {
+                    continue;
+                }
+
+                if (!ignorePlayerObstacles && bulidings[neighbor.x, neighbor.y] != null)
                 {
                     continue;
                 }
@@ -74,27 +113,18 @@ public class Navigation
                 }
             }
         }
-
-        this.NavMap = navMap;
     }
 
-    private NavMapPoint[,] InitNavMap(Hexagon[,] points)
+    private void InitNavMap(NavMapPoint[,] navMap, Hexagon[,] points)
     {
-        NavMapPoint[,] distance = new NavMapPoint[points.GetLength(0), points.GetLength(1)];
-
-        for (int x = 0; x < distance.GetLength(0); x++)
+        for (int x = 0; x < navMap.GetLength(0); x++)
         {
-            for (int y = 0; y < distance.GetLength(1); y++)
+            for (int y = 0; y < navMap.GetLength(1); y++)
             {
-                distance[x, y] = new NavMapPoint
-                {
-                    Distance = Constants.MAX_ISH,
-                    Next = Constants.MaxVector2Int,
-                    IsTermination = true,
-                };
+                navMap[x, y].Distance = Constants.MAX_ISH;
+                navMap[x, y].Next = Constants.MaxVector2Int;
+                navMap[x, y].IsTermination = true;
             }
         }
-
-        return distance;
     }
 }
