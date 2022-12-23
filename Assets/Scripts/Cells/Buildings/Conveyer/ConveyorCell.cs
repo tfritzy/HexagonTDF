@@ -123,7 +123,9 @@ public class ConveyorCell : Cell
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        iterRes.ItemInst.transform.LookAt(belt.Points[iterRes.CurrentPathPoint + 1]);
+                        iterRes.ItemInst.transform.forward =
+                            iterRes.ItemInst.Item.ForwardOnConveyor *
+                            (belt.Points[iterRes.CurrentPathPoint + 1] - iterRes.ItemInst.gameObject.transform.position);
                         iterRes.ProgressAlongPath += moveDelta.magnitude;
 
                         if (deltaToNextPoint.magnitude < .02f)
@@ -179,6 +181,10 @@ public class ConveyorCell : Cell
             throw new System.Exception("Tried to add an item to the belt which overlaps with an existing item.");
         }
 
+        if (inst.TryGetComponent<Collider>(out Collider col))
+        {
+            col.enabled = false;
+        }
         toBelt.Items.AddFirst(newItem);
     }
 

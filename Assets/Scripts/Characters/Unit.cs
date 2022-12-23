@@ -6,6 +6,7 @@ public abstract class Unit : Character
     private UnitAnimationState AnimationState;
     private Animator Animator;
     private const string AnimationStateName = "AnimationState";
+    private HealthBar healthbar;
 
     public void SetAnimationState(UnitAnimationState newState)
     {
@@ -37,6 +38,6 @@ public abstract class Unit : Character
         }
 
         this.Animator = this.Body.GetComponent<Animator>();
+        this.healthbar = (HealthBar)Managers.UI.ShowHoverer(Hoverer.HealthBar, this.transform);
     }
-
 }

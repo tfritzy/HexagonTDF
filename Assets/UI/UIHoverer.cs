@@ -5,12 +5,13 @@ public abstract class UIHoverer : VisualElement
 {
     public abstract Hoverer Type { get; }
     // Offset position around target in terms of percent of element size.
-    public abstract Vector2 Offset { get; }
+    public abstract Vector3 Offset { get; }
     private Transform Target;
     private int UpdateAfter1Frame = 0;
 
     private static Vector3 Down = new Vector3(0, 1);
     private static Vector3 Right = new Vector3(1, 0);
+    private static Vector3 Up = new Vector3(0, 0, 1);
 
     public UIHoverer()
     {
@@ -38,7 +39,7 @@ public abstract class UIHoverer : VisualElement
     {
         if (Target == null)
         {
-            Debug.LogWarning("Update called on uiHover with no target.");
+            Managers.UI.HideHoverer(this);
             return;
         }
 
@@ -49,8 +50,9 @@ public abstract class UIHoverer : VisualElement
         this.transform.position = ((Vector3)newPosition) +
             Right * (this.layout.width * Offset.x) +
             Down * (this.layout.height * Offset.y);
+        // Up * (this.layout.height * Offset.z);
 
-        if (UpdateAfter1Frame == 1)
+        if (UpdateAfter1Frame == 2)
         {
             this.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
         }

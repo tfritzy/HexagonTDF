@@ -20,10 +20,13 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        this.Board = OverworldTerrainGenerator.GenerateSingleSegment(50, 50, UnityEngine.Random.Range(0, 1000));
+        this.Board = OverworldTerrainGenerator.GenerateSingleSegment(
+            Constants.OVERWORLD_DIMENSIONS,
+            Constants.OVERWORLD_DIMENSIONS,
+            UnityEngine.Random.Range(0, 1000));
 
-        this.Buildings = new Building[Board.GetLength(0), Board.GetLength(1)];
-        this.Dimensions = new RectInt(0, 0, Board.GetLength(0), Board.GetLength(1));
+        this.Buildings = new Building[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS];
+        this.Dimensions = new RectInt(0, 0, Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS);
 
         TownHall townHall = SpawnTownHall();
         Navigation = new Navigation(this.Dimensions.max, townHall);

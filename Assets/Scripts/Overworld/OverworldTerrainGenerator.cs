@@ -14,7 +14,6 @@ public class OverworldTerrainGenerator : MonoBehaviour
     public GameObject territoryBoundsLR;
     private const int SUBDIVISION_SIZE = Constants.OVERWORLD_DIMENSIONS / 10;
     private float halfDimensions = Constants.OVERWORLD_DIMENSIONS / 2f;
-    private readonly float CITY_HEIGHT_CUTOFF_DELTA = .02f;
     private const int FALLOFF_NEAR_START = 5;
     private const int FALLOFF_FAR_START = Constants.OVERWORLD_DIMENSIONS - FALLOFF_NEAR_START;
     private System.Random random;

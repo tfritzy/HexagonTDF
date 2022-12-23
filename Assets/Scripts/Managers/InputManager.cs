@@ -9,7 +9,6 @@ public class InputManager : MonoBehaviour
 {
     public bool DisabledByScroll;
     public bool IsFingerHeldDown;
-    public static event EventHandler InputWasMade;
     public InputMode CurrentMode;
     public BuildInputMode BuildMode;
     public GameInputMode GameMode;

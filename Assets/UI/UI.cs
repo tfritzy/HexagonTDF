@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,20 +29,20 @@ public class UI : MonoBehaviour
             {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
         };
 
-        Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>()
+        Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>();
+        foreach (Hoverer hoverer in Enum.GetValues(typeof(Hoverer)))
         {
-            {Hoverer.BuildConfirmation, new Stack<UIHoverer>()},
-            {Hoverer.ResourceCollectionIndicator, new Stack<UIHoverer>()}
-        };
+            Hoverers[hoverer] = new Stack<UIHoverer>();
+        }
 
         ShowPage(Page.ActionDrawer);
     }
 
     void Update()
     {
-        foreach (UIHoverer hoverer in LentHoverers)
+        for (int i = 0; i < LentHoverers.Count; i++)
         {
-            hoverer.Update();
+            LentHoverers[i].Update();
         }
     }
 
@@ -93,7 +94,6 @@ public class UI : MonoBehaviour
 
     private UIHoverer BuildHoverer(Hoverer hoverer)
     {
-        VisualElement clone;
         switch (hoverer)
         {
             case (Hoverer.BuildConfirmation):
@@ -104,6 +104,10 @@ public class UI : MonoBehaviour
                 ResourceCollectionIndicator ci = new ResourceCollectionIndicator();
                 root.Add(ci);
                 return ci;
+            case (Hoverer.HealthBar):
+                HealthBar hb = new HealthBar();
+                root.Add(hb);
+                return hb;
             default:
                 throw new System.Exception("Unknown hoverer: " + hoverer);
         }

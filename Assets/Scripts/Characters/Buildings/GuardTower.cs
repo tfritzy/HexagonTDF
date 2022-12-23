@@ -31,6 +31,10 @@ public class GuardTower : Building
             new ItemType[] { ItemType.Arrow },
             this.InventoryCell);
 
+        Arrow arrowStack = new Arrow();
+        arrowStack.Quantity = arrowStack.MaxStackSize;
+        _inventoryCell.AddItem(arrowStack);
+
         base.Setup();
     }
 }

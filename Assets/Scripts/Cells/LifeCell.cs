@@ -6,9 +6,23 @@ public abstract class LifeCell : Cell
 {
     public abstract int StartingHealth { get; }
     public bool IsDead { get; private set; }
-    private int health;
-    private Healthbar healthbar;
+    private int _health;
     private List<TakeDamageTiming> damageTimings;
+    private HealthBar healthBar;
+
+    public int Health
+    {
+        get { return _health; }
+        set
+        {
+            _health = value;
+            if (_health <= 0)
+            {
+                Die();
+            }
+        }
+    }
+
 
     internal class TakeDamageTiming
     {
@@ -32,32 +46,9 @@ public abstract class LifeCell : Cell
         }
 
         this.Health = StartingHealth;
-
-        // if (this.healthbar == null)
-        // {
-        //     this.healthbar = GameObject.Instantiate(Prefabs.Healthbar,
-        //                 new Vector3(10000, 10000),
-        //                 new Quaternion(),
-        //                 Managers.Canvas).GetComponent<Healthbar>();
-        //     this.healthbar.SetOwner(this.Owner.Body);
-        //     this.healthbar.enabled = false;
-        // }
-
+        this.healthBar = (HealthBar)Managers.UI.ShowHoverer(Hoverer.HealthBar, this.Owner.transform);
+        this.healthBar.Update(this.Health);
         damageTimings = new List<TakeDamageTiming>();
-    }
-
-
-    public int Health
-    {
-        get { return health; }
-        set
-        {
-            health = value;
-            if (health <= 0)
-            {
-                Die();
-            }
-        }
     }
 
     protected virtual void Die()
@@ -79,8 +70,7 @@ public abstract class LifeCell : Cell
     public void TakeDamage(int amount, Character source)
     {
         this.Health -= amount;
-        this.healthbar.enabled = true;
-        this.healthbar.SetFillScale((float)this.Health / (float)this.StartingHealth);
+        this.healthBar.Update(this.Health);
     }
 
     public void TakeDamage(int amount, Character source, float delay)
