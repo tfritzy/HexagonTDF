@@ -23,30 +23,8 @@ public abstract class Character : MonoBehaviour
     public abstract Alliance Alliance { get; }
     public abstract string Name { get; }
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
-    protected Collider Collider;
-    private Rigidbody rb;
-    private CapsuleCollider _capsule;
     private List<Cell> Cells;
-
-    public Vector3 Position
-    {
-        get
-        {
-            return Collider != null ? Collider.bounds.center : this.transform.position;
-        }
-    }
-
-    public Rigidbody Rigidbody
-    {
-        get
-        {
-            if (rb == null)
-            {
-                rb = this.GetComponent<Rigidbody>();
-            }
-            return rb;
-        }
-    }
+    private CapsuleCollider _capsule;
 
     public CapsuleCollider Capsule
     {
@@ -61,6 +39,7 @@ public abstract class Character : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         Setup();
@@ -68,17 +47,9 @@ public abstract class Character : MonoBehaviour
 
     public virtual void Setup()
     {
-        this.Collider = this.GetComponent<Collider>();
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
         this.GridPosition = Helpers.ToGridPosition(this.transform.position);
-        if (this.Rigidbody != null)
-        {
-            this.Rigidbody.constraints =
-                RigidbodyConstraints.FreezePositionY |
-                RigidbodyConstraints.FreezeRotationX |
-                RigidbodyConstraints.FreezeRotationZ;
-        }
 
         this.Cells = new List<Cell>()
         {

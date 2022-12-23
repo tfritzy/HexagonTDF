@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class CharacterBrainCell : BrainCell
+public class UnitBrainCell : BrainCell
 {
-    private const float MOVEMENT_SPEED = .3f;
+    private const float MOVEMENT_SPEED = .5f;
     private const int MAX_EXTRA_NON_IDEAL_DIST = 10;
     protected virtual float FindTargetRadius => 5f;
+    protected Unit UnitOwner => (Unit)this.Owner;
 
     public override void Update()
     {
@@ -28,15 +29,15 @@ public class CharacterBrainCell : BrainCell
         }
 
         Vector2Int nextPos;
-        int dist = Managers.Board.Navigation.GetDistanceToTownHall(this.Owner.GridPosition);
-        int idealDist = Managers.Board.Navigation.GetIdealDistanceToTownHall(this.Owner.GridPosition);
+        int dist = Managers.Board.Navigation.GetDistanceToTownHall(this.UnitOwner.GridPosition);
+        int idealDist = Managers.Board.Navigation.GetIdealDistanceToTownHall(this.UnitOwner.GridPosition);
         if (dist > idealDist + MAX_EXTRA_NON_IDEAL_DIST)
         {
-            nextPos = Managers.Board.Navigation.GetIdealNextPos(this.Owner.GridPosition);
+            nextPos = Managers.Board.Navigation.GetIdealNextPos(this.UnitOwner.GridPosition);
         }
         else
         {
-            nextPos = Managers.Board.Navigation.GetNextPos(this.Owner.GridPosition);
+            nextPos = Managers.Board.Navigation.GetNextPos(this.UnitOwner.GridPosition);
         }
 
         if (!Helpers.IsInBounds(nextPos, Managers.Board.Dimensions))
@@ -44,35 +45,45 @@ public class CharacterBrainCell : BrainCell
             return;
         }
 
-        Vector3 diff = Helpers.ToWorldPosition(nextPos) - this.Owner.transform.position;
+        Vector3 diff = Helpers.ToWorldPosition(nextPos) - this.UnitOwner.transform.position;
 
         if (diff.magnitude < .3f)
         {
-            this.Owner.GridPosition = nextPos;
+            this.UnitOwner.GridPosition = nextPos;
         }
 
-        this.Owner.Rigidbody.velocity = Vector3.Lerp(
-            this.Owner.Rigidbody.velocity,
+        // Update grid pos and y.
+        Vector2Int currentPos = Helpers.ToGridPosition(this.Owner.transform.position);
+        this.Owner.GridPosition = currentPos;
+        Vector3 worldPos = this.UnitOwner.transform.position;
+        worldPos.y = Managers.Board.GetHex(currentPos).transform.position.y;
+        this.UnitOwner.transform.position = worldPos;
+
+        this.UnitOwner.Rigidbody.velocity = Vector3.Lerp(
+            this.UnitOwner.Rigidbody.velocity,
             diff.normalized * MOVEMENT_SPEED,
             Time.deltaTime);
+        this.UnitOwner.transform.LookAt(this.UnitOwner.transform.position + this.UnitOwner.Rigidbody.velocity);
     }
 
     private void AttackTarget()
     {
-        Vector3? moveDir = FirstUnobstructedDirection(this.Target.transform.position - this.Owner.transform.position);
+        Vector3? moveDir = FirstUnobstructedDirection(this.Target.transform.position - this.UnitOwner.transform.position);
         if (moveDir != null)
         {
             Vector3 newDirection = Vector3.Lerp(
-                this.Owner.Rigidbody.velocity,
+                this.UnitOwner.Rigidbody.velocity,
                 moveDir.Value.normalized * MOVEMENT_SPEED,
                 Time.deltaTime * 3);
-            this.Owner.Rigidbody.velocity = newDirection;
-            this.Owner.transform.LookAt(this.Owner.transform.position + newDirection);
+            this.UnitOwner.Rigidbody.velocity = newDirection;
+            this.UnitOwner.transform.LookAt(this.UnitOwner.transform.position + newDirection);
+            this.UnitOwner.SetAnimationState(UnitAnimationState.Walking);
         }
         else
         {
-            this.Owner.Rigidbody.velocity = Vector3.zero;
-            this.Owner.transform.LookAt(this.Target.transform);
+            this.UnitOwner.Rigidbody.velocity = Vector3.zero;
+            this.UnitOwner.transform.LookAt(this.Target.transform);
+            this.UnitOwner.SetAnimationState(UnitAnimationState.Attacking);
         }
     }
 
@@ -86,7 +97,7 @@ public class CharacterBrainCell : BrainCell
         lastTargetCheckTime = Time.time;
 
         Collider[] hits = Physics.OverlapSphere(
-            this.Owner.transform.position,
+            this.UnitOwner.transform.position,
             FindTargetRadius,
             Constants.Layers.Buildings);
 
@@ -118,16 +129,22 @@ public class CharacterBrainCell : BrainCell
             directions[i].Weight = Vector3.Dot(desiredDirection, directions[i].Vector);
         }
 
-        Collider[] nearbyCharacters = Physics.OverlapSphere(this.Owner.Position, CHECK_DISTANCE, Constants.Layers.Characters);
+        Collider[] nearbyCharacters = Physics.OverlapSphere(
+            this.UnitOwner.transform.position,
+            CHECK_DISTANCE,
+            Constants.Layers.Characters);
         foreach (Collider hit in nearbyCharacters)
         {
-            if (hit.gameObject == this.Owner.gameObject)
+            if (hit.gameObject == this.UnitOwner.gameObject)
             {
                 continue;
             }
 
-            Vector3 toCharacter = hit.transform.position - this.Owner.transform.position;
-            float distToCharacter = toCharacter.magnitude - this.Owner.Capsule.radius - hit.GetComponent<Character>().Capsule.radius;
+            Vector3 toCharacter = hit.transform.position - this.UnitOwner.transform.position;
+            float distToCharacter =
+                toCharacter.magnitude -
+                this.UnitOwner.Capsule.radius -
+                hit.GetComponent<Character>().Capsule.radius;
             float percentDistToCharacter = Mathf.Min(distToCharacter / DESIRED_DISTANCE, 1f);
 
             if (hit.gameObject == this.Target.gameObject)
@@ -153,13 +170,13 @@ public class CharacterBrainCell : BrainCell
             }
         }
 
-        for (int i = 0; i < NumSteps; i++)
-        {
-            int angle = i * AngleStep;
-            Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
-            float weight = (directions[i].Weight + 1) / 2;
-            Debug.DrawLine(this.Owner.transform.position, this.Owner.transform.position + v * weight, Color.green, .01f);
-        }
+        // for (int i = 0; i < NumSteps; i++)
+        // {
+        //     int angle = i * AngleStep;
+        //     Vector3 v = Quaternion.AngleAxis(angle, Vector3.up) * desiredDirection;
+        //     float weight = (directions[i].Weight + 1) / 2;
+        //     Debug.DrawLine(this.UnitOwner.transform.position, this.UnitOwner.transform.position + v * weight, Color.green, .01f);
+        // }
 
         int mostDesired = -1;
         float mostDesiredWeight = float.MinValue;

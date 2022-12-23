@@ -108,15 +108,17 @@ public abstract class AttackCell : Cell
 
     protected virtual bool IsInRangeOfTarget(Character target)
     {
-        if (target == null)
-        {
-            return false;
-        }
+        return false;
 
-        // TODO use distance checking system.
-        Vector3 distToTarget =
-            target.transform.position - this.Owner.Position;
-        return distToTarget.magnitude <= this.Owner.AttackCell.Range;
+        // if (target == null)
+        // {
+        //     return false;
+        // }
+
+        // // TODO use distance checking system.
+        // Vector3 distToTarget =
+        //     target.transform.position - this.Owner.Position;
+        // return distToTarget.magnitude <= this.Owner.AttackCell.Range;
     }
 
     private bool IsCollisionTarget(Character attacker, GameObject collision)
