@@ -25,6 +25,7 @@ public abstract class Character : MonoBehaviour
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     protected Collider Collider;
     private Rigidbody rb;
+    private CapsuleCollider _capsule;
     private List<Cell> Cells;
 
     public Vector3 Position
@@ -44,6 +45,19 @@ public abstract class Character : MonoBehaviour
                 rb = this.GetComponent<Rigidbody>();
             }
             return rb;
+        }
+    }
+
+    public CapsuleCollider Capsule
+    {
+        get
+        {
+            if (_capsule == null)
+            {
+                _capsule = this.GetComponent<CapsuleCollider>();
+            }
+
+            return _capsule;
         }
     }
 

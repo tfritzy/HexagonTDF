@@ -10,7 +10,7 @@ public class TeleportingBuilding : MonoBehaviour
 
     void Update()
     {
-        if (Time.time > lastTeleportTime + 3f)
+        if (Time.time > lastTeleportTime + 10f)
         {
             this.transform.position = new Vector3(Random.Range(-Bounds, Bounds), 0, Random.Range(-Bounds, Bounds));
             lastTeleportTime = Time.time;
