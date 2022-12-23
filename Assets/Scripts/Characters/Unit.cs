@@ -38,6 +38,5 @@ public abstract class Unit : Character
         }
 
         this.Animator = this.Body.GetComponent<Animator>();
-        this.healthbar = (HealthBar)Managers.UI.ShowHoverer(Hoverer.HealthBar, this.transform);
     }
 }

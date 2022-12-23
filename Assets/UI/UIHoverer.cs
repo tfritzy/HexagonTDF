@@ -17,7 +17,6 @@ public abstract class UIHoverer : VisualElement
     {
         this.style.position = new StyleEnum<Position>(Position.Absolute);
         this.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
-        Update();
     }
 
     public void Show()
@@ -33,6 +32,7 @@ public abstract class UIHoverer : VisualElement
     public void SetTarget(Transform target)
     {
         this.Target = target;
+        Update();
     }
 
     public void Update()
@@ -50,7 +50,6 @@ public abstract class UIHoverer : VisualElement
         this.transform.position = ((Vector3)newPosition) +
             Right * (this.layout.width * Offset.x) +
             Down * (this.layout.height * Offset.y);
-        // Up * (this.layout.height * Offset.z);
 
         if (UpdateAfter1Frame == 2)
         {

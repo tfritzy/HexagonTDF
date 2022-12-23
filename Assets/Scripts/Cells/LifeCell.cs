@@ -47,7 +47,7 @@ public abstract class LifeCell : Cell
 
         this.Health = StartingHealth;
         this.healthBar = (HealthBar)Managers.UI.ShowHoverer(Hoverer.HealthBar, this.Owner.transform);
-        this.healthBar.Update(this.Health);
+        this.healthBar.Update(this.Health, StartingHealth);
         damageTimings = new List<TakeDamageTiming>();
     }
 
@@ -70,7 +70,7 @@ public abstract class LifeCell : Cell
     public void TakeDamage(int amount, Character source)
     {
         this.Health -= amount;
-        this.healthBar.Update(this.Health);
+        this.healthBar.Update(this.Health, this.StartingHealth);
     }
 
     public void TakeDamage(int amount, Character source, float delay)
