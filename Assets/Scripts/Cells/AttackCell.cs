@@ -8,6 +8,8 @@ public abstract class AttackCell : Cell
     public abstract VerticalRegion AttackRegion { get; }
     public abstract VerticalRegion Region { get; }
     public abstract bool InstantaneousAttacks { get; }
+    public abstract ItemType Ammo { get; }
+    public bool IsOnCooldown => Time.time < lastAttackTime + Cooldown;
 
     public float Cooldown => BaseCooldown / CooldownModificationAmount;
 
@@ -20,10 +22,10 @@ public abstract class AttackCell : Cell
     protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
 
     public float AttackSpeedModifiedPercent;
-    public GameObject Projectile;
     private float lastAttackTime;
     protected Transform projectileStartPosition;
-    private GameObject windingUpProjectile;
+
+    public override void Update() { }
 
     public override void Setup(Character character)
     {
@@ -35,7 +37,6 @@ public abstract class AttackCell : Cell
                 "ProjectileStartPosition")
             ?? this.Owner.Body;
     }
-
 
     private void Explode(Character attacker, Character target)
     {
@@ -56,6 +57,16 @@ public abstract class AttackCell : Cell
         }
     }
 
+    public bool CanAttack()
+    {
+        if (IsOnCooldown)
+        {
+            return false;
+        }
+
+        return this.Owner.InventoryCell.FirstIndexOfItem(this.Ammo) != -1;
+    }
+
     protected virtual void ConfigureProjectile(GameObject projectile, Character target)
     {
         projectile.transform.parent = null;
@@ -70,6 +81,12 @@ public abstract class AttackCell : Cell
             if (DoProjectilesTrack && target != null)
             {
                 projectileMono.SetTracking(target.gameObject, this.ProjectileSpeed);
+            }
+            else
+            {
+                projectileMono.Rigidbody.velocity =
+                    (target.transform.position - this.Owner.transform.position).normalized * ProjectileSpeed;
+                projectileMono.transform.LookAt(target.transform);
             }
         }
     }
@@ -94,31 +111,31 @@ public abstract class AttackCell : Cell
             return;
         }
 
+        this.lastAttackTime = Time.time;
+
+        int ammoIndex = this.Owner.InventoryCell.FirstIndexOfItem(this.Ammo);
+        this.Owner.InventoryCell.RemoveAt(ammoIndex);
+
         if (this.InstantaneousAttacks)
         {
             this.DealDamageToEnemy(this.Owner, target);
         }
         else
         {
-            ConfigureProjectile(windingUpProjectile, target);
-            windingUpProjectile.transform.parent = null;
-            windingUpProjectile = null;
+            GameObject projectile = GameObject.Instantiate(Prefabs.GetResource(this.Ammo), this.Owner.transform.position, new Quaternion());
+            ConfigureProjectile(projectile, target);
         }
     }
 
     protected virtual bool IsInRangeOfTarget(Character target)
     {
-        return false;
+        if (target == null)
+        {
+            return false;
+        }
 
-        // if (target == null)
-        // {
-        //     return false;
-        // }
-
-        // // TODO use distance checking system.
-        // Vector3 distToTarget =
-        //     target.transform.position - this.Owner.Position;
-        // return distToTarget.magnitude <= this.Owner.AttackCell.Range;
+        Vector3 distToTarget = target.transform.position - this.Owner.transform.position;
+        return distToTarget.sqrMagnitude <= this.Owner.AttackCell.Range * this.Owner.AttackCell.Range;
     }
 
     private bool IsCollisionTarget(Character attacker, GameObject collision)

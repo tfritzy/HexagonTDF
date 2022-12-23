@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class Projectile : MonoBehaviour
 {
     public delegate void DealDamageToEnemy(Character attacker, Character target);
+    public Rigidbody Rigidbody { get; protected set; }
     private DealDamageToEnemy dealDamageToEnemy;
     public delegate bool IsCollisionTarget(Character attacker, GameObject collision);
     private IsCollisionTarget isCollisionTarget;
-    protected Rigidbody Rigidbody;
     protected float birthTime;
     private Character attacker;
     private Transform trailParticles;
