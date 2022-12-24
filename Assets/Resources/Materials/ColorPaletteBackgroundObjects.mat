@@ -79,8 +79,8 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _HighIntensity: 3.32
-    - _LightScalar: 1.3
+    - _HighIntensity: 3.07
+    - _LightScalar: 8.66
     - _LowIntensity: 1.89
     - _Metallic: 0
     - _Mode: 0
@@ -90,7 +90,7 @@ Material:
     - _RampLevels: 2
     - _RimAlpha: 1
     - _RimDropOff: 0
-    - _RimPower: 0.371
+    - _RimPower: 0.158
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

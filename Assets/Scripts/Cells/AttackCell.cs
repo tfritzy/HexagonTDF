@@ -17,7 +17,7 @@ public abstract class AttackCell : Cell
     public virtual float Range => BaseRange;
     protected virtual float ExplosionRadius => 0;
     protected virtual bool DoProjectilesTrack => false;
-    protected virtual float ProjectileSpeed => 10;
+    protected virtual float ProjectileSpeed => 15;
     protected virtual int MaxPierceCount => 0;
     protected virtual float CooldownModificationAmount => 1 + AttackSpeedModifiedPercent;
 
@@ -85,7 +85,7 @@ public abstract class AttackCell : Cell
             else
             {
                 projectileMono.Rigidbody.velocity =
-                    (target.transform.position - this.Owner.transform.position).normalized * ProjectileSpeed;
+                    (target.transform.position - this.Owner.ProjectileStartPos.position).normalized * ProjectileSpeed;
                 projectileMono.transform.LookAt(target.transform);
             }
         }
@@ -122,7 +122,10 @@ public abstract class AttackCell : Cell
         }
         else
         {
-            GameObject projectile = GameObject.Instantiate(Prefabs.GetResource(this.Ammo), this.Owner.transform.position, new Quaternion());
+            GameObject projectile = GameObject.Instantiate(
+                Prefabs.GetResource(this.Ammo),
+                this.Owner.ProjectileStartPos.position,
+                new Quaternion());
             ConfigureProjectile(projectile, target);
         }
     }

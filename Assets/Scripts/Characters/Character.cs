@@ -39,6 +39,19 @@ public abstract class Character : MonoBehaviour
         }
     }
 
+    private Transform _projectileStartPos;
+    public Transform ProjectileStartPos
+    {
+        get
+        {
+            if (_projectileStartPos == null)
+            {
+                _projectileStartPos = this.transform.Find("ProjectileStartPosition");
+            }
+
+            return _projectileStartPos;
+        }
+    }
 
     void Start()
     {
