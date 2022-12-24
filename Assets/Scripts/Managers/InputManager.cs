@@ -66,7 +66,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        RaycastAndInteract(inputPos, Constants.Layers.Hexagons | Constants.Layers.Characters);
+        RaycastAndInteract(inputPos, Constants.Layers.Hexagons | Constants.Layers.Units);
     }
 
     private void RaycastAndInteract(Vector3? inputPos, int layer)
@@ -90,6 +90,7 @@ public class InputManager : MonoBehaviour
         List<Character> characters =
             hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<Character>())
             .ToList();
+        characters.AddRange(hexes.Select((HexagonMono hex) => Managers.Board.GetBuilding(hex.GridPosition)));
         hexes.RemoveAll((HexagonMono i) => i == null);
         characters.RemoveAll((Character i) => i == null);
         this.CurrentMode.Interact(hexes, characters);
