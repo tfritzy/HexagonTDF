@@ -13,28 +13,115 @@ public class BuildInputMode : InputMode
     private ResourceCollectionIndicator resourceCollectionIndicator;
     private GameObject previewBuilding;
     private Vector2Int previewPosition;
+    private Character retargetingConveyorOf;
+    private GameObject ArrowIndicator;
 
     public enum BuildInputState
     {
         Default,
         PreviewingBuilding,
+        RetargetingConveyor,
     }
 
-    public override void Interact(List<HexagonMono> hexes, List<Character> characters)
+    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
     {
         Debug.Log($"Build input mode interacts with {hexes.Count} hexes and {characters.Count} characters. I have build mode {SelectedBuildingType}");
 
-        if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
+        if (State == BuildInputState.RetargetingConveyor && retargetingConveyorOf != null)
         {
-            if (Prefabs.GetBuilding(SelectedBuildingType).GetComponent<Building>().RequiresConfirmationToBuild)
+            Character newConveyor = characters.FirstOrDefault((Character c) => c.ConveyorCell != null);
+            if (CanCharacterAcceptInput(retargetingConveyorOf, newConveyor))
             {
-                OpenBuildConfirmation(hexes.First(), SelectedBuildingType);
+                retargetingConveyorOf.ConveyorCell.SwitchOutput(newConveyor.ConveyorCell);
+            }
+
+            ArrowIndicator.SetActive(false);
+            State = BuildInputState.Default;
+        }
+        else if (State == BuildInputState.Default && !hasDragged)
+        {
+            if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
+            {
+                if (Prefabs.GetBuilding(SelectedBuildingType).GetComponent<Building>().RequiresConfirmationToBuild)
+                {
+                    OpenBuildConfirmation(hexes.First(), SelectedBuildingType);
+                }
+                else
+                {
+                    BuildBuilding(hexes.First(), SelectedBuildingType);
+                }
+            }
+        }
+    }
+
+    public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
+    {
+        if (this.State == BuildInputState.RetargetingConveyor)
+        {
+            Character building = Managers.Board.GetBuilding(hexes.First().GridPosition);
+            ArrowIndicator.transform.LookAt(hexes.First().transform);
+
+            if (building != null && CanCharacterAcceptInput(retargetingConveyorOf, building))
+            {
+                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Color.green;
             }
             else
             {
-                BuildBuilding(hexes.First(), SelectedBuildingType);
+                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Color.red;
             }
         }
+    }
+
+    public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
+    {
+        Character conveyor = characters.FirstOrDefault(
+            (Character character) =>
+                character.ConveyorCell != null &&
+                !character.ConveyorCell.IsTermination);
+
+        if (conveyor != null)
+        {
+            this.State = BuildInputState.RetargetingConveyor;
+            Managers.CameraControl.FrozenUntilMouseUp = true;
+            this.retargetingConveyorOf = conveyor;
+            if (this.ArrowIndicator == null)
+            {
+                this.ArrowIndicator = GameObject.Instantiate(
+                    Managers.Prefabs.RedArrow3D,
+                    conveyor.transform.position,
+                    new Quaternion());
+            }
+            else
+            {
+                this.ArrowIndicator.transform.position = conveyor.transform.position;
+                this.ArrowIndicator.SetActive(true);
+            }
+        }
+    }
+
+    private bool CanCharacterAcceptInput(Character source, Character target)
+    {
+        if (target?.ConveyorCell == null)
+        {
+            return false;
+        }
+
+        if (source.ConveyorCell == target.ConveyorCell)
+        {
+            return false;
+        }
+
+        if (target.ConveyorCell.Next == source.ConveyorCell)
+        {
+            return false;
+        }
+
+        if (target.ConveyorCell.IsTermination)
+        {
+            return false;
+        }
+
+        return !target.ConveyorCell.IsTermination;
     }
 
     public void SelectBuildingType(BuildingType type)

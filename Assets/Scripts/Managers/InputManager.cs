@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
-    public bool DisabledByScroll;
+    public bool hasDragged;
     public bool IsFingerHeldDown;
     public InputMode CurrentMode;
     public BuildInputMode BuildMode;
@@ -26,19 +26,19 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (DisabledByScroll == false)
+        if (Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
         {
             ShootRayCast();
         }
 
         if (Managers.CameraControl.IsDragging())
         {
-            DisabledByScroll = true;
+            hasDragged = true;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            DisabledByScroll = false;
+            hasDragged = false;
         }
 
         this.CurrentMode.Update();
@@ -48,14 +48,15 @@ public class InputManager : MonoBehaviour
     {
         Vector3? inputPos = null;
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
         {
             inputPos = Input.mousePosition;
         }
-        else if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        else if (Input.touchCount > 0)
         {
             inputPos = Input.GetTouch(0).position;
         }
+
         if (!inputPos.HasValue)
         {
             return;
@@ -66,14 +67,38 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        RaycastAndInteract(inputPos, Constants.Layers.Hexagons | Constants.Layers.Units);
+        var hits = RaycastAndInteract(inputPos, Constants.Layers.Hexagons | Constants.Layers.Units);
+        if (hits == null)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            this.CurrentMode.OnDown(hits.Value.Hexes, hits.Value.Characters);
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            this.CurrentMode.OnUp(hits.Value.Hexes, hits.Value.Characters, hasDragged);
+        }
+        else
+        {
+            this.CurrentMode.OnDrag(hits.Value.Hexes, hits.Value.Characters);
+        }
     }
 
-    private void RaycastAndInteract(Vector3? inputPos, int layer)
+    struct RaycastHits
+    {
+        public List<Character> Characters;
+        public List<HexagonMono> Hexes;
+        public List<Vector3> HitPoints;
+    };
+
+    private RaycastHits? RaycastAndInteract(Vector3? inputPos, int layer)
     {
         if (Helpers.IsPointerOverUI())
         {
-            return;
+            return null;
         }
 
         Ray ray = Managers.Camera.ScreenPointToRay(inputPos.Value);
@@ -93,7 +118,12 @@ public class InputManager : MonoBehaviour
         characters.AddRange(hexes.Select((HexagonMono hex) => Managers.Board.GetBuilding(hex.GridPosition)));
         hexes.RemoveAll((HexagonMono i) => i == null);
         characters.RemoveAll((Character i) => i == null);
-        this.CurrentMode.Interact(hexes, characters);
+        return new RaycastHits
+        {
+            Characters = characters,
+            Hexes = hexes,
+            HitPoints = hits.Select((RaycastHit hit) => hit.point).ToList(),
+        };
     }
 
     private bool IsPointerOverUIObject()

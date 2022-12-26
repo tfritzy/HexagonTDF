@@ -256,6 +256,25 @@ public class ConveyorCell : Cell
         throw new System.Exception($"Tried to remove item with id {itemId} from this belt, but it wasn't there.");
     }
 
+    public void SwitchOutput(ConveyorCell newOutput)
+    {
+        bool isNewANeighbor = false;
+        for (int i = 0; i < 6; i++)
+        {
+            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
+            if (Managers.Board.GetBuilding(neighbor)?.ConveyorCell == newOutput)
+            {
+                isNewANeighbor = true;
+                break;
+            }
+        }
+
+        if (isNewANeighbor)
+        {
+            LinkConveyors(this, newOutput);
+        }
+    }
+
     private float GetMinBoundOfNextItem(LinkedListNode<ItemOnBelt> item, Belt nextBelt)
     {
         if (item.Next != null)
@@ -310,6 +329,13 @@ public class ConveyorCell : Cell
     {
         HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
         HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
+
+        if (this.Next != null)
+        {
+            HexSide existingTargetInputSide = GetOppositeSide(this.OutputBelt.Side);
+            this.Next.InputBelts.Remove(existingTargetInputSide);
+            ConfigureLines(this.Next);
+        }
 
         // todo: recalculate positions of existing items on output belt.
         source.OutputBelt = new Belt(

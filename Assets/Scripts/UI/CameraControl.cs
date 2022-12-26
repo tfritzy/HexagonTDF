@@ -6,6 +6,7 @@ public class CameraControl : MonoBehaviour
 {
     public const float MOVEMENT_SPEED = 9f;
     public bool DisableXScroll;
+    public bool FrozenUntilMouseUp;
     private const float INPUT_BUFFER_DURATION = .25f;
     private const float MAX_CAMERA_VELOCITY = 20f;
     private Vector3? touchStartPosition;
@@ -47,6 +48,16 @@ public class CameraControl : MonoBehaviour
 
     private void HandleTouchInput()
     {
+        if (Input.GetMouseButtonUp(0))
+        {
+            FrozenUntilMouseUp = false;
+        }
+
+        if (FrozenUntilMouseUp)
+        {
+            return;
+        }
+
         if (Input.GetMouseButton(0))
         {
             if (touchStartPosition.HasValue == false)
