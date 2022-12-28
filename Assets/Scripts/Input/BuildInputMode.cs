@@ -63,11 +63,11 @@ public class BuildInputMode : InputMode
 
             if (building != null && CanCharacterAcceptInput(retargetingConveyorOf, building))
             {
-                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Color.green;
+                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Constants.Colors.Green;
             }
             else
             {
-                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Color.red;
+                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Constants.Colors.Red;
             }
         }
     }

@@ -25,6 +25,12 @@ public static class Constants
     public const int MAX_ISH = int.MaxValue;
     public const int MIN_ISH = int.MinValue;
 
+    public class Colors
+    {
+        public static Color Red = ColorExtensions.Create("#FF2F2F");
+        public static Color Green = ColorExtensions.Create("#3EF857");
+    }
+
     /// <summary>
     /// How much of each resource 1 power maps to.
     /// </summary>

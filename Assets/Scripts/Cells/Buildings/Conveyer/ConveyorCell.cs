@@ -271,7 +271,9 @@ public class ConveyorCell : Cell
 
         if (isNewANeighbor)
         {
+            var currentItems = this.OutputBelt?.Items ?? new LinkedList<ItemOnBelt>();
             LinkConveyors(this, newOutput);
+            this.OutputBelt.Items = currentItems;
         }
     }
 
@@ -330,12 +332,12 @@ public class ConveyorCell : Cell
         HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
         HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
 
-        if (this.Next != null)
-        {
-            HexSide existingTargetInputSide = GetOppositeSide(this.OutputBelt.Side);
-            this.Next.InputBelts.Remove(existingTargetInputSide);
-            ConfigureLines(this.Next);
-        }
+        // if (this.Next != null)
+        // {
+        //     HexSide existingTargetInputSide = GetOppositeSide(this.OutputBelt.Side);
+        //     this.Next.InputBelts.Remove(existingTargetInputSide);
+        //     ConfigureLines(this.Next);
+        // }
 
         // todo: recalculate positions of existing items on output belt.
         source.OutputBelt = new Belt(
