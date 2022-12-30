@@ -1,4 +1,5 @@
-public static class ItemGenerator {
+public static class ItemGenerator
+{
     public static Item Make(ItemType type)
     {
         switch (type)
@@ -7,6 +8,8 @@ public static class ItemGenerator {
                 return new Log();
             case (ItemType.ArrowShaft):
                 return new ArrowShaft();
+            case (ItemType.Shingle):
+                return new Shingle();
             case (ItemType.Rock):
                 return new Rock();
             case (ItemType.ArrowHead):

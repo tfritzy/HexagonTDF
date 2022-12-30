@@ -11,6 +11,9 @@ public class Conveyor : Building
     public override Alliance Alliance => Alliance.Player;
     public override string Name => charName;
     private const string charName = "Conveyor";
+    public override Dictionary<ItemType, int> ItemsNeededForConstruction => null;
+    public override int InventorySize => 0;
+    public override bool NeedsConstruction => false;
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;

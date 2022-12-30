@@ -2,7 +2,8 @@ Shader "Cel/CelDitheredPercent"
 {
     Properties
     {
-        _PercentConstructed("Percent Dithered", Range(0, 3)) = 0
+        _PercentConstructed("Percent Constructed", Range(0, 3)) = 0
+        _ModelMinY("Model min y", float) = 0
 
         _Color("Global Color Modifier", Color) = (1, 1, 1, 1)
         _MainTex("Texture", 2D) = "white" {}
@@ -34,63 +35,8 @@ Shader "Cel/CelDitheredPercent"
     
     SubShader
     {
-        Tags{ "Queue" = "Transparent" }
-        
-        // This Pass Renders the outlines
-        Cull Front
-        ZWrite off
-        Pass
-        {
-            Blend SrcAlpha OneMinusSrcAlpha
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
-
-            #include "UnityCG.cginc"
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-            };
-
-            struct v2f
-            {
-                float4 vertex : SV_POSITION;
-                UNITY_FOG_COORDS(1)
-            };
-
-            float _OutlineSize;
-            v2f vert(appdata v)
-            {
-                v2f o;
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
-                worldPos.xyz = worldPos.xyz + worldNormal * _OutlineSize * 0.001;
-                o.vertex = mul(UNITY_MATRIX_VP, worldPos);
-                UNITY_TRANSFER_FOG(o,o.vertex);
-                return o;
-            }
-
-            float4 _OutlineColor;
-            fixed4 frag(v2f i) : SV_Target
-            {
-                fixed4 col = _OutlineColor;
-
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
-            }
-
-            ENDCG
-        }// End Outline Pass
-
         // This pass renders the object
         Cull Back
-        ZWrite On
-        ZTest LEqual
         Pass
         {
             Tags{ "LightMode" = "ForwardBase" }
@@ -170,6 +116,7 @@ Shader "Cel/CelDitheredPercent"
             float4    _FresnelColor;
             float     _FresnelShadowDropoff;
             float     _PercentConstructed;
+            float     _ModelMinY;
 
             fixed4 frag(v2f i) : SV_Target
             {
@@ -180,26 +127,25 @@ Shader "Cel/CelDitheredPercent"
                 i.pos.xy = floor(i.pos.xy * 0.25) * .5;
                 float checker = -frac(i.pos.x + i.pos.y);
 
-                float distToBand = _PercentConstructed - i.worldPos.y;
+                float height = i.worldPos.y - _ModelMinY;
+                float distToBand = _PercentConstructed - height;
                 
-                clip(distToBand); // Discard pixels above the band.
+                if (distToBand < 0)
+                {
+                    return _Color = float4(0.2, 0.2, 0.2, .5);
+                }
+                // clip(distToBand); // Discard pixels above the band.
 
                 if (distToBand < .1)
                 {
                     // Dither
-                    float percentAlongBand = -(distToBand / .1 - 1);
-                    float randomForPixel = random(i.pos.x * 7 + i.pos.y * 31);
-                    clip(randomForPixel - percentAlongBand);    
+                    // float percentAlongBand = -(distToBand / .1 - 1);
+                    // float randomForPixel = random(i.pos.x * 7 + i.pos.y * 31);
+                    // clip(randomForPixel - percentAlongBand);    
 
                     // Render constant color for non-dithered pixels in band.
                     return _Color = float4(1, 1, 1, 1);
                 }
-
-                // // clip HLSL instruction stops rendering a pixel if value is negative
-                // if (randomForPixel > 0)
-                // {
-                    //     clip(checker);
-                // }
 
                 // Get view direction && light direction for rim lighting
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);

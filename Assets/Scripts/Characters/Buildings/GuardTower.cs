@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class GuardTower : Building
 {
     public override LifeCell LifeCell => _lifeCell;
@@ -10,6 +12,13 @@ public class GuardTower : Building
     public override Alliance Alliance => Alliance.Player;
     public override string Name => _name;
     public override BuildingType Type => BuildingType.GuardTower;
+    public override Dictionary<ItemType, int> ItemsNeededForConstruction => _itemsNeededForConstruction;
+    private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
+    {
+        {ItemType.Log, 6},
+        // {ItemType.Plank, 10},
+        {ItemType.Rock, 20},
+    };
 
     private string _name = "Guard Tower";
     private GuardTowerLifeCell _lifeCell;
@@ -21,15 +30,15 @@ public class GuardTower : Building
 
     public override void Setup()
     {
+        List<ItemType> acceptedItems = new List<ItemType>(_itemsNeededForConstruction.Keys);
+        acceptedItems.Add(ItemType.Arrow);
+
         _lifeCell = new GuardTowerLifeCell();
         _inventoryCell = new InventoryCell(8);
         _conveyorCell = new ConveyorCell();
         _brainCell = new AttackTowerBrainCell();
         _attackCell = new GuardTowerAttackCell();
-        _pickupCell = new ItemPickupCell(
-            this.ConveyorCell,
-            new ItemType[] { ItemType.Arrow },
-            this.InventoryCell);
+        _pickupCell = new ItemPickupCell(this.ConveyorCell, acceptedItems.ToArray(), this.InventoryCell);
 
         Arrow arrowStack = new Arrow();
         arrowStack.Quantity = arrowStack.MaxStackSize;

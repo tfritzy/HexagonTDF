@@ -85,7 +85,7 @@ public abstract class Character : MonoBehaviour
         UpdateLoop();
     }
 
-    protected void UpdateLoop()
+    protected virtual void UpdateLoop()
     {
         if (this.Disabled)
         {

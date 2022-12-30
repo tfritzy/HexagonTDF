@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
-    <ui:VisualElement name="VerticalGroup" class="dark-frame" style="flex-direction: row; justify-content: flex-start; align-self: auto; position: absolute; align-items: center;">
-        <ui:Label tabindex="-1" text=".50" display-tooltip-when-elided="true" name="Value" class="small-outlined-text" />
-        <ui:VisualElement name="Icon" class="hud-icon resource-collection-hoverer--inline-icon" style="background-image: resource(&apos;ArrowHead&apos;);" />
-        <ui:Label tabindex="-1" text="/s" display-tooltip-when-elided="true" name="Value" class="small-outlined-text" />
-    </ui:VisualElement>
-</ui:UXML>

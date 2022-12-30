@@ -108,6 +108,10 @@ public class UI : MonoBehaviour
                 HealthBar hb = new HealthBar();
                 root.Add(hb);
                 return hb;
+            case (Hoverer.ConstructionProgress):
+                ConstructionProgress conProg = new ConstructionProgress();
+                root.Add(conProg);
+                return conProg;
             default:
                 throw new System.Exception("Unknown hoverer: " + hoverer);
         }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class LumberMill : Building
 {
     public override LifeCell LifeCell => lifeCell;
@@ -7,6 +9,16 @@ public class LumberMill : Building
     public override ResourceProcessingCell ResourceProcessingCell => resourceProcessingCell;
     public override ConveyorCell ConveyorCell => conveyorCell;
     public override string Name => charName;
+    public override Dictionary<ItemType, int> ItemsNeededForConstruction => _itemsNeededForConstruction;
+    private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
+    {
+        {ItemType.Log, 10},
+        {ItemType.Plank, 20},
+        {ItemType.StoneBlock, 30},
+        {ItemType.SawBlade, 1},
+        {ItemType.Shingle, 50},
+    };
+
     private const string charName = "Lumber mill";
 
     private LifeCell lifeCell;
