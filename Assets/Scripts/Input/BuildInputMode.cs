@@ -25,8 +25,6 @@ public class BuildInputMode : InputMode
 
     public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
     {
-        Debug.Log($"Build input mode interacts with {hexes.Count} hexes and {characters.Count} characters. I have build mode {SelectedBuildingType}");
-
         if (State == BuildInputState.RetargetingConveyor && retargetingConveyorOf != null)
         {
             Character newConveyor = characters.FirstOrDefault((Character c) => c.ConveyorCell != null);

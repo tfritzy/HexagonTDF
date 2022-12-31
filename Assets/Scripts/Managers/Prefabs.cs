@@ -153,19 +153,6 @@ public static class Prefabs
         }
     }
 
-    private static GameObject healthbar;
-    public static GameObject Healthbar
-    {
-        get
-        {
-            if (healthbar == null)
-            {
-                healthbar = Resources.Load<GameObject>("Prefabs/UI/Healthbar");
-            }
-            return healthbar;
-        }
-    }
-
     private static GameObject pathCorner;
     public static GameObject PathCorner
     {

@@ -122,11 +122,6 @@ Shader "Cel/CelDitheredPercent"
             {
                 _RampLevels -= 1;
 
-                // checker value will be negative for 4x4 blocks of pixels
-                // in a checkerboard pattern
-                i.pos.xy = floor(i.pos.xy * 0.25) * .5;
-                float checker = -frac(i.pos.x + i.pos.y);
-
                 float height = i.worldPos.y - _ModelMinY;
                 float distToBand = _PercentConstructed - height;
                 
@@ -134,15 +129,9 @@ Shader "Cel/CelDitheredPercent"
                 {
                     return _Color = float4(0.2, 0.2, 0.2, .5);
                 }
-                // clip(distToBand); // Discard pixels above the band.
 
                 if (distToBand < .1)
                 {
-                    // Dither
-                    // float percentAlongBand = -(distToBand / .1 - 1);
-                    // float randomForPixel = random(i.pos.x * 7 + i.pos.y * 31);
-                    // clip(randomForPixel - percentAlongBand);    
-
                     // Render constant color for non-dithered pixels in band.
                     return _Color = float4(1, 1, 1, 1);
                 }

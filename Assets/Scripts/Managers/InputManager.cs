@@ -135,6 +135,16 @@ public class InputManager : MonoBehaviour
         return results.Count > 0;
     }
 
+    public void SwitchMode()
+    {
+        this.CurrentMode.OnExit();
+    }
+
+    public void OpenSelectedCharacterMode(Character character)
+    {
+        this.CurrentMode = new SelectedCharacterInputMode(character);
+    }
+
     public void OpenBuildMode()
     {
         this.CurrentMode = this.BuildMode;

@@ -10,11 +10,8 @@ public class GameInputMode : InputMode
         if (characters.Count > 0 && !hasDragged)
         {
             selectedCharacter = characters[0];
-            Managers.UI.ShowPage(Page.CharacterSelectionDrawer);
-            UpdateSelectedCharacterUI();
+            Managers.InputManager.OpenSelectedCharacterMode(selectedCharacter);
         }
-
-        Debug.Log($"Game input mode onUp interacts with {hexes.Count} hexes and {characters.Count} characters");
     }
 
     public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
@@ -23,23 +20,9 @@ public class GameInputMode : InputMode
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
     {
-        Debug.Log($"Game input mode onDown interacts with {hexes.Count} hexes and {characters.Count} characters");
     }
 
     public override void Update()
     {
-        UpdateSelectedCharacterUI();
     }
-
-    private void UpdateSelectedCharacterUI()
-    {
-        if (selectedCharacter != null)
-        {
-            CharacterSelectionDrawer drawer = (CharacterSelectionDrawer)Managers.UI.GetPage(Page.CharacterSelectionDrawer);
-            Character character = selectedCharacter;
-
-            drawer.Update(selectedCharacter.Name, selectedCharacter);
-        }
-    }
-
 }

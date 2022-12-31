@@ -10,4 +10,5 @@ public class InMemPrefabs : MonoBehaviour
     public GameObject[] Cacti;
 
     public GameObject RedArrow3D;
+    public GameObject SelectedCharacterRing;
 }
