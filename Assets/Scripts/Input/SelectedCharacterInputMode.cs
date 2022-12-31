@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SelectedCharacterInputMode : InputMode
@@ -29,7 +30,10 @@ public class SelectedCharacterInputMode : InputMode
 
     public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
     {
-        Debug.Log("OnUp in selected char");
+        if (!hasDragged && hexes.Count > 0)
+        {
+            SelectedCharacter.SelectedClickHex(hexes.First().GridPosition);
+        }
     }
 
     public override void OnExit()

@@ -32,6 +32,7 @@ public class BoardManager : MonoBehaviour
         Navigation = new Navigation(this.Dimensions.max, townHall);
         AddBuilding(townHall.GridPosition, townHall);
         SpawnHexagons();
+        SpawnHero();
 
         this.Navigation.ReacalculateIdealPath(Board, Buildings);
     }
@@ -83,6 +84,11 @@ public class BoardManager : MonoBehaviour
         return building;
     }
 
+    public LinkedList<Vector2Int> ShortestPathBetween(Vector2Int startPos, Vector2Int endPos)
+    {
+        return Navigation.BFS(startPos, endPos, this.Board, this.Buildings);
+    }
+
     private void CleanupMap()
     {
         foreach (HexagonMono hexagon in this.HexagonMonos)
@@ -107,6 +113,12 @@ public class BoardManager : MonoBehaviour
                 BuildHexagon(x, y);
             }
         }
+    }
+
+    private void SpawnHero()
+    {
+        GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
+        character.transform.position = Helpers.ToWorldPosition(Center + new Vector2Int(4, 4));
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)

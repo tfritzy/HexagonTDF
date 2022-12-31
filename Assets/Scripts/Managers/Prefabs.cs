@@ -115,6 +115,26 @@ public static class Prefabs
         }
     }
 
+    private static Dictionary<CharacterType, GameObject> _allies;
+    public static GameObject GetCharacter(CharacterType characterType)
+    {
+        if (_allies == null)
+        {
+            _allies = new Dictionary<CharacterType, GameObject>();
+        }
+
+        if (_allies.ContainsKey(characterType))
+        {
+            return _allies[characterType];
+        }
+        else
+        {
+            _allies[characterType] = Resources.Load<GameObject>($"Prefabs/Allies/{characterType}");
+            return _allies[characterType];
+        }
+    }
+
+
     public static Hexagon GetHexagonScript(Biome biome, int height)
     {
         switch (biome)

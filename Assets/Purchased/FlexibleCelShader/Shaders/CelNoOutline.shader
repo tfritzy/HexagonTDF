@@ -40,8 +40,6 @@
 			Tags{ "LightMode" = "ForwardBase" }
 
 			CGPROGRAM
-			// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members localPosition)
-			#pragma exclude_renderers d3d11
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
@@ -62,7 +60,7 @@
 				float3 worldBitangent : TEXCOORD4;
 				float4 worldPos : TEXCOORD5;
 				float4 pos : SV_POSITION;
-				UNITY_FOG_COORDS(6);
+				UNITY_FOG_COORDS(6)
 			};
 
 			v2f vert(appdata_tan v)

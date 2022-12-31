@@ -112,11 +112,11 @@ public class InputManager : MonoBehaviour
         List<HexagonMono> hexes =
             hits.Select((RaycastHit hit) => hit.collider.transform.parent?.gameObject.GetComponent<HexagonMono>())
             .ToList();
+        hexes.RemoveAll((HexagonMono i) => i == null);
         List<Character> characters =
             hits.Select((RaycastHit hit) => hit.collider.gameObject.GetComponent<Character>())
             .ToList();
         characters.AddRange(hexes.Select((HexagonMono hex) => Managers.Board.GetBuilding(hex.GridPosition)));
-        hexes.RemoveAll((HexagonMono i) => i == null);
         characters.RemoveAll((Character i) => i == null);
         return new RaycastHits
         {
