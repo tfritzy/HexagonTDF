@@ -161,16 +161,16 @@ public class BuildInputMode : InputMode
         }
 
 
-        if (building.ResourceCollectionCell.SecondsPerResourceCollection.Count > 0)
+        if (building.ResourceCollectionCell.CurrentCollectionDetails.Count > 0)
         {
             this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
                 Hoverer.ResourceCollectionIndicator,
                 this.previewBuilding.transform);
 
-            this.resourceCollectionIndicator.Init(building.ResourceCollectionCell.SecondsPerResourceCollection);
+            this.resourceCollectionIndicator.Init(building.ResourceCollectionCell.CurrentCollectionDetails);
         }
 
-        foreach (Vector2Int pos in Helpers.GetHexesInRange(hex.GridPosition, building.ResourceCollectionCell.CollectionRange))
+        foreach (Vector2Int pos in building.ResourceCollectionCell.HexesCollectedFrom)
         {
             var iHex = Managers.Board.GetHex(pos);
 
@@ -179,7 +179,7 @@ public class BuildInputMode : InputMode
                 continue;
             }
 
-            if (building.ResourceCollectionCell.BiomesCollectedFrom.ContainsKey(iHex.Biome))
+            if (building.ResourceCollectionCell.BaseCollectionDetails.ContainsKey(iHex.Biome))
             {
                 iHex.SetBorderMaterial(Prefabs.GetMaterial(MaterialType.Gold));
             }
@@ -188,6 +188,7 @@ public class BuildInputMode : InputMode
 
     private void ResetHighlightedHexes(Vector2Int centerPos)
     {
+        Managers.Board.GetHex(centerPos)?.ResetMaterial();
         foreach (Vector2Int pos in Helpers.GetHexesInRange(centerPos, 1))
         {
             Managers.Board.GetHex(pos)?.ResetMaterial();

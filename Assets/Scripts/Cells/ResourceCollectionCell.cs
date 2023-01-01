@@ -3,18 +3,20 @@ using UnityEngine;
 
 public abstract class ResourceCollectionCell : Cell
 {
-    public abstract Dictionary<ItemType, float> BaseSecondsPerResource { get; }
-    public Dictionary<ItemType, float> SecondsPerResourceCollection => _secondsPerResource;
-    private Dictionary<ItemType, float> _secondsPerResource;
-    public abstract Dictionary<Biome, ItemType> BiomesCollectedFrom { get; }
-    public virtual int CollectionRange => 1;
-    public virtual InventoryCell Inventory => outputInventory;
-    private InventoryCell outputInventory;
+    public abstract List<Vector2Int> HexesCollectedFrom { get; }
+    public Dictionary<Biome, CollectionDetails> CurrentCollectionDetails { get; private set; }
+    public virtual InventoryCell OutputInventory => this.Owner.InventoryCell;
+    public abstract Dictionary<Biome, CollectionDetails> BaseCollectionDetails { get; }
+
+    public class CollectionDetails
+    {
+        public ItemType Item;
+        public float TimeRequired;
+    }
 
     public override void Setup(Character character)
     {
         base.Setup(character);
-        outputInventory = new InventoryCell(3, "Inventory");
         InitCollectionRates();
     }
 
@@ -23,31 +25,40 @@ public abstract class ResourceCollectionCell : Cell
         HarvestResources();
     }
 
-    private void InitCollectionRates()
+    protected void InitCollectionRates()
     {
-        _secondsPerResource = new Dictionary<ItemType, float>();
-        foreach (Vector2Int pos in Helpers.GetHexesInRange(this.Owner.GridPosition, this.CollectionRange))
+        if (this.HexesCollectedFrom == null)
+        {
+            return;
+        }
+
+        CurrentCollectionDetails = new Dictionary<Biome, CollectionDetails>();
+        foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
             var hex = Managers.Board.GetHex(pos);
 
-            if (hex != null && BiomesCollectedFrom.ContainsKey(hex.Biome))
+            if (hex != null && BaseCollectionDetails.ContainsKey(hex.Biome))
             {
-                ItemType collectedItem = BiomesCollectedFrom[hex.Biome];
+                ItemType collectedItem = BaseCollectionDetails[hex.Biome].Item;
 
-                if (!SecondsPerResourceCollection.ContainsKey(collectedItem))
+                if (!CurrentCollectionDetails.ContainsKey(hex.Biome))
                 {
-                    SecondsPerResourceCollection[collectedItem] = BaseSecondsPerResource[collectedItem];
+                    CurrentCollectionDetails[hex.Biome] = new CollectionDetails
+                    {
+                        Item = BaseCollectionDetails[hex.Biome].Item,
+                        TimeRequired = BaseCollectionDetails[hex.Biome].TimeRequired,
+                    };
                 }
                 else
                 {
-                    SecondsPerResourceCollection[collectedItem] *= .75f;
+                    CurrentCollectionDetails[hex.Biome].TimeRequired *= .75f;
                 }
             }
         }
     }
 
     private float lastHarvestCheckTime;
-    private Dictionary<ItemType, float> lastCollectionTimes = new Dictionary<ItemType, float>();
+    private Dictionary<Biome, float> lastCollectionTimes = new Dictionary<Biome, float>();
     private void HarvestResources()
     {
         if (Time.time < lastHarvestCheckTime + .25f)
@@ -56,30 +67,38 @@ public abstract class ResourceCollectionCell : Cell
         }
         lastHarvestCheckTime = Time.time;
 
-        foreach (ItemType resource in this.SecondsPerResourceCollection.Keys)
+        if (CurrentCollectionDetails == null)
         {
-            if (!lastCollectionTimes.ContainsKey(resource))
+            return;
+        }
+
+        foreach (Biome biome in this.CurrentCollectionDetails.Keys)
+        {
+            if (!lastCollectionTimes.ContainsKey(biome))
             {
-                lastCollectionTimes[resource] = 0f;
+                lastCollectionTimes[biome] = 0f;
             }
 
-            if (Time.time - lastCollectionTimes[resource] > SecondsPerResourceCollection[resource] &&
-                this.Inventory.CanAcceptItem(resource))
+            if (Time.time - lastCollectionTimes[biome] > CurrentCollectionDetails[biome].TimeRequired &&
+                this.OutputInventory.CanAcceptItem(CurrentCollectionDetails[biome].Item))
             {
-                Item item = ItemGenerator.Make(resource);
-                this.Inventory.AddItem(item);
-                lastCollectionTimes[resource] = Time.time;
+                Item item = ItemGenerator.Make(CurrentCollectionDetails[biome].Item);
+                this.OutputInventory.AddItem(item);
+                lastCollectionTimes[biome] = Time.time;
             }
 
-            int firstItemIndex = this.Inventory.FirstNonEmptyIndex();
-            if (firstItemIndex != -1 &&
-                this.Owner.ConveyorCell.CanAccept(
-                    this.Owner.ConveyorCell.OutputBelt,
-                    this.Inventory.ItemAt(firstItemIndex).Width))
+            if (this.Owner.ConveyorCell != null)
             {
-                Item itemToPlace = this.Inventory.ItemAt(firstItemIndex);
-                SpawnItem(itemToPlace);
-                this.Inventory.RemoveAt(firstItemIndex);
+                int firstItemIndex = this.OutputInventory.FirstNonEmptyIndex();
+                if (firstItemIndex != -1 &&
+                    this.Owner.ConveyorCell.CanAccept(
+                        this.Owner.ConveyorCell.OutputBelt,
+                        this.OutputInventory.ItemAt(firstItemIndex).Width))
+                {
+                    Item itemToPlace = this.OutputInventory.ItemAt(firstItemIndex);
+                    SpawnItem(itemToPlace);
+                    this.OutputInventory.RemoveAt(firstItemIndex);
+                }
             }
         }
     }

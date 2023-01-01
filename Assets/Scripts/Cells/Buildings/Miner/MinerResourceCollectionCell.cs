@@ -1,23 +1,28 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MinerResourceCollectionCell : ResourceCollectionCell
 {
-    public override int CollectionRange => 0;
-    private Dictionary<ItemType, float> resourceCollection = new Dictionary<ItemType, float>
-    {
-        {
-            ItemType.Rock,
-            2
-        }
-    };
-    public override Dictionary<ItemType, float> BaseSecondsPerResource => resourceCollection;
+    public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
+    private List<Vector2Int> _hexesCollectedFrom;
 
-    private Dictionary<Biome, ItemType> _biomeCollection = new Dictionary<Biome, ItemType>
+    private Dictionary<Biome, CollectionDetails> _biomeCollection = new Dictionary<Biome, CollectionDetails>
     {
         {
             Biome.Mountain,
-            ItemType.Rock
+            new CollectionDetails
+            {
+                Item = ItemType.Rock,
+                TimeRequired = 2f,
+            }
         }
     };
-    public override Dictionary<Biome, ItemType> BiomesCollectedFrom => _biomeCollection;
+    public override Dictionary<Biome, CollectionDetails> BaseCollectionDetails => _biomeCollection;
+
+    public override void Setup(Character character)
+    {
+        _hexesCollectedFrom = new List<Vector2Int> { character.GridPosition };
+
+        base.Setup(character);
+    }
 }

@@ -138,16 +138,16 @@ public class Navigation
             {
                 Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
 
-                if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
-                    !segment[neighbor.x, neighbor.y].IsWalkable)
-                {
-                    continue;
-                }
-
                 if (neighbor == targetPos)
                 {
                     nextMap[neighbor] = current;
                     return GetPathFromMap(nextMap, targetPos, startPos);
+                }
+
+                if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
+                    !segment[neighbor.x, neighbor.y].IsWalkable)
+                {
+                    continue;
                 }
 
                 if (!visited[neighbor.x, neighbor.y])

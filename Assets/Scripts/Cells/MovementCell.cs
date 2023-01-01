@@ -2,15 +2,15 @@ using UnityEngine;
 
 public abstract class MovementCell : Cell
 {
-    public abstract Vector3 Velocity { get; }
-    protected abstract float BaseMovementSpeed { get; }
-
-    public float MovementSpeedModification;
     public float MovementSpeed { get; private set; }
+    public float MovementSpeedModification;
+    protected abstract float BaseMovementSpeed { get; }
 
     public override void Setup(Character character)
     {
         base.Setup(character);
         this.MovementSpeed = BaseMovementSpeed;
     }
+
+    public override void Update() { }
 }

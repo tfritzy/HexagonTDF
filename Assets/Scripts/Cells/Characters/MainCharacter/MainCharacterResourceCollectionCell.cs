@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LumberCampResourceCollectionCell : ResourceCollectionCell
+public class MainCharacterResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
-    private List<Vector2Int> _hexesCollectedFrom;
+    private List<Vector2Int> _hexesCollectedFrom = null;
+
     private Dictionary<Biome, CollectionDetails> _biomeCollection = new Dictionary<Biome, CollectionDetails>
     {
         {
@@ -12,16 +13,23 @@ public class LumberCampResourceCollectionCell : ResourceCollectionCell
             new CollectionDetails
             {
                 Item = ItemType.Log,
-                TimeRequired = 6f,
+                TimeRequired = 8f,
+            }
+        },
+        {
+            Biome.Mountain,
+            new CollectionDetails
+            {
+                Item = ItemType.Rock,
+                TimeRequired = 4f,
             }
         }
     };
     public override Dictionary<Biome, CollectionDetails> BaseCollectionDetails => _biomeCollection;
 
-    public override void Setup(Character character)
+    public void ChangeTargetHex(Vector2Int newTarget)
     {
-        this._hexesCollectedFrom = Helpers.GetHexesInRange(character.GridPosition, 1);
-
-        base.Setup(character);
+        this._hexesCollectedFrom = new List<Vector2Int> { newTarget };
+        InitCollectionRates();
     }
 }

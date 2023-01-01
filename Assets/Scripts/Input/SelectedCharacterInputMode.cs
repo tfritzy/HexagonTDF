@@ -20,12 +20,10 @@ public class SelectedCharacterInputMode : InputMode
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
     {
-        Debug.Log("OnDown in selected char");
     }
 
     public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
     {
-        Debug.Log("OnDrag in selected char");
     }
 
     public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)

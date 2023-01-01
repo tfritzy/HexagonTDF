@@ -54,9 +54,9 @@ public class CharacterSelectionDrawer : Drawer
     private void UpdateInventories(Character character)
     {
         List<InventoryCell> inventories = new List<InventoryCell>();
-        if (character.ResourceCollectionCell != null)
+        if (character.InventoryCell != null)
         {
-            inventories.Add(character.ResourceCollectionCell.Inventory);
+            inventories.Add(character.InventoryCell);
         }
 
         if (character.ResourceProcessingCell != null)
@@ -66,10 +66,6 @@ public class CharacterSelectionDrawer : Drawer
             inventories.Add(character.ResourceProcessingCell.OutputInventory);
         }
 
-        if (character.InventoryCell != null)
-        {
-            inventories.Add(character.InventoryCell);
-        }
 
         this.characterNameLabel.text = character.name;
 

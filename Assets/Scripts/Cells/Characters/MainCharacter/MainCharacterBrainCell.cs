@@ -3,38 +3,42 @@ using UnityEngine;
 
 public class MainCharacterBrainCell : BrainCell
 {
-    private LinkedList<Vector2Int> pathToFollow;
-    private const float MovementSpeed = 4f;
+    private LinkedList<CharacterAction> CurrentActions = new LinkedList<CharacterAction>();
 
     public MainCharacterBrainCell()
     {
 
     }
 
-    public void SetPath(LinkedList<Vector2Int> path)
+    public void SetTargetHex(Vector2Int pos)
     {
-        Debug.Log(string.Join(", ", path));
-        this.pathToFollow = path;
+        HexagonMono hex = Managers.Board.GetHex(pos);
+        if (this.Owner.ResourceCollectionCell != null &&
+            this.Owner.ResourceCollectionCell.BaseCollectionDetails.ContainsKey(hex.Biome))
+        {
+            ((MainCharacterResourceCollectionCell)this.Owner.ResourceCollectionCell).ChangeTargetHex(pos);
+
+            this.CurrentActions = new LinkedList<CharacterAction>();
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
+            this.CurrentActions.AddLast(new HarvestAction(this.Owner));
+        }
+        else
+        {
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: false));
+        }
     }
 
     public override void Update()
     {
-        if (pathToFollow != null && pathToFollow.Count > 0)
+        if (this.CurrentActions.Count > 0)
         {
-            Vector2Int nextPos = pathToFollow.First.Value;
-            Vector3 delta = Helpers.ToWorldPosition(nextPos) - this.Owner.transform.position;
-
-            if (delta.magnitude < .2f)
+            if (this.CurrentActions.First.Value.State == CharacterAction.ActionState.Finished)
             {
-                pathToFollow.RemoveFirst();
+                this.CurrentActions.RemoveFirst();
+                return;
             }
 
-            if (this.Owner.GridPosition != Helpers.ToGridPosition(this.Owner.transform.position))
-            {
-                this.Owner.GridPosition = Helpers.ToGridPosition(this.Owner.transform.position);
-            }
-
-            this.Owner.transform.position += delta.normalized * Time.deltaTime * MovementSpeed;
+            this.CurrentActions.First.Value.Update();
         }
     }
 }

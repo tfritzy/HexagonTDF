@@ -95,6 +95,11 @@ public abstract class Character : MonoBehaviour
         ApplyEffects();
         foreach (Cell cell in this.Cells)
         {
+            if (!cell.IsEnabled)
+            {
+                continue;
+            }
+
             cell.Update();
         }
     }
