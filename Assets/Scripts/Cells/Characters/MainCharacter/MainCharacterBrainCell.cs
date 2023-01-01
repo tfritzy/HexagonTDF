@@ -29,6 +29,11 @@ public class MainCharacterBrainCell : BrainCell
                 pathToFollow.RemoveFirst();
             }
 
+            if (this.Owner.GridPosition != Helpers.ToGridPosition(this.Owner.transform.position))
+            {
+                this.Owner.GridPosition = Helpers.ToGridPosition(this.Owner.transform.position);
+            }
+
             this.Owner.transform.position += delta.normalized * Time.deltaTime * MovementSpeed;
         }
     }

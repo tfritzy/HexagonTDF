@@ -126,6 +126,7 @@ public class Navigation
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
         bool[,] visited = new bool[segment.GetLength(0), segment.GetLength(1)];
+        // visited[startPos.x, startPos.y] = true;
         Dictionary<Vector2Int, Vector2Int> nextMap = new Dictionary<Vector2Int, Vector2Int>();
         queue.Enqueue(startPos);
 
