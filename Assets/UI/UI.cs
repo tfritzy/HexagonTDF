@@ -12,11 +12,6 @@ public class UI : MonoBehaviour
     private VisualElement root;
     private List<UIHoverer> LentHoverers = new List<UIHoverer>();
 
-    [SerializeField]
-    private VisualTreeAsset BuildConfirmationPrefab;
-    [SerializeField]
-    private VisualTreeAsset ResourceCollectionIndicatorPrefab;
-
     void OnEnable()
     {
         History = new Stack<Page>();

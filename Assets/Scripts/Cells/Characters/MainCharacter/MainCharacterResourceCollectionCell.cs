@@ -20,7 +20,7 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
             new CollectionDetails
             {
                 Item = ItemType.Log,
-                TimeRequired = 2f,
+                TimeRequired = 4f,
             }
         },
         {
@@ -28,7 +28,7 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
             new CollectionDetails
             {
                 Item = ItemType.Rock,
-                TimeRequired = 1f,
+                TimeRequired = 1.5f,
             }
         }
     };

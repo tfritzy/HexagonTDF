@@ -23,11 +23,11 @@ public class MainCharacter : Character
         _brainCell = new MainCharacterBrainCell();
         _movementCell = new MainCharacterMovementCell();
         _inventoryCell = new InventoryCell(16);
-
         _resourceCollectionCell = new MainCharacterResourceCollectionCell();
-        _resourceCollectionCell.SetEnabled(false); // Only becomes enabled when character is harvesting.
 
         base.Setup();
+
+        _resourceCollectionCell.SetEnabled(false); // Only becomes enabled when character is harvesting.
     }
 
     public override void SelectedClickHex(Vector2Int pos)
