@@ -220,3 +220,53 @@
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
 }
+
+.construction-bar-outline {
+    position: absolute;
+    background-color: rgb(51, 51, 51);
+    width: 150px;
+    height: 35px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.construction-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255, 210, 129);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.harvest-progress-bar-outline {
+    position: absolute;
+    background-color: rgb(51, 51, 51);
+    width: 125px;
+    height: 15px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.harvest-progress-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(137, 137, 137);
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}

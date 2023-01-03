@@ -1,21 +1,21 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ConstructionProgress : UIHoverer
+public class HarvestProgress : UIHoverer
 {
-    public override Hoverer Type => Hoverer.ConstructionProgress;
+    public override Hoverer Type => Hoverer.HarvestProgress;
     public override Vector3 Offset => _offset;
-    private Vector3 _offset = new Vector3(-.5f, -5);
+    private Vector3 _offset = new Vector3(-.5f, -8);
     private VisualElement Inner;
 
     private Label label;
 
-    public ConstructionProgress()
+    public HarvestProgress()
     {
-        this.AddToClassList("construction-bar-outline");
+        this.AddToClassList("harvest-progress-bar-outline");
 
         VisualElement inner = new VisualElement();
-        inner.AddToClassList("construction-bar-inner");
+        inner.AddToClassList("harvest-progress-bar-inner");
         this.Add(inner);
         this.Inner = inner;
 
@@ -26,6 +26,7 @@ public class ConstructionProgress : UIHoverer
     {
         // Because of the border radius on inner, it looks weird at small percent values.
         progress = Mathf.Max(5f, progress);
+        progress = Mathf.Min(100f, progress);
 
         this.Inner.style.width = new StyleLength(new Length(progress, LengthUnit.Percent));
         this.style.display = DisplayStyle.Flex;

@@ -15,6 +15,7 @@ public class HarvestAction : CharacterAction
     {
         base.End();
 
+        this.Owner.ResourceCollectionCell.Reset();
         this.Owner.ResourceCollectionCell.SetEnabled(false);
     }
 }

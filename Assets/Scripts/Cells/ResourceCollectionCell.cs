@@ -1,12 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class ResourceCollectionCell : Cell
 {
     public abstract List<Vector2Int> HexesCollectedFrom { get; }
-    public Dictionary<Biome, CollectionDetails> CurrentCollectionDetails { get; private set; }
+    public CollectionDetails CurrentCollectionDetails { get; private set; }
     public virtual InventoryCell OutputInventory => this.Owner.InventoryCell;
-    public abstract Dictionary<Biome, CollectionDetails> BaseCollectionDetails { get; }
+    public abstract bool CanHarvestFrom(Hexagon hexagon);
+    public abstract CollectionDetails BaseCollectionDetails { get; }
+    private HarvestProgress harvestHoverer;
 
     public class CollectionDetails
     {
@@ -32,33 +35,33 @@ public abstract class ResourceCollectionCell : Cell
             return;
         }
 
-        CurrentCollectionDetails = new Dictionary<Biome, CollectionDetails>();
+        this.CurrentCollectionDetails = null;
         foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
             var hex = Managers.Board.GetHex(pos);
 
-            if (hex != null && BaseCollectionDetails.ContainsKey(hex.Biome))
+            if (hex != null && CanHarvestFrom(hex.Hexagon))
             {
-                ItemType collectedItem = BaseCollectionDetails[hex.Biome].Item;
+                ItemType collectedItem = BaseCollectionDetails.Item;
 
-                if (!CurrentCollectionDetails.ContainsKey(hex.Biome))
+                if (CurrentCollectionDetails == null)
                 {
-                    CurrentCollectionDetails[hex.Biome] = new CollectionDetails
+                    CurrentCollectionDetails = new CollectionDetails
                     {
-                        Item = BaseCollectionDetails[hex.Biome].Item,
-                        TimeRequired = BaseCollectionDetails[hex.Biome].TimeRequired,
+                        Item = BaseCollectionDetails.Item,
+                        TimeRequired = BaseCollectionDetails.TimeRequired,
                     };
                 }
                 else
                 {
-                    CurrentCollectionDetails[hex.Biome].TimeRequired *= .75f;
+                    CurrentCollectionDetails.TimeRequired *= .75f;
                 }
             }
         }
     }
 
     private float lastHarvestCheckTime;
-    private Dictionary<Biome, float> lastCollectionTimes = new Dictionary<Biome, float>();
+    private float lastCollectionTime = 0f;
     private void HarvestResources()
     {
         if (Time.time < lastHarvestCheckTime + .25f)
@@ -72,35 +75,47 @@ public abstract class ResourceCollectionCell : Cell
             return;
         }
 
-        foreach (Biome biome in this.CurrentCollectionDetails.Keys)
+        if (lastCollectionTime == 0f)
         {
-            if (!lastCollectionTimes.ContainsKey(biome))
-            {
-                lastCollectionTimes[biome] = 0f;
-            }
+            // initial state
+            lastCollectionTime = Time.time;
+        }
 
-            if (Time.time - lastCollectionTimes[biome] > CurrentCollectionDetails[biome].TimeRequired &&
-                this.OutputInventory.CanAcceptItem(CurrentCollectionDetails[biome].Item))
-            {
-                Item item = ItemGenerator.Make(CurrentCollectionDetails[biome].Item);
-                this.OutputInventory.AddItem(item);
-                lastCollectionTimes[biome] = Time.time;
-            }
+        if (harvestHoverer == null)
+        {
+            harvestHoverer = (HarvestProgress)Managers.UI.ShowHoverer(Hoverer.HarvestProgress, this.Owner.transform);
+        }
 
-            if (this.Owner.ConveyorCell != null)
+        harvestHoverer.Update(((Time.time - lastCollectionTime) / CurrentCollectionDetails.TimeRequired) * 100f);
+
+        if (Time.time - lastCollectionTime > CurrentCollectionDetails.TimeRequired &&
+            this.OutputInventory.CanAcceptItem(CurrentCollectionDetails.Item))
+        {
+            Item item = ItemGenerator.Make(CurrentCollectionDetails.Item);
+            this.OutputInventory.AddItem(item);
+            lastCollectionTime = Time.time;
+        }
+
+        if (this.Owner.ConveyorCell != null)
+        {
+            int firstItemIndex = this.OutputInventory.FirstNonEmptyIndex();
+            if (firstItemIndex != -1 &&
+                this.Owner.ConveyorCell.CanAccept(
+                    this.Owner.ConveyorCell.OutputBelt,
+                    this.OutputInventory.ItemAt(firstItemIndex).Width))
             {
-                int firstItemIndex = this.OutputInventory.FirstNonEmptyIndex();
-                if (firstItemIndex != -1 &&
-                    this.Owner.ConveyorCell.CanAccept(
-                        this.Owner.ConveyorCell.OutputBelt,
-                        this.OutputInventory.ItemAt(firstItemIndex).Width))
-                {
-                    Item itemToPlace = this.OutputInventory.ItemAt(firstItemIndex);
-                    SpawnItem(itemToPlace);
-                    this.OutputInventory.RemoveAt(firstItemIndex);
-                }
+                Item itemToPlace = this.OutputInventory.ItemAt(firstItemIndex);
+                SpawnItem(itemToPlace);
+                this.OutputInventory.RemoveAt(firstItemIndex);
             }
         }
+    }
+
+    public void Reset()
+    {
+        lastCollectionTime = 0f;
+        Managers.UI.HideHoverer(this.harvestHoverer);
+        this.harvestHoverer = null;
     }
 
     private void SpawnItem(Item item)

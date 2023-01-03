@@ -16,6 +16,9 @@ public class SelectedCharacterInputMode : InputMode
             character.transform.position + Vector3.up * .1f,
             Managers.Prefabs.SelectedCharacterRing.transform.rotation,
             character.transform);
+
+        this.selectedCharacterRing.transform.localScale *=
+            SelectedCharacter.GetComponent<CapsuleCollider>().radius * 2f;
     }
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters)

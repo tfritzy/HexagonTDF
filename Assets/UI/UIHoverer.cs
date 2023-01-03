@@ -35,7 +35,7 @@ public abstract class UIHoverer : VisualElement
         Update();
     }
 
-    public void Update()
+    public virtual void Update()
     {
         if (Target == null)
         {

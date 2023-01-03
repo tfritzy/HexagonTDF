@@ -161,7 +161,7 @@ public class BuildInputMode : InputMode
         }
 
 
-        if (building.ResourceCollectionCell.CurrentCollectionDetails.Count > 0)
+        if (building.ResourceCollectionCell.CurrentCollectionDetails != null)
         {
             this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
                 Hoverer.ResourceCollectionIndicator,
@@ -179,7 +179,7 @@ public class BuildInputMode : InputMode
                 continue;
             }
 
-            if (building.ResourceCollectionCell.BaseCollectionDetails.ContainsKey(iHex.Biome))
+            if (building.ResourceCollectionCell.CanHarvestFrom(iHex.Hexagon))
             {
                 iHex.SetBorderMaterial(Prefabs.GetMaterial(MaterialType.Gold));
             }

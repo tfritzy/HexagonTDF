@@ -33,20 +33,17 @@ public class ResourceCollectionIndicator : UIHoverer
         return horizontalGroup;
     }
 
-    public void Init(Dictionary<Biome, ResourceCollectionCell.CollectionDetails> collectionRates)
+    public void Init(ResourceCollectionCell.CollectionDetails collectionRates)
     {
         int i = 0;
-        foreach (Biome biome in collectionRates.Keys)
+        if (horizontalGroups.Count <= i)
         {
-            if (horizontalGroups.Count <= i)
-            {
-                var row = new ResourceCollectionRow();
-                horizontalGroups.Add(row);
-                verticalGroup.Add(row);
-            }
-
-            horizontalGroups[i].Setup(collectionRates[biome].Item, collectionRates[biome].TimeRequired);
-            i += 1;
+            var row = new ResourceCollectionRow();
+            horizontalGroups.Add(row);
+            verticalGroup.Add(row);
         }
+
+        horizontalGroups[i].Setup(collectionRates.Item, collectionRates.TimeRequired);
+        i += 1;
     }
 }

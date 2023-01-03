@@ -94,24 +94,25 @@ public class UI : MonoBehaviour
 
     private UIHoverer BuildHoverer(Hoverer hoverer)
     {
+        var hovererInst = getHoverer(hoverer);
+        root.Add(hovererInst);
+        return hovererInst;
+    }
+
+    private UIHoverer getHoverer(Hoverer hoverer)
+    {
         switch (hoverer)
         {
             case (Hoverer.BuildConfirmation):
-                BuildConfirmation confirmation = new BuildConfirmation();
-                root.Add(confirmation);
-                return confirmation;
+                return new BuildConfirmation();
             case (Hoverer.ResourceCollectionIndicator):
-                ResourceCollectionIndicator ci = new ResourceCollectionIndicator();
-                root.Add(ci);
-                return ci;
+                return new ResourceCollectionIndicator();
             case (Hoverer.HealthBar):
-                HealthBar hb = new HealthBar();
-                root.Add(hb);
-                return hb;
+                return new HealthBar();
             case (Hoverer.ConstructionProgress):
-                ConstructionProgress conProg = new ConstructionProgress();
-                root.Add(conProg);
-                return conProg;
+                return new ConstructionProgress();
+            case (Hoverer.HarvestProgress):
+                return new HarvestProgress();
             default:
                 throw new System.Exception("Unknown hoverer: " + hoverer);
         }

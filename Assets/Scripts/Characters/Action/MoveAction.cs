@@ -47,5 +47,9 @@ public class MoveAction : CharacterAction
 
             this.Owner.transform.position += delta.normalized * Time.deltaTime * this.Owner.MovementCell.MovementSpeed;
         }
+        else
+        {
+            this.End();
+        }
     }
 }

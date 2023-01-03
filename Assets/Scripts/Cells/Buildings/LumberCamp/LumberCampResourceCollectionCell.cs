@@ -5,18 +5,16 @@ public class LumberCampResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
     private List<Vector2Int> _hexesCollectedFrom;
-    private Dictionary<Biome, CollectionDetails> _biomeCollection = new Dictionary<Biome, CollectionDetails>
+    public override bool CanHarvestFrom(Hexagon hexagon)
     {
-        {
-            Biome.Forrest,
-            new CollectionDetails
-            {
-                Item = ItemType.Log,
-                TimeRequired = 6f,
-            }
-        }
+        return hexagon.Biome == Biome.Forrest;
+    }
+    private CollectionDetails _biomeCollection = new CollectionDetails
+    {
+        Item = ItemType.Log,
+        TimeRequired = 6f,
     };
-    public override Dictionary<Biome, CollectionDetails> BaseCollectionDetails => _biomeCollection;
+    public override CollectionDetails BaseCollectionDetails => _biomeCollection;
 
     public override void Setup(Character character)
     {

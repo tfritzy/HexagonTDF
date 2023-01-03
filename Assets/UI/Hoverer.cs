@@ -4,4 +4,5 @@ public enum Hoverer
     ResourceCollectionIndicator,
     HealthBar,
     ConstructionProgress,
+    HarvestProgress,
 }

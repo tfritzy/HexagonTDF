@@ -8,7 +8,5 @@ public class Grassland : Hexagon
     }
 
     public override Biome Biome => Biome.Grassland;
-    public override bool IsBuildable => true;
-    public override bool IsWalkable => true;
     public override Color BaseColor => ColorExtensions.Create("#477664");
 }

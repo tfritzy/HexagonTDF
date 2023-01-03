@@ -5,15 +5,22 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
     private List<Vector2Int> _hexesCollectedFrom = null;
+    public override bool CanHarvestFrom(Hexagon hexagon)
+    {
+        return
+            hexagon.Biome == Biome.Forrest ||
+            (hexagon.Biome == Biome.Mountain && hexagon.HasObstacle);
+    }
+    private Biome currentBiome;
 
-    private Dictionary<Biome, CollectionDetails> _biomeCollection = new Dictionary<Biome, CollectionDetails>
+    public Dictionary<Biome, CollectionDetails> BiomeCollections = new Dictionary<Biome, CollectionDetails>
     {
         {
             Biome.Forrest,
             new CollectionDetails
             {
                 Item = ItemType.Log,
-                TimeRequired = 8f,
+                TimeRequired = 2f,
             }
         },
         {
@@ -21,14 +28,21 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
             new CollectionDetails
             {
                 Item = ItemType.Rock,
-                TimeRequired = 4f,
+                TimeRequired = 1f,
             }
         }
     };
-    public override Dictionary<Biome, CollectionDetails> BaseCollectionDetails => _biomeCollection;
+    public override CollectionDetails BaseCollectionDetails => BiomeCollections[currentBiome];
 
-    public void ChangeTargetHex(Vector2Int newTarget)
+    public void ChangeTargetHex(Vector2Int newTarget, Biome biome)
     {
+        currentBiome = biome;
+
+        if (!BiomeCollections.ContainsKey(biome))
+        {
+            throw new System.Exception($"Biome {biome} is not harvestable by this character");
+        }
+
         this._hexesCollectedFrom = new List<Vector2Int> { newTarget };
         InitCollectionRates();
     }

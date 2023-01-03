@@ -5,19 +5,16 @@ public class MinerResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
     private List<Vector2Int> _hexesCollectedFrom;
-
-    private Dictionary<Biome, CollectionDetails> _biomeCollection = new Dictionary<Biome, CollectionDetails>
+    public override bool CanHarvestFrom(Hexagon hexagon)
     {
-        {
-            Biome.Mountain,
-            new CollectionDetails
-            {
-                Item = ItemType.Rock,
-                TimeRequired = 2f,
-            }
-        }
+        return hexagon.Biome == Biome.Mountain && hexagon.HasObstacle;
+    }
+    private CollectionDetails _biomeCollection = new CollectionDetails
+    {
+        Item = ItemType.Rock,
+        TimeRequired = 2f,
     };
-    public override Dictionary<Biome, CollectionDetails> BaseCollectionDetails => _biomeCollection;
+    public override CollectionDetails BaseCollectionDetails => _biomeCollection;
 
     public override void Setup(Character character)
     {

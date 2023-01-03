@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class HexagonMono : MonoBehaviour, Interactable
 {
-    public Biome Biome { get { return hexagon.Biome; } }
-    public bool IsBuildable { get { return hexagon.IsBuildable; } }
-    public bool IsWalkable { get { return hexagon.IsWalkable; } }
+    public Biome Biome { get { return Hexagon.Biome; } }
+    public bool IsBuildable { get { return Hexagon.IsBuildable; } }
+    public bool IsWalkable { get { return Hexagon.IsWalkable; } }
     public Vector2Int GridPosition;
     public int Height;
+    public Hexagon Hexagon;
 
     protected int colorVaryIndex;
-    protected Hexagon hexagon;
     protected List<MeshRenderer> meshRenderers;
 
     private MeshRenderer hexMesh;
@@ -23,7 +23,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void SetType(Hexagon hexagon)
     {
-        this.hexagon = hexagon;
+        this.Hexagon = hexagon;
     }
 
     void Start()
@@ -37,6 +37,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         this.border = this.hexMesh.transform.Find("border").GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
+        InitObstacle();
     }
 
     public void Interact()
@@ -47,6 +48,16 @@ public class HexagonMono : MonoBehaviour, Interactable
     public void SetMaterial(Material material)
     {
         this.hexMesh.material = material;
+    }
+
+    public void InitObstacle()
+    {
+        this.Hexagon.RollObstacle();
+        if (this.Hexagon.HasObstacle)
+        {
+            GameObject body = this.Hexagon.GetObstacleBody();
+            GameObject.Instantiate(body, this.transform.position, body.transform.rotation);
+        }
     }
 
     public void SetBorderMaterial(Material material)
@@ -80,20 +91,20 @@ public class HexagonMono : MonoBehaviour, Interactable
             baseMaterialCache = new Dictionary<Biome, Dictionary<int, Material>>();
         }
 
-        if (!baseMaterialCache.ContainsKey(this.hexagon.Biome))
+        if (!baseMaterialCache.ContainsKey(this.Hexagon.Biome))
         {
-            baseMaterialCache[this.hexagon.Biome] = new Dictionary<int, Material>();
+            baseMaterialCache[this.Hexagon.Biome] = new Dictionary<int, Material>();
         }
 
         System.Random random = new System.Random(GridPosition.x * 7 + GridPosition.y * 31);
         this.colorVaryIndex = random.Next(0, 3);
 
-        if (!baseMaterialCache[this.hexagon.Biome].ContainsKey(this.colorVaryIndex))
+        if (!baseMaterialCache[this.Hexagon.Biome].ContainsKey(this.colorVaryIndex))
         {
-            Color ColorAfterVariance = ColorExtensions.VaryBy(this.hexagon.BaseColor, this.colorVaryIndex * this.hexagon.MaxColorVariance);
+            Color ColorAfterVariance = ColorExtensions.VaryBy(this.Hexagon.BaseColor, this.colorVaryIndex * this.Hexagon.MaxColorVariance);
             Material newBase = new Material(Prefabs.GetMaterial(MaterialType.Base));
             newBase.color = ColorAfterVariance;
-            baseMaterialCache[this.hexagon.Biome][this.colorVaryIndex] = newBase;
+            baseMaterialCache[this.Hexagon.Biome][this.colorVaryIndex] = newBase;
         }
 
         if (outlineMaterialCache == null)
@@ -101,15 +112,15 @@ public class HexagonMono : MonoBehaviour, Interactable
             outlineMaterialCache = new Dictionary<Biome, Material>();
         }
 
-        if (!outlineMaterialCache.ContainsKey(this.hexagon.Biome))
+        if (!outlineMaterialCache.ContainsKey(this.Hexagon.Biome))
         {
             Material newHighlight = this.transform.Find("hex/border").GetComponent<MeshRenderer>().material;
-            newHighlight.color = ColorExtensions.VaryBy(this.hexagon.BaseColor, -.15f);
-            outlineMaterialCache[this.hexagon.Biome] = newHighlight;
+            newHighlight.color = ColorExtensions.VaryBy(this.Hexagon.BaseColor, -.15f);
+            outlineMaterialCache[this.Hexagon.Biome] = newHighlight;
         }
 
-        this.hexMesh.material = baseMaterialCache[this.hexagon.Biome][this.colorVaryIndex];
-        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material = outlineMaterialCache[this.hexagon.Biome];
+        this.hexMesh.material = baseMaterialCache[this.Hexagon.Biome][this.colorVaryIndex];
+        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material = outlineMaterialCache[this.Hexagon.Biome];
     }
 
 
