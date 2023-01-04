@@ -28,7 +28,7 @@ public class MainCharacterBrainCell : BrainCell
 
             this.CurrentActions = new LinkedList<CharacterAction>();
             this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
-            this.CurrentActions.AddLast(new HarvestAction(this.Owner));
+            this.CurrentActions.AddLast(new HarvestAction(this.Owner, hex.Biome));
         }
         else
         {
@@ -46,10 +46,18 @@ public class MainCharacterBrainCell : BrainCell
             {
                 this.CurrentActions.RemoveFirst();
                 this.CurrentActions.First?.Value.Start();
+
+                if (this.CurrentActions.Count == 0)
+                {
+                    this.Owner.Animator?.SetInteger(Constants.AnimationStateParameter, (int)MainCharacterAnimationState.Idle);
+                }
+
                 return;
             }
 
             this.CurrentActions.First.Value.Update();
         }
+
+
     }
 }

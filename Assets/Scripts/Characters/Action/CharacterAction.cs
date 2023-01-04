@@ -8,6 +8,7 @@ public abstract class CharacterAction
         InProgress,
         Finished,
     }
+    public abstract MainCharacterAnimationState Animation { get; }
 
     public CharacterAction(Character owner)
     {
@@ -18,6 +19,7 @@ public abstract class CharacterAction
     public virtual void Start()
     {
         this.State = ActionState.InProgress;
+        this.Owner.Animator?.SetInteger(Constants.AnimationStateParameter, (int)this.Animation);
     }
 
     public virtual void Update() { }

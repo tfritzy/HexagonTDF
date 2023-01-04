@@ -22,6 +22,7 @@ public abstract class Character : MonoBehaviour
     public abstract Alliance Enemies { get; }
     public abstract Alliance Alliance { get; }
     public abstract string Name { get; }
+    public Animator Animator;
     protected Dictionary<EffectType, Dictionary<Guid, Effect>> Effects;
     private List<Cell> Cells;
     private CapsuleCollider _capsule;
@@ -63,6 +64,7 @@ public abstract class Character : MonoBehaviour
         this.Effects = new Dictionary<EffectType, Dictionary<Guid, Effect>>();
         this.Body = this.transform.Find("Body");
         this.GridPosition = Helpers.ToGridPosition(this.transform.position);
+        this.Animator = this.Body.GetComponent<Animator>();
 
         this.Cells = new List<Cell>()
         {

@@ -1,7 +1,19 @@
+using System.Collections.Generic;
+
 public class HarvestAction : CharacterAction
 {
-    public HarvestAction(Character owner) : base(owner)
+    public override MainCharacterAnimationState Animation => currentAnimation;
+
+    private MainCharacterAnimationState currentAnimation;
+    private static Dictionary<Biome, MainCharacterAnimationState> harvestAnimations = new Dictionary<Biome, MainCharacterAnimationState>()
     {
+        {Biome.Forrest, MainCharacterAnimationState.Chopping},
+        {Biome.Mountain, MainCharacterAnimationState.Mining},
+    };
+
+    public HarvestAction(Character owner, Biome targetBiome) : base(owner)
+    {
+        this.currentAnimation = harvestAnimations[targetBiome];
     }
 
     public override void Start()

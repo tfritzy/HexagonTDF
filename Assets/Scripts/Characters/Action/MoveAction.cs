@@ -4,15 +4,18 @@ using UnityEngine;
 public class MoveAction : CharacterAction
 {
     public LinkedList<Vector2Int> PathToFollow;
+    public override MainCharacterAnimationState Animation => MainCharacterAnimationState.Running;
+    private bool StopOneBefore;
 
     public MoveAction(Character owner, Vector2Int targetPos, bool stopOneBefore = false) : base(owner)
     {
         LinkedList<Vector2Int> path = Managers.Board.ShortestPathBetween(owner.GridPosition, targetPos);
+        this.StopOneBefore = stopOneBefore;
 
-        if (path != null && path.Count > 0 && stopOneBefore)
-        {
-            path.RemoveLast();
-        }
+        // if (path != null && path.Count > 0 && stopOneBefore)
+        // {
+        //     path.RemoveLast();
+        // }
 
         this.PathToFollow = path;
     }
@@ -42,10 +45,21 @@ public class MoveAction : CharacterAction
 
             if (this.Owner.GridPosition != Helpers.ToGridPosition(this.Owner.transform.position))
             {
-                this.Owner.GridPosition = Helpers.ToGridPosition(this.Owner.transform.position);
+                Vector2Int newPos = Helpers.ToGridPosition(this.Owner.transform.position);
+
+                if (StopOneBefore && newPos == this.PathToFollow.Last.Value)
+                {
+                    // Stop on the edge of the target pos.
+                    this.End();
+                    return;
+                }
+
+                this.Owner.GridPosition = newPos;
             }
 
-            this.Owner.transform.position += delta.normalized * Time.deltaTime * this.Owner.MovementCell.MovementSpeed;
+            Vector3 movementVector = delta.normalized * Time.deltaTime * this.Owner.MovementCell.MovementSpeed;
+            this.Owner.transform.position += movementVector;
+            this.Owner.transform.LookAt(this.Owner.transform.position + movementVector);
         }
         else
         {
