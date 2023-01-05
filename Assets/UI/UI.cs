@@ -22,6 +22,7 @@ public class UI : MonoBehaviour
             {Page.ActionDrawer, new ActionDrawer(root.Q<VisualElement>("ActionDrawer"))},
             {Page.BuildDrawer, new BuildDrawer(root.Q<VisualElement>("BuildDrawer"))},
             {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
+            {Page.PlayerInventory, new PlayerInventory(root.Q<VisualElement>("PlayerInventory"))},
         };
 
         Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>();
@@ -39,6 +40,8 @@ public class UI : MonoBehaviour
         {
             LentHoverers[i].Update();
         }
+
+        Pages[History.Peek()].Update();
     }
 
     public void ShowPage(Page page)

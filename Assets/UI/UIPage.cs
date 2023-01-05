@@ -18,4 +18,6 @@ public abstract class UIPage
     {
         Root.style.display = DisplayStyle.None;
     }
+
+    public virtual void Update() { }
 }

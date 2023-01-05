@@ -1,0 +1,12 @@
+using UnityEngine.UIElements;
+
+public class Modal : VisualElement
+{
+    public Modal(int width)
+    {
+        this.style.width = width;
+        this.style.backgroundColor = UIColors.Dark.PanelBackground;
+        this.SetBorderColor(UIColors.Dark.PanelOutline);
+        this.AddToClassList("modal");
+    }
+}

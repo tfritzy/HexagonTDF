@@ -119,6 +119,7 @@ public class BoardManager : MonoBehaviour
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
         character.transform.position = Helpers.ToWorldPosition(Center + new Vector2Int(4, 4));
+        character.name = "MainCharacter";
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)

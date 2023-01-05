@@ -13,6 +13,8 @@ public class InventorySlotUI : Button
     {
         this.AddToClassList("grid-button");
         this.clicked += () => Debug.Log("Click button");
+        this.style.backgroundColor = UIColors.Dark.InventorySlotBackground;
+        this.SetBorderColor(UIColors.Dark.InventorySlotBackground);
     }
 
     public void Update(InventoryCell.Slot slot)

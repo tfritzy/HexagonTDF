@@ -115,4 +115,18 @@ public static class Managers
             return _ui;
         }
     }
+
+    private static MainCharacter _mainCharacter;
+    public static MainCharacter MainCharacter
+    {
+        get
+        {
+            if (_mainCharacter == null)
+            {
+                _mainCharacter = GameObject.Find("MainCharacter").GetComponent<MainCharacter>();
+            }
+
+            return _mainCharacter;
+        }
+    }
 }
