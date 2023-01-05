@@ -1,22 +1,15 @@
 using UnityEngine.UIElements;
 
-public abstract class UIPage
+public abstract class UIPage : VisualElement
 {
-    protected VisualElement Root;
-
-    public UIPage(VisualElement root)
-    {
-        this.Root = root;
-    }
-
     public void Show()
     {
-        Root.style.display = DisplayStyle.Flex;
+        this.style.display = DisplayStyle.Flex;
     }
 
     public void Hide()
     {
-        Root.style.display = DisplayStyle.None;
+        this.style.display = DisplayStyle.None;
     }
 
     public virtual void Update() { }

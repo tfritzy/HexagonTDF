@@ -7,29 +7,33 @@ public class BuildDrawer : Drawer
     private List<Button> BuildingButtons;
     private const string BUTTON_SELECTED_CLASS = "grid-button-selected";
 
-    public BuildDrawer(VisualElement root) : base(root)
+    private List<BuildingType> Buildings = new List<BuildingType>
     {
-        BuildingButtons = new List<Button>();
-        int i = 0;
-        Button currentButton = root.Q<Button>($"Build_{i}");
-        do
+        BuildingType.LumberCamp,
+        BuildingType.LumberMill,
+        BuildingType.Conveyor,
+        BuildingType.Miner,
+        BuildingType.StoneCarver,
+        BuildingType.Assembler,
+        BuildingType.GuardTower,
+    };
+
+    public BuildDrawer()
+    {
+        this.BuildingButtons = new List<Button>();
+        foreach (BuildingType building in Buildings)
         {
-            BuildingButtons.Add(currentButton);
-            i += 1;
-            currentButton = root.Q<Button>($"Build_{i}");
+            Button button = new Button();
+            button.AddToClassList("grid-button");
+            button.clicked += () => SelectBuilding(button, building);
+            BuildingButtons.Add(button);
+            this.Add(button);
         }
-        while (currentButton != null);
 
-        BuildingButtons[0].clicked += () => SelectBuilding(BuildingButtons[0], BuildingType.LumberCamp);
-        BuildingButtons[1].clicked += () => SelectBuilding(BuildingButtons[1], BuildingType.LumberMill);
-        BuildingButtons[2].clicked += () => SelectBuilding(BuildingButtons[2], BuildingType.Conveyor);
-        BuildingButtons[3].clicked += () => SelectBuilding(BuildingButtons[3], BuildingType.Miner);
-        BuildingButtons[4].clicked += () => SelectBuilding(BuildingButtons[4], BuildingType.StoneCarver);
-        BuildingButtons[5].clicked += () => SelectBuilding(BuildingButtons[5], BuildingType.Assembler);
-        BuildingButtons[6].clicked += () => SelectBuilding(BuildingButtons[6], BuildingType.GuardTower);
-
-        Button backButton = this.Root.Q<Button>("Back");
+        Button backButton = new Button();
+        backButton.AddToClassList("floating-circle-button");
         backButton.clicked += GoBack;
+        this.Add(backButton);
     }
 
     private void SelectBuilding(Button button, BuildingType buildingType)

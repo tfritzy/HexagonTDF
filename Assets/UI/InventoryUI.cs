@@ -20,7 +20,8 @@ public class InventoryUI : VisualElement
         verticalGroup.Add(NameLabel);
 
         itemsContainer = new VisualElement();
-        itemsContainer.AddToClassList("grid");
+        itemsContainer.style.flexDirection = FlexDirection.Row;
+        itemsContainer.style.flexWrap = Wrap.Wrap;
         verticalGroup.Add(itemsContainer);
 
         itemSlots = new List<InventorySlotUI>();

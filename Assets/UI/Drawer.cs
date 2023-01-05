@@ -5,7 +5,10 @@ using UnityEngine.UIElements;
 
 public class Drawer : UIPage
 {
-    public Drawer(VisualElement root) : base(root)
+    public Drawer()
     {
+        this.AddToClassList("drawer");
+        this.style.backgroundColor = UIColors.Dark.PanelBackground;
+        this.SetBorderColor(UIColors.Dark.PanelOutline);
     }
 }

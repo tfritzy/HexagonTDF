@@ -19,11 +19,16 @@ public class UI : MonoBehaviour
 
         Pages = new Dictionary<Page, UIPage>()
         {
-            {Page.ActionDrawer, new ActionDrawer(root.Q<VisualElement>("ActionDrawer"))},
-            {Page.BuildDrawer, new BuildDrawer(root.Q<VisualElement>("BuildDrawer"))},
-            {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer(root.Q<VisualElement>("CharacterSelectionDrawer"))},
-            {Page.PlayerInventory, new PlayerInventory(root.Q<VisualElement>("PlayerInventory"))},
+            {Page.ActionDrawer, new ActionDrawer()},
+            {Page.BuildDrawer, new BuildDrawer()},
+            {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer()},
+            {Page.PlayerInventory, new PlayerInventory()},
         };
+
+        foreach (UIPage page in Pages.Values)
+        {
+            root.Add(page);
+        }
 
         Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>();
         foreach (Hoverer hoverer in Enum.GetValues(typeof(Hoverer)))

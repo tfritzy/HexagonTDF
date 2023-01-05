@@ -10,16 +10,20 @@ public class CharacterSelectionDrawer : Drawer
     private Character selectedCharacter;
     private Button destroyButton;
 
-
-    public CharacterSelectionDrawer(VisualElement root) : base(root)
+    public CharacterSelectionDrawer()
     {
-        this.characterNameLabel = root.Q<Label>("CharacterName");
+        this.characterNameLabel = new Label();
+        this.characterNameLabel.AddToClassList("heading-1");
+        this.Add(characterNameLabel);
 
-        this.InventoryContainer = root.Q<VisualElement>("Inventories");
+        this.InventoryContainer = new VisualElement();
         Inventories = new List<InventoryUI>();
 
-        root.Q<Button>("Close").clicked += () => Managers.UI.ShowPage(Page.ActionDrawer);
-        destroyButton = root.Q<Button>("Destroy");
+        var closeButton = new Button();
+        closeButton.AddToClassList("floating-circle-button");
+        closeButton.clicked += () => Managers.UI.ShowPage(Page.ActionDrawer);
+
+        var destroyButton = new Button();
         destroyButton.clicked += () =>
         {
             Managers.Board.DestroyBuilding((Building)this.selectedCharacter);

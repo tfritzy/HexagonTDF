@@ -8,5 +8,9 @@ public class Modal : VisualElement
         this.style.backgroundColor = UIColors.Dark.PanelBackground;
         this.SetBorderColor(UIColors.Dark.PanelOutline);
         this.AddToClassList("modal");
+
+        Button backButton = new Button();
+        backButton.clicked += () => Managers.UI.Back();
+        this.Add(backButton);
     }
 }

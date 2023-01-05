@@ -2,13 +2,17 @@ using UnityEngine.UIElements;
 
 public class ActionDrawer : Drawer
 {
-    public ActionDrawer(VisualElement root) : base(root)
+    public ActionDrawer()
     {
-        Button buildMenuButton = root.Q<Button>("OpenBuildDrawer");
+        Button buildMenuButton = new Button();
+        buildMenuButton.AddToClassList("mode-switch-button");
         buildMenuButton.clicked += OpenBuildMode;
+        this.Add(buildMenuButton);
 
-        Button inventory = root.Q<Button>("OpenInventory");
+        Button inventory = new Button();
+        inventory.AddToClassList("mode-switch-button");
         inventory.clicked += OpenInventory;
+        this.Add(inventory);
     }
 
     private void OpenBuildMode()

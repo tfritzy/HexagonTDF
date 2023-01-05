@@ -4,10 +4,10 @@ public class PlayerInventory : UIPage
 {
     private InventoryUI inventory;
 
-    public PlayerInventory(VisualElement root) : base(root)
+    public PlayerInventory()
     {
         var modal = new Modal(800);
-        root.Add(modal);
+        this.Add(modal);
 
         modal.Add(new CraftingMenu());
 

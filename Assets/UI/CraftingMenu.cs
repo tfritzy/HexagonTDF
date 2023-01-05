@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 public class CraftingMenu : VisualElement
 {
-    private const int hexWidth = 50;
+    private const int hexWidth = 60;
     private const float HEX_R = Constants.HEXAGON_R * hexWidth;
     private const float HEX_r = Constants.HEXAGON_r * hexWidth;
     const float horizontalDistBetweenHex = (HEX_R + HEX_r / 2) * Constants.HEXAGON_R;
