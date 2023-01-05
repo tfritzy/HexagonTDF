@@ -1,7 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
-    <ui:GroupBox name="ActionDrawer" class="drawer">
-        <ui:Button display-tooltip-when-elided="true" name="OpenBuildDrawer" class="mode-switch-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/Hammer.png?fileID=2800000&amp;guid=f77edec5a6a2816418b7765b168ecc11&amp;type=3#Hammer&apos;); background-color: rgb(97, 36, 22);" />
-        <ui:Button display-tooltip-when-elided="true" name="OpenInventory" class="mode-switch-button" style="background-image: url(&apos;project://database/Assets/UI/Images/Icons/Inventory.png?fileID=2800000&amp;guid=d0e8530ebdb5b4b4cb6abe2bf5822b5b&amp;type=3#Inventory&apos;); background-color: rgb(97, 36, 22);" />
-    </ui:GroupBox>
-</ui:UXML>

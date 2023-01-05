@@ -2,7 +2,7 @@ public enum BuildingType
 {
     Invalid,
     LumberCamp,
-    LumberMill,
+    SawMill,
     Conveyor,
     Miner,
     StoneCarver,
