@@ -192,6 +192,10 @@
     border-bottom-width: 1px;
 }
 
+.modal-header {
+    height: 65px;
+}
+
 .modal-x-button {
     position: absolute;
     right: 10px;

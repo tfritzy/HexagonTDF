@@ -11,12 +11,12 @@ public class PlayerInventory : UIPage
 
         modal.Add(new CraftingMenu());
 
-        this.inventory = new InventoryUI();
-        modal.Add(inventory);
+        // this.inventory = new InventoryUI();
+        // modal.Add(inventory);
     }
 
     public override void Update()
     {
-        this.inventory.Update(Managers.MainCharacter.InventoryCell);
+        // this.inventory.Update(Managers.MainCharacter.InventoryCell);
     }
 }

@@ -10,7 +10,7 @@ public class SelectedCharacterInputMode : InputMode
     public SelectedCharacterInputMode(Character character)
     {
         this.SelectedCharacter = character;
-        Managers.UI.ShowPage(Page.CharacterSelectionDrawer);
+        Managers.UI.ShowPage(Page.CharacterSelectionModal);
         this.selectedCharacterRing = GameObject.Instantiate(
             Managers.Prefabs.SelectedCharacterRing,
             character.transform.position + Vector3.up * .1f,
@@ -46,9 +46,9 @@ public class SelectedCharacterInputMode : InputMode
     {
         if (SelectedCharacter != null)
         {
-            CharacterSelectionDrawer drawer = (CharacterSelectionDrawer)Managers.UI.GetPage(Page.CharacterSelectionDrawer);
+            CharacterSelectionModal modal = (CharacterSelectionModal)Managers.UI.GetPage(Page.CharacterSelectionModal);
             Character character = SelectedCharacter;
-            drawer.Update(SelectedCharacter.Name, SelectedCharacter);
+            modal.Update(Managers.MainCharacter, SelectedCharacter);
         }
     }
 }

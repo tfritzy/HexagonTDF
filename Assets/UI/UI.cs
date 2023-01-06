@@ -21,7 +21,7 @@ public class UI : MonoBehaviour
         {
             {Page.ActionDrawer, new ActionDrawer()},
             {Page.BuildDrawer, new BuildDrawer()},
-            {Page.CharacterSelectionDrawer, new CharacterSelectionDrawer()},
+            {Page.CharacterSelectionModal, new CharacterSelectionModal(600)},
             {Page.PlayerInventory, new PlayerInventory()},
         };
 
