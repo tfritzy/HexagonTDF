@@ -11,6 +11,7 @@ public static class UIColors
         public static Color InventorySlotImageTint = ColorExtensions.Create("#ECBCB3");
         public static Color PrimaryButton = ColorExtensions.Create("#55211A");
         public static Color PrimaryButtonOutline = ColorExtensions.Create("#6F6954");
+        public static Color BrightRed = ColorExtensions.Create("#B53322");
 
         public static class Text
         {

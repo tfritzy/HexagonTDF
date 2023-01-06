@@ -191,3 +191,12 @@
     border-top-width: 1px;
     border-bottom-width: 1px;
 }
+
+.modal-x-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    width: 65px;
+    height: 65px;
+}

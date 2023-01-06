@@ -32,7 +32,7 @@ public class CameraControl : MonoBehaviour
 
     void Update()
     {
-        HandleTouchInput();
+        // HandleTouchInput();
         this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.unscaledDeltaTime;
     }
 

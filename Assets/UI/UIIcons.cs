@@ -5,6 +5,7 @@ public enum UIIconType
 {
     Hammer,
     Inventory,
+    X
 };
 
 public static class Icons

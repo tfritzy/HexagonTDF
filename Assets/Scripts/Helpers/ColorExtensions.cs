@@ -48,4 +48,9 @@ public static class ColorExtensions
         Color.RGBToHSV(color, out float h, out float s, out float v);
         return Color.HSVToRGB(h, s, v + amount);
     }
+
+    public static Color Dim(this Color color, float alpha)
+    {
+        return new Color(color.r, color.g, color.b, alpha);
+    }
 }

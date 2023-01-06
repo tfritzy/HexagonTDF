@@ -68,6 +68,7 @@ public class InventoryUI : VisualElement
             {
                 this.pickedUpItemIndex = slot.Index;
                 Item item = this.inventoryCell.ItemAt(this.pickedUpItemIndex);
+                slot.SetDim(true);
 
                 if (hoveredItem == null)
                 {

@@ -29,6 +29,8 @@ public class CraftingMenu : VisualElement
         container.style.alignSelf = new StyleEnum<Align>(Align.Center);
         container.style.width = HEX_R * 5 * padding;
         container.style.height = HEX_r * 8 * padding;
+        this.style.width = HEX_r * 8 * padding * 1.2f;
+        this.style.alignSelf = new StyleEnum<Align>(Align.Center);
 
         for (int x = 0; x < 3; x++)
         {

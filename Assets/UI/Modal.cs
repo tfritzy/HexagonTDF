@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Modal : VisualElement
@@ -11,6 +12,10 @@ public class Modal : VisualElement
 
         Button backButton = new Button();
         backButton.clicked += () => Managers.UI.Back();
+        backButton.AddToClassList("modal-x-button");
+        backButton.style.backgroundImage = new StyleBackground(Icons.GetUiIcon(UIIconType.X));
+        backButton.style.unityBackgroundImageTintColor = UIColors.Dark.BrightRed;
+        backButton.SetBorderColor(new Color(0, 0, 0, 0));
         this.Add(backButton);
     }
 }

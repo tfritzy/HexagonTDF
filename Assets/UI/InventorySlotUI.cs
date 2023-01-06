@@ -21,6 +21,7 @@ public class InventorySlotUI : Button
         this.clicked += () => Debug.Log("Click button");
         this.style.backgroundColor = UIColors.Dark.InventorySlotBackground;
         this.SetBorderColor(UIColors.Dark.InventorySlotBackground);
+        this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
 
         this.clickable.activators.Clear();
         this.RegisterCallback<MouseDownEvent>(evt =>
@@ -59,5 +60,17 @@ public class InventorySlotUI : Button
         this.renderedReservedFor = slot.ReservedFor;
         this.renderedItem = slot.Item;
         this.renderedQuantity = slot.Item?.Quantity;
+    }
+
+    public void SetDim(bool isDim)
+    {
+        if (isDim)
+        {
+            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint.Dim(.5f);
+        }
+        else
+        {
+            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
+        }
     }
 }
