@@ -5,7 +5,7 @@ public class Miner : Building
     public override LifeCell LifeCell => _lifeCell;
     public override Alliance Enemies => Alliance.Maltov;
     public override Alliance Alliance => Alliance.Player;
-    public override BuildingType Type => BuildingType.Miner;
+    public override BuildingType Type => BuildingType.Mine;
     public override ResourceCollectionCell ResourceCollectionCell => _resourceCollectionCell;
     public override ConveyorCell ConveyorCell => _conveyorCell;
     public override InventoryCell InventoryCell => _inventoryCell;

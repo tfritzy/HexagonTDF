@@ -4,7 +4,7 @@ public enum BuildingType
     LumberCamp,
     SawMill,
     Conveyor,
-    Miner,
+    Mine,
     StoneCarver,
     Assembler,
     GuardTower,

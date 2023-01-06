@@ -47,18 +47,22 @@ public class InventoryCell : Cell
         return Slots[index].Item;
     }
 
-    public void AddItem(Item item)
+    public void AddItem(Item item, int index = -1)
     {
-        int firstOpenSlot = GetFirstOpenSlot(item.Type);
-        if (firstOpenSlot != -1)
+        if (index == -1)
         {
-            if (Slots[firstOpenSlot].Item == null)
+            index = GetFirstOpenSlot(item.Type);
+        }
+
+        if (index != -1)
+        {
+            if (Slots[index].Item == null)
             {
-                this.Slots[firstOpenSlot].Item = item;
+                this.Slots[index].Item = item;
             }
-            else if (Slots[firstOpenSlot].Item.Quantity < Slots[firstOpenSlot].Item.MaxStackSize)
+            else if (Slots[index].Item.Quantity < Slots[index].Item.MaxStackSize)
             {
-                this.Slots[firstOpenSlot].Item.Quantity += 1;
+                this.Slots[index].Item.Quantity += 1;
             }
             else
             {
@@ -102,6 +106,22 @@ public class InventoryCell : Cell
     public bool CanAcceptItem(ItemType itemType)
     {
         return GetFirstOpenSlot(itemType) != -1;
+    }
+
+    public bool CanAcceptItem(ItemType itemType, int index)
+    {
+        if (ItemAt(index) == null)
+        {
+            return true;
+        }
+
+        if (SlotAt(index).ReservedFor != null &&
+            SlotAt(index).ReservedFor != itemType)
+        {
+            return false;
+        }
+
+        return ItemAt(index).Quantity < ItemAt(index).MaxStackSize;
     }
 
     private int GetFirstOpenSlot(ItemType forItem)

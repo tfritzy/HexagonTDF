@@ -12,7 +12,7 @@ public class BuildDrawer : Drawer
         BuildingType.LumberCamp,
         BuildingType.SawMill,
         BuildingType.Conveyor,
-        BuildingType.Miner,
+        BuildingType.Mine,
         BuildingType.StoneCarver,
         BuildingType.Assembler,
         BuildingType.GuardTower,

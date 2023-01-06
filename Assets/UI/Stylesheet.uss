@@ -60,6 +60,12 @@
     -unity-background-scale-mode: stretch-to-fill;
 }
 
+.floating-item {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+}
+
 .grid-button {
     width: 100px;
     height: 100px;

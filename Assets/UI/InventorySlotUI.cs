@@ -3,18 +3,31 @@ using UnityEngine.UIElements;
 
 public class InventorySlotUI : Button
 {
+    public int Index { get; private set; }
+
     private Item renderedItem;
     private ItemType? renderedReservedFor;
     private int? renderedQuantity;
     private Color tintColor = ColorExtensions.Create("#ECBCB3");
     private Color emptyColor = ColorExtensions.Create("#ECBCB3", 128);
+    private InventoryUI Parent;
 
-    public InventorySlotUI()
+    public InventorySlotUI(InventoryUI parent, int index)
     {
+        this.Index = index;
+        this.Parent = parent;
+
         this.AddToClassList("grid-button");
         this.clicked += () => Debug.Log("Click button");
         this.style.backgroundColor = UIColors.Dark.InventorySlotBackground;
         this.SetBorderColor(UIColors.Dark.InventorySlotBackground);
+
+        this.clickable.activators.Clear();
+        this.RegisterCallback<MouseDownEvent>(evt =>
+        {
+            Debug.Log("Pickup item");
+            this.Parent.OnSlotMouseDown(this);
+        });
     }
 
     public void Update(InventoryCell.Slot slot)

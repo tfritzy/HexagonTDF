@@ -17,11 +17,13 @@ public class CharacterSelectionDrawer : Drawer
         this.Add(characterNameLabel);
 
         this.InventoryContainer = new VisualElement();
+        this.Add(InventoryContainer);
         Inventories = new List<InventoryUI>();
 
         var closeButton = new Button();
         closeButton.AddToClassList("floating-circle-button");
         closeButton.clicked += () => Managers.UI.ShowPage(Page.ActionDrawer);
+        this.Add(closeButton);
 
         this.destroyButton = new Button();
         destroyButton.clicked += () =>
@@ -29,6 +31,7 @@ public class CharacterSelectionDrawer : Drawer
             Managers.Board.DestroyBuilding((Building)this.selectedCharacter);
             Managers.UI.Back();
         };
+        this.InventoryContainer.Add(destroyButton);
     }
 
     public void Update(string characterName, Character selectedCharacter)
