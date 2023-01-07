@@ -64,6 +64,11 @@ public abstract class ResourceCollectionCell : Cell
     private float lastCollectionTime = 0f;
     private void HarvestResources()
     {
+        if (CurrentCollectionDetails == null)
+        {
+            return;
+        }
+
         if (Time.time < lastHarvestCheckTime + .25f &&
             !(Time.time - lastCollectionTime > CurrentCollectionDetails.TimeRequired))
         {

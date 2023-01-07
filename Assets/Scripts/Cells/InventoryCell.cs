@@ -105,6 +105,7 @@ public class InventoryCell : Cell
 
     public bool CanAcceptItem(ItemType itemType)
     {
+        // TODO respect quantity.
         return GetFirstOpenSlot(itemType) != -1;
     }
 

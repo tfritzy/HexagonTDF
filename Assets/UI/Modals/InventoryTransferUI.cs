@@ -9,6 +9,7 @@ public class InventoryTransferUI : VisualElement
     private VisualElement hoveredItem;
     private Vector2 HoverItemOffset = new Vector2(50, 50);
     private List<InventoryUI> inventoriesRendered;
+    private List<InventoryCell> inventories;
     private VisualElement inventoryContainer;
 
     public InventoryTransferUI()
@@ -19,7 +20,17 @@ public class InventoryTransferUI : VisualElement
 
     public void OnSlotMouseDown(InventoryCell inventory, InventorySlotUI slot)
     {
-        if (this.pickedUpItemIndex == null)
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            Item item = inventory.ItemAt(slot.Index);
+            InventoryCell nextInventory = this.inventories.Find((InventoryCell i) => i != inventory);
+            if (nextInventory != null && item != null && nextInventory.CanAcceptItem(item.Type))
+            {
+                inventory.RemoveAt(slot.Index);
+                nextInventory.AddItem(item);
+            }
+        }
+        else if (this.pickedUpItemIndex == null)
         {
             if (inventory.ItemAt(slot.Index) != null)
             {
@@ -69,6 +80,8 @@ public class InventoryTransferUI : VisualElement
 
     private void InitInventories(List<InventoryCell> inventoriesToRender)
     {
+        this.inventories = inventoriesToRender;
+
         if (this.inventoryContainer == null)
         {
             this.inventoryContainer = new VisualElement();
