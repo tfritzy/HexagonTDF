@@ -26,7 +26,10 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButton(0) ||
+            Input.GetMouseButtonUp(0) ||
+            Input.GetMouseButton(1) ||
+            Input.GetMouseButtonUp(1))
         {
             ShootRayCast();
         }
@@ -48,7 +51,10 @@ public class InputManager : MonoBehaviour
     {
         Vector3? inputPos = null;
 
-        if (Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButton(0) ||
+            Input.GetMouseButtonUp(0) ||
+            Input.GetMouseButton(1) ||
+            Input.GetMouseButtonUp(1))
         {
             inputPos = Input.mousePosition;
         }
@@ -75,11 +81,19 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            this.CurrentMode.OnDown(hits.Value.Hexes, hits.Value.Characters);
+            this.CurrentMode.OnDown(hits.Value.Hexes, hits.Value.Characters, 0);
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            this.CurrentMode.OnUp(hits.Value.Hexes, hits.Value.Characters, hasDragged);
+            this.CurrentMode.OnUp(hits.Value.Hexes, hits.Value.Characters, 0, hasDragged);
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            this.CurrentMode.OnDown(hits.Value.Hexes, hits.Value.Characters, 1);
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            this.CurrentMode.OnUp(hits.Value.Hexes, hits.Value.Characters, 1, hasDragged);
         }
         else
         {

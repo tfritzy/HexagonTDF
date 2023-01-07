@@ -10,7 +10,6 @@ public class SelectedCharacterInputMode : InputMode
     public SelectedCharacterInputMode(Character character)
     {
         this.SelectedCharacter = character;
-        Managers.UI.ShowPage(Page.CharacterSelectionModal);
         this.selectedCharacterRing = GameObject.Instantiate(
             Managers.Prefabs.SelectedCharacterRing,
             character.transform.position + Vector3.up * .1f,
@@ -21,7 +20,7 @@ public class SelectedCharacterInputMode : InputMode
             SelectedCharacter.GetComponent<CapsuleCollider>().radius * 2f;
     }
 
-    public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
+    public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
     }
 
@@ -29,12 +28,31 @@ public class SelectedCharacterInputMode : InputMode
     {
     }
 
-    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
+    public override void OnUp(
+        List<HexagonMono> hexes,
+        List<Character> characters,
+        int button,
+        bool hasDragged)
     {
-        if (!hasDragged && hexes.Count > 0)
+        if (!hasDragged && hexes.Count > 0 && button == 1)
         {
             SelectedCharacter.SelectedClickHex(hexes.First().GridPosition);
         }
+
+        if (button == 0 && !hasDragged)
+        {
+            if (characters.Count > 0)
+            {
+                Managers.InputManager.OpenSelectedCharacterMode(characters[0]);
+            }
+            else
+            {
+                // Deselect current character.
+                GameObject.Destroy(selectedCharacterRing);
+                Managers.InputManager.SetGameInputMode();
+            }
+        }
+
     }
 
     public override void OnExit()
@@ -44,11 +62,5 @@ public class SelectedCharacterInputMode : InputMode
 
     public override void Update()
     {
-        if (SelectedCharacter != null)
-        {
-            CharacterSelectionModal modal = (CharacterSelectionModal)Managers.UI.GetPage(Page.CharacterSelectionModal);
-            Character character = SelectedCharacter;
-            modal.Update(Managers.MainCharacter, SelectedCharacter);
-        }
     }
 }

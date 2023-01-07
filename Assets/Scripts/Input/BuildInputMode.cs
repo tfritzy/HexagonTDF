@@ -23,7 +23,7 @@ public class BuildInputMode : InputMode
         RetargetingConveyor,
     }
 
-    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
+    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, int button, bool hasDragged)
     {
         if (State == BuildInputState.RetargetingConveyor && retargetingConveyorOf != null)
         {
@@ -70,7 +70,7 @@ public class BuildInputMode : InputMode
         }
     }
 
-    public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
+    public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
         Character conveyor = characters.FirstOrDefault(
             (Character character) =>

@@ -3,14 +3,11 @@ using UnityEngine;
 
 public class GameInputMode : InputMode
 {
-    private Character selectedCharacter;
-
-    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, bool hasDragged)
+    public override void OnUp(List<HexagonMono> hexes, List<Character> characters, int button, bool hasDragged)
     {
-        if (characters.Count > 0 && !hasDragged)
+        if (characters.Count > 0 && !hasDragged && button == 0)
         {
-            selectedCharacter = characters[0];
-            Managers.InputManager.OpenSelectedCharacterMode(selectedCharacter);
+            Managers.InputManager.OpenSelectedCharacterMode(characters[0]);
         }
     }
 
@@ -18,7 +15,7 @@ public class GameInputMode : InputMode
     {
     }
 
-    public override void OnDown(List<HexagonMono> hexes, List<Character> characters)
+    public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
     }
 

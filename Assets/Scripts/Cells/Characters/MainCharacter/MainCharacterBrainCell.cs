@@ -30,6 +30,11 @@ public class MainCharacterBrainCell : BrainCell
             this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
             this.CurrentActions.AddLast(new HarvestAction(this.Owner, hex.Biome));
         }
+        else if (Managers.Board.GetBuilding(hex.GridPosition) != null)
+        {
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
+            this.CurrentActions.AddLast(new OpenInventoryAction(this.Owner, Managers.Board.GetBuilding(hex.GridPosition)));
+        }
         else
         {
             this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: false));
