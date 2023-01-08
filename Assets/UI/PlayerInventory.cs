@@ -10,14 +10,15 @@ public class PlayerInventory : UIPage
         var modal = new Modal(800, "Your inventory");
         this.Add(modal);
 
-        this.Add(new InventoryTransferUI());
+        this.inventory = new InventoryTransferUI();
         modal.Add(inventory);
 
-        playerInventory = new List<InventoryCell> { Managers.MainCharacter.InventoryCell };
+        playerInventory = new List<InventoryCell> { null };
     }
 
     public override void Update()
     {
-        this.inventory.UpdateInventories(playerInventory);
+        this.playerInventory[0] = Managers.MainCharacter.InventoryCell;
+        this.inventory.UpdateInventories(this.playerInventory);
     }
 }
