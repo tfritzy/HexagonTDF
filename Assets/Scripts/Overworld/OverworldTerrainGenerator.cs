@@ -172,7 +172,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         {
             float xD = x / Scale;
             float yD = y / Scale;
-            float heightValue = .8f + ((float)heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity) - .5f) * .25f;
+            float heightValue = .6f + heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity) * .25f;
             // float xDistFromCenter = Mathf.Abs(x - points.GetLength(0) / 2) / (points.GetLength(0) / 2f);
             // float yDistFromCenter = Mathf.Abs(y - points.GetLength(1) / 2) / (points.GetLength(1) / 2f);
             // float maxDist = 1 - Math.Max(xDistFromCenter, yDistFromCenter);

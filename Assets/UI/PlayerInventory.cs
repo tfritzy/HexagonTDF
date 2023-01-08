@@ -1,22 +1,23 @@
-using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class PlayerInventory : UIPage
 {
-    private InventoryUI inventory;
+    private InventoryTransferUI inventory;
+    private List<InventoryCell> playerInventory;
 
     public PlayerInventory()
     {
         var modal = new Modal(800, "Your inventory");
         this.Add(modal);
 
-        modal.Add(new CraftingMenu());
+        this.Add(new InventoryTransferUI());
+        modal.Add(inventory);
 
-        // this.inventory = new InventoryUI();
-        // modal.Add(inventory);
+        playerInventory = new List<InventoryCell> { Managers.MainCharacter.InventoryCell };
     }
 
     public override void Update()
     {
-        // this.inventory.Update(Managers.MainCharacter.InventoryCell);
+        this.inventory.UpdateInventories(playerInventory);
     }
 }

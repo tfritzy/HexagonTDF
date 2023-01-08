@@ -15,7 +15,7 @@ public class GuardTower : Building
     public override Dictionary<ItemType, int> ItemsNeededForConstruction => _itemsNeededForConstruction;
     private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
     {
-        {ItemType.Log, 6},
+        {ItemType.Log, 3},
         {ItemType.Rock, 20},
     };
 

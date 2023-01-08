@@ -5,7 +5,7 @@ public class ConstructionProgress : UIHoverer
 {
     public override Hoverer Type => Hoverer.ConstructionProgress;
     public override Vector3 Offset => _offset;
-    private Vector3 _offset = new Vector3(-.5f, -5);
+    private Vector3 _offset = new Vector3(-.5f, -10f);
     private VisualElement Inner;
 
     private Label label;

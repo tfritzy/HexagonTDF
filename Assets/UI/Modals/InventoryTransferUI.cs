@@ -6,7 +6,7 @@ public class InventoryTransferUI : VisualElement
 {
     private int? pickedUpItemIndex;
     private InventoryCell pickedUpItemInventory;
-    private VisualElement hoveredItem;
+    private ItemUI hoveredItem;
     private Vector2 HoverItemOffset = new Vector2(50, 50);
     private List<InventoryUI> inventoriesRendered;
     private List<InventoryCell> inventories;
@@ -26,7 +26,7 @@ public class InventoryTransferUI : VisualElement
             InventoryCell nextInventory = this.inventories.Find((InventoryCell i) => i != inventory);
             if (nextInventory != null && item != null && nextInventory.CanAcceptItem(item.Type))
             {
-                inventory.RemoveAt(slot.Index);
+                inventory.RemoveAt(slot.Index, all: true);
                 nextInventory.AddItem(item);
             }
         }
@@ -41,18 +41,17 @@ public class InventoryTransferUI : VisualElement
 
                 if (hoveredItem == null)
                 {
-                    hoveredItem = new VisualElement();
-                    hoveredItem.AddToClassList("item");
+                    hoveredItem = new ItemUI();
                     hoveredItem.AddToClassList("floating");
-                    hoveredItem.pickingMode = PickingMode.Ignore;
+                    this.Add(hoveredItem);
                 }
                 else
                 {
                     this.hoveredItem.style.display = DisplayStyle.Flex;
                 }
 
+                hoveredItem.Update(item.Type, item.Quantity, false);
                 hoveredItem.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(item.Type));
-                this.Add(hoveredItem);
             }
         }
         else
@@ -60,7 +59,7 @@ public class InventoryTransferUI : VisualElement
             Item item = this.pickedUpItemInventory.ItemAt(this.pickedUpItemIndex.Value);
             if (inventory.CanAcceptItem(item.Type, slot.Index))
             {
-                this.pickedUpItemInventory.RemoveAt(this.pickedUpItemIndex.Value);
+                this.pickedUpItemInventory.RemoveAt(this.pickedUpItemIndex.Value, all: true);
                 inventory.AddItem(item, slot.Index);
 
                 this.hoveredItem.style.display = DisplayStyle.None;

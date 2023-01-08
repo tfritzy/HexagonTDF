@@ -62,7 +62,7 @@ public class InventoryCell : Cell
             }
             else if (Slots[index].Item.Quantity < Slots[index].Item.MaxStackSize)
             {
-                this.Slots[index].Item.Quantity += 1;
+                this.Slots[index].Item.Quantity += item.Quantity;
             }
             else
             {
@@ -86,14 +86,14 @@ public class InventoryCell : Cell
         }
     }
 
-    public void RemoveAt(int index)
+    public void RemoveAt(int index, bool all = false)
     {
         if (Slots[index] == null)
         {
             return;
         }
 
-        if (Slots[index].Item.Quantity > 1)
+        if (Slots[index].Item.Quantity > 1 && !all)
         {
             Slots[index].Item.Quantity -= 1;
         }

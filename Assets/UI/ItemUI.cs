@@ -12,8 +12,10 @@ public class ItemUI : VisualElement
         this.quantityLabel.AddToClassList("outlined");
         this.quantityLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
         this.quantityLabel.style.position = Position.Absolute;
-        this.quantityLabel.style.bottom = -10;
-        this.quantityLabel.style.right = -10;
+        this.quantityLabel.style.bottom = -15;
+        this.quantityLabel.style.right = -15;
+        this.quantityLabel.pickingMode = PickingMode.Ignore;
+        this.pickingMode = PickingMode.Ignore;
         this.Add(this.quantityLabel);
         this.AddToClassList("item");
     }
