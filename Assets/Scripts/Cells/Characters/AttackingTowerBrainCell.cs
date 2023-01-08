@@ -28,7 +28,7 @@ public class AttackTowerBrainCell : BrainCell
         foreach (Collider hit in Physics.OverlapSphere(this.Owner.transform.position, this.Owner.AttackCell.Range, Constants.Layers.Units))
         {
             Unit unit = hit.GetComponent<Unit>();
-            if (unit.Alliance == this.Owner.Enemies)
+            if (unit != null && unit.Alliance == this.Owner.Enemies)
             {
                 return unit;
             }

@@ -48,7 +48,6 @@ public class SelectedCharacterInputMode : InputMode
             else
             {
                 // Deselect current character.
-                GameObject.Destroy(selectedCharacterRing);
                 Managers.InputManager.SetGameInputMode();
             }
         }
@@ -57,7 +56,7 @@ public class SelectedCharacterInputMode : InputMode
 
     public override void OnExit()
     {
-
+        GameObject.Destroy(this.selectedCharacterRing);
     }
 
     public override void Update()

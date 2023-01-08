@@ -30,7 +30,7 @@ public class Miner : Building
         _lifeCell = new MinerLifeCell();
         _resourceCollectionCell = new MinerResourceCollectionCell();
         _conveyorCell = new ConveyorCell(true);
-        _inventoryCell = new InventoryCell(8);
+        _inventoryCell = new InventoryCell(8, "Mine's inventory");
 
         base.Setup();
     }

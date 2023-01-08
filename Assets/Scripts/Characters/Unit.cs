@@ -4,7 +4,6 @@ public abstract class Unit : Character
 {
     private Rigidbody rb;
     private UnitAnimationState AnimationState;
-    private Animator Animator;
     private const string AnimationStateName = "AnimationState";
     private HealthBar healthbar;
 

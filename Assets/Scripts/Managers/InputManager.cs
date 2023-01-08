@@ -18,10 +18,6 @@ public class InputManager : MonoBehaviour
         this.BuildMode = new BuildInputMode();
         this.GameMode = new GameInputMode();
         this.CurrentMode = GameMode;
-
-#if UNITY_EDITOR
-        Cursor.visible = true;
-#endif
     }
 
     void Update()
@@ -149,23 +145,26 @@ public class InputManager : MonoBehaviour
         return results.Count > 0;
     }
 
-    public void SwitchMode()
+    private void SwitchMode()
     {
         this.CurrentMode.OnExit();
     }
 
     public void OpenSelectedCharacterMode(Character character)
     {
+        SwitchMode();
         this.CurrentMode = new SelectedCharacterInputMode(character);
     }
 
     public void OpenBuildMode()
     {
+        SwitchMode();
         this.CurrentMode = this.BuildMode;
     }
 
     public void SetGameInputMode()
     {
+        SwitchMode();
         this.CurrentMode = this.GameMode;
     }
 }

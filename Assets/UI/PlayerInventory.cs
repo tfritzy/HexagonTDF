@@ -6,7 +6,7 @@ public class PlayerInventory : UIPage
 
     public PlayerInventory()
     {
-        var modal = new Modal(800);
+        var modal = new Modal(800, "Your inventory");
         this.Add(modal);
 
         modal.Add(new CraftingMenu());

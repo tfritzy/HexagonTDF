@@ -14,16 +14,18 @@ public class InventoryUI : VisualElement
     public InventoryUI(InventoryTransferUI parent)
     {
         this.Parent = parent;
+        this.AddToClassList("section");
 
         VisualElement verticalGroup = new VisualElement();
         this.Add(verticalGroup);
 
         this.NameLabel = new Label();
-        this.NameLabel.AddToClassList("heading-2");
+        this.NameLabel.AddToClassList("h2");
         this.NameLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
         verticalGroup.Add(NameLabel);
 
         itemsContainer = new VisualElement();
+        itemsContainer.style.justifyContent = Justify.Center;
         itemsContainer.style.flexDirection = FlexDirection.Row;
         itemsContainer.style.flexWrap = Wrap.Wrap;
         verticalGroup.Add(itemsContainer);

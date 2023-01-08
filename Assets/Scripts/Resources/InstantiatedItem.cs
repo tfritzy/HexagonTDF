@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InstantiatedItem : MonoBehaviour 
+public class InstantiatedItem : MonoBehaviour
 {
     public Item Item;
 

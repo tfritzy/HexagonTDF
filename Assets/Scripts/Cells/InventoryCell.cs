@@ -15,7 +15,7 @@ public class InventoryCell : Cell
 
     public override void Update() { }
 
-    public InventoryCell(int size, string name = "Inventory")
+    public InventoryCell(int size, string name)
     {
         this.Size = size;
         this.Slots = new Slot[Size];

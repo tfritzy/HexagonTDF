@@ -34,16 +34,30 @@
     margin-bottom: 0;
 }
 
-.heading-1 {
-    font-size: 24px;
+.outlined {
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+}
+
+.h1 {
+    color: rgb(255, 255, 255);
     padding-bottom: 10px;
     -unity-text-align: upper-left;
     -unity-font-style: bold;
+    font-size: 30px;
 }
 
-.heading-2 {
-    font-size: 18px;
-    padding-bottom: 5px;
+.h2 {
+    color: rgb(255, 255, 255);
+    font-size: 24px;
+    padding-bottom: 10px;
+}
+
+.p {
+    color: rgb(255, 255, 255);
+    font-size: 36px;
+    -unity-font-style: bold;
+    -unity-font: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=ecfd808de87b039448b3941c2e643404&type=3#NotInter-Regular');
 }
 
 .floating-circle-button {
@@ -56,14 +70,17 @@
     border-bottom-left-radius: 50px;
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
-    background-image: url('project://database/Assets/UI/Images/Icons/BackArrow.png?fileID=2800000&guid=65a8c8d2156442e4c81940434d7106d3&type=3#BackArrow');
+    background-image: url('project://database/Assets/Resources/Icons/UI/BackArrow.png?fileID=2800000&guid=65a8c8d2156442e4c81940434d7106d3&type=3#BackArrow');
     -unity-background-scale-mode: stretch-to-fill;
 }
 
-.floating-item {
+.item {
+    width: 75px;
+    height: 75px;
+}
+
+.floating {
     position: absolute;
-    width: 100px;
-    height: 100px;
 }
 
 .grid-button {
@@ -75,19 +92,12 @@
     margin-bottom: 7px;
     padding-left: 5px;
     padding-right: 5px;
-    padding-top: 0;
-    padding-bottom: 0;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-    -unity-text-align: lower-right;
-    font-size: 35px;
-    color: rgb(219, 219, 219);
-    white-space: normal;
-    -unity-text-outline-width: 1px;
-    text-shadow: 0 0 4px rgb(0, 0, 0);
-    -unity-text-outline-color: rgb(219, 219, 219);
+    align-items: center;
+    justify-content: space-around;
 }
 
 .resource-collection-hoverer--inline-icon {
@@ -167,21 +177,28 @@
     border-bottom-left-radius: 3px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
+    background-color: rgb(100, 100, 100);
 }
 
 .crafting-menu-hex {
     width: 75px;
     height: 75px;
-    background-image: url('project://database/Assets/UI/Images/Icons/Hex.png?fileID=2800000&guid=f7e5a16ad252d544dbca565a3396ae18&type=3#Hex');
+    background-image: url('project://database/Assets/Resources/Icons/UI/Hex.png?fileID=2800000&guid=f7e5a16ad252d544dbca565a3396ae18&type=3#Hex');
     position: absolute;
 }
 
+.section {
+    padding-bottom: 36px;
+}
+
 .modal {
+    position: absolute;
+    top: 10%;
     align-self: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     border-top-right-radius: 15px;
@@ -194,12 +211,13 @@
 
 .modal-header {
     height: 65px;
+    padding-bottom: 16px;
 }
 
 .modal-x-button {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    top: 0;
+    right: 0;
     background-color: rgba(0, 0, 0, 0);
     width: 65px;
     height: 65px;

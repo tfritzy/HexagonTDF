@@ -15,10 +15,7 @@ public class LumberCamp : Building
     private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
     {
         {ItemType.Log, 10},
-        {ItemType.Plank, 20},
-        {ItemType.StoneBlock, 30},
-        {ItemType.SawBlade, 1},
-        {ItemType.Shingle, 50},
+        {ItemType.Rock, 30},
     };
 
     private LifeCell _lifeCell;
@@ -30,7 +27,7 @@ public class LumberCamp : Building
         _lifeCell = new LumberCampLifeCell();
         _resourceCollectionCell = new LumberCampResourceCollectionCell();
         _conveyorCell = new ConveyorCell(true);
-        _inventoryCell = new InventoryCell(8);
+        _inventoryCell = new InventoryCell(8, "Lumber camp's inventory");
 
         base.Setup();
     }

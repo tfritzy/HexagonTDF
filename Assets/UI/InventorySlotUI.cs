@@ -11,6 +11,7 @@ public class InventorySlotUI : Button
     private Color tintColor = ColorExtensions.Create("#ECBCB3");
     private Color emptyColor = ColorExtensions.Create("#ECBCB3", 128);
     private InventoryUI Parent;
+    private ItemUI itemUI;
 
     public InventorySlotUI(InventoryUI parent, int index)
     {
@@ -22,12 +23,13 @@ public class InventorySlotUI : Button
         this.style.backgroundColor = UIColors.Dark.InventorySlotBackground;
         this.SetBorderColor(UIColors.Dark.InventorySlotBackground);
         this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
+        this.itemUI = new ItemUI();
+        this.Add(this.itemUI);
 
         this.clickable.activators.Clear();
         this.RegisterCallback<MouseDownEvent>(evt =>
         {
-            Debug.Log("Pickup item");
-            this.Parent.OnSlotMouseDown(this);
+            this.Parent?.OnSlotMouseDown(this);
         });
     }
 
@@ -39,20 +41,17 @@ public class InventorySlotUI : Button
         {
             if (slot.Item != null)
             {
-                this.text = slot.Item.Quantity > 1 ? slot.Item.Quantity.ToString() : "";
-                this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.Item.Type));
-                this.style.unityBackgroundImageTintColor = new StyleColor(tintColor);
+                this.itemUI.Update(slot.Item.Type, slot.Item.Quantity, false);
             }
             else
             {
                 if (slot.ReservedFor != null)
                 {
-                    this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(slot.ReservedFor.Value));
-                    this.style.unityBackgroundImageTintColor = new StyleColor(emptyColor);
+                    this.itemUI.Update(slot.Item.Type, 0, true);
                 }
                 else
                 {
-                    this.style.backgroundImage = null;
+                    this.itemUI.Blank();
                 }
             }
         }

@@ -22,7 +22,7 @@ public class MainCharacter : Character
         _lifeCell = new MainCharacterLifeCell();
         _brainCell = new MainCharacterBrainCell();
         _movementCell = new MainCharacterMovementCell();
-        _inventoryCell = new InventoryCell(16);
+        _inventoryCell = new InventoryCell(16, "Your inventory");
         _resourceCollectionCell = new MainCharacterResourceCollectionCell();
 
         base.Setup();

@@ -42,7 +42,8 @@ public class InventoryTransferUI : VisualElement
                 if (hoveredItem == null)
                 {
                     hoveredItem = new VisualElement();
-                    hoveredItem.AddToClassList("floating-item");
+                    hoveredItem.AddToClassList("item");
+                    hoveredItem.AddToClassList("floating");
                     hoveredItem.pickingMode = PickingMode.Ignore;
                 }
                 else

@@ -16,7 +16,6 @@ public class GuardTower : Building
     private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
     {
         {ItemType.Log, 6},
-        // {ItemType.Plank, 10},
         {ItemType.Rock, 20},
     };
 
@@ -34,7 +33,7 @@ public class GuardTower : Building
         acceptedItems.Add(ItemType.Arrow);
 
         _lifeCell = new GuardTowerLifeCell();
-        _inventoryCell = new InventoryCell(8);
+        _inventoryCell = new InventoryCell(8, "Guard tower's inventory");
         _conveyorCell = new ConveyorCell();
         _brainCell = new AttackTowerBrainCell();
         _attackCell = new GuardTowerAttackCell();

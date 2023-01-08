@@ -8,13 +8,14 @@ public abstract class Building : Character
     public abstract BuildingType Type { get; }
     public virtual bool RequiresConfirmationToBuild => true;
     public virtual List<HexSide> ExtraSize => new List<HexSide>();
-    public abstract Dictionary<ItemType, int> ItemsNeededForConstruction { get; }
     public virtual int InventorySize => 8;
     private InventoryCell _inventory;
 
     // Construction
+    public abstract Dictionary<ItemType, int> ItemsNeededForConstruction { get; }
     public bool ShouldInstaBuild;
     public virtual bool NeedsConstruction => true;
+    public float ConstructionPercent { get; private set; }
     private Dictionary<ItemType, int> ItemsUsedForConstruction;
     private int numItemsNeededForConstruction;
     private int numItemsUsedForConstruction;
@@ -22,7 +23,6 @@ public abstract class Building : Character
     private Bounds _bodyBounds;
     private ConstructionProgress constructionProgressHoverer;
     private float renderedConstructionPercent;
-    private float constructionPercent;
     private float lastConstructionIncrementTime;
     private const string CONSTRUCTION_MAT_CONSTRUCTED_PROP = "_PercentConstructed";
     private const string CONSTRUCTION_MAT_MIN_Y = "_ModelMinY";
@@ -118,8 +118,8 @@ public abstract class Building : Character
                     this.numItemsUsedForConstruction += 1;
                     this.ItemsUsedForConstruction[item] += 1;
                     this.InventoryCell.RemoveAt(firstIndex);
-                    this.constructionPercent = (float)numItemsUsedForConstruction / (float)numItemsNeededForConstruction;
-                    this.constructionProgressHoverer.Update(constructionPercent * 100f);
+                    this.ConstructionPercent = (float)numItemsUsedForConstruction / (float)numItemsNeededForConstruction;
+                    this.constructionProgressHoverer.Update(ConstructionPercent * 100f);
                 }
             }
         }
@@ -127,6 +127,25 @@ public abstract class Building : Character
         if (IsConstructed)
         {
             FinishConstruction();
+        }
+    }
+
+    public int GetRemainingItemsNeeded(ItemType itemType)
+    {
+        if (!ItemsNeededForConstruction.ContainsKey(itemType))
+        {
+            return 0;
+        }
+        else
+        {
+            if (ItemsUsedForConstruction.ContainsKey(itemType))
+            {
+                return ItemsNeededForConstruction[itemType] - ItemsUsedForConstruction[itemType];
+            }
+            else
+            {
+                return ItemsNeededForConstruction[itemType];
+            }
         }
     }
 
@@ -139,7 +158,7 @@ public abstract class Building : Character
 
         renderedConstructionPercent = Mathf.Lerp(
             renderedConstructionPercent,
-            constructionPercent,
+            ConstructionPercent,
             (Time.time - lastConstructionIncrementTime) * 4f);
 
         this.underConstructionMaterial.SetFloat(
