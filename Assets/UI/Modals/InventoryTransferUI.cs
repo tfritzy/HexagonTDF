@@ -20,14 +20,13 @@ public class InventoryTransferUI : VisualElement
 
     public void OnSlotMouseDown(InventoryCell inventory, InventorySlotUI slot)
     {
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
             Item item = inventory.ItemAt(slot.Index);
             InventoryCell nextInventory = this.inventories.Find((InventoryCell i) => i != inventory);
-            if (nextInventory != null && item != null && nextInventory.CanAcceptItem(item.Type))
+            if (nextInventory != null)
             {
-                inventory.RemoveAt(slot.Index, all: true);
-                nextInventory.AddItem(item);
+                nextInventory.AutomaticTransfer(inventory, slot.Index);
             }
         }
         else if (this.pickedUpItemIndex == null)
@@ -59,12 +58,25 @@ public class InventoryTransferUI : VisualElement
             Item item = this.pickedUpItemInventory.ItemAt(this.pickedUpItemIndex.Value);
             if (inventory.CanAcceptItem(item.Type, slot.Index))
             {
-                this.pickedUpItemInventory.RemoveAt(this.pickedUpItemIndex.Value, all: true);
-                inventory.AddItem(item, slot.Index);
+                // Transfer only 1 item if rmb is held down.
+                int quantity = Input.GetMouseButton(1) ? 1 : item.Quantity;
 
-                this.hoveredItem.style.display = DisplayStyle.None;
-                this.pickedUpItemIndex = null;
-                this.pickedUpItemInventory = null;
+                int remaining = inventory.TransferItem(
+                    this.pickedUpItemInventory,
+                    this.pickedUpItemIndex.Value,
+                    slot.Index,
+                    quantity);
+
+                if (this.pickedUpItemInventory.ItemAt(this.pickedUpItemIndex.Value) == null)
+                {
+                    this.hoveredItem.style.display = DisplayStyle.None;
+                    this.pickedUpItemIndex = null;
+                    this.pickedUpItemInventory = null;
+                }
+                else
+                {
+                    this.hoveredItem.Update(item.Type, item.Quantity, false);
+                }
             }
         }
     }

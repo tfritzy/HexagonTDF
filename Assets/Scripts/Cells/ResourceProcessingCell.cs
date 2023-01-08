@@ -55,7 +55,7 @@ public abstract class ResourceProcessingCell : Cell
             int firstEligableIndex = InputInventory.FirstIndexOfItem(item);
             if (firstEligableIndex != -1 && ProcessingInventory.CanAcceptItem(InputInventory.ItemAt(firstEligableIndex).Type))
             {
-                ProcessingInventory.TransferItem(InputInventory, firstEligableIndex);
+                ProcessingInventory.AutomaticTransfer(InputInventory, firstEligableIndex);
             }
         }
     }

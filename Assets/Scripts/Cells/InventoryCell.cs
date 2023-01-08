@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -75,31 +76,79 @@ public class InventoryCell : Cell
         }
     }
 
-    public void TransferItem(InventoryCell fromInventory, int itemIndex)
+    public void AutomaticTransfer(InventoryCell fromInventory, int index)
     {
-        Item itemBeingTransfered = fromInventory.ItemAt(itemIndex);
-        int firstOpenSlot = GetFirstOpenSlot(itemBeingTransfered.Type);
-        if (firstOpenSlot != -1)
-        {
-            this.Slots[firstOpenSlot].Item = fromInventory.Slots[itemIndex].Item;
-            fromInventory.Slots[itemIndex].Item = null;
-        }
-    }
-
-    public void RemoveAt(int index, bool all = false)
-    {
-        if (Slots[index] == null)
+        Item item = fromInventory.ItemAt(index);
+        if (item == null)
         {
             return;
         }
 
-        if (Slots[index].Item.Quantity > 1 && !all)
+        int targetIndex = GetFirstOpenSlot(item.Type);
+        while (targetIndex != -1 && fromInventory.ItemAt(index) != null)
         {
-            Slots[index].Item.Quantity -= 1;
+            TransferItem(fromInventory, index, targetIndex, item.Quantity);
+            targetIndex = GetFirstOpenSlot(item.Type);
+        }
+    }
+
+    public int TransferItem(InventoryCell fromInventory, int sourceIndex, int targetIndex, int quantity)
+    {
+        Item item = fromInventory.ItemAt(sourceIndex);
+        if (item == null)
+        {
+            return 0;
+        }
+
+        Item targetItem = ItemAt(targetIndex);
+        if (targetItem != null)
+        {
+            int transferQuantity = Math.Min(quantity, targetItem.MaxStackSize - targetItem.Quantity);
+            if (transferQuantity > 0)
+            {
+                int remaining = item.Quantity - transferQuantity;
+                RemoveAt(sourceIndex, transferQuantity);
+                targetItem.Quantity += transferQuantity;
+                targetIndex = GetFirstOpenSlot(item.Type);
+                return remaining;
+            }
+            else
+            {
+                return quantity;
+            }
         }
         else
         {
+            fromInventory.RemoveAt(sourceIndex, quantity);
+            if (fromInventory.ItemAt(sourceIndex) == null)
+            {
+                AddItem(item, targetIndex);
+            }
+            else
+            {
+                Item splitStack = ItemGenerator.Make(item.Type);
+                splitStack.Quantity = quantity;
+                AddItem(splitStack, targetIndex);
+            }
+
+            return 0;
+        }
+    }
+
+    public void RemoveAt(int index, int quantity = 1)
+    {
+        if (ItemAt(index) == null)
+        {
+            return;
+        }
+
+        if (quantity >= ItemAt(index).Quantity)
+        {
             Slots[index].Item = null;
+        }
+        else
+        {
+            ItemAt(index).Quantity -= quantity;
         }
     }
 
