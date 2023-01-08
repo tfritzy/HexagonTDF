@@ -22,6 +22,12 @@ public class ItemUI : VisualElement
 
     public void Update(ItemType itemType, int quantity, bool dim)
     {
+        if (quantity == 0)
+        {
+            Blank();
+            return;
+        }
+
         this.quantityLabel.text = quantity > 1 ? quantity.ToString() : "";
         this.style.backgroundImage = new StyleBackground(Prefabs.GetResourceIcon(itemType));
 
@@ -38,5 +44,17 @@ public class ItemUI : VisualElement
         this.style.backgroundImage = null;
         this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
         this.quantityLabel.text = "";
+    }
+
+    public void SetDim(bool isDim)
+    {
+        if (isDim)
+        {
+            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint.Dim(.5f);
+        }
+        else
+        {
+            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
+        }
     }
 }

@@ -16,6 +16,7 @@ public abstract class Building : Character
     public bool ShouldInstaBuild;
     public virtual bool NeedsConstruction => true;
     public float ConstructionPercent { get; private set; }
+    public bool IsConstructed => !NeedsConstruction || (numItemsUsedForConstruction >= numItemsNeededForConstruction);
     private Dictionary<ItemType, int> ItemsUsedForConstruction;
     private int numItemsNeededForConstruction;
     private int numItemsUsedForConstruction;
@@ -84,8 +85,6 @@ public abstract class Building : Character
 
         return center;
     }
-
-    private bool IsConstructed => numItemsUsedForConstruction >= numItemsNeededForConstruction;
 
     private float lastConstructionCheckTime;
     private const float constructionDebounceTime = .2f;

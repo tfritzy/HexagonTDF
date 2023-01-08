@@ -107,9 +107,8 @@ public class InventoryCell : Cell
             if (transferQuantity > 0)
             {
                 int remaining = item.Quantity - transferQuantity;
-                RemoveAt(sourceIndex, transferQuantity);
+                fromInventory.RemoveAt(sourceIndex, transferQuantity);
                 targetItem.Quantity += transferQuantity;
-                targetIndex = GetFirstOpenSlot(item.Type);
                 return remaining;
             }
             else

@@ -27,7 +27,7 @@ public class CharacterSelectionModal : Modal
 
     private void UpdateConstructionNeeds(Character targetChar)
     {
-        if (targetChar is Building && ((Building)targetChar).NeedsConstruction)
+        if (targetChar is Building && !((Building)targetChar).IsConstructed)
         {
             if (this.constructionRequirements.style.display == DisplayStyle.None)
             {

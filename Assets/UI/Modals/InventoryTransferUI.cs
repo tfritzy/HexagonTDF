@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 public class InventoryTransferUI : VisualElement
 {
-    private int? pickedUpItemIndex;
+    private InventorySlotUI pickedUpItemSlot;
     private InventoryCell pickedUpItemInventory;
     private ItemUI hoveredItem;
     private Vector2 HoverItemOffset = new Vector2(50, 50);
@@ -29,13 +29,13 @@ public class InventoryTransferUI : VisualElement
                 nextInventory.AutomaticTransfer(inventory, slot.Index);
             }
         }
-        else if (this.pickedUpItemIndex == null)
+        else if (this.pickedUpItemSlot == null)
         {
             if (inventory.ItemAt(slot.Index) != null)
             {
                 this.pickedUpItemInventory = inventory;
-                this.pickedUpItemIndex = slot.Index;
-                Item item = inventory.ItemAt(this.pickedUpItemIndex.Value);
+                this.pickedUpItemSlot = slot;
+                Item item = inventory.ItemAt(this.pickedUpItemSlot.Index);
                 slot.SetDim(true);
 
                 if (hoveredItem == null)
@@ -55,7 +55,7 @@ public class InventoryTransferUI : VisualElement
         }
         else
         {
-            Item item = this.pickedUpItemInventory.ItemAt(this.pickedUpItemIndex.Value);
+            Item item = this.pickedUpItemInventory.ItemAt(this.pickedUpItemSlot.Index);
             if (inventory.CanAcceptItem(item.Type, slot.Index))
             {
                 // Transfer only 1 item if rmb is held down.
@@ -63,14 +63,15 @@ public class InventoryTransferUI : VisualElement
 
                 int remaining = inventory.TransferItem(
                     this.pickedUpItemInventory,
-                    this.pickedUpItemIndex.Value,
+                    this.pickedUpItemSlot.Index,
                     slot.Index,
                     quantity);
 
-                if (this.pickedUpItemInventory.ItemAt(this.pickedUpItemIndex.Value) == null)
+                if (this.pickedUpItemInventory.ItemAt(this.pickedUpItemSlot.Index) == null)
                 {
                     this.hoveredItem.style.display = DisplayStyle.None;
-                    this.pickedUpItemIndex = null;
+                    this.pickedUpItemSlot.SetDim(false);
+                    this.pickedUpItemSlot = null;
                     this.pickedUpItemInventory = null;
                 }
                 else

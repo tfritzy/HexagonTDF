@@ -12,6 +12,7 @@ public class InventorySlotUI : Button
     private Color emptyColor = ColorExtensions.Create("#ECBCB3", 128);
     private InventoryUI Parent;
     private ItemUI itemUI;
+    private bool isDim;
 
     public InventorySlotUI(InventoryUI parent, int index)
     {
@@ -41,7 +42,7 @@ public class InventorySlotUI : Button
         {
             if (slot.Item != null)
             {
-                this.itemUI.Update(slot.Item.Type, slot.Item.Quantity, false);
+                this.itemUI.Update(slot.Item.Type, slot.Item.Quantity, this.isDim);
             }
             else
             {
@@ -63,13 +64,7 @@ public class InventorySlotUI : Button
 
     public void SetDim(bool isDim)
     {
-        if (isDim)
-        {
-            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint.Dim(.5f);
-        }
-        else
-        {
-            this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
-        }
+        this.isDim = isDim;
+        this.itemUI.SetDim(isDim);
     }
 }
