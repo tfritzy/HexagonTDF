@@ -12,4 +12,12 @@ public class Forrest : Hexagon
     public Forrest(int height) : base(height)
     {
     }
+
+    public override float ObstacleChance => .1f;
+    public override GameObject GetObstacleBody()
+    {
+        return Managers.Prefabs.Trees[
+            Random.Range(0, Managers.Prefabs.Trees.Length)
+        ];
+    }
 }

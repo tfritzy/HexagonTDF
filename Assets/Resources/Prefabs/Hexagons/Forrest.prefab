@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6602246963816564235}
-  - component: {fileID: 1830279525684160678}
   - component: {fileID: 1409736385486290940}
   m_Layer: 8
   m_Name: Forrest
@@ -34,22 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 30, z: 0}
---- !u!114 &1830279525684160678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5824337456035552433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee21d5e735bcdc45ba553501f195da8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DecorationOptions:
-  - {fileID: 2917152848762551453, guid: d6fb351c274daf646ab20faf61b050e9, type: 3}
-  NumDecorations: 4
-  sizeVariance: 0.5
 --- !u!114 &1409736385486290940
 MonoBehaviour:
   m_ObjectHideFlags: 0
