@@ -178,11 +178,6 @@ public class BuildInputMode : InputMode
             {
                 continue;
             }
-
-            if (building.ResourceCollectionCell.CanHarvestFrom(iHex.Hexagon))
-            {
-                iHex.SetBorderMaterial(Prefabs.GetMaterial(MaterialType.Gold));
-            }
         }
     }
 

@@ -16,7 +16,6 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected List<MeshRenderer> meshRenderers;
 
     private MeshRenderer hexMesh;
-    private MeshRenderer border;
     private static Dictionary<Biome, Dictionary<int, Material>> baseMaterialCache;
     private static Dictionary<Biome, Material> outlineMaterialCache;
     private static Dictionary<int, Mesh> aoMeshCache;
@@ -34,7 +33,6 @@ public class HexagonMono : MonoBehaviour, Interactable
     protected virtual void Setup()
     {
         this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
-        this.border = this.hexMesh.transform.Find("border").GetComponent<MeshRenderer>();
         FindMeshRenderers();
         SetHexBodyColor();
         InitObstacle();
@@ -58,11 +56,6 @@ public class HexagonMono : MonoBehaviour, Interactable
             GameObject body = this.Hexagon.GetObstacleBody();
             GameObject.Instantiate(body, this.transform.position, body.transform.rotation);
         }
-    }
-
-    public void SetBorderMaterial(Material material)
-    {
-        this.border.material = material;
     }
 
     public void ResetMaterial()
@@ -112,15 +105,7 @@ public class HexagonMono : MonoBehaviour, Interactable
             outlineMaterialCache = new Dictionary<Biome, Material>();
         }
 
-        if (!outlineMaterialCache.ContainsKey(this.Hexagon.Biome))
-        {
-            Material newHighlight = this.transform.Find("hex/border").GetComponent<MeshRenderer>().material;
-            newHighlight.color = ColorExtensions.VaryBy(this.Hexagon.BaseColor, -.15f);
-            outlineMaterialCache[this.Hexagon.Biome] = newHighlight;
-        }
-
         this.hexMesh.material = baseMaterialCache[this.Hexagon.Biome][this.colorVaryIndex];
-        this.transform.Find("hex/border").GetComponent<MeshRenderer>().material = outlineMaterialCache[this.Hexagon.Biome];
     }
 
 
