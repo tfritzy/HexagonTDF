@@ -22,13 +22,7 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0) ||
-            Input.GetMouseButtonUp(0) ||
-            Input.GetMouseButton(1) ||
-            Input.GetMouseButtonUp(1))
-        {
-            ShootRayCast();
-        }
+        ShootRayCast();
 
         if (Managers.CameraControl.IsDragging())
         {
@@ -45,24 +39,7 @@ public class InputManager : MonoBehaviour
 
     private void ShootRayCast()
     {
-        Vector3? inputPos = null;
-
-        if (Input.GetMouseButton(0) ||
-            Input.GetMouseButtonUp(0) ||
-            Input.GetMouseButton(1) ||
-            Input.GetMouseButtonUp(1))
-        {
-            inputPos = Input.mousePosition;
-        }
-        else if (Input.touchCount > 0)
-        {
-            inputPos = Input.GetTouch(0).position;
-        }
-
-        if (!inputPos.HasValue)
-        {
-            return;
-        }
+        Vector3 inputPos = Input.mousePosition;
 
         if (IsPointerOverUIObject())
         {
@@ -91,9 +68,13 @@ public class InputManager : MonoBehaviour
         {
             this.CurrentMode.OnUp(hits.Value.Hexes, hits.Value.Characters, 1, hasDragged);
         }
-        else
+        else if (Input.GetMouseButton(0))
         {
             this.CurrentMode.OnDrag(hits.Value.Hexes, hits.Value.Characters);
+        }
+        else
+        {
+            this.CurrentMode.OnHover(hits.Value.Hexes, hits.Value.Characters);
         }
     }
 

@@ -9,10 +9,8 @@ public class BuildInputMode : InputMode
     public BuildingType SelectedBuildingType;
     public BuildInputState State { get; private set; }
 
-    private BuildConfirmation buildConfirmation;
     private ResourceCollectionIndicator resourceCollectionIndicator;
     private GameObject previewBuilding;
-    private Vector2Int previewPosition;
     private Character retargetingConveyorOf;
     private GameObject ArrowIndicator;
 
@@ -40,15 +38,16 @@ public class BuildInputMode : InputMode
         {
             if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
             {
-                if (Prefabs.GetBuilding(SelectedBuildingType).GetComponent<Building>().RequiresConfirmationToBuild)
-                {
-                    OpenBuildConfirmation(hexes.First(), SelectedBuildingType);
-                }
-                else
-                {
-                    BuildBuilding(hexes.First(), SelectedBuildingType);
-                }
+                BuildBuilding(hexes.First(), SelectedBuildingType);
             }
+        }
+    }
+
+    public override void OnHover(List<HexagonMono> hexes, List<Character> characters)
+    {
+        if (this.State == BuildInputState.PreviewingBuilding && hexes.Count > 0)
+        {
+            this.previewBuilding.transform.position = hexes.First().transform.position;
         }
     }
 
@@ -72,27 +71,34 @@ public class BuildInputMode : InputMode
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
-        Character conveyor = characters.FirstOrDefault(
-            (Character character) =>
-                character.ConveyorCell != null &&
-                !character.ConveyorCell.IsTermination);
-
-        if (conveyor != null)
+        if (this.State == BuildInputState.PreviewingBuilding)
         {
-            this.State = BuildInputState.RetargetingConveyor;
-            Managers.CameraControl.FrozenUntilMouseUp = true;
-            this.retargetingConveyorOf = conveyor;
-            if (this.ArrowIndicator == null)
+            BuildBuilding(hexes.First(), this.SelectedBuildingType);
+        }
+        else
+        {
+            Character conveyor = characters.FirstOrDefault(
+                        (Character character) =>
+                            character.ConveyorCell != null &&
+                            !character.ConveyorCell.IsTermination);
+
+            if (conveyor != null)
             {
-                this.ArrowIndicator = GameObject.Instantiate(
-                    Managers.Prefabs.RedArrow3D,
-                    conveyor.transform.position,
-                    new Quaternion());
-            }
-            else
-            {
-                this.ArrowIndicator.transform.position = conveyor.transform.position;
-                this.ArrowIndicator.SetActive(true);
+                this.State = BuildInputState.RetargetingConveyor;
+                Managers.CameraControl.FrozenUntilMouseUp = true;
+                this.retargetingConveyorOf = conveyor;
+                if (this.ArrowIndicator == null)
+                {
+                    this.ArrowIndicator = GameObject.Instantiate(
+                        Managers.Prefabs.RedArrow3D,
+                        conveyor.transform.position,
+                        new Quaternion());
+                }
+                else
+                {
+                    this.ArrowIndicator.transform.position = conveyor.transform.position;
+                    this.ArrowIndicator.SetActive(true);
+                }
             }
         }
     }
@@ -124,31 +130,8 @@ public class BuildInputMode : InputMode
 
     public void SelectBuildingType(BuildingType type)
     {
+        this.CreatePreviewBuilding(type);
         this.SelectedBuildingType = type;
-    }
-
-    public void OpenBuildConfirmation(HexagonMono hex, BuildingType type)
-    {
-        if (!CanBuildBuildingOnHex(hex.GridPosition, type))
-        {
-            return;
-        }
-
-        if (this.State == BuildInputState.PreviewingBuilding)
-        {
-            ExitPreviewState();
-        }
-
-        this.CreatePreviewBuilding(hex, type);
-        this.HighlightResourceHexes(hex, type);
-        this.previewPosition = hex.GridPosition;
-        this.buildConfirmation = (BuildConfirmation)Managers.UI.ShowHoverer(
-            Hoverer.BuildConfirmation,
-            this.previewBuilding.transform);
-        ((BuildConfirmation)buildConfirmation).Init(
-            () => BuildBuilding(hex, type),
-            () => ExitPreviewState()
-        );
         this.State = BuildInputState.PreviewingBuilding;
     }
 
@@ -195,26 +178,25 @@ public class BuildInputMode : InputMode
         return building != BuildingType.Invalid && Managers.Board.GetBuilding(pos) == null;
     }
 
-    private void CreatePreviewBuilding(HexagonMono hex, BuildingType type)
+    private void CreatePreviewBuilding(BuildingType type)
     {
         if (previewBuilding != null)
         {
             GameObject.Destroy(previewBuilding);
         }
 
-        Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
-        building.Disabled = true;
-        building.Setup();
-        building.GetComponentInChildren<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
-        this.previewBuilding = building.gameObject;
+        Building building = GameObject.Instantiate(Prefabs.GetBuilding(type)).GetComponent<Building>();
+        Transform body = building.Body;
+        body.SetParent(null);
+        GameObject.Destroy(building);
+        body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
+        this.previewBuilding = body.gameObject;
     }
 
     private void ExitPreviewState()
     {
         GameObject.Destroy(previewBuilding);
-        Managers.UI.HideHoverer(this.buildConfirmation);
         Managers.UI.HideHoverer(this.resourceCollectionIndicator);
-        ResetHighlightedHexes(this.previewPosition);
         this.State = BuildInputState.Default;
     }
 
