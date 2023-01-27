@@ -1,4 +1,4 @@
-public class LumberMillProcessingCell : ResourceProcessingCell
+public class SawMillProcessingCell : ResourceProcessingCell
 {
     public override ItemType OutputItemType => ItemType.ArrowShaft;
     public override float SecondsToProcessResource => 1;

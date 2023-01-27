@@ -1,4 +1,4 @@
-public class LumberMillLifeCell : LifeCell
+public class SawMillLifeCell : LifeCell
 {
     public override int StartingHealth => 150;
 }

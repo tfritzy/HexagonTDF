@@ -186,7 +186,7 @@ public class BuildInputMode : InputMode
         }
 
         Building building = GameObject.Instantiate(Prefabs.GetBuilding(type)).GetComponent<Building>();
-        Transform body = building.Body;
+        Transform body = building.transform.Find("Body");
         body.SetParent(null);
         GameObject.Destroy(building);
         body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);

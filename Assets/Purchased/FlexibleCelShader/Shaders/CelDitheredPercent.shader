@@ -39,9 +39,9 @@ Shader "Cel/CelDitheredPercent"
         Cull Back
         Pass
         {
-            Tags{ "LightMode" = "ForwardBase" }
+            Tags{ "LightMode" = "ForwardBase" "RenderPipeline" = "UniversalRenderPipeline"}
 
-            CGPROGRAM
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"

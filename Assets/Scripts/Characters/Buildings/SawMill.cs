@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class LumberMill : Building
+public class SawMill : Building
 {
     public override LifeCell LifeCell => lifeCell;
     public override Alliance Enemies => Alliance.Maltov;
@@ -19,15 +19,15 @@ public class LumberMill : Building
         {ItemType.Shingle, 50},
     };
 
-    private const string charName = "Lumber mill";
+    private const string charName = "Saw mill";
 
     private LifeCell lifeCell;
     private ConveyorCell conveyorCell;
     private ResourceProcessingCell resourceProcessingCell;
     public override void Setup()
     {
-        lifeCell = new LumberMillLifeCell();
-        resourceProcessingCell = new LumberMillProcessingCell();
+        lifeCell = new SawMillLifeCell();
+        resourceProcessingCell = new SawMillProcessingCell();
         conveyorCell = new ConveyorCell();
 
         base.Setup();
