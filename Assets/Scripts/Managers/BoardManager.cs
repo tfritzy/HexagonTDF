@@ -16,6 +16,11 @@ public class BoardManager : MonoBehaviour
         SpawnMap();
     }
 
+    // async void Update()
+    // {
+    //     Vector2Int currentChunk = Helpers.ToGridPosition(Managers.Camera.transform.position) / Constants.CHUNK_SIZE;
+    // }
+
     private void SpawnMap()
     {
         this.LoadedChunks = new Dictionary<Vector2Int, Hexagon[,]>();
@@ -119,7 +124,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero + new Vector2Int(4, 4));
+        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, Vector2Int.zero + new Vector2Int(4, 4));
         character.name = "Main Character";
     }
 
@@ -131,7 +136,7 @@ public class BoardManager : MonoBehaviour
     private void BuildHexagon(Vector2Int chunkIndex, int x, int y)
     {
         Helpers.GetFromChunk(this.LoadedChunks, x, y, out Hexagon point);
-        Vector3 position = Helpers.ToWorldPosition(x, y);
+        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
         position.y = point.Height * Constants.HEXAGON_HEIGHT;
         GameObject go = Instantiate(
             Prefabs.Hexagons[point.Biome],

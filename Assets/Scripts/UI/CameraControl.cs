@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    public const float MOVEMENT_SPEED = 9f;
+    public const float MOVEMENT_SPEED = 18f;
     public bool DisableXScroll;
     public bool FrozenUntilMouseUp;
     private const float INPUT_BUFFER_DURATION = .25f;
