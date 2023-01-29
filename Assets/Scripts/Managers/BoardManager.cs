@@ -5,13 +5,11 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public Hexagon[,] Board;
-    public HexagonMono[,] HexagonMonos;
+    public Dictionary<Vector2Int, Hexagon[,]> LoadedChunks;
+    public Dictionary<Vector2Int, HexagonMono[,]> HexagonMonos;
     public string ActiveMapName;
-    private Building[,] Buildings;
-    public RectInt Dimensions;
-    private Vector2Int Center => this.Dimensions.max / 2;
-    public Navigation Navigation;
+    private Dictionary<Vector2Int, Building[,]> Buildings;
+    public TownHall TownHall;
 
     void Awake()
     {
@@ -20,56 +18,59 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnMap()
     {
-        this.Board = OverworldTerrainGenerator.GenerateSingleSegment(
-            Constants.OVERWORLD_DIMENSIONS,
-            Constants.OVERWORLD_DIMENSIONS,
-            UnityEngine.Random.Range(0, 1000));
+        this.LoadedChunks = new Dictionary<Vector2Int, Hexagon[,]>();
 
-        this.Buildings = new Building[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS];
-        this.Dimensions = new RectInt(0, 0, Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS);
+        for (int x = 0; x < 10; x++)
+        {
+            for (int y = 0; y < 10; y++)
+            {
+                Vector2Int chunk = new Vector2Int(x, y);
+                this.LoadedChunks[new Vector2Int(x, y)] =
+                    OverworldTerrainGenerator.GenerateChunk(chunk, UnityEngine.Random.Range(0, 1000));
+            }
+        }
 
-        TownHall townHall = SpawnTownHall();
-        Navigation = new Navigation(this.Dimensions.max, townHall);
-        AddBuilding(townHall.GridPosition, townHall);
+        this.Buildings = new Dictionary<Vector2Int, Building[,]>();
+
+        // TownHall = SpawnTownHall();
+        // AddBuilding(TownHall.GridPosition, TownHall);
         SpawnHexagons();
         SpawnHero();
-
-        this.Navigation.ReacalculateIdealPath(Board, Buildings);
     }
 
     private TownHall SpawnTownHall()
     {
         // flatten area
-        var points = new List<Vector2Int> { Center };
+        var points = new List<Vector2Int> { Vector2Int.zero };
         for (int i = 0; i < 6; i++)
         {
-            points.Add(Helpers.GetNeighborPosition(Center, (HexSide)i));
+            points.Add(Helpers.GetNeighborPosition(Vector2Int.zero, (HexSide)i));
         }
 
-        float averageHeight = 0;
-        List<Biome> biomesThatArentWater = new List<Biome> { Board[Center.x, Center.y].Biome };
-        foreach (Vector2Int point in points)
-        {
-            averageHeight += Board[point.x, point.y].Height;
+        // float averageHeight = 0;
+        // List<Biome> biomesThatArentWater = new List<Biome> { LoadedChunks[Center.x, Center.y].Biome };
+        // foreach (Vector2Int point in points)
+        // {
+        //     averageHeight += LoadedChunks[point.x, point.y].Height;
 
-            if (Board[point.x, point.y].Biome != Biome.Water)
-            {
-                biomesThatArentWater.Add(Board[point.x, point.y].Biome);
-            }
-        }
+        //     if (LoadedChunks[point.x, point.y].Biome != Biome.Water)
+        //     {
+        //         biomesThatArentWater.Add(LoadedChunks[point.x, point.y].Biome);
+        //     }
+        // }
 
-        averageHeight /= 7;
-        int newHeight = (int)Mathf.Round(averageHeight);
-        Biome mostCommonHex = biomesThatArentWater
-            .GroupBy(q => q)
-            .OrderByDescending(gp => gp.Count())
-            .First().Key;
-        foreach (Vector2Int point in points)
-        {
-            Board[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
-        }
+        // averageHeight /= 7;
+        // int newHeight = (int)Mathf.Round(averageHeight);
+        // Biome mostCommonHex = biomesThatArentWater
+        //     .GroupBy(q => q)
+        //     .OrderByDescending(gp => gp.Count())
+        //     .First().Key;
+        // foreach (Vector2Int point in points)
+        // {
+        //     LoadedChunks[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
+        // }
 
-        return (TownHall)InstantiateBuilding(Center, BuildingType.TownHall);
+        return (TownHall)InstantiateBuilding(Vector2Int.zero, BuildingType.TownHall);
     }
 
     public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
@@ -86,40 +87,40 @@ public class BoardManager : MonoBehaviour
 
     public LinkedList<Vector2Int> ShortestPathBetween(Vector2Int startPos, Vector2Int endPos)
     {
-        return Navigation.BFS(startPos, endPos, this.Board, this.Buildings);
-    }
-
-    private void CleanupMap()
-    {
-        foreach (HexagonMono hexagon in this.HexagonMonos)
-        {
-            Destroy(hexagon?.gameObject);
-        }
+        return Navigation.BFS(startPos, endPos, this.LoadedChunks, this.Buildings);
     }
 
     private void SpawnHexagons()
     {
-        this.HexagonMonos = new HexagonMono[Board.GetLength(0), Board.GetLength(1)];
+        this.HexagonMonos = new Dictionary<Vector2Int, HexagonMono[,]>();
 
-        for (int y = 0; y < Board.GetLength(1); y++)
+        foreach (Vector2Int chunkIndex in LoadedChunks.Keys)
         {
-            for (int x = 0; x < Board.GetLength(0); x++)
-            {
-                if (Board[x, y] == null)
-                {
-                    continue;
-                }
+            Debug.Log("Spawning chunk, " + chunkIndex);
+            Hexagon[,] chunk = LoadedChunks[chunkIndex];
+            this.HexagonMonos[chunkIndex] = new HexagonMono[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
 
-                BuildHexagon(x, y);
+            for (int y = 0; y < Constants.CHUNK_SIZE; y++)
+            {
+                for (int x = 0; x < Constants.CHUNK_SIZE; x++)
+                {
+                    if (chunk[x, y] == null)
+                    {
+                        continue;
+                    }
+
+                    BuildHexagon(chunkIndex, x, y);
+                }
             }
         }
+
     }
 
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        character.transform.position = Helpers.ToWorldPosition(Center + new Vector2Int(4, 4));
-        character.name = "MainCharacter";
+        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero + new Vector2Int(4, 4));
+        character.name = "Main Character";
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
@@ -127,66 +128,62 @@ public class BoardManager : MonoBehaviour
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
-    private void BuildHexagon(int x, int y)
+    private void BuildHexagon(Vector2Int chunkIndex, int x, int y)
     {
-        Hexagon point = Board[x, y];
+        Helpers.GetFromChunk(this.LoadedChunks, x, y, out Hexagon point);
         Vector3 position = Helpers.ToWorldPosition(x, y);
         position.y = point.Height * Constants.HEXAGON_HEIGHT;
-        GameObject go = Instantiate(Prefabs.Hexagons[point.Biome], position, new Quaternion(), this.transform);
+        GameObject go = Instantiate(
+            Prefabs.Hexagons[point.Biome],
+            position,
+            Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
+            this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome, point.Height));
-        this.HexagonMonos[x, y] = go.GetComponent<HexagonMono>();
-        this.HexagonMonos[x, y].GridPosition = new Vector2Int(x, y);
-        this.HexagonMonos[x, y].Height = point.Height;
-        this.HexagonMonos[x, y].name = point.Biome + "," + point.Height.ToString();
-        this.HexagonMonos[x, y].SetSideData();
+        this.HexagonMonos[chunkIndex][x, y] = go.GetComponent<HexagonMono>();
+        this.HexagonMonos[chunkIndex][x, y].GridPosition = new Vector2Int(x, y);
+        this.HexagonMonos[chunkIndex][x, y].Height = point.Height;
+        this.HexagonMonos[chunkIndex][x, y].name = point.Biome + "," + point.Height.ToString();
     }
 
     public HexagonMono GetHex(Vector2Int pos)
     {
-        if (Helpers.IsInBounds(pos, this.Dimensions) == false)
-        {
-            return null;
-        }
-
-        return HexagonMonos[pos.x, pos.y];
+        Helpers.GetFromChunk<HexagonMono>(this.HexagonMonos, pos.x, pos.y, out HexagonMono hex);
+        return hex;
     }
 
     public Building GetBuilding(Vector2Int pos)
     {
-        if (!Helpers.IsInBounds(pos, this.Dimensions))
-        {
-            return null;
-        }
-
-        return Buildings[pos.x, pos.y];
+        Helpers.GetFromChunk<Building>(this.Buildings, pos.x, pos.y, out Building building);
+        return building;
     }
 
     public void AddBuilding(Vector2Int pos, Building building)
     {
-        this.Buildings[pos.x, pos.y] = building;
+        Helpers.SetInChunk(this.Buildings, pos.x, pos.y, building);
 
         foreach (HexSide side in building.ExtraSize)
         {
             Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
-            this.Buildings[extraPos.x, extraPos.y] = building;
+            Helpers.SetInChunk(this.Buildings, extraPos.x, extraPos.y, building);
         }
-
-        Navigation.ReacalculatePath(this.Board, this.Buildings);
     }
 
     public void DestroyBuilding(Building building)
     {
-        this.Buildings[building.GridPosition.x, building.GridPosition.y] = null;
+        Helpers.SetInChunk(this.Buildings, building.GridPosition.x, building.GridPosition.y, null);
 
         foreach (HexSide side in building.ExtraSize)
         {
             Vector2Int extraPos = Helpers.GetNeighborPosition(building.GridPosition, side);
-            this.Buildings[extraPos.x, extraPos.y] = null;
+            Helpers.SetInChunk(this.Buildings, extraPos.x, extraPos.y, null);
         }
 
-        Navigation.ReacalculatePath(this.Board, this.Buildings);
-
         Destroy(building.gameObject);
+    }
+
+    public LinkedList<Vector2Int> GetPathBetweenPoints(Vector2Int startPos, Vector2Int endPos)
+    {
+        return Navigation.BFS(startPos, endPos, this.LoadedChunks, this.Buildings);
     }
 }

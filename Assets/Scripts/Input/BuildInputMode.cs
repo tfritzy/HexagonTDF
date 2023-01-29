@@ -164,15 +164,6 @@ public class BuildInputMode : InputMode
         }
     }
 
-    private void ResetHighlightedHexes(Vector2Int centerPos)
-    {
-        Managers.Board.GetHex(centerPos)?.ResetMaterial();
-        foreach (Vector2Int pos in Helpers.GetHexesInRange(centerPos, 1))
-        {
-            Managers.Board.GetHex(pos)?.ResetMaterial();
-        }
-    }
-
     private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)
     {
         return building != BuildingType.Invalid && Managers.Board.GetBuilding(pos) == null;

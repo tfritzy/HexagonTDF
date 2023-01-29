@@ -150,7 +150,11 @@ public static class Helpers
     {
         float xF = x * Constants.HorizontalDistanceBetweenHexagons;
         float zF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        float yF = Managers.Board.Board[x, y].Height * Constants.HEXAGON_HEIGHT;
+        float yF = 0;
+        if (Helpers.GetFromChunk(Managers.Board.LoadedChunks, x, y, out Hexagon hex))
+        {
+            zF = hex.Height;
+        }
         return new Vector3(xF, yF, zF);
     }
 
@@ -259,4 +263,33 @@ public static class Helpers
             return hexes;
         }
     }
+
+    public static bool GetFromChunk<T>(Dictionary<Vector2Int, T[,]> chunks, int x, int y, out T hex)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        if (!chunks.ContainsKey(chunkIndex))
+        {
+            hex = default(T);
+            return false;
+        }
+        else
+        {
+            hex = chunks[chunkIndex][x - chunkIndex.x * Constants.CHUNK_SIZE, y - chunkIndex.y * Constants.CHUNK_SIZE];
+            return true;
+        }
+    }
+
+    public static void SetInChunk<T>(Dictionary<Vector2Int, T[,]> chunks, int x, int y, T val)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        if (!chunks.ContainsKey(chunkIndex))
+        {
+            return;
+        }
+        else
+        {
+            chunks[chunkIndex][x - chunkIndex.x * Constants.CHUNK_SIZE, y - chunkIndex.y * Constants.CHUNK_SIZE] = val;
+        }
+    }
+
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitBrainCell : BrainCell
@@ -6,6 +7,7 @@ public class UnitBrainCell : BrainCell
     private const int MAX_EXTRA_NON_IDEAL_DIST = 10;
     protected virtual float FindTargetRadius => 5f;
     protected Unit UnitOwner => (Unit)this.Owner;
+    private LinkedList<Vector2Int> pathBeingFollowed;
 
     public override void Update()
     {
@@ -28,28 +30,26 @@ public class UnitBrainCell : BrainCell
             return;
         }
 
-        Vector2Int nextPos;
-        int dist = Managers.Board.Navigation.GetDistanceToTownHall(this.UnitOwner.GridPosition);
-        int idealDist = Managers.Board.Navigation.GetIdealDistanceToTownHall(this.UnitOwner.GridPosition);
-        if (dist > idealDist + MAX_EXTRA_NON_IDEAL_DIST)
+        if (pathBeingFollowed == null)
         {
-            nextPos = Managers.Board.Navigation.GetIdealNextPos(this.UnitOwner.GridPosition);
-        }
-        else
-        {
-            nextPos = Managers.Board.Navigation.GetNextPos(this.UnitOwner.GridPosition);
+            pathBeingFollowed = Managers.Board.ShortestPathBetween(this.Owner.GridPosition, Managers.Board.TownHall.GridPosition);
         }
 
-        if (!Helpers.IsInBounds(nextPos, Managers.Board.Dimensions))
+        if (pathBeingFollowed.Count <= 0)
         {
             return;
         }
 
-        Vector3 diff = Helpers.ToWorldPosition(nextPos) - this.UnitOwner.transform.position;
+        // if (!Helpers.IsInBounds(pathBeingFollowed.First.Value, Managers.Board.Dimensions))
+        // {
+        //     return;
+        // }
+
+        Vector3 diff = Helpers.ToWorldPosition(pathBeingFollowed.First.Value) - this.UnitOwner.transform.position;
 
         if (diff.magnitude < .3f)
         {
-            this.UnitOwner.GridPosition = nextPos;
+            this.pathBeingFollowed.RemoveFirst();
         }
 
         Vector2Int currentPos = Helpers.ToGridPosition(this.Owner.transform.position);

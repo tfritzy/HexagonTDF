@@ -8,7 +8,7 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
     public override bool CanHarvestFrom(Hexagon hexagon)
     {
         return
-            hexagon.Biome == Biome.Forrest ||
+            (hexagon.Biome == Biome.Forrest && hexagon.HasObstacle) ||
             (hexagon.Biome == Biome.Mountain && hexagon.HasObstacle);
     }
     private Biome currentBiome;
