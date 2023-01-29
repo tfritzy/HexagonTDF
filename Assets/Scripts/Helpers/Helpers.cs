@@ -276,6 +276,20 @@ public static class Helpers
         }
     }
 
+    public static bool GetFromChunk<T>(Dictionary<Vector2Int, T[,]> chunks, Vector2Int chunkIndex, int x, int y, out T hex)
+    {
+        if (!chunks.ContainsKey(chunkIndex))
+        {
+            hex = default(T);
+            return false;
+        }
+        else
+        {
+            hex = chunks[chunkIndex][x, y];
+            return true;
+        }
+    }
+
     public static bool GetFromChunk<T>(Dictionary<Vector2Int, T[,]> chunks, int x, int y, out T hex)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);

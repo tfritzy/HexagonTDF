@@ -42,7 +42,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         if (this.Hexagon.HasObstacle)
         {
             GameObject body = this.Hexagon.GetObstacleBody();
-            GameObject.Instantiate(body, this.transform.position, body.transform.rotation);
+            GameObject.Instantiate(body, this.transform.position, body.transform.rotation, this.transform);
         }
     }
 

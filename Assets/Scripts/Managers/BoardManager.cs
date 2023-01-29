@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -10,36 +12,115 @@ public class BoardManager : MonoBehaviour
     public string ActiveMapName;
     private Dictionary<Vector2Int, Building[,]> Buildings;
     public TownHall TownHall;
+    private const int CHUNK_RENDER_DIST = 4;
+
+    private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
+    private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
 
     void Awake()
     {
         SpawnMap();
     }
 
-    // async void Update()
-    // {
-    //     Vector2Int currentChunk = Helpers.ToGridPosition(Managers.Camera.transform.position) / Constants.CHUNK_SIZE;
-    // }
+    void Update()
+    {
+        Vector2Int currentChunk = Helpers.ToGridPosition(Managers.Camera.transform.position) / Constants.CHUNK_SIZE;
+        if (currentChunk != renderedChunk)
+        {
+            UpdatedLoadedChunks(currentChunk);
+            renderedChunk = currentChunk;
+        }
+    }
+
+    private void UpdatedLoadedChunks(Vector2Int currentChunk)
+    {
+        HashSet<Vector2Int> chunksInRange = new HashSet<Vector2Int>();
+        for (int x = currentChunk.x - CHUNK_RENDER_DIST; x < currentChunk.x + CHUNK_RENDER_DIST; x++)
+        {
+            for (int y = currentChunk.y - CHUNK_RENDER_DIST; y < currentChunk.y + CHUNK_RENDER_DIST; y++)
+            {
+                Vector2Int chunkIndex = new Vector2Int(x, y);
+                chunksInRange.Add(chunkIndex);
+                if (!LoadedChunks.ContainsKey(chunkIndex) && !chunkLoadingCoroutines.ContainsKey(chunkIndex))
+                {
+                    var coroutine = StartCoroutine(LoadChunk(chunkIndex));
+                    chunkLoadingCoroutines.Add(chunkIndex, coroutine);
+                }
+            }
+        }
+
+        foreach (Vector2Int chunkIndex in LoadedChunks.Keys.ToList())
+        {
+            if (!chunksInRange.Contains(chunkIndex))
+            {
+                StartCoroutine(UnloadChunk(chunkIndex));
+            }
+        }
+    }
+
+    private IEnumerator LoadChunk(Vector2Int chunkIndex)
+    {
+        this.LoadedChunks[chunkIndex] = OverworldTerrainGenerator.GenerateChunk(chunkIndex, 0);
+        Hexagon[,] chunk = LoadedChunks[chunkIndex];
+        this.HexagonMonos[chunkIndex] = new HexagonMono[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
+
+        for (int y = 0; y < Constants.CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < Constants.CHUNK_SIZE; x++)
+            {
+                if (chunk[x, y] == null)
+                {
+                    continue;
+                }
+
+                BuildHexagon(chunkIndex, x, y);
+            }
+
+            yield return null;
+        }
+
+        chunkLoadingCoroutines.Remove(chunkIndex);
+    }
+
+    private IEnumerator UnloadChunk(Vector2Int chunkIndex)
+    {
+        HexagonMono[,] chunk = HexagonMonos[chunkIndex];
+        for (int y = 0; y < Constants.CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < Constants.CHUNK_SIZE; x++)
+            {
+                Helpers.GetFromChunk<HexagonMono>(HexagonMonos, chunkIndex, x, y, out HexagonMono hex);
+                if (hex != null)
+                {
+                    Destroy(hex.gameObject);
+                }
+            }
+
+            yield return null;
+        }
+
+        HexagonMonos.Remove(chunkIndex);
+        LoadedChunks.Remove(chunkIndex);
+        // not sure what to do with buildings yet.
+    }
 
     private void SpawnMap()
     {
         this.LoadedChunks = new Dictionary<Vector2Int, Hexagon[,]>();
+        this.HexagonMonos = new Dictionary<Vector2Int, HexagonMono[,]>();
 
-        for (int x = 0; x < 10; x++)
-        {
-            for (int y = 0; y < 10; y++)
-            {
-                Vector2Int chunk = new Vector2Int(x, y);
-                this.LoadedChunks[new Vector2Int(x, y)] =
-                    OverworldTerrainGenerator.GenerateChunk(chunk, UnityEngine.Random.Range(0, 1000));
-            }
-        }
+        // for (int x = 0; x < 10; x++)
+        // {
+        //     for (int y = 0; y < 10; y++)
+        //     {
+        //         LoadChunk(new Vector2Int(x, y));
+        //     }
+        // }
 
         this.Buildings = new Dictionary<Vector2Int, Building[,]>();
 
         // TownHall = SpawnTownHall();
         // AddBuilding(TownHall.GridPosition, TownHall);
-        SpawnHexagons();
         SpawnHero();
     }
 
@@ -95,32 +176,6 @@ public class BoardManager : MonoBehaviour
         return Navigation.BFS(startPos, endPos, this.LoadedChunks, this.Buildings);
     }
 
-    private void SpawnHexagons()
-    {
-        this.HexagonMonos = new Dictionary<Vector2Int, HexagonMono[,]>();
-
-        foreach (Vector2Int chunkIndex in LoadedChunks.Keys)
-        {
-            Debug.Log("Spawning chunk, " + chunkIndex);
-            Hexagon[,] chunk = LoadedChunks[chunkIndex];
-            this.HexagonMonos[chunkIndex] = new HexagonMono[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
-
-            for (int y = 0; y < Constants.CHUNK_SIZE; y++)
-            {
-                for (int x = 0; x < Constants.CHUNK_SIZE; x++)
-                {
-                    if (chunk[x, y] == null)
-                    {
-                        continue;
-                    }
-
-                    BuildHexagon(chunkIndex, x, y);
-                }
-            }
-        }
-
-    }
-
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
@@ -135,20 +190,20 @@ public class BoardManager : MonoBehaviour
 
     private void BuildHexagon(Vector2Int chunkIndex, int x, int y)
     {
-        Helpers.GetFromChunk(this.LoadedChunks, x, y, out Hexagon point);
+        Helpers.GetFromChunk(this.LoadedChunks, chunkIndex, x, y, out Hexagon hex);
         Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
-        position.y = point.Height * Constants.HEXAGON_HEIGHT;
+        position.y = hex.Height * Constants.HEXAGON_HEIGHT;
         GameObject go = Instantiate(
-            Prefabs.Hexagons[point.Biome],
+            Prefabs.Hexagons[hex.Biome],
             position,
             Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
             this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
-        hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome, point.Height));
+        hexagonScript.SetType(Prefabs.GetHexagonScript(hex.Biome, hex.Height));
         this.HexagonMonos[chunkIndex][x, y] = go.GetComponent<HexagonMono>();
         this.HexagonMonos[chunkIndex][x, y].GridPosition = new Vector2Int(x, y);
-        this.HexagonMonos[chunkIndex][x, y].Height = point.Height;
-        this.HexagonMonos[chunkIndex][x, y].name = point.Biome + "," + point.Height.ToString();
+        this.HexagonMonos[chunkIndex][x, y].Height = hex.Height;
+        this.HexagonMonos[chunkIndex][x, y].name = hex.Biome + "," + hex.Height.ToString();
     }
 
     public HexagonMono GetHex(Vector2Int pos)
