@@ -91,7 +91,8 @@ public class UnitBrainCell : BrainCell
         // Update grid pos and y.
         Vector2Int currentPos = Helpers.ToGridPosition(this.Owner.transform.position);
         Vector3 worldPos = this.UnitOwner.transform.position;
-        worldPos.y = Managers.Board.GetHex(currentPos).transform.position.y;
+        Managers.Board.World.TryGetHexBody(currentPos.x, currentPos.y, out HexagonMono hex);
+        worldPos.y = hex.transform.position.y;
         this.UnitOwner.transform.position = worldPos;
     }
 

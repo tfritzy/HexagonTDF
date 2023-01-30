@@ -155,9 +155,7 @@ public class BuildInputMode : InputMode
 
         foreach (Vector2Int pos in building.ResourceCollectionCell.HexesCollectedFrom)
         {
-            var iHex = Managers.Board.GetHex(pos);
-
-            if (iHex == null)
+            if (!Managers.Board.World.TryGetHex(pos.x, pos.y, out Hexagon iHex))
             {
                 continue;
             }
@@ -199,7 +197,7 @@ public class BuildInputMode : InputMode
         }
 
         Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
-        Managers.Board.AddBuilding(hex.GridPosition, building);
+        Managers.Board.SetBuilding(hex.GridPosition, building);
 
         ExitPreviewState();
     }

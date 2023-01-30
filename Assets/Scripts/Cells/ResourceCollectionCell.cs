@@ -38,9 +38,9 @@ public abstract class ResourceCollectionCell : Cell
         this.CurrentCollectionDetails = null;
         foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
-            var hex = Managers.Board.GetHex(pos);
+            Managers.Board.World.TryGetHex(pos.x, pos.y, out Hexagon hex);
 
-            if (hex != null && CanHarvestFrom(hex.Hexagon))
+            if (hex != null && CanHarvestFrom(hex))
             {
                 ItemType collectedItem = BaseCollectionDetails.Item;
 

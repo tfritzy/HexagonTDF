@@ -163,7 +163,7 @@ public static class Helpers
         float xF = (x + chunk.x * Constants.CHUNK_SIZE) * Constants.HorizontalDistanceBetweenHexagons;
         float zF = (y + chunk.y * Constants.CHUNK_SIZE) * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
         float yF = 0;
-        if (Helpers.GetFromChunk(Managers.Board.LoadedChunks, x, y, out Hexagon hex))
+        if (Managers.Board.World.TryGetHex(chunk, x, y, out Hexagon hex))
         {
             yF = hex.Height;
         }

@@ -86,11 +86,7 @@ public class Navigation
         public bool IsTermination;
     }
 
-    public static LinkedList<Vector2Int> BFS(
-        Vector2Int startPos,
-        Vector2Int targetPos,
-        Dictionary<Vector2Int, Hexagon[,]> chunks,
-        Dictionary<Vector2Int, Building[,]> bulidings)
+    public static LinkedList<Vector2Int> BFS(Vector2Int startPos, Vector2Int targetPos, World world)
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -112,7 +108,7 @@ public class Navigation
                     return GetPathFromMap(nextMap, targetPos, startPos);
                 }
 
-                if (Helpers.GetFromChunk(chunks, neighbor.x, neighbor.y, out Hexagon hex))
+                if (world.TryGetHex(neighbor.x, neighbor.y, out Hexagon hex))
                 {
                     if (hex.IsWalkable)
                     {

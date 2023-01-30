@@ -20,7 +20,7 @@ public class MainCharacterBrainCell : BrainCell
 
         CurrentActions = new LinkedList<CharacterAction>();
 
-        HexagonMono hex = Managers.Board.GetHex(pos);
+        Managers.Board.World.TryGetHexBody(pos.x, pos.y, out HexagonMono hex);
         if (this.Owner.ResourceCollectionCell != null &&
             this.Owner.ResourceCollectionCell.CanHarvestFrom(hex.Hexagon))
         {

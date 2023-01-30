@@ -81,8 +81,8 @@ public abstract class Building : Character
         }
 
         center /= ExtraSize.Count + 1;
-        Vector2Int chunk = new Vector2Int(this.GridPosition.x / Constants.CHUNK_SIZE, this.GridPosition.y / Constants.CHUNK_SIZE);
-        center.y = Managers.Board.LoadedChunks[chunk][this.GridPosition.x, this.GridPosition.y].Height * Constants.HEXAGON_HEIGHT;
+        Managers.Board.World.TryGetHex(this.GridPosition.x, this.GridPosition.y, out Hexagon hex);
+        center.y = hex.Height * Constants.HEXAGON_HEIGHT;
 
         return center;
     }
