@@ -87,12 +87,13 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 float xD = x / Scale;
                 float yD = y / Scale;
                 float heightValue = .6f + heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
+                int height = (int)(heightValue * 5);
 
                 float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 moistureValue = (moistureValue + 1) / 2;
 
                 Biome biome = GetBiome(heightValue, moistureValue, random);
-                segment[x - xOffset, y - yOffset] = Prefabs.GetHexagonScript(biome, (int)(heightValue * 5));
+                segment[x - xOffset, y - yOffset] = Prefabs.GetHexagonScript(biome, height);
             }
         }
 

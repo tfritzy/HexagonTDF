@@ -19,6 +19,7 @@ public static class Constants
     public const int MIN_ISH = int.MinValue;
     public const string AnimationStateParameter = "AnimationState";
     public const int WATER_HEIGHT = 2;
+    public const int HEIGHT_LEVELS = 64;
 
     public class Colors
     {
