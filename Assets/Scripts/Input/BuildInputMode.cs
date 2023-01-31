@@ -135,33 +135,6 @@ public class BuildInputMode : InputMode
         this.State = BuildInputState.PreviewingBuilding;
     }
 
-    private void HighlightResourceHexes(HexagonMono hex, BuildingType type)
-    {
-        var building = this.previewBuilding.GetComponent<Building>();
-        if (building.ResourceCollectionCell == null)
-        {
-            return;
-        }
-
-
-        if (building.ResourceCollectionCell.CurrentCollectionDetails != null)
-        {
-            this.resourceCollectionIndicator = (ResourceCollectionIndicator)Managers.UI.ShowHoverer(
-                Hoverer.ResourceCollectionIndicator,
-                this.previewBuilding.transform);
-
-            this.resourceCollectionIndicator.Init(building.ResourceCollectionCell.CurrentCollectionDetails);
-        }
-
-        foreach (Vector2Int pos in building.ResourceCollectionCell.HexesCollectedFrom)
-        {
-            if (!Managers.Board.World.TryGetHex(pos.x, pos.y, out Hexagon iHex))
-            {
-                continue;
-            }
-        }
-    }
-
     private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)
     {
         return building != BuildingType.Invalid && Managers.Board.GetBuilding(pos) == null;

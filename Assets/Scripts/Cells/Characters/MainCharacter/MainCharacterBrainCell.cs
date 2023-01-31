@@ -11,7 +11,7 @@ public class MainCharacterBrainCell : BrainCell
 
     }
 
-    public void SetTargetHex(Vector2Int pos)
+    public void SetTargetHex(HexagonMono hex)
     {
         foreach (CharacterAction action in this.CurrentActions)
         {
@@ -20,24 +20,23 @@ public class MainCharacterBrainCell : BrainCell
 
         CurrentActions = new LinkedList<CharacterAction>();
 
-        Managers.Board.World.TryGetHexBody(pos.x, pos.y, out HexagonMono hex);
         if (this.Owner.ResourceCollectionCell != null &&
-            this.Owner.ResourceCollectionCell.CanHarvestFrom(hex.Hexagon))
+            this.Owner.ResourceCollectionCell.CanHarvestFrom(hex))
         {
-            harvestCell.ChangeTargetHex(pos, hex.Biome);
+            harvestCell.ChangeTargetHex(hex.GridPosition, hex.Biome);
 
             this.CurrentActions = new LinkedList<CharacterAction>();
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, hex.GridPosition, stopOneBefore: true));
             this.CurrentActions.AddLast(new HarvestAction(this.Owner, hex.Biome));
         }
         else if (Managers.Board.GetBuilding(hex.GridPosition) != null)
         {
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, hex.GridPosition, stopOneBefore: true));
             this.CurrentActions.AddLast(new OpenInventoryAction(this.Owner, Managers.Board.GetBuilding(hex.GridPosition)));
         }
         else
         {
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: false));
+            this.CurrentActions.AddLast(new MoveAction(this.Owner, hex.GridPosition, stopOneBefore: false));
         }
 
         this.CurrentActions.First.Value.Start();

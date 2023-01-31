@@ -9,6 +9,7 @@ public abstract class Hexagon
     public float MaxColorVariance => .015f;
     public virtual float ObstacleChance => 0f;
     public virtual GameObject GetObstacleBody() { return null; }
+    public virtual bool IsTransparent => false;
 
     public Hexagon()
     {

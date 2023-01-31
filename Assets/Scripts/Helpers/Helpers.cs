@@ -151,29 +151,38 @@ public static class Helpers
         return null;
     }
 
-    public static Vector3 ToWorldPosition(Vector3Int pos)
+    public static float GetTopHexWorldHeight(int x, int y)
+    {
+        return Managers.Board.World.GetTopHexHeight(x, y) * Constants.HEXAGON_HEIGHT;
+    }
+
+    public static float GetTopHexWorldHeight(Vector2Int pos)
+    {
+        return GetTopHexWorldHeight(pos.x, pos.y);
+    }
+
+    public static Vector3 ToWorldPosition(Vector2Int pos)
     {
         Vector2Int chunk = new Vector2Int(pos.x / Constants.CHUNK_SIZE, pos.y / Constants.CHUNK_SIZE);
-        return ToWorldPosition(chunk, pos.x, pos.y, pos.z);
+        return ToWorldPosition(chunk, pos.x, pos.y);
     }
 
-    public static Vector3 ToWorldPosition(int x, int y, int z)
+    public static Vector3 ToWorldPosition(int x, int y)
     {
         Vector2Int chunk = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return ToWorldPosition(chunk, x, y, z);
+        return ToWorldPosition(chunk, x, y);
     }
 
-    public static Vector3 ToWorldPosition(Vector2Int chunk, int x, int y, int z)
+    public static Vector3 ToWorldPosition(Vector2Int chunk, int x, int y)
     {
         float xF = (x + chunk.x * Constants.CHUNK_SIZE) * Constants.HorizontalDistanceBetweenHexagons;
         float zF = (y + chunk.y * Constants.CHUNK_SIZE) * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        float yF = z * Constants.HEXAGON_HEIGHT;
-        return new Vector3(xF, yF, zF);
+        return new Vector3(xF, 0, zF);
     }
 
     public static Vector3 ToWorldPosition(Vector2Int chunk, Vector3Int position)
     {
-        return ToWorldPosition(chunk, position.x, position.y, position.z);
+        return ToWorldPosition(chunk, position.x, position.y);
     }
 
     public static Vector2Int ToGridPosition(Vector3 pos)

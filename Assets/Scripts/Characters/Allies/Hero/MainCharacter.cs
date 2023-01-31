@@ -30,8 +30,8 @@ public class MainCharacter : Character
         _resourceCollectionCell.SetEnabled(false); // Only becomes enabled when character is harvesting.
     }
 
-    public override void SelectedClickHex(Vector2Int pos)
+    public override void SelectedClickHex(HexagonMono hex)
     {
-        this._brainCell.SetTargetHex(pos);
+        this._brainCell.SetTargetHex(hex);
     }
 }

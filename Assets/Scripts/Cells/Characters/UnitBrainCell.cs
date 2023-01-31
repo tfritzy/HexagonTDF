@@ -54,7 +54,6 @@ public class UnitBrainCell : BrainCell
 
         Vector2Int currentPos = Helpers.ToGridPosition(this.Owner.transform.position);
         this.Owner.GridPosition = currentPos;
-        UpdateHeight();
 
         this.UnitOwner.Rigidbody.velocity = Vector3.Lerp(
             this.UnitOwner.Rigidbody.velocity,
@@ -65,8 +64,6 @@ public class UnitBrainCell : BrainCell
 
     private void AttackTarget()
     {
-        UpdateHeight();
-
         Vector3? moveDir = FirstUnobstructedDirection(this.Target.transform.position - this.UnitOwner.transform.position);
         if (moveDir != null)
         {
@@ -84,16 +81,6 @@ public class UnitBrainCell : BrainCell
             this.UnitOwner.transform.LookAt(this.Target.transform);
             this.UnitOwner.SetAnimationState(UnitAnimationState.Attacking);
         }
-    }
-
-    private void UpdateHeight()
-    {
-        // Update grid pos and y.
-        Vector2Int currentPos = Helpers.ToGridPosition(this.Owner.transform.position);
-        Vector3 worldPos = this.UnitOwner.transform.position;
-        Managers.Board.World.TryGetHexBody(currentPos.x, currentPos.y, out HexagonMono hex);
-        worldPos.y = hex.transform.position.y;
-        this.UnitOwner.transform.position = worldPos;
     }
 
     private float lastTargetCheckTime;

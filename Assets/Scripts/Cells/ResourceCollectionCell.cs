@@ -7,7 +7,7 @@ public abstract class ResourceCollectionCell : Cell
     public abstract List<Vector2Int> HexesCollectedFrom { get; }
     public CollectionDetails CurrentCollectionDetails { get; private set; }
     public virtual InventoryCell OutputInventory => this.Owner.InventoryCell;
-    public abstract bool CanHarvestFrom(Hexagon hexagon);
+    public abstract bool CanHarvestFrom(HexagonMono hexagon);
     public abstract CollectionDetails BaseCollectionDetails { get; }
     private HarvestProgress harvestHoverer;
 
@@ -38,7 +38,7 @@ public abstract class ResourceCollectionCell : Cell
         this.CurrentCollectionDetails = null;
         foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
-            Managers.Board.World.TryGetHex(pos.x, pos.y, out Hexagon hex);
+            HexagonMono hex = Managers.Board.World.GetTopHexBody(pos.x, pos.y);
 
             if (hex != null && CanHarvestFrom(hex))
             {

@@ -67,7 +67,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < Constants.CHUNK_SIZE; x++)
             {
-                BuildHexagon(chunkIndex, x, y);
+                SpawnHexForColumn(chunkIndex, x, y);
             }
 
             yield return null;
@@ -83,11 +83,15 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < Constants.CHUNK_SIZE; x++)
             {
-                HexagonMono hexBody = chunk.GetBody(x, y);
-
-                if (hexBody != null)
+                foreach (int z in chunk.GetUncoveredOfColumn(x, y))
                 {
-                    Destroy(hexBody.gameObject);
+                    Debug.Log($"Destroying {chunkIndex} {x}, {y}, {z}");
+                    HexagonMono hexBody = chunk.GetBody(x, y, z);
+
+                    if (hexBody != null)
+                    {
+                        Destroy(hexBody.gameObject);
+                    }
                 }
             }
 
@@ -103,7 +107,7 @@ public class BoardManager : MonoBehaviour
 
         // TownHall = SpawnTownHall();
         // AddBuilding(TownHall.GridPosition, TownHall);
-        SpawnHero();
+        // SpawnHero();
     }
 
     private TownHall SpawnTownHall()
@@ -161,7 +165,8 @@ public class BoardManager : MonoBehaviour
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, Vector2Int.zero + new Vector2Int(4, 4));
+        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(4, 4));
+        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, spawnPos);
         character.name = "Main Character";
     }
 
@@ -172,13 +177,17 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnHexForColumn(Vector2Int chunkIndex, int x, int y)
     {
-        World.TryGetHex(chunkIndex, x, y, out Hexagon hex);
-        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y, z);
-        SpawnHex(position, hex, chunkIndex, x, y);
+        foreach (int z in this.World.GetUncoveredHexOfColumn(x, y))
+        {
+            Hexagon iHex = this.World.GetHex(x, y, z);
+            SpawnHex(iHex, chunkIndex, x, y, z);
+        }
     }
 
-    private void SpawnHex(Vector3 position, Hexagon hex, Vector2Int chunkIndex, int x, int y)
+    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z)
     {
+        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
+        position.y = Helpers.GetTopHexWorldHeight(x, y);
         GameObject go = Instantiate(
             Prefabs.Hexagons[hex.Biome],
             position,
@@ -186,25 +195,28 @@ public class BoardManager : MonoBehaviour
             this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         var hexBody = go.GetComponent<HexagonMono>();
-        hexBody.Setup(hexagonScript this.seed, new Vector2Int(x, y), height);
-        hexBody.name = hex.Biome + "," + hex.Height.ToString();
-        World.SetHexBody(chunkIndex, x, y, hexBody);
+        hexBody.Setup(hex, this.seed, new Vector2Int(x, y), z);
+        World.SetHexBody(chunkIndex, x, y, z, hexBody);
     }
 
     public Building GetBuilding(Vector2Int pos)
     {
-        World.TryGetBuilding(pos.x, pos.y, out Building building);
+        World.TryGetBuilding(pos.x, pos.y, World.GetTopHexHeight(pos.x, pos.y) + 1, out Building building);
         return building;
     }
 
     public void SetBuilding(Vector2Int pos, Building building)
     {
-        World.SetBuilding(pos.x, pos.y, building);
+        World.SetBuilding(pos.x, pos.y, World.GetTopHexHeight(pos.x, pos.y), building);
 
         foreach (HexSide side in building.ExtraSize)
         {
             Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
-            World.SetBuilding(extraPos.x, extraPos.y, building);
+            World.SetBuilding(
+                extraPos.x,
+                extraPos.y,
+                World.GetTopHexHeight(extraPos.x, extraPos.y),
+                building);
         }
     }
 

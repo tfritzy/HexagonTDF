@@ -36,7 +36,7 @@ public class SelectedCharacterInputMode : InputMode
     {
         if (!hasDragged && hexes.Count > 0 && button == 1)
         {
-            SelectedCharacter.SelectedClickHex(hexes.First().GridPosition);
+            SelectedCharacter.SelectedClickHex(hexes.First());
         }
 
         if (button == 0 && !hasDragged)

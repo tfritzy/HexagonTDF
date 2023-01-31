@@ -108,12 +108,10 @@ public class Navigation
                     return GetPathFromMap(nextMap, targetPos, startPos);
                 }
 
-                if (world.TryGetHex(neighbor.x, neighbor.y, out Hexagon hex))
+                Hexagon topHex = world.GetTopHex(neighbor.x, neighbor.y);
+                if (topHex == null || !topHex.IsWalkable)
                 {
-                    if (hex.IsWalkable)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
 
                 if (!visited.Contains(neighbor))

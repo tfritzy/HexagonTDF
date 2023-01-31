@@ -107,7 +107,7 @@ public abstract class Character : MonoBehaviour
     }
 
     // The event called when the user clicks on a hex, while having this character selected.
-    public virtual void SelectedClickHex(Vector2Int pos) { }
+    public virtual void SelectedClickHex(HexagonMono hex) { }
 
     private void ApplyEffects()
     {

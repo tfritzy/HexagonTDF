@@ -5,12 +5,35 @@ public class World
 {
     public Dictionary<Vector2Int, Chunk> Chunks = new Dictionary<Vector2Int, Chunk>();
 
-    public Hexagon
-
     public bool TryGetBuilding(int x, int y, int z, out Building building)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
         return TryGetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out building);
+    }
+
+    public LinkedList<int> GetUncoveredHexOfColumn(int x, int y)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetUncoveredOfColumn(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+    }
+
+    public int GetTopHexHeight(int x, int y)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+    }
+
+    public Hexagon GetTopHex(int x, int y)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        int height = Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetHex(x, y, height);
+    }
+
+    public Hexagon GetHex(int x, int y, int z)
+    {
+        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z);
     }
 
     public bool TryGetBuilding(Vector2Int chunkIndex, int x, int y, int z, out Building building)
@@ -41,10 +64,11 @@ public class World
         Chunks[chunkIndex].SetBuilding(x, y, z, value);
     }
 
-    public bool TryGetHexBody(int x, int y, int z, out HexagonMono hex)
+    public HexagonMono GetTopHexBody(int x, int y)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return TryGetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out hex);
+        int height = Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetBody(x, y, height);
     }
 
     public bool TryGetHexBody(Vector2Int chunkIndex, int x, int y, int z, out HexagonMono hex)
@@ -57,12 +81,6 @@ public class World
 
         hex = Chunks[chunkIndex].GetBody(x, y, z);
         return hex != null;
-    }
-
-    public void SetHexBody(int x, int y, int z, HexagonMono value)
-    {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        SetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, value);
     }
 
     public void SetHexBody(Vector2Int chunkIndex, int x, int y, int z, HexagonMono value)
