@@ -60,6 +60,8 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator LoadChunk(Vector2Int chunkIndex)
     {
+        Debug.Log("Loading chunk " + chunkIndex);
+        var chunkContainer = new GameObject("Chunk " + chunkIndex);
         World.Chunks[chunkIndex] = OverworldTerrainGenerator.GenerateChunk(chunkIndex, this.seed);
         Chunk chunk = World.Chunks[chunkIndex];
 
@@ -67,7 +69,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < Constants.CHUNK_SIZE; x++)
             {
-                SpawnHexForColumn(chunkIndex, x, y);
+                SpawnHexForColumn(chunkIndex, x, y, chunkContainer);
             }
 
             yield return null;
@@ -85,8 +87,9 @@ public class BoardManager : MonoBehaviour
             {
                 foreach (int z in chunk.GetUncoveredOfColumn(x, y))
                 {
-                    Debug.Log($"Destroying {chunkIndex} {x}, {y}, {z}");
+                    Hexagon hex = chunk.GetHex(x, y, z);
                     HexagonMono hexBody = chunk.GetBody(x, y, z);
+                    Debug.Log($"Destroying {chunkIndex} {x}, {y}, {z}, supposed hex {hex}, hex body {hexBody?.name}");
 
                     if (hexBody != null)
                     {
@@ -165,7 +168,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(4, 4));
+        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(new Vector2Int(0, 0), 4, 4));
         character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, spawnPos);
         character.name = "Main Character";
     }
@@ -175,24 +178,24 @@ public class BoardManager : MonoBehaviour
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
-    private void SpawnHexForColumn(Vector2Int chunkIndex, int x, int y)
+    private void SpawnHexForColumn(Vector2Int chunkIndex, int x, int y, GameObject chunkContainer)
     {
-        foreach (int z in this.World.GetUncoveredHexOfColumn(x, y))
+        foreach (int z in this.World.GetUncoveredHexOfColumn(chunkIndex, x, y))
         {
-            Hexagon iHex = this.World.GetHex(x, y, z);
-            SpawnHex(iHex, chunkIndex, x, y, z);
+            Hexagon iHex = this.World.GetHex(chunkIndex, x, y, z);
+            SpawnHex(iHex, chunkIndex, x, y, z, chunkContainer);
         }
     }
 
-    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z)
+    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, GameObject chunkContainer)
     {
         Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
-        position.y = Helpers.GetTopHexWorldHeight(x, y);
+        position.y = Helpers.GetTopHexWorldHeight(chunkIndex, x, y);
         GameObject go = Instantiate(
             Prefabs.Hexagons[hex.Biome],
             position,
             Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
-            this.transform);
+            chunkContainer.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
         var hexBody = go.GetComponent<HexagonMono>();
         hexBody.Setup(hex, this.seed, new Vector2Int(x, y), z);
@@ -201,21 +204,30 @@ public class BoardManager : MonoBehaviour
 
     public Building GetBuilding(Vector2Int pos)
     {
-        World.TryGetBuilding(pos.x, pos.y, World.GetTopHexHeight(pos.x, pos.y) + 1, out Building building);
+        Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+        World.TryGetBuilding(pos.x, pos.y, World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1, out Building building);
         return building;
     }
 
     public void SetBuilding(Vector2Int pos, Building building)
     {
-        World.SetBuilding(pos.x, pos.y, World.GetTopHexHeight(pos.x, pos.y), building);
+        Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+        World.SetBuilding(
+            chunkIndex,
+            subPos.x,
+            subPos.y,
+            World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+            building);
 
         foreach (HexSide side in building.ExtraSize)
         {
             Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+            Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
             World.SetBuilding(
+                chunkIndex,
                 extraPos.x,
                 extraPos.y,
-                World.GetTopHexHeight(extraPos.x, extraPos.y),
+                World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
                 building);
         }
     }

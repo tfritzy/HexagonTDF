@@ -38,7 +38,8 @@ public abstract class ResourceCollectionCell : Cell
         this.CurrentCollectionDetails = null;
         foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
-            HexagonMono hex = Managers.Board.World.GetTopHexBody(pos.x, pos.y);
+            Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+            HexagonMono hex = Managers.Board.World.GetTopHexBody(chunkIndex, subPos.x, subPos.y);
 
             if (hex != null && CanHarvestFrom(hex))
             {

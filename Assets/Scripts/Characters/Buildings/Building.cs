@@ -75,7 +75,8 @@ public abstract class Building : Character
     public Vector3 GetWorldPosition()
     {
         Vector3 center = Helpers.ToWorldPosition(this.GridPosition);
-        center.y = Managers.Board.World.GetTopHexHeight(this.GridPosition.x, this.GridPosition.y) * Constants.HEXAGON_HEIGHT;
+        Helpers.WorldToChunkPos(this.GridPosition, out Vector2Int chunkIndex, out Vector3Int subPos);
+        center.y = Managers.Board.World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) * Constants.HEXAGON_HEIGHT;
         return center;
     }
 

@@ -151,14 +151,20 @@ public static class Helpers
         return null;
     }
 
-    public static float GetTopHexWorldHeight(int x, int y)
+    public static void WorldToChunkPos(Vector2Int worldPos, out Vector2Int chunkIndex, out Vector3Int subPos)
     {
-        return Managers.Board.World.GetTopHexHeight(x, y) * Constants.HEXAGON_HEIGHT;
+        WorldToChunkPos(worldPos.x, worldPos.y, 0, out chunkIndex, out subPos);
     }
 
-    public static float GetTopHexWorldHeight(Vector2Int pos)
+    public static void WorldToChunkPos(int x, int y, int z, out Vector2Int chunkIndex, out Vector3Int subPos)
     {
-        return GetTopHexWorldHeight(pos.x, pos.y);
+        chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        subPos = new Vector3Int(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z);
+    }
+
+    public static float GetTopHexWorldHeight(Vector2Int chunkIndex, int x, int y)
+    {
+        return Managers.Board.World.GetTopHexHeight(chunkIndex, x, y) * Constants.HEXAGON_HEIGHT;
     }
 
     public static Vector3 ToWorldPosition(Vector2Int pos)

@@ -108,7 +108,8 @@ public class Navigation
                     return GetPathFromMap(nextMap, targetPos, startPos);
                 }
 
-                Hexagon topHex = world.GetTopHex(neighbor.x, neighbor.y);
+                Helpers.WorldToChunkPos(neighbor, out Vector2Int chunkIndex, out Vector3Int subPos);
+                Hexagon topHex = world.GetTopHex(chunkIndex, subPos.x, subPos.y);
                 if (topHex == null || !topHex.IsWalkable)
                 {
                     continue;

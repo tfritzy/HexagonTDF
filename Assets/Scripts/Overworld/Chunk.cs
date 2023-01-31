@@ -36,7 +36,6 @@ public class Chunk
                             UncoveredBlocks[x, y] = new LinkedList<int>();
                         }
 
-                        Debug.Log($"Setting uncovered: {ChunkIndex} {x}, {y}, {z}");
                         UncoveredBlocks[x, y].AddFirst(z);
 
                         if (!this.Hexes[x, y, z].IsTransparent)
@@ -80,13 +79,6 @@ public class Chunk
 
     public void SetBody(int x, int y, int z, HexagonMono value)
     {
-        // Allow passing in absolute position.
-        if (x >= Constants.CHUNK_SIZE || y >= Constants.CHUNK_SIZE)
-        {
-            x %= Constants.CHUNK_SIZE;
-            y %= Constants.CHUNK_SIZE;
-        }
-
         HexBodies[x, y, z] = value;
     }
 

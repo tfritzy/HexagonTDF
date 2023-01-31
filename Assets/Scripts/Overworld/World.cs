@@ -11,29 +11,25 @@ public class World
         return TryGetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out building);
     }
 
-    public LinkedList<int> GetUncoveredHexOfColumn(int x, int y)
+    public LinkedList<int> GetUncoveredHexOfColumn(Vector2Int chunkIndex, int x, int y)
     {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return Chunks[chunkIndex].GetUncoveredOfColumn(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetUncoveredOfColumn(x, y);
     }
 
-    public int GetTopHexHeight(int x, int y)
+    public int GetTopHexHeight(Vector2Int chunkIndex, int x, int y)
     {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        return Chunks[chunkIndex].GetTopHex(x, y);
     }
 
-    public Hexagon GetTopHex(int x, int y)
+    public Hexagon GetTopHex(Vector2Int chunkIndex, int x, int y)
     {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        int height = Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        int height = Chunks[chunkIndex].GetTopHex(x, y);
         return Chunks[chunkIndex].GetHex(x, y, height);
     }
 
-    public Hexagon GetHex(int x, int y, int z)
+    public Hexagon GetHex(Vector2Int chunkIndex, int x, int y, int z)
     {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return Chunks[chunkIndex].GetHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z);
+        return Chunks[chunkIndex].GetHex(x, y, z);
     }
 
     public bool TryGetBuilding(Vector2Int chunkIndex, int x, int y, int z, out Building building)
@@ -47,12 +43,6 @@ public class World
         return Chunks[chunkIndex].TryGetBuilding(x, y, z, out building);
     }
 
-    public void SetBuilding(int x, int y, int z, Building value)
-    {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        SetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, value);
-    }
-
     public void SetBuilding(Vector2Int chunkIndex, int x, int y, int z, Building value)
     {
         if (!Chunks.ContainsKey(chunkIndex))
@@ -64,10 +54,9 @@ public class World
         Chunks[chunkIndex].SetBuilding(x, y, z, value);
     }
 
-    public HexagonMono GetTopHexBody(int x, int y)
+    public HexagonMono GetTopHexBody(Vector2Int chunkIndex, int x, int y)
     {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        int height = Chunks[chunkIndex].GetTopHex(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE);
+        int height = Chunks[chunkIndex].GetTopHex(x, y);
         return Chunks[chunkIndex].GetBody(x, y, height);
     }
 
