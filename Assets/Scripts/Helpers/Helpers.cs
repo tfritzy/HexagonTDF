@@ -49,10 +49,20 @@ public static class Helpers
 
     public static bool IsInBounds(Vector2Int pos, Vector2Int dimensions)
     {
-        return IsInBounds(pos, dimensions);
+        return IsInBounds(pos.x, pos.y, (Vector3Int)dimensions);
     }
 
-    public static bool IsInBounds(int x, int y, Vector2Int dimensions)
+    public static bool IsInBounds(Vector2Int pos, Vector3Int dimensions)
+    {
+        return IsInBounds(pos.x, pos.y, dimensions);
+    }
+
+    public static bool IsInBounds(int x, int y, Vector3Int dimensions)
+    {
+        return IsInBounds(x, y, 0, dimensions);
+    }
+
+    public static bool IsInBounds(int x, int y, int z, Vector3Int dimensions)
     {
         if (x < 0 || x >= dimensions.x)
         {
@@ -60,6 +70,11 @@ public static class Helpers
         }
 
         if (y < 0 || y >= dimensions.y)
+        {
+            return false;
+        }
+
+        if (z < 0 || z >= dimensions.z)
         {
             return false;
         }

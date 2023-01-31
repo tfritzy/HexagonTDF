@@ -9,7 +9,7 @@ public class Chunk
     private Building[,,] Buildings = new Building[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.MAX_HEIGHT];
 
     // The visible hexes on each column in the chunk.
-    private LinkedList<int>[,] UncoveredBlocks = new LinkedList<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
+    private HashSet<int>[,] UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
     private Vector2Int ChunkIndex;
 
     public Chunk(Vector2Int chunkIndex, Hexagon[,,] hexes)
@@ -21,7 +21,7 @@ public class Chunk
 
     private void CalculateUncoveredHex()
     {
-        this.UncoveredBlocks = new LinkedList<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
+        this.UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
 
         for (int x = 0; x < Constants.CHUNK_SIZE; x++)
         {
@@ -29,34 +29,64 @@ public class Chunk
             {
                 for (int z = Constants.MAX_HEIGHT - 1; z >= 0; z--)
                 {
-                    if (this.Hexes[x, y, z] != null)
+                    // Mark every hex touching air or transparent block as uncovered.
+                    if (this.Hexes[x, y, z] == null || this.Hexes[x, y, z].IsTransparent)
                     {
                         if (UncoveredBlocks[x, y] == null)
                         {
-                            UncoveredBlocks[x, y] = new LinkedList<int>();
+                            UncoveredBlocks[x, y] = new HashSet<int>();
                         }
 
-                        UncoveredBlocks[x, y].AddFirst(z);
+                        MaybeSetUncovered(x, y, z - 1);
 
-                        if (!this.Hexes[x, y, z].IsTransparent)
+                        for (int i = 0; i < 6; i++)
                         {
-                            // Stop going down on opaque hex.
-                            break;
+                            var neighbor = Helpers.GetNeighborPosition(x, y, (HexSide)i);
+                            if (Helpers.IsInBounds(neighbor, Constants.CHUNK_DIMENSIONS))
+                            {
+                                MaybeSetUncovered(neighbor.x, neighbor.y, z);
+                            }
+                            else
+                            {
+                                // TODO: inform neighboring chunks of uncovered status
+                            }
                         }
+                    }
+                    else
+                    {
+                        // Once we hit an opaque block we can stop. Not doing caves.
+                        break;
                     }
                 }
             }
         }
     }
 
-    public LinkedList<int> GetUncoveredOfColumn(int x, int y)
+    private void MaybeSetUncovered(int x, int y, int z)
+    {
+        if (!Helpers.IsInBounds(x, y, z, Constants.CHUNK_DIMENSIONS))
+        {
+            return;
+        }
+
+        if (GetHex(x, y, z) != null)
+        {
+            if (UncoveredBlocks[x, y] == null)
+            {
+                UncoveredBlocks[x, y] = new HashSet<int>();
+            }
+            UncoveredBlocks[x, y].Add(z);
+        }
+    }
+
+    public HashSet<int> GetUncoveredOfColumn(int x, int y)
     {
         return UncoveredBlocks[x, y];
     }
 
     public int GetTopHex(int x, int y)
     {
-        return UncoveredBlocks[x, y].Last.Value;
+        return UncoveredBlocks[x, y].Max();
     }
 
     public Hexagon GetHex(int x, int y, int z)

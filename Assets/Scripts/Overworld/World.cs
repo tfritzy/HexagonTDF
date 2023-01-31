@@ -11,7 +11,7 @@ public class World
         return TryGetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out building);
     }
 
-    public LinkedList<int> GetUncoveredHexOfColumn(Vector2Int chunkIndex, int x, int y)
+    public HashSet<int> GetUncoveredHexOfColumn(Vector2Int chunkIndex, int x, int y)
     {
         return Chunks[chunkIndex].GetUncoveredOfColumn(x, y);
     }
