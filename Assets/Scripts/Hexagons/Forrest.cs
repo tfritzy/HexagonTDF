@@ -9,7 +9,7 @@ public class Forrest : Hexagon
     public override bool IsBuildable => false;
     public override bool IsWalkable => false;
 
-    public Forrest(int height) : base(height)
+    public Forrest(int height)
     {
     }
 

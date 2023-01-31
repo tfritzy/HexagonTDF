@@ -47,14 +47,19 @@ public static class Helpers
         return IsInBounds(position, dimensions.max);
     }
 
-    public static bool IsInBounds(Vector2Int position, Vector2Int dimensions)
+    public static bool IsInBounds(Vector2Int pos, Vector2Int dimensions)
     {
-        if (position.x < 0 || position.x >= dimensions.x)
+        return IsInBounds(pos, dimensions);
+    }
+
+    public static bool IsInBounds(int x, int y, Vector2Int dimensions)
+    {
+        if (x < 0 || x >= dimensions.x)
         {
             return false;
         }
 
-        if (position.y < 0 || position.y >= dimensions.y)
+        if (y < 0 || y >= dimensions.y)
         {
             return false;
         }
@@ -146,33 +151,29 @@ public static class Helpers
         return null;
     }
 
-    public static Vector3 ToWorldPosition(Vector2Int pos)
+    public static Vector3 ToWorldPosition(Vector3Int pos)
     {
         Vector2Int chunk = new Vector2Int(pos.x / Constants.CHUNK_SIZE, pos.y / Constants.CHUNK_SIZE);
-        return ToWorldPosition(chunk, pos.x, pos.y);
+        return ToWorldPosition(chunk, pos.x, pos.y, pos.z);
     }
 
-    public static Vector3 ToWorldPosition(int x, int y)
+    public static Vector3 ToWorldPosition(int x, int y, int z)
     {
         Vector2Int chunk = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return ToWorldPosition(chunk, x, y);
+        return ToWorldPosition(chunk, x, y, z);
     }
 
-    public static Vector3 ToWorldPosition(Vector2Int chunk, int x, int y)
+    public static Vector3 ToWorldPosition(Vector2Int chunk, int x, int y, int z)
     {
         float xF = (x + chunk.x * Constants.CHUNK_SIZE) * Constants.HorizontalDistanceBetweenHexagons;
         float zF = (y + chunk.y * Constants.CHUNK_SIZE) * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        float yF = 0;
-        if (Managers.Board.World.TryGetHex(chunk, x, y, out Hexagon hex))
-        {
-            yF = hex.Height;
-        }
+        float yF = z * Constants.HEXAGON_HEIGHT;
         return new Vector3(xF, yF, zF);
     }
 
-    public static Vector3 ToWorldPosition(Vector2Int chunk, Vector2Int position)
+    public static Vector3 ToWorldPosition(Vector2Int chunk, Vector3Int position)
     {
-        return ToWorldPosition(chunk, position.x, position.y);
+        return ToWorldPosition(chunk, position.x, position.y, position.z);
     }
 
     public static Vector2Int ToGridPosition(Vector3 pos)

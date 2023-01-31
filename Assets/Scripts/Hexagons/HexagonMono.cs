@@ -6,29 +6,23 @@ using UnityEngine;
 public class HexagonMono : MonoBehaviour, Interactable
 {
     public Biome Biome { get { return Hexagon.Biome; } }
-    public bool IsBuildable { get { return Hexagon.IsBuildable; } }
-    public bool IsWalkable { get { return Hexagon.IsWalkable; } }
-    public Vector2Int GridPosition;
-    public int Height;
-    public Hexagon Hexagon;
+    public bool IsBuildable { get { return Hexagon.IsBuildable && !HasObstacle; } }
+    public bool IsWalkable { get { return Hexagon.IsWalkable && !HasObstacle; } }
+    public Vector2Int GridPosition { get; private set; }
+    public int Height { get; private set; }
+    public Hexagon Hexagon { get; private set; }
     protected List<MeshRenderer> meshRenderers;
     private MeshRenderer hexMesh;
+    public bool HasObstacle { get; private set; }
 
-    public void SetType(Hexagon hexagon)
+    public virtual void Setup(Hexagon hex, int seed, Vector2Int gridPosition, int height)
     {
-        this.Hexagon = hexagon;
-    }
-
-    void Start()
-    {
-        Setup();
-    }
-
-    protected virtual void Setup()
-    {
+        this.Hexagon = hex;
+        this.Height = height;
+        this.GridPosition = gridPosition;
         this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
-        InitObstacle();
+        InitObstacle(seed);
     }
 
     public void Interact()
@@ -36,13 +30,22 @@ public class HexagonMono : MonoBehaviour, Interactable
         Debug.Log("Clicked on hex at pos " + GridPosition);
     }
 
-    public void InitObstacle()
+    public void InitObstacle(int seed)
     {
-        this.Hexagon.RollObstacle();
-        if (this.Hexagon.HasObstacle)
+        RollObstacle(seed);
+        if (this.HasObstacle)
         {
             GameObject body = this.Hexagon.GetObstacleBody();
             GameObject.Instantiate(body, this.transform.position, body.transform.rotation, this.transform);
+        }
+    }
+
+    private void RollObstacle(int seed)
+    {
+        System.Random random = new System.Random(seed + GridPosition.GetHashCode());
+        if (Hexagon.ObstacleChance > 0 && random.NextDouble() < Hexagon.ObstacleChance)
+        {
+            HasObstacle = true;
         }
     }
 

@@ -7,5 +7,5 @@ public class Water : Hexagon
     public override bool IsWalkable => false;
     public override Color BaseColor => ColorExtensions.Create("#3d71c4");
 
-    public Water() : base(Constants.WATER_HEIGHT) { }
+    public Water() { }
 }

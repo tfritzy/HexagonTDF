@@ -14,9 +14,11 @@ public class BoardManager : MonoBehaviour
 
     private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
     private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
+    private int seed;
 
     void Awake()
     {
+        this.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         SpawnMap();
     }
 
@@ -58,9 +60,8 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator LoadChunk(Vector2Int chunkIndex)
     {
-        World.Chunks[chunkIndex] = OverworldTerrainGenerator.GenerateChunk(chunkIndex, 0);
+        World.Chunks[chunkIndex] = OverworldTerrainGenerator.GenerateChunk(chunkIndex, this.seed);
         Chunk chunk = World.Chunks[chunkIndex];
-        chunk.HexBodies = new HexagonMono[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
 
         for (int y = 0; y < Constants.CHUNK_SIZE; y++)
         {
@@ -169,11 +170,10 @@ public class BoardManager : MonoBehaviour
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
-    private void BuildHexagon(Vector2Int chunkIndex, int x, int y)
+    private void SpawnHexForColumn(Vector2Int chunkIndex, int x, int y)
     {
         World.TryGetHex(chunkIndex, x, y, out Hexagon hex);
-        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
-        position.y = hex.Height * Constants.HEXAGON_HEIGHT;
+        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y, z);
         SpawnHex(position, hex, chunkIndex, x, y);
     }
 
@@ -185,10 +185,8 @@ public class BoardManager : MonoBehaviour
             Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
             this.transform);
         HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
-        hexagonScript.SetType(Prefabs.GetHexagonScript(hex.Biome, hex.Height));
         var hexBody = go.GetComponent<HexagonMono>();
-        hexBody.GridPosition = new Vector2Int(x, y);
-        hexBody.Height = hex.Height;
+        hexBody.Setup(hexagonScript this.seed, new Vector2Int(x, y), height);
         hexBody.name = hex.Biome + "," + hex.Height.ToString();
         World.SetHexBody(chunkIndex, x, y, hexBody);
     }

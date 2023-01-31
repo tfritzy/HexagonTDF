@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Snow : Hexagon
 {
-    public Snow(int height) : base(height)
+    public Snow(int height)
     {
     }
 

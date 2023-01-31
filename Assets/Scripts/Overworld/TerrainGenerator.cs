@@ -76,7 +76,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
 
-        var segment = new Hexagon[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
+        var segment = new Hexagon[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.HEIGHT_LEVELS];
         System.Random random = new System.Random(seed);
         int yOffset = chunk.y * Constants.CHUNK_SIZE;
         int xOffset = chunk.x * Constants.CHUNK_SIZE;
@@ -93,14 +93,17 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 moistureValue = (moistureValue + 1) / 2;
 
                 Biome biome = GetBiome(heightValue, moistureValue, random);
-                segment[x - xOffset, y - yOffset] = Prefabs.GetHexagonScript(biome, height);
+                segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(biome, height);
+
+                while (height > 0)
+                {
+                    segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(Biome.Mountain, height);
+                    height -= 1;
+                }
             }
         }
 
-        return new Chunk
-        {
-            Hexes = segment,
-        };
+        return new Chunk(segment);
     }
 
     private static Biome GetBiome(float height, float moisture, System.Random random)

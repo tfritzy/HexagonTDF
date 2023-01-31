@@ -9,6 +9,7 @@ public static class Constants
     public const float HEXAGON_HEIGHT = 1f;
     public const float OVERWORLD_HEXAGON_R = .15f;
     public const int CHUNK_SIZE = 16;
+    public static readonly Vector2Int CHUNK_DIMENSIONS = new Vector2Int(CHUNK_SIZE, CHUNK_SIZE);
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
     public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;

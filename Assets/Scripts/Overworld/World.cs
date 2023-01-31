@@ -5,31 +5,15 @@ public class World
 {
     public Dictionary<Vector2Int, Chunk> Chunks = new Dictionary<Vector2Int, Chunk>();
 
-    public bool TryGetHex(int x, int y, out Hexagon hex)
+    public Hexagon
+
+    public bool TryGetBuilding(int x, int y, int z, out Building building)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return TryGetHex(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, out hex);
+        return TryGetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out building);
     }
 
-    public bool TryGetHex(Vector2Int chunkIndex, int x, int y, out Hexagon hex)
-    {
-        if (!Chunks.ContainsKey(chunkIndex))
-        {
-            hex = null;
-            return false;
-        }
-
-        hex = Chunks[chunkIndex].Hexes[x, y];
-        return true;
-    }
-
-    public bool TryGetBuilding(int x, int y, out Building building)
-    {
-        Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return TryGetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, out building);
-    }
-
-    public bool TryGetBuilding(Vector2Int chunkIndex, int x, int y, out Building building)
+    public bool TryGetBuilding(Vector2Int chunkIndex, int x, int y, int z, out Building building)
     {
         if (!Chunks.ContainsKey(chunkIndex))
         {
@@ -37,17 +21,16 @@ public class World
             return false;
         }
 
-        building = Chunks[chunkIndex].Buildings[x, y];
-        return true;
+        return Chunks[chunkIndex].TryGetBuilding(x, y, z, out building);
     }
 
-    public void SetBuilding(int x, int y, Building value)
+    public void SetBuilding(int x, int y, int z, Building value)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        SetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, value);
+        SetBuilding(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, value);
     }
 
-    public void SetBuilding(Vector2Int chunkIndex, int x, int y, Building value)
+    public void SetBuilding(Vector2Int chunkIndex, int x, int y, int z, Building value)
     {
         if (!Chunks.ContainsKey(chunkIndex))
         {
@@ -55,16 +38,16 @@ public class World
             return;
         }
 
-        Chunks[chunkIndex].Buildings[x, y] = value;
+        Chunks[chunkIndex].SetBuilding(x, y, z, value);
     }
 
-    public bool TryGetHexBody(int x, int y, out HexagonMono hex)
+    public bool TryGetHexBody(int x, int y, int z, out HexagonMono hex)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        return TryGetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, out hex);
+        return TryGetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, out hex);
     }
 
-    public bool TryGetHexBody(Vector2Int chunkIndex, int x, int y, out HexagonMono hex)
+    public bool TryGetHexBody(Vector2Int chunkIndex, int x, int y, int z, out HexagonMono hex)
     {
         if (!Chunks.ContainsKey(chunkIndex))
         {
@@ -72,17 +55,17 @@ public class World
             return false;
         }
 
-        hex = Chunks[chunkIndex].HexBodies[x, y];
-        return true;
+        hex = Chunks[chunkIndex].GetBody(x, y, z);
+        return hex != null;
     }
 
-    public void SetHexBody(int x, int y, HexagonMono value)
+    public void SetHexBody(int x, int y, int z, HexagonMono value)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
-        SetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, value);
+        SetHexBody(chunkIndex, x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z, value);
     }
 
-    public void SetHexBody(Vector2Int chunkIndex, int x, int y, HexagonMono value)
+    public void SetHexBody(Vector2Int chunkIndex, int x, int y, int z, HexagonMono value)
     {
         if (!Chunks.ContainsKey(chunkIndex))
         {
@@ -90,6 +73,6 @@ public class World
             return;
         }
 
-        Chunks[chunkIndex].HexBodies[x, y] = value;
+        Chunks[chunkIndex].SetBody(x, y, z, value);
     }
 }
