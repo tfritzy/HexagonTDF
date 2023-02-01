@@ -5,6 +5,11 @@ public class World
 {
     public Dictionary<Vector2Int, Chunk> Chunks = new Dictionary<Vector2Int, Chunk>();
 
+    public void DestroyHex(Vector2Int chunkIndex, int x, int y, int z)
+    {
+        Chunks[chunkIndex].DestroyHex(x, y, z);
+    }
+
     public bool TryGetBuilding(int x, int y, int z, out Building building)
     {
         Vector2Int chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
@@ -18,6 +23,11 @@ public class World
 
     public int GetTopHexHeight(Vector2Int chunkIndex, int x, int y)
     {
+        if (!Chunks.ContainsKey(chunkIndex))
+        {
+            return int.MinValue;
+        }
+
         return Chunks[chunkIndex].GetTopHex(x, y);
     }
 

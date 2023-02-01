@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Chunk
 {
+    public HashSet<Vector3Int> NeedsBody = new HashSet<Vector3Int>();
+    public Transform Container { get; private set; }
+
     private Hexagon[,,] Hexes = new Hexagon[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.MAX_HEIGHT];
     private HexagonMono[,,] HexBodies = new HexagonMono[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.MAX_HEIGHT];
     private Building[,,] Buildings = new Building[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.MAX_HEIGHT];
@@ -12,11 +15,31 @@ public class Chunk
     private HashSet<int>[,] UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
     private Vector2Int ChunkIndex;
 
-    public Chunk(Vector2Int chunkIndex, Hexagon[,,] hexes)
+    public Chunk(Vector2Int chunkIndex, Hexagon[,,] hexes, Transform container)
     {
         this.ChunkIndex = chunkIndex;
         this.Hexes = hexes;
+        this.Container = container;
         CalculateUncoveredHex();
+    }
+
+    public void DestroyHex(int x, int y, int z)
+    {
+        if (!Helpers.IsInBounds(x, y, z, Constants.CHUNK_DIMENSIONS))
+        {
+            return;
+        }
+
+        Debug.Log($"Destroying {x}, {y}, {z}");
+        Hexes[x, y, z] = null;
+
+        if (this.HexBodies[x, y, z] != null)
+        {
+            GameObject.Destroy(this.HexBodies[x, y, z].gameObject);
+        }
+        this.HexBodies[x, y, z] = null;
+        this.UncoveredBlocks[x, y].Remove(z);
+        UncoverNeighbors(x, y, z);
     }
 
     private void CalculateUncoveredHex()
@@ -37,20 +60,7 @@ public class Chunk
                             UncoveredBlocks[x, y] = new HashSet<int>();
                         }
 
-                        MaybeSetUncovered(x, y, z - 1);
-
-                        for (int i = 0; i < 6; i++)
-                        {
-                            var neighbor = Helpers.GetNeighborPosition(x, y, (HexSide)i);
-                            if (Helpers.IsInBounds(neighbor, Constants.CHUNK_DIMENSIONS))
-                            {
-                                MaybeSetUncovered(neighbor.x, neighbor.y, z);
-                            }
-                            else
-                            {
-                                // TODO: inform neighboring chunks of uncovered status
-                            }
-                        }
+                        UncoverNeighbors(x, y, z);
                     }
                     else
                     {
@@ -62,6 +72,25 @@ public class Chunk
         }
     }
 
+    private void UncoverNeighbors(int x, int y, int z)
+    {
+        MaybeSetUncovered(x, y, z + 1);
+        MaybeSetUncovered(x, y, z - 1);
+
+        for (int i = 0; i < 6; i++)
+        {
+            var neighbor = Helpers.GetNeighborPosition(x, y, (HexSide)i);
+            if (Helpers.IsInBounds(neighbor, Constants.CHUNK_DIMENSIONS))
+            {
+                MaybeSetUncovered(neighbor.x, neighbor.y, z);
+            }
+            else
+            {
+                // TODO: inform neighboring chunks of uncovered status
+            }
+        }
+    }
+
     private void MaybeSetUncovered(int x, int y, int z)
     {
         if (!Helpers.IsInBounds(x, y, z, Constants.CHUNK_DIMENSIONS))
@@ -69,13 +98,29 @@ public class Chunk
             return;
         }
 
+        Debug.Log($"Maybe setting {x}, {y}, {z} uncovered");
+
         if (GetHex(x, y, z) != null)
         {
             if (UncoveredBlocks[x, y] == null)
             {
                 UncoveredBlocks[x, y] = new HashSet<int>();
             }
-            UncoveredBlocks[x, y].Add(z);
+
+            if (!UncoveredBlocks[x, y].Contains(z))
+            {
+                Debug.Log($"Setting {x}, {y}, {z} uncovered");
+                UncoveredBlocks[x, y].Add(z);
+                NeedsBody.Add(new Vector3Int(x, y, z));
+            }
+            else
+            {
+                Debug.Log($"Skipping because it's already uncovered {x}, {y}, {z} uncovered");
+            }
+        }
+        else
+        {
+            Debug.Log($"Skipping because no hex there {x}, {y}, {z} uncovered");
         }
     }
 
@@ -109,9 +154,9 @@ public class Chunk
 
     public void SetBody(int x, int y, int z, HexagonMono value)
     {
+        NeedsBody.Remove(new Vector3Int(x, y, z));
         HexBodies[x, y, z] = value;
     }
-
 
     public void SetHex(int x, int y, int z, Hexagon value)
     {

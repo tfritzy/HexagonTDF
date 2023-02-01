@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameInputMode : InputMode
@@ -17,6 +18,8 @@ public class GameInputMode : InputMode
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
+        HexagonMono hex = hexes.First();
+        Managers.Board.DestroyHex(hex.GridPosition.x, hex.GridPosition.y, hex.Height);
     }
 
     public override void Update()

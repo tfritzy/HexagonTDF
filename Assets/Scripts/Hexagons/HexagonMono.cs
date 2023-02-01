@@ -27,7 +27,7 @@ public class HexagonMono : MonoBehaviour, Interactable
 
     public void Interact()
     {
-        Debug.Log("Clicked on hex at pos " + GridPosition);
+        Managers.Board.DestroyHex(this.GridPosition.x, this.GridPosition.y, this.Height);
     }
 
     public void InitObstacle(int seed)

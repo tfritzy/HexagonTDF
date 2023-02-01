@@ -32,6 +32,20 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void DestroyHex(int x, int y, int z)
+    {
+        Debug.Log("Destroying hex");
+        Helpers.WorldToChunkPos(x, y, z, out Vector2Int chunkIndex, out Vector3Int subPos);
+        World.DestroyHex(chunkIndex, x, y, z);
+
+        Debug.Log($"{World.Chunks[chunkIndex].NeedsBody.Count} need a body");
+        foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
+        {
+            Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
+            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, World.Chunks[chunkIndex].Container);
+        }
+    }
+
     private void UpdatedLoadedChunks(Vector2Int currentChunk)
     {
         HashSet<Vector2Int> chunksInRange = new HashSet<Vector2Int>();
@@ -60,19 +74,26 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator LoadChunk(Vector2Int chunkIndex)
     {
-        Debug.Log("Loading chunk " + chunkIndex);
+        // Spread out the starts a bit.
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0, .25f));
+
         var chunkContainer = new GameObject("Chunk " + chunkIndex);
-        World.Chunks[chunkIndex] = OverworldTerrainGenerator.GenerateChunk(chunkIndex, this.seed);
+        var terrainGenerator = new TerrainGenerator();
+        yield return terrainGenerator.GenerateChunk(chunkIndex, this.seed, chunkContainer.transform);
+        World.Chunks[chunkIndex] = terrainGenerator.GeneratedChunk;
         Chunk chunk = World.Chunks[chunkIndex];
 
-        for (int y = 0; y < Constants.CHUNK_SIZE; y++)
+        int i = 0;
+        foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
-            for (int x = 0; x < Constants.CHUNK_SIZE; x++)
-            {
-                SpawnHexForColumn(chunkIndex, x, y, chunkContainer);
-            }
+            Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
+            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, chunkContainer.transform);
+            i += 1;
 
-            yield return null;
+            if (i % 5 == 0)
+            {
+                yield return null;
+            }
         }
 
         chunkLoadingCoroutines.Remove(chunkIndex);
@@ -89,7 +110,6 @@ public class BoardManager : MonoBehaviour
                 {
                     Hexagon hex = chunk.GetHex(x, y, z);
                     HexagonMono hexBody = chunk.GetBody(x, y, z);
-                    Debug.Log($"Destroying {chunkIndex} {x}, {y}, {z}, supposed hex {hex}, hex body {hexBody?.name}");
 
                     if (hexBody != null)
                     {
@@ -183,11 +203,11 @@ public class BoardManager : MonoBehaviour
         foreach (int z in this.World.GetUncoveredHexOfColumn(chunkIndex, x, y))
         {
             Hexagon iHex = this.World.GetHex(chunkIndex, x, y, z);
-            SpawnHex(iHex, chunkIndex, x, y, z, chunkContainer);
+            SpawnHex(iHex, chunkIndex, x, y, z, chunkContainer.transform);
         }
     }
 
-    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, GameObject chunkContainer)
+    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
     {
         Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
         position.y = Helpers.GetTopHexWorldHeight(chunkIndex, x, y);

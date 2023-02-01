@@ -5,8 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class OverworldTerrainGenerator : MonoBehaviour
+public class TerrainGenerator : MonoBehaviour
 {
+    public Chunk GeneratedChunk;
     public Hexagon[,] Segment;
     private float halfDimensions = Constants.CHUNK_SIZE / 2f;
     private System.Random random;
@@ -71,7 +72,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
         },
     };
 
-    public static Chunk GenerateChunk(Vector2Int chunk, int seed)
+    public IEnumerator GenerateChunk(Vector2Int chunk, int seed, Transform container)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
@@ -80,6 +81,9 @@ public class OverworldTerrainGenerator : MonoBehaviour
         System.Random random = new System.Random(seed);
         int yOffset = chunk.y * Constants.CHUNK_SIZE;
         int xOffset = chunk.x * Constants.CHUNK_SIZE;
+
+        yield return null;
+
         for (int y = yOffset; y < yOffset + Constants.CHUNK_SIZE; y++)
         {
             for (int x = xOffset; x < xOffset + Constants.CHUNK_SIZE; x++)
@@ -87,7 +91,7 @@ public class OverworldTerrainGenerator : MonoBehaviour
                 float xD = x / Scale;
                 float yD = y / Scale;
                 float heightValue = .6f + heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
-                int height = (int)(heightValue * 5);
+                int height = (int)(heightValue * 5) + 10;
 
                 float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 moistureValue = (moistureValue + 1) / 2;
@@ -101,9 +105,11 @@ public class OverworldTerrainGenerator : MonoBehaviour
                     height -= 1;
                 }
             }
+
+            yield return null;
         }
 
-        return new Chunk(chunk, segment);
+        this.GeneratedChunk = new Chunk(chunk, segment, container);
     }
 
     private static Biome GetBiome(float height, float moisture, System.Random random)
