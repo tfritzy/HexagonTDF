@@ -1,12 +1,11 @@
 using UnityEngine;
 
-public class Snow : Hexagon
+public class Stone : Hexagon
 {
-    public Snow()
+    public Stone()
     {
     }
 
-    public override Biome Biome => Biome.Snow;
+    public override Biome Biome => Biome.Stone;
     public override Color BaseColor => ColorExtensions.Create("#000000");
-
 }

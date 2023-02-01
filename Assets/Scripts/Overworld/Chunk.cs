@@ -98,8 +98,6 @@ public class Chunk
             return;
         }
 
-        Debug.Log($"Maybe setting {x}, {y}, {z} uncovered");
-
         if (GetHex(x, y, z) != null)
         {
             if (UncoveredBlocks[x, y] == null)
@@ -107,20 +105,11 @@ public class Chunk
                 UncoveredBlocks[x, y] = new HashSet<int>();
             }
 
-            if (!UncoveredBlocks[x, y].Contains(z))
+            UncoveredBlocks[x, y].Add(z);
+            if (HexBodies[x, y, z] == null)
             {
-                Debug.Log($"Setting {x}, {y}, {z} uncovered");
-                UncoveredBlocks[x, y].Add(z);
                 NeedsBody.Add(new Vector3Int(x, y, z));
             }
-            else
-            {
-                Debug.Log($"Skipping because it's already uncovered {x}, {y}, {z} uncovered");
-            }
-        }
-        else
-        {
-            Debug.Log($"Skipping because no hex there {x}, {y}, {z} uncovered");
         }
     }
 

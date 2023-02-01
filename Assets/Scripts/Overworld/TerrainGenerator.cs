@@ -33,20 +33,20 @@ public class TerrainGenerator : MonoBehaviour
 
     private static List<BiomeCriteria> biomeDeterminator = new List<BiomeCriteria>
     {
-        new BiomeCriteria{
-            Height = .75f,
-            Criteria = new BiomeFormationCriterion[]
-            {
-                new BiomeFormationCriterion {Biome = Biome.Snow, MinMoisture = float.MinValue}
-            }
-        },
-        new BiomeCriteria{
-            Height = 0.65f,
-            Criteria = new BiomeFormationCriterion[]
-            {
-                new BiomeFormationCriterion {Biome = Biome.Mountain, MinMoisture = float.MinValue}
-            }
-        },
+        // new BiomeCriteria{
+        //     Height = .75f,
+        //     Criteria = new BiomeFormationCriterion[]
+        //     {
+        //         new BiomeFormationCriterion {Biome = Biome.Snow, MinMoisture = float.MinValue}
+        //     }
+        // },
+        // new BiomeCriteria{
+        //     Height = 0.65f,
+        //     Criteria = new BiomeFormationCriterion[]
+        //     {
+        //         new BiomeFormationCriterion {Biome = Biome.Mountain, MinMoisture = float.MinValue}
+        //     }
+        // },
         new BiomeCriteria{
             Height = 0.4f,
             Criteria = new BiomeFormationCriterion[]
@@ -97,11 +97,20 @@ public class TerrainGenerator : MonoBehaviour
                 moistureValue = (moistureValue + 1) / 2;
 
                 Biome biome = GetBiome(heightValue, moistureValue, random);
-                segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(biome, height);
+                segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(biome);
 
-                while (height > 0)
+                // Submerge hex below water height
+                int iWaterHeight = height;
+                while (iWaterHeight <= Constants.WATER_HEIGHT)
                 {
-                    segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(Biome.Mountain, height);
+                    segment[x - xOffset, y - yOffset, iWaterHeight] = Prefabs.GetHexagonScript(Biome.Water);
+                }
+
+                // Fill in ground with stone.
+                height -= 1;
+                while (height >= 0)
+                {
+                    segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(Biome.Stone);
                     height -= 1;
                 }
             }

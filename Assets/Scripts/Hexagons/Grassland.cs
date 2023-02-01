@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Grassland : Hexagon
 {
-    public Grassland(int height)
+    public Grassland()
     {
     }
 

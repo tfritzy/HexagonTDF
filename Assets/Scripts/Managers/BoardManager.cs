@@ -210,7 +210,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
     {
         Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
-        position.y = Helpers.GetTopHexWorldHeight(chunkIndex, x, y);
+        position.y = z * Constants.HEXAGON_HEIGHT;
         GameObject go = Instantiate(
             Prefabs.Hexagons[hex.Biome],
             position,
