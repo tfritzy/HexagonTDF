@@ -45,8 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 271a5faa82e427c458688b4ca494bc7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridPosition: {x: 0, y: 0}
-  Height: 0
 --- !u!1001 &468955160334212378
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58,7 +56,7 @@ PrefabInstance:
     - target: {fileID: 5525479130187255769, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 96d8e21840ac0af4f9dfa6b19822a061, type: 2}
+      objectReference: {fileID: 2100000, guid: cfa06ab5a93c5e54eb75af0c0778ab25, type: 2}
     - target: {fileID: 6318142969715813900, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_Name
       value: hex

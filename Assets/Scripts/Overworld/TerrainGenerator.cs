@@ -57,7 +57,7 @@ public class TerrainGenerator : MonoBehaviour
             }
         },
         new BiomeCriteria{
-            Height = 0.3f,
+            Height = .3f,
             Criteria = new BiomeFormationCriterion[]
             {
                 new BiomeFormationCriterion {Biome = Biome.Sand, MinMoisture = float.MinValue},
@@ -98,13 +98,6 @@ public class TerrainGenerator : MonoBehaviour
 
                 Biome biome = GetBiome(heightValue, moistureValue, random);
                 segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(biome);
-
-                // Submerge hex below water height
-                int iWaterHeight = height;
-                while (iWaterHeight <= Constants.WATER_HEIGHT)
-                {
-                    segment[x - xOffset, y - yOffset, iWaterHeight] = Prefabs.GetHexagonScript(Biome.Water);
-                }
 
                 // Fill in ground with stone.
                 height -= 1;
