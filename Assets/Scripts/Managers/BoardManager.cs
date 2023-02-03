@@ -10,7 +10,7 @@ public class BoardManager : MonoBehaviour
     public World World;
     public string ActiveMapName;
     public TownHall TownHall;
-    private const int CHUNK_RENDER_DIST = 4;
+    private const int CHUNK_RENDER_DIST = 3;
 
     private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
     private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();

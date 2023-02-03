@@ -23,6 +23,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         InitObstacle(seed);
+        InitDecorations();
     }
 
     public void Interact()
@@ -30,7 +31,7 @@ public class HexagonMono : MonoBehaviour, Interactable
         Managers.Board.DestroyHex(this.GridPosition.x, this.GridPosition.y, this.Height);
     }
 
-    public void InitObstacle(int seed)
+    private void InitObstacle(int seed)
     {
         RollObstacle(seed);
         if (this.HasObstacle)
@@ -46,6 +47,15 @@ public class HexagonMono : MonoBehaviour, Interactable
         if (Hexagon.ObstacleChance > 0 && random.NextDouble() < Hexagon.ObstacleChance)
         {
             HasObstacle = true;
+        }
+    }
+
+    private void InitDecorations()
+    {
+        for (int i = 0; i < this.Hexagon.NumDecorations; i++)
+        {
+            GameObject body = this.Hexagon.GetDecorationBody();
+            GameObject.Instantiate(body, this.transform.position, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0), this.transform);
         }
     }
 

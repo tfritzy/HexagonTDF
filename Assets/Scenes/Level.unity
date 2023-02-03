@@ -171,6 +171,7 @@ MonoBehaviour:
   - {fileID: 3062840591587402575, guid: 069eb8b3a4c53d046a8b9c2968477976, type: 3}
   - {fileID: 4556671804527212049, guid: 87e99ddde9cc8c44080a2694da58c315, type: 3}
   - {fileID: 8882352757782417300, guid: 55a0c0c312b7cfd4b9c6b8e72d7db10e, type: 3}
+  Grass: {fileID: 6404268809379339476, guid: 9a32147e38101fd48876749fd208348d, type: 3}
   DeadTrees:
   - {fileID: 7035676776283088885, guid: 6a5edab1fb8735249bd172847120f913, type: 3}
   - {fileID: 83972318937324538, guid: 7e6cb9db4f22db24580949881444951f, type: 3}
@@ -602,11 +603,11 @@ MonoBehaviour:
       mainTex: {fileID: 2800000, guid: a73c218e0d8156240a793d22710686d1, type: 3}
     - color: {r: 0.03921568, g: 0.5372549, b: 0.26911527, a: 1}
       mainTex: {fileID: 2800000, guid: 8ee0d49a0c0a08240ac783af3a7be31a, type: 3}
-    - color: {r: 0.6603774, g: 0.38990906, b: 0.19624422, a: 1}
+    - color: {r: 0.31764707, g: 0.5764706, b: 0.30980393, a: 1}
       mainTex: {fileID: 2800000, guid: a73c218e0d8156240a793d22710686d1, type: 3}
     - color: {r: 0.6509804, g: 0.5981105, b: 0.27450982, a: 1}
       mainTex: {fileID: 2800000, guid: a73c218e0d8156240a793d22710686d1, type: 3}
-    selectedProperty: 0
+    selectedProperty: 2
   - meterial: {fileID: 2100000, guid: af3d69dd3ab4777479ce92faa440698b, type: 2}
     properties:
     - color: {r: 0.4121916, g: 0.5188676, b: 0.21293145, a: 1}
@@ -943,7 +944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &663144871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1653,6 +1654,7 @@ GameObject:
   - component: {fileID: 1886508822}
   - component: {fileID: 1886508821}
   - component: {fileID: 1886508826}
+  - component: {fileID: 1886508827}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1672,6 +1674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6645306161aeda40b15c33435bd177e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MOVEMENT_SPEED: 5
   DisableXScroll: 0
   FrozenUntilMouseUp: 0
 --- !u!114 &1886508822
@@ -1810,3 +1813,30 @@ MonoBehaviour:
   normalsSource: 1
   debugMode: 0
   output: 0
+--- !u!54 &1886508827
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886508820}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

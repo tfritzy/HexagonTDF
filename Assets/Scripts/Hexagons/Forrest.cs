@@ -20,4 +20,10 @@ public class Forrest : Hexagon
             Random.Range(0, Managers.Prefabs.Trees.Length)
         ];
     }
+
+    public override int NumDecorations => 4;
+    public override GameObject GetDecorationBody()
+    {
+        return Managers.Prefabs.Grass;
+    }
 }
