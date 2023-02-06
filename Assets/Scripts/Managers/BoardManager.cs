@@ -10,11 +10,12 @@ public class BoardManager : MonoBehaviour
     public World World;
     public string ActiveMapName;
     public TownHall TownHall;
-    private const int CHUNK_RENDER_DIST = 3;
+    private const int CHUNK_RENDER_DIST = 4;
 
     private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
     private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
     private int seed;
+    private Dictionary<Biome, LinkedList<GameObject>> hexPool = new Dictionary<Biome, LinkedList<GameObject>>();
 
     void Awake()
     {
@@ -32,13 +33,27 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    private void UnloadHex(Vector2Int chunkIndex, int x, int y, int z)
+    {
+        Hexagon destroyedHex = World.GetHex(chunkIndex, x, y, z);
+        if (World.TryGetHexBody(chunkIndex, x, y, z, out HexagonMono body))
+        {
+            body.gameObject.SetActive(false);
+
+            if (!hexPool.ContainsKey(destroyedHex.Biome))
+            {
+                hexPool[destroyedHex.Biome] = new LinkedList<GameObject>();
+            }
+
+            hexPool[destroyedHex.Biome].AddLast(body.gameObject);
+        }
+    }
+
     public void DestroyHex(int x, int y, int z)
     {
-        Debug.Log("Destroying hex");
         Helpers.WorldToChunkPos(x, y, z, out Vector2Int chunkIndex, out Vector3Int subPos);
+        UnloadHex(chunkIndex, x, y, z);
         World.DestroyHex(chunkIndex, x, y, z);
-
-        Debug.Log($"{World.Chunks[chunkIndex].NeedsBody.Count} need a body");
         foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
             Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
@@ -87,10 +102,13 @@ public class BoardManager : MonoBehaviour
         foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
             Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
-            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, chunkContainer.transform);
-            i += 1;
+            bool isFromCache = SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, chunkContainer.transform);
+            if (isFromCache)
+            {
+                i += 1;
+            }
 
-            if (i % 5 == 0)
+            if (i % 10 == 0)
             {
                 yield return null;
             }
@@ -113,7 +131,7 @@ public class BoardManager : MonoBehaviour
 
                     if (hexBody != null)
                     {
-                        Destroy(hexBody.gameObject);
+                        UnloadHex(chunkIndex, x, y, z);
                     }
                 }
             }
@@ -141,29 +159,6 @@ public class BoardManager : MonoBehaviour
         {
             points.Add(Helpers.GetNeighborPosition(Vector2Int.zero, (HexSide)i));
         }
-
-        // float averageHeight = 0;
-        // List<Biome> biomesThatArentWater = new List<Biome> { LoadedChunks[Center.x, Center.y].Biome };
-        // foreach (Vector2Int point in points)
-        // {
-        //     averageHeight += LoadedChunks[point.x, point.y].Height;
-
-        //     if (LoadedChunks[point.x, point.y].Biome != Biome.Water)
-        //     {
-        //         biomesThatArentWater.Add(LoadedChunks[point.x, point.y].Biome);
-        //     }
-        // }
-
-        // averageHeight /= 7;
-        // int newHeight = (int)Mathf.Round(averageHeight);
-        // Biome mostCommonHex = biomesThatArentWater
-        //     .GroupBy(q => q)
-        //     .OrderByDescending(gp => gp.Count())
-        //     .First().Key;
-        // foreach (Vector2Int point in points)
-        // {
-        //     LoadedChunks[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
-        // }
 
         return (TownHall)InstantiateBuilding(Vector2Int.zero, BuildingType.TownHall);
     }
@@ -198,26 +193,40 @@ public class BoardManager : MonoBehaviour
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
-    private void SpawnHexForColumn(Vector2Int chunkIndex, int x, int y, GameObject chunkContainer)
+    // Spawns a hex and returns true if it was retrieved from the cache, and false if instantiated.
+    // The distinction is useful for knowing when the coroutine should yield.
+    private bool SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
     {
-        foreach (int z in this.World.GetUncoveredHexOfColumn(chunkIndex, x, y))
+        GameObject go;
+        if (hexPool.ContainsKey(hex.Biome) && hexPool[hex.Biome].Count > 0)
         {
-            Hexagon iHex = this.World.GetHex(chunkIndex, x, y, z);
-            SpawnHex(iHex, chunkIndex, x, y, z, chunkContainer.transform);
+            // Debug.Log("cached");
+            go = hexPool[hex.Biome].First.Value;
+            hexPool[hex.Biome].RemoveFirst();
+            go.SetActive(true);
+            go.transform.SetParent(chunkContainer);
+            AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
+            return true;
+        }
+        else
+        {
+            go = Instantiate(
+                Prefabs.Hexagons[hex.Biome],
+                Vector3.zero,
+                Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
+                chunkContainer.transform);
+            AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
+            return false;
         }
     }
 
-    private void SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
+    private void AddHexGameObjectToWorld(Hexagon hex, GameObject body, Vector2Int chunkIndex, int x, int y, int z)
     {
         Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
         position.y = z * Constants.HEXAGON_HEIGHT;
-        GameObject go = Instantiate(
-            Prefabs.Hexagons[hex.Biome],
-            position,
-            Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
-            chunkContainer.transform);
-        HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
-        var hexBody = go.GetComponent<HexagonMono>();
+        body.transform.position = position;
+        HexagonMono hexagonScript = body.GetComponent<HexagonMono>();
+        var hexBody = body.GetComponent<HexagonMono>();
         hexBody.Setup(hex, this.seed, new Vector2Int(x, y), z);
         World.SetHexBody(chunkIndex, x, y, z, hexBody);
     }

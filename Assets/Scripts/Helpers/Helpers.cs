@@ -129,7 +129,28 @@ public static class Helpers
         return GetNeighborPosition(new Vector2Int(x, y), direction);
     }
 
+    public static Vector2Int GetNeighborPosition(int x, int y, int z, HexSide direction)
+    {
+        return GetNeighborPosition(new Vector2Int(x, y), direction);
+    }
+
     public static Vector2Int GetNeighborPosition(Vector2Int pos, HexSide direction)
+    {
+        Vector2Int position;
+
+        if (pos.x % 2 == 0)
+        {
+            position = pos + evenNeighborPattern[(int)direction];
+        }
+        else
+        {
+            position = pos + oddNeighborPattern[(int)direction];
+        }
+
+        return position;
+    }
+
+    public static Vector3Int GetNeighborPosition(Vector3Int pos, HexSide direction)
     {
         Vector2Int position;
 

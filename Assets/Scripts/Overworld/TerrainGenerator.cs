@@ -112,6 +112,7 @@ public class TerrainGenerator : MonoBehaviour
         }
 
         this.GeneratedChunk = new Chunk(chunk, segment, container);
+        yield return this.GeneratedChunk.CalculateUncoveredHex();
     }
 
     private static Biome GetBiome(float height, float moisture, System.Random random)

@@ -944,7 +944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &663144871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1674,7 +1674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6645306161aeda40b15c33435bd177e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MOVEMENT_SPEED: 5
+  MOVEMENT_SPEED: 18
   DisableXScroll: 0
   FrozenUntilMouseUp: 0
 --- !u!114 &1886508822

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,7 +21,6 @@ public class Chunk
         this.ChunkIndex = chunkIndex;
         this.Hexes = hexes;
         this.Container = container;
-        CalculateUncoveredHex();
     }
 
     public void DestroyHex(int x, int y, int z)
@@ -30,21 +30,37 @@ public class Chunk
             return;
         }
 
-        Debug.Log($"Destroying {x}, {y}, {z}");
         Hexes[x, y, z] = null;
 
-        if (this.HexBodies[x, y, z] != null)
-        {
-            GameObject.Destroy(this.HexBodies[x, y, z].gameObject);
-        }
         this.HexBodies[x, y, z] = null;
         this.UncoveredBlocks[x, y].Remove(z);
         UncoverNeighbors(x, y, z);
     }
 
-    private void CalculateUncoveredHex()
+    public IEnumerator CalculateUncoveredHex()
     {
         this.UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
+        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        Queue<Vector3Int> queue = new Queue<Vector3Int>();
+
+        // Start at some hex on the top row, and it shouldn't be filled by anything 🙏
+        queue.Enqueue(new Vector3Int(0, 0, Constants.MAX_HEIGHT));
+
+        while (queue.Count > 0)
+        {
+            Vector3Int current = queue.Dequeue();
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2Int neighbor = Helpers.GetNeighborPosition(current.x, current.y, (HexSide)i);
+                MaybeSetUncovered(neighbor.x, neighbor.y, current.z);
+
+                if (GetHex(neighbor.x, neighbor.y, current.z) == null)
+                {
+                    queue.Enqueue(new Vector3Int(neighbor.x, neighbor.y, current.z));
+                }
+            }
+        }
 
         for (int x = 0; x < Constants.CHUNK_SIZE; x++)
         {
@@ -68,6 +84,8 @@ public class Chunk
                         break;
                     }
                 }
+
+                yield return null;
             }
         }
     }

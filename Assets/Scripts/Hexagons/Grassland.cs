@@ -10,7 +10,7 @@ public class Grassland : Hexagon
     public override Biome Biome => Biome.Grassland;
     public override Color BaseColor => ColorExtensions.Create("#477664");
 
-    public override int NumDecorations => 4;
+    public override int NumDecorations => 0;
     public override GameObject GetDecorationBody()
     {
         return Managers.Prefabs.Grass;
