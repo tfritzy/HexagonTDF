@@ -16,11 +16,48 @@ public class Chunk
     private HashSet<int>[,] UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
     private Vector2Int ChunkIndex;
 
-    public Chunk(Vector2Int chunkIndex, Hexagon[,,] hexes, Transform container)
+    public Chunk(Vector2Int chunkIndex, Hexagon[,,] hexes, int[,] tops, Transform container)
     {
         this.ChunkIndex = chunkIndex;
         this.Hexes = hexes;
         this.Container = container;
+
+        for (int y = 0; y < Constants.CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < Constants.CHUNK_SIZE; x++)
+            {
+                UncoveredBlocks[x, y] = new HashSet<int>();
+                UncoveredBlocks[x, y].Add(tops[x, y]);
+                NeedsBody.Add(new Vector3Int(x, y, tops[x, y]));
+
+                int lowestNeighbor = GetLowestNeighbor(tops, x, y);
+                int iHeight = tops[x, y];
+                while (iHeight > 0 && iHeight > lowestNeighbor)
+                {
+                    UncoveredBlocks[x, y].Add(iHeight);
+                    NeedsBody.Add(new Vector3Int(x, y, iHeight));
+                    iHeight -= 1;
+                }
+            }
+        }
+    }
+
+    private int GetLowestNeighbor(int[,] tops, int x, int y)
+    {
+        int lowest = tops[x, y];
+        for (int i = 0; i < 6; i++)
+        {
+            Vector2Int neighbor = Helpers.GetNeighborPosition(x, y, (HexSide)i);
+            if (Helpers.IsInBounds(neighbor, Constants.CHUNK_DIMENSIONS))
+            {
+                if (tops[neighbor.x, neighbor.y] < lowest)
+                {
+                    lowest = tops[neighbor.x, neighbor.y];
+                }
+            }
+        }
+
+        return lowest;
     }
 
     public void DestroyHex(int x, int y, int z)
@@ -35,59 +72,6 @@ public class Chunk
         this.HexBodies[x, y, z] = null;
         this.UncoveredBlocks[x, y].Remove(z);
         UncoverNeighbors(x, y, z);
-    }
-
-    public IEnumerator CalculateUncoveredHex()
-    {
-        this.UncoveredBlocks = new HashSet<int>[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
-        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
-        Queue<Vector3Int> queue = new Queue<Vector3Int>();
-
-        // Start at some hex on the top row, and it shouldn't be filled by anything 🙏
-        queue.Enqueue(new Vector3Int(0, 0, Constants.MAX_HEIGHT));
-
-        while (queue.Count > 0)
-        {
-            Vector3Int current = queue.Dequeue();
-
-            for (int i = 0; i < 6; i++)
-            {
-                Vector2Int neighbor = Helpers.GetNeighborPosition(current.x, current.y, (HexSide)i);
-                MaybeSetUncovered(neighbor.x, neighbor.y, current.z);
-
-                if (GetHex(neighbor.x, neighbor.y, current.z) == null)
-                {
-                    queue.Enqueue(new Vector3Int(neighbor.x, neighbor.y, current.z));
-                }
-            }
-        }
-
-        for (int x = 0; x < Constants.CHUNK_SIZE; x++)
-        {
-            for (int y = 0; y < Constants.CHUNK_SIZE; y++)
-            {
-                for (int z = Constants.MAX_HEIGHT - 1; z >= 0; z--)
-                {
-                    // Mark every hex touching air or transparent block as uncovered.
-                    if (this.Hexes[x, y, z] == null || this.Hexes[x, y, z].IsTransparent)
-                    {
-                        if (UncoveredBlocks[x, y] == null)
-                        {
-                            UncoveredBlocks[x, y] = new HashSet<int>();
-                        }
-
-                        UncoverNeighbors(x, y, z);
-                    }
-                    else
-                    {
-                        // Once we hit an opaque block we can stop. Not doing caves.
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-        }
     }
 
     private void UncoverNeighbors(int x, int y, int z)

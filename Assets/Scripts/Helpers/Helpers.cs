@@ -129,11 +129,6 @@ public static class Helpers
         return GetNeighborPosition(new Vector2Int(x, y), direction);
     }
 
-    public static Vector2Int GetNeighborPosition(int x, int y, int z, HexSide direction)
-    {
-        return GetNeighborPosition(new Vector2Int(x, y), direction);
-    }
-
     public static Vector2Int GetNeighborPosition(Vector2Int pos, HexSide direction)
     {
         Vector2Int position;
@@ -152,18 +147,26 @@ public static class Helpers
 
     public static Vector3Int GetNeighborPosition(Vector3Int pos, HexSide direction)
     {
-        Vector2Int position;
-
-        if (pos.x % 2 == 0)
+        if (direction == HexSide.Up)
         {
-            position = pos + evenNeighborPattern[(int)direction];
+            pos.z += 1;
+            return pos;
+        }
+        else if (direction == HexSide.Down)
+        {
+            pos.z -= 1;
+            return pos;
+        }
+        else if (pos.x % 2 == 0)
+        {
+            pos += (Vector3Int)evenNeighborPattern[(int)direction];
+            return pos;
         }
         else
         {
-            position = pos + oddNeighborPattern[(int)direction];
+            pos += (Vector3Int)oddNeighborPattern[(int)direction];
+            return pos;
         }
-
-        return position;
     }
 
     public static Transform RecursiveFindChild(Transform parent, string childName)
@@ -195,6 +198,7 @@ public static class Helpers
     public static void WorldToChunkPos(int x, int y, int z, out Vector2Int chunkIndex, out Vector3Int subPos)
     {
         chunkIndex = new Vector2Int(x / Constants.CHUNK_SIZE, y / Constants.CHUNK_SIZE);
+        x = Math.Abs(x); y = Math.Abs(y);
         subPos = new Vector3Int(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z);
     }
 

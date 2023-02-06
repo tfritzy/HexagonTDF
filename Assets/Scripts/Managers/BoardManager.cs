@@ -10,7 +10,7 @@ public class BoardManager : MonoBehaviour
     public World World;
     public string ActiveMapName;
     public TownHall TownHall;
-    private const int CHUNK_RENDER_DIST = 4;
+    private const int CHUNK_RENDER_DIST = 3;
 
     private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
     private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
@@ -197,10 +197,14 @@ public class BoardManager : MonoBehaviour
     // The distinction is useful for knowing when the coroutine should yield.
     private bool SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
     {
+        if (hex == null)
+        {
+            return true;
+        }
+
         GameObject go;
         if (hexPool.ContainsKey(hex.Biome) && hexPool[hex.Biome].Count > 0)
         {
-            // Debug.Log("cached");
             go = hexPool[hex.Biome].First.Value;
             hexPool[hex.Biome].RemoveFirst();
             go.SetActive(true);

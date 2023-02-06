@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class TerrainGenerator : MonoBehaviour
+public class TerrainGenerator
 {
     public Chunk GeneratedChunk;
     public Hexagon[,] Segment;
@@ -78,6 +78,7 @@ public class TerrainGenerator : MonoBehaviour
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
 
         var segment = new Hexagon[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE, Constants.MAX_HEIGHT];
+        int[,] tops = new int[Constants.CHUNK_SIZE, Constants.CHUNK_SIZE];
         System.Random random = new System.Random(seed);
         int yOffset = chunk.y * Constants.CHUNK_SIZE;
         int xOffset = chunk.x * Constants.CHUNK_SIZE;
@@ -92,12 +93,14 @@ public class TerrainGenerator : MonoBehaviour
                 float yD = y / Scale;
                 float heightValue = .6f + heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 int height = (int)(heightValue * 5) + 10;
+                Helpers.WorldToChunkPos(x, y, height, out Vector2Int chunkIndex, out Vector3Int subPos);
+                tops[subPos.x, subPos.y] = height;
 
                 float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 moistureValue = (moistureValue + 1) / 2;
 
                 Biome biome = GetBiome(heightValue, moistureValue, random);
-                segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(biome);
+                segment[subPos.x, subPos.y, height] = Prefabs.GetHexagonScript(biome);
 
                 // Fill in ground with stone.
                 height -= 1;
@@ -111,8 +114,7 @@ public class TerrainGenerator : MonoBehaviour
             yield return null;
         }
 
-        this.GeneratedChunk = new Chunk(chunk, segment, container);
-        yield return this.GeneratedChunk.CalculateUncoveredHex();
+        this.GeneratedChunk = new Chunk(chunk, segment, tops, container);
     }
 
     private static Biome GetBiome(float height, float moisture, System.Random random)

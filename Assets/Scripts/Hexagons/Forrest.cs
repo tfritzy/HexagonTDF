@@ -13,7 +13,7 @@ public class Forrest : Hexagon
     {
     }
 
-    public override float ObstacleChance => 0f;
+    public override float ObstacleChance => .2f;
     public override GameObject GetObstacleBody()
     {
         return Managers.Prefabs.Trees[
@@ -21,7 +21,7 @@ public class Forrest : Hexagon
         ];
     }
 
-    public override int NumDecorations => 0;
+    public override int NumDecorations => 2;
     public override GameObject GetDecorationBody()
     {
         return Managers.Prefabs.Grass;
