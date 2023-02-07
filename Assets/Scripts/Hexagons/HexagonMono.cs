@@ -10,16 +10,21 @@ public class HexagonMono : MonoBehaviour, Interactable
     public bool IsWalkable { get { return Hexagon.IsWalkable && !HasObstacle; } }
     public Vector2Int GridPosition { get; private set; }
     public int Height { get; private set; }
+    public Vector3Int ChunkPos { get; private set; }
+    public Vector2Int Chunk { get; private set; }
     public Hexagon Hexagon { get; private set; }
     protected List<MeshRenderer> meshRenderers;
     private MeshRenderer hexMesh;
     public bool HasObstacle { get; private set; }
 
-    public virtual void Setup(Hexagon hex, int seed, Vector2Int gridPosition, int height)
+    public virtual void Setup(Hexagon hex, int seed, Vector2Int chunkPos, Vector3Int chunkSubPos)
     {
         this.Hexagon = hex;
-        this.Height = height;
-        this.GridPosition = gridPosition;
+        Helpers.ChunkToWorldPos(chunkPos, chunkSubPos, out Vector3Int gridPosition);
+        this.GridPosition = (Vector2Int)gridPosition;
+        this.Height = gridPosition.z;
+        this.ChunkPos = chunkSubPos;
+        this.Chunk = chunkPos;
         this.hexMesh = transform.Find("hex")?.GetComponent<MeshRenderer>();
         FindMeshRenderers();
         InitObstacle(seed);

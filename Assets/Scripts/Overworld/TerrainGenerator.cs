@@ -14,10 +14,10 @@ public class TerrainGenerator
     private int Seed;
     private HexGridGenerator hexGridGenerator;
 
-    public const float Scale = 50;
+    public const float Scale = 25;
     public const int Octaves = 5;
     public const float Persistence = .55f;
-    public const float Lacunarity = 10;
+    public const float Lacunarity = 2;
 
     private struct BiomeFormationCriterion
     {
@@ -57,22 +57,22 @@ public class TerrainGenerator
             }
         },
         new BiomeCriteria{
-            Height = .3f,
+            Height = -3f,
             Criteria = new BiomeFormationCriterion[]
             {
                 new BiomeFormationCriterion {Biome = Biome.Sand, MinMoisture = float.MinValue},
             }
         },
-        new BiomeCriteria{
-            Height = -3f,
-            Criteria = new BiomeFormationCriterion[]
-            {
-                new BiomeFormationCriterion {Biome = Biome.Water, MinMoisture = float.MinValue},
-            }
-        },
+        // new BiomeCriteria{
+        //     Height = -3f,
+        //     Criteria = new BiomeFormationCriterion[]
+        //     {
+        //         new BiomeFormationCriterion {Biome = Biome.Water, MinMoisture = float.MinValue},
+        //     }
+        // },
     };
 
-    public IEnumerator GenerateChunk(Vector2Int chunk, int seed, Transform container)
+    public void GenerateChunk(Vector2Int chunk, int seed, Transform container)
     {
         OpenSimplexNoise heightNoise = new OpenSimplexNoise(seed);
         OpenSimplexNoise moistureNoise = new OpenSimplexNoise(seed + 1);
@@ -82,8 +82,6 @@ public class TerrainGenerator
         System.Random random = new System.Random(seed);
         int yOffset = chunk.y * Constants.CHUNK_SIZE;
         int xOffset = chunk.x * Constants.CHUNK_SIZE;
-
-        yield return null;
 
         for (int y = yOffset; y < yOffset + Constants.CHUNK_SIZE; y++)
         {
@@ -102,6 +100,11 @@ public class TerrainGenerator
                 Biome biome = GetBiome(heightValue, moistureValue, random);
                 segment[subPos.x, subPos.y, height] = Prefabs.GetHexagonScript(biome);
 
+                for (int iHeight = height + 1; iHeight <= Constants.WATER_HEIGHT; iHeight++)
+                {
+                    segment[subPos.x, subPos.y, iHeight] = Prefabs.GetHexagonScript(Biome.Water);
+                }
+
                 // Fill in ground with stone.
                 height -= 1;
                 while (height >= 0)
@@ -110,8 +113,6 @@ public class TerrainGenerator
                     height -= 1;
                 }
             }
-
-            yield return null;
         }
 
         this.GeneratedChunk = new Chunk(chunk, segment, tops, container);

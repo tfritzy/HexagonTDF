@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class Chunk
 {
+    private bool _isActive = false;
+    public bool IsActive
+    {
+        get { return _isActive; }
+        set { _isActive = value; this.Container.gameObject.SetActive(value); }
+    }
     public HashSet<Vector3Int> NeedsBody = new HashSet<Vector3Int>();
     public Transform Container { get; private set; }
 

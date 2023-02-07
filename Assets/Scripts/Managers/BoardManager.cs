@@ -16,15 +16,21 @@ public class BoardManager : MonoBehaviour
     private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
     private int seed;
     private Dictionary<Biome, LinkedList<GameObject>> hexPool = new Dictionary<Biome, LinkedList<GameObject>>();
+    private bool isWorldGenerated;
 
     void Awake()
     {
         this.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        SpawnMap();
+        StartCoroutine(SpawnMap());
     }
 
     void Update()
     {
+        if (!isWorldGenerated)
+        {
+            return;
+        }
+
         Vector2Int currentChunk = Helpers.ToGridPosition(Managers.Camera.transform.position) / Constants.CHUNK_SIZE;
         if (currentChunk != renderedChunk)
         {
@@ -51,18 +57,20 @@ public class BoardManager : MonoBehaviour
 
     public void DestroyHex(int x, int y, int z)
     {
+        Debug.Log($"Destroying {x} {y} {z}");
         Helpers.WorldToChunkPos(x, y, z, out Vector2Int chunkIndex, out Vector3Int subPos);
-        UnloadHex(chunkIndex, x, y, z);
-        World.DestroyHex(chunkIndex, x, y, z);
+        UnloadHex(chunkIndex, subPos.x, subPos.y, z);
+        World.DestroyHex(chunkIndex, subPos.x, subPos.y, z);
         foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
             Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
-            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, World.Chunks[chunkIndex].Container);
+            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z);
         }
     }
 
     private void UpdatedLoadedChunks(Vector2Int currentChunk)
     {
+        Debug.Log("Updating chunks");
         HashSet<Vector2Int> chunksInRange = new HashSet<Vector2Int>();
         for (int x = currentChunk.x - CHUNK_RENDER_DIST; x < currentChunk.x + CHUNK_RENDER_DIST; x++)
         {
@@ -70,10 +78,14 @@ public class BoardManager : MonoBehaviour
             {
                 Vector2Int chunkIndex = new Vector2Int(x, y);
                 chunksInRange.Add(chunkIndex);
-                if (!World.Chunks.ContainsKey(chunkIndex) && !chunkLoadingCoroutines.ContainsKey(chunkIndex))
+                if (World.Chunks.ContainsKey(chunkIndex) && !chunkLoadingCoroutines.ContainsKey(chunkIndex) && !World.Chunks[chunkIndex].IsActive)
                 {
                     var coroutine = StartCoroutine(LoadChunk(chunkIndex));
                     chunkLoadingCoroutines.Add(chunkIndex, coroutine);
+                }
+                else if (World.Chunks.ContainsKey(chunkIndex) && !World.Chunks[chunkIndex].IsActive)
+                {
+                    World.Chunks[chunkIndex].IsActive = true;
                 }
             }
         }
@@ -82,27 +94,28 @@ public class BoardManager : MonoBehaviour
         {
             if (!chunksInRange.Contains(chunkIndex))
             {
-                StartCoroutine(UnloadChunk(chunkIndex));
+                UnloadChunk(chunkIndex);
             }
         }
     }
 
-    private IEnumerator LoadChunk(Vector2Int chunkIndex)
+    private void GenerateChunk(Vector2Int chunkIndex)
     {
-        // Spread out the starts a bit.
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0, .25f));
-
         var chunkContainer = new GameObject("Chunk " + chunkIndex);
         var terrainGenerator = new TerrainGenerator();
-        yield return terrainGenerator.GenerateChunk(chunkIndex, this.seed, chunkContainer.transform);
+        terrainGenerator.GenerateChunk(chunkIndex, this.seed, chunkContainer.transform);
         World.Chunks[chunkIndex] = terrainGenerator.GeneratedChunk;
         Chunk chunk = World.Chunks[chunkIndex];
+    }
 
+    private IEnumerator LoadChunk(Vector2Int chunkIndex)
+    {
+        Debug.Log($"Loading chunk {chunkIndex}");
         int i = 0;
         foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
             Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
-            bool isFromCache = SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z, chunkContainer.transform);
+            bool isFromCache = SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z);
             if (isFromCache)
             {
                 i += 1;
@@ -114,41 +127,34 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        World.Chunks[chunkIndex].IsActive = true;
         chunkLoadingCoroutines.Remove(chunkIndex);
     }
 
-    private IEnumerator UnloadChunk(Vector2Int chunkIndex)
+    private void UnloadChunk(Vector2Int chunkIndex)
     {
         Chunk chunk = World.Chunks[chunkIndex];
-        for (int y = 0; y < Constants.CHUNK_SIZE; y++)
-        {
-            for (int x = 0; x < Constants.CHUNK_SIZE; x++)
-            {
-                foreach (int z in chunk.GetUncoveredOfColumn(x, y))
-                {
-                    Hexagon hex = chunk.GetHex(x, y, z);
-                    HexagonMono hexBody = chunk.GetBody(x, y, z);
+        chunk.IsActive = false;
+    }
 
-                    if (hexBody != null)
-                    {
-                        UnloadHex(chunkIndex, x, y, z);
-                    }
-                }
+    private IEnumerator SpawnMap()
+    {
+        this.World = new World();
+
+        for (int x = 0; x < Constants.WORLD_CHUNK_WIDTH; x++)
+        {
+            for (int y = 0; y < Constants.WORLD_CHUNK_WIDTH; y++)
+            {
+                GenerateChunk(new Vector2Int(x, y));
             }
+
+            Debug.Log($"Generated {x} chunk rows out of {Constants.WORLD_CHUNK_WIDTH}");
 
             yield return null;
         }
 
-        World.Chunks.Remove(chunkIndex);
-    }
-
-    private void SpawnMap()
-    {
-        this.World = new World();
-
-        // TownHall = SpawnTownHall();
-        // AddBuilding(TownHall.GridPosition, TownHall);
-        // SpawnHero();
+        Debug.Log("Done generating world");
+        isWorldGenerated = true;
     }
 
     private TownHall SpawnTownHall()
@@ -195,7 +201,7 @@ public class BoardManager : MonoBehaviour
 
     // Spawns a hex and returns true if it was retrieved from the cache, and false if instantiated.
     // The distinction is useful for knowing when the coroutine should yield.
-    private bool SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z, Transform chunkContainer)
+    private bool SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z)
     {
         if (hex == null)
         {
@@ -208,7 +214,7 @@ public class BoardManager : MonoBehaviour
             go = hexPool[hex.Biome].First.Value;
             hexPool[hex.Biome].RemoveFirst();
             go.SetActive(true);
-            go.transform.SetParent(chunkContainer);
+            go.transform.SetParent(World.Chunks[chunkIndex].Container);
             AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
             return true;
         }
@@ -218,7 +224,7 @@ public class BoardManager : MonoBehaviour
                 Prefabs.Hexagons[hex.Biome],
                 Vector3.zero,
                 Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
-                chunkContainer.transform);
+                World.Chunks[chunkIndex].Container.transform);
             AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
             return false;
         }
@@ -231,7 +237,7 @@ public class BoardManager : MonoBehaviour
         body.transform.position = position;
         HexagonMono hexagonScript = body.GetComponent<HexagonMono>();
         var hexBody = body.GetComponent<HexagonMono>();
-        hexBody.Setup(hex, this.seed, new Vector2Int(x, y), z);
+        hexBody.Setup(hex, this.seed, chunkIndex, new Vector3Int(x, y, z));
         World.SetHexBody(chunkIndex, x, y, z, hexBody);
     }
 

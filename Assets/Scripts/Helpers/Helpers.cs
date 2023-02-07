@@ -202,6 +202,12 @@ public static class Helpers
         subPos = new Vector3Int(x % Constants.CHUNK_SIZE, y % Constants.CHUNK_SIZE, z);
     }
 
+    public static void ChunkToWorldPos(Vector2Int chunkIndex, Vector3Int subPos, out Vector3Int worldPos)
+    {
+        worldPos = new Vector3Int(subPos.x, subPos.y, subPos.z);
+        worldPos += (Vector3Int)(chunkIndex * Constants.CHUNK_SIZE);
+    }
+
     public static float GetTopHexWorldHeight(Vector2Int chunkIndex, int x, int y)
     {
         return Managers.Board.World.GetTopHexHeight(chunkIndex, x, y) * Constants.HEXAGON_HEIGHT;
