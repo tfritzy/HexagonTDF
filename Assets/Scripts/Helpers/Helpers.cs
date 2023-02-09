@@ -215,8 +215,8 @@ public static class Helpers
 
     public static Vector3 ToWorldPosition(Vector2Int pos)
     {
-        Vector2Int chunk = new Vector2Int(pos.x / Constants.CHUNK_SIZE, pos.y / Constants.CHUNK_SIZE);
-        return ToWorldPosition(chunk, pos.x, pos.y);
+        Helpers.WorldToChunkPos(pos, out Vector2Int chunk, out Vector3Int subPos);
+        return ToWorldPosition(chunk, subPos.x, subPos.y);
     }
 
     public static Vector3 ToWorldPosition(int x, int y)

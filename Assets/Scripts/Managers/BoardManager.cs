@@ -121,7 +121,7 @@ public class BoardManager : MonoBehaviour
                 i += 1;
             }
 
-            if (i % 10 == 0)
+            if (i % 40 == 0)
             {
                 yield return null;
             }

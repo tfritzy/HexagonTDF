@@ -11,6 +11,7 @@ public class LumberCamp : Building
     public override InventoryCell InventoryCell => _inventoryCell;
     public override string Name => charName;
     private const string charName = "Lumber camp";
+    public override bool NeedsConstruction => false;
     public override Dictionary<ItemType, int> ItemsNeededForConstruction => _itemsNeededForConstruction;
     private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
     {

@@ -25,8 +25,9 @@ public abstract class Building : Character
     private ConstructionProgress constructionProgressHoverer;
     private float renderedConstructionPercent;
     private float lastConstructionIncrementTime;
-    private const string CONSTRUCTION_MAT_CONSTRUCTED_PROP = "_PercentConstructed";
-    private const string CONSTRUCTION_MAT_MIN_Y = "_ModelMinY";
+    private const string CONSTRUCTION_MAT_CONSTRUCTED_PROP = "_ConstructedPercent";
+    private const string CONSTRUCTION_MAT_MIN_Y = "_Y_Min";
+    private const string CONSTRUCTION_MAT_MAX_Y = "_Y_Max";
 
     public override void Setup()
     {
@@ -61,9 +62,10 @@ public abstract class Building : Character
         this.ItemsUsedForConstruction = new Dictionary<ItemType, int>();
         this.SetMaterial(Prefabs.GetMaterial(MaterialType.UnderConstruction));
         this.underConstructionMaterial = this.Body.GetComponent<MeshRenderer>().material;
-        this._bodyBounds = this.Body.GetComponent<MeshRenderer>().bounds;
+        this._bodyBounds = this.Body.GetComponent<MeshRenderer>().localBounds;
         this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_CONSTRUCTED_PROP, 0f);
         this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_MIN_Y, this._bodyBounds.min.y);
+        this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_MAX_Y, this._bodyBounds.extents.y);
         this.constructionProgressHoverer = (ConstructionProgress)Managers.UI.ShowHoverer(Hoverer.ConstructionProgress, this.transform);
 
         foreach (ItemType item in ItemsNeededForConstruction.Keys)
@@ -164,7 +166,10 @@ public abstract class Building : Character
         Managers.UI.HideHoverer(this.constructionProgressHoverer);
         if (numItemsUsedForConstruction >= numItemsNeededForConstruction)
         {
-            this.Body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.ColorPalette);
+            if (this.Body.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
+            {
+                meshRenderer.material = Prefabs.GetMaterial(MaterialType.ColorPalette);
+            }
         }
     }
 }

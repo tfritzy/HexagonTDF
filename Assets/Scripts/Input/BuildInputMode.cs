@@ -151,7 +151,11 @@ public class BuildInputMode : InputMode
         Transform body = building.transform.Find("Body");
         body.SetParent(null);
         GameObject.Destroy(building);
-        body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
+        if (body.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
+        {
+            body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
+        }
+
         this.previewBuilding = body.gameObject;
     }
 
@@ -169,6 +173,7 @@ public class BuildInputMode : InputMode
             return;
         }
 
+        Debug.Log("Building building at " + hex.GridPosition);
         Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
         Managers.Board.SetBuilding(hex.GridPosition, building);
 

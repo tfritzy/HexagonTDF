@@ -92,7 +92,6 @@ public class TerrainGenerator
                 float heightValue = .6f + heightNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 int height = (int)(heightValue * 5) + 10;
                 Helpers.WorldToChunkPos(x, y, height, out Vector2Int chunkIndex, out Vector3Int subPos);
-                tops[subPos.x, subPos.y] = height;
 
                 float moistureValue = (float)moistureNoise.Evaluate(xD, yD, Octaves, Persistence, Lacunarity);
                 moistureValue = (moistureValue + 1) / 2;
@@ -100,9 +99,11 @@ public class TerrainGenerator
                 Biome biome = GetBiome(heightValue, moistureValue, random);
                 segment[subPos.x, subPos.y, height] = Prefabs.GetHexagonScript(biome);
 
+                int maxHeight = height;
                 for (int iHeight = height + 1; iHeight <= Constants.WATER_HEIGHT; iHeight++)
                 {
                     segment[subPos.x, subPos.y, iHeight] = Prefabs.GetHexagonScript(Biome.Water);
+                    maxHeight = iHeight;
                 }
 
                 // Fill in ground with stone.
@@ -112,6 +113,8 @@ public class TerrainGenerator
                     segment[x - xOffset, y - yOffset, height] = Prefabs.GetHexagonScript(Biome.Stone);
                     height -= 1;
                 }
+
+                tops[subPos.x, subPos.y] = maxHeight;
             }
         }
 

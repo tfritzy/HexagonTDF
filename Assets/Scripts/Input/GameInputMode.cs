@@ -10,6 +10,11 @@ public class GameInputMode : InputMode
         {
             Managers.InputManager.OpenSelectedCharacterMode(characters[0]);
         }
+        else if (hexes.Count > 0)
+        {
+            HexagonMono hex = hexes.First();
+            Managers.Board.DestroyHex(hex.GridPosition.x, hex.GridPosition.y, hex.Height);
+        }
     }
 
     public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
@@ -18,8 +23,7 @@ public class GameInputMode : InputMode
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
-        HexagonMono hex = hexes.First();
-        Managers.Board.DestroyHex(hex.GridPosition.x, hex.GridPosition.y, hex.Height);
+
     }
 
     public override void Update()
