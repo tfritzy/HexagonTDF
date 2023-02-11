@@ -329,34 +329,64 @@ public class ConveyorCell : Cell
 
     private void LinkConveyors(ConveyorCell source, ConveyorCell target)
     {
+        if (target?.Next == source)
+        {
+            Debug.Log("target next == source");
+            target.Next = null;
+            target.OutputBelt = null;
+        }
+
         HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
         HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
-
-        // if (this.Next != null)
-        // {
-        //     HexSide existingTargetInputSide = GetOppositeSide(this.OutputBelt.Side);
-        //     this.Next.InputBelts.Remove(existingTargetInputSide);
-        //     ConfigureLines(this.Next);
-        // }
 
         // todo: recalculate positions of existing items on output belt.
         source.OutputBelt = new Belt(
             new LinkedList<ItemOnBelt>(),
             GetOutputPath(sourceOutputSide, source.Owner.transform.position),
             sourceOutputSide);
-
-        if (target.InputBelts == null)
-        {
-            target.InputBelts = new Dictionary<HexSide, Belt>();
-        }
-        target.InputBelts[targetInputSide] = new Belt(
-            new LinkedList<ItemOnBelt>(),
-            GetInputPath(targetInputSide, target.Owner.transform.position),
-            targetInputSide);
         source.Next = target;
+
+        source.RecalculateInputs();
+        target.RecalculateInputs();
 
         ConfigureLines(source);
         ConfigureLines(target);
+    }
+
+    private void RecalculateInputs()
+    {
+        if (this.InputBelts == null)
+        {
+            this.InputBelts = new Dictionary<HexSide, Belt>();
+        }
+
+        HashSet<HexSide> foundInputs = new HashSet<HexSide>();
+        for (int i = 0; i < 6; i++)
+        {
+            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition.x, this.Owner.GridPosition.y, (HexSide)i);
+            Building neighborBuilding = Managers.Board.GetBuilding(neighbor);
+            if (neighborBuilding?.ConveyorCell != null && neighborBuilding.ConveyorCell.Next == this)
+            {
+                HexSide neighborOutputSide = CalculateHexSide(neighborBuilding.transform.position, this.Owner.transform.position);
+                HexSide inputSide = GetOppositeSide(neighborOutputSide);
+                if (!this.InputBelts.ContainsKey(inputSide))
+                {
+                    this.InputBelts[inputSide] = new Belt(
+                        new LinkedList<ItemOnBelt>(),
+                        GetInputPath(inputSide, this.Owner.transform.position),
+                        inputSide);
+                }
+                foundInputs.Add(inputSide);
+            }
+        }
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (!foundInputs.Contains((HexSide)i) && this.InputBelts.ContainsKey((HexSide)i))
+            {
+                this.InputBelts.Remove((HexSide)i);
+            }
+        }
     }
 
     private static void ConfigureLines(ConveyorCell conveyor)
@@ -374,7 +404,7 @@ public class ConveyorCell : Cell
 
         for (int i = 0; i < points.Count; i++)
         {
-            points[i] += Vector3.up * .2f;
+            points[i] += Vector3.up * .5f;
         }
 
         conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;

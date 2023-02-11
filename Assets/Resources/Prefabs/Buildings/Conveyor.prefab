@@ -81,6 +81,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Disabled: 0
   Body: {fileID: 0}
+  Animator: {fileID: 0}
+  ShouldInstaBuild: 0
 --- !u!120 &7680015874735327014
 LineRenderer:
   serializedVersion: 2

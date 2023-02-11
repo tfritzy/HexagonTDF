@@ -224,7 +224,7 @@ Transform:
   - {fileID: 230432614}
   - {fileID: 1407331932}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &282042453
 GameObject:
@@ -357,7 +357,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.31}
 --- !u!1 &372329260
 GameObject:
@@ -832,7 +832,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &554414336
 GameObject:
@@ -1052,7 +1052,7 @@ Transform:
   - {fileID: 1005745529}
   - {fileID: 554414337}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &811251943
 GameObject:
@@ -1309,7 +1309,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1102847301
 MonoBehaviour:
@@ -1435,7 +1435,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1353032100
 GameObject:
@@ -1468,7 +1468,7 @@ Transform:
   - {fileID: 811251944}
   - {fileID: 672020885}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1407331931
 GameObject:
@@ -1619,7 +1619,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1547876851
 GameObject:
@@ -1692,7 +1692,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!1 &1609710964
 GameObject:
@@ -1747,71 +1747,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 100, y: 0.6077161, z: 100}
   m_Center: {x: 0, y: -0.30361295, z: 0}
---- !u!1001 &1799385219
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 392295490369615355, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 9cee68fbe820ce245bef7d6fcf03f148, type: 2}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 85.24757
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.0000009536743
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 116.27041
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3848616178806195376, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4477379206566698506, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
-      propertyPath: m_Name
-      value: ArcherFortress
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 763a4393869fa6b428aa19b7ecfcceda, type: 3}
 --- !u!1 &1886508820
 GameObject:
   m_ObjectHideFlags: 0

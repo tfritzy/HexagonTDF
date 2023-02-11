@@ -115,12 +115,7 @@ public class BuildInputMode : InputMode
             return false;
         }
 
-        if (target.ConveyorCell.Next == source.ConveyorCell)
-        {
-            return false;
-        }
-
-        if (target.ConveyorCell.IsTermination)
+        if (target.ConveyorCell.IsSource)
         {
             return false;
         }
