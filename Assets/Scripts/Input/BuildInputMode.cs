@@ -53,7 +53,7 @@ public class BuildInputMode : InputMode
 
     public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
     {
-        if (this.State == BuildInputState.RetargetingConveyor)
+        if (this.State == BuildInputState.RetargetingConveyor && hexes.Count > 0)
         {
             Character building = Managers.Board.GetBuilding(hexes.First().GridPosition);
             ArrowIndicator.transform.LookAt(hexes.First().transform);
@@ -175,7 +175,18 @@ public class BuildInputMode : InputMode
         ExitPreviewState();
     }
 
+    private void ListenToKeyInput()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Managers.UI.ShowPage(Page.ActionDrawer);
+            Managers.InputManager.SetGameInputMode();
+            ExitPreviewState();
+        }
+    }
+
     public override void Update()
     {
+        ListenToKeyInput();
     }
 }

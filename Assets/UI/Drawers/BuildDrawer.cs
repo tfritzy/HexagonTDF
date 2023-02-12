@@ -51,7 +51,7 @@ public class BuildDrawer : Drawer
 
     private void GoBack()
     {
-        Managers.UI.Back();
+        Managers.UI.ShowPage(Page.ActionDrawer);
         Managers.InputManager.SetGameInputMode();
     }
 }
