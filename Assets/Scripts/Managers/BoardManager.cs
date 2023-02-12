@@ -148,8 +148,6 @@ public class BoardManager : MonoBehaviour
                 GenerateChunk(new Vector2Int(x, y));
             }
 
-            Debug.Log($"Generated {x} chunk rows out of {Constants.WORLD_CHUNK_WIDTH}");
-
             yield return null;
         }
 

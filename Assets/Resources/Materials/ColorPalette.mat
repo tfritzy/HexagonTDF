@@ -195,7 +195,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FireColor: {r: 1, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.5188679, g: 0.3545241, b: 0.1501127, a: 1}
+    - _FresnelColor: {r: 0.745283, g: 0.67512286, b: 0.5882579, a: 1}
     - _HighColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightDirection: {r: 1, g: 1, b: 1, a: 0}
