@@ -8,13 +8,13 @@ public class TextureScroll : MonoBehaviour
 
     void Start()
     {
-        this.mat = this.GetComponent<LineRenderer>().material;
+        this.mat = this.GetComponent<MeshRenderer>().material;
     }
 
     void Update()
     {
         Vector2 offset = this.mat.mainTextureOffset;
-        offset.x -= .2f * Time.deltaTime;
+        offset.x += .2f * Time.deltaTime;
         this.mat.mainTextureOffset = offset;
     }
 }
