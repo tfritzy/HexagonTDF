@@ -1,9 +1,10 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class LinkingBody : MonoBehaviour
 {
     protected Character Owner;
-    public int LinkCase;
+    public HashSet<HexSide> NeighboredSides;
 
     void Start()
     {
@@ -12,19 +13,22 @@ public abstract class LinkingBody : MonoBehaviour
 
     protected virtual void Setup()
     {
-        this.Owner = this.transform.parent?.GetComponent<Character>();
         CalculateCase();
         InformNeighborsOfChange();
     }
 
+    protected abstract void SetupBody();
+
     public void CalculateCase()
     {
+        this.Owner = this.transform.parent?.GetComponent<Character>();
+
         if (Owner == null)
         {
             return;
         }
 
-        LinkCase = 0;
+        NeighboredSides = new HashSet<HexSide>();
         for (int i = 0; i < 6; i++)
         {
             Vector2Int neighborPos = Helpers.GetNeighborPosition(Owner.GridPosition, (HexSide)i);
@@ -38,10 +42,12 @@ public abstract class LinkingBody : MonoBehaviour
             {
                 if (linkingBody.GetType() == this.GetType())
                 {
-                    LinkCase |= 1 << i;
+                    NeighboredSides.Add((HexSide)i);
                 }
             }
         }
+
+        SetupBody();
     }
 
     private void InformNeighborsOfChange()
@@ -51,7 +57,6 @@ public abstract class LinkingBody : MonoBehaviour
             return;
         }
 
-        LinkCase = 0;
         for (int i = 0; i < 6; i++)
         {
             Vector2Int neighborPos = Helpers.GetNeighborPosition(Owner.GridPosition, (HexSide)i);
