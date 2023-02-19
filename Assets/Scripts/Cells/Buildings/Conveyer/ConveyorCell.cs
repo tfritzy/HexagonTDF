@@ -11,6 +11,7 @@ public class ConveyorCell : Cell
     /// </summary>
     public bool IsSource { get; private set; }
     public bool IsTermination { get; private set; }
+    public bool IsMultiInput { get; private set; }
     private ConveyorCell _next;
     public ConveyorCell Next
     {
@@ -64,10 +65,11 @@ public class ConveyorCell : Cell
         }
     }
 
-    public ConveyorCell(bool isSource = false, bool isTermination = false)
+    public ConveyorCell(bool isSource = false, bool isTermination = false, bool acceptsMultipleInputs = false)
     {
         this.IsSource = isSource;
         this.IsTermination = isTermination;
+        this.IsMultiInput = acceptsMultipleInputs;
     }
 
     public override void Setup(Character owner)
@@ -312,7 +314,8 @@ public class ConveyorCell : Cell
             }
 
             if (building.ConveyorCell.Next == null &&
-                !(building.ConveyorCell != null && building.ConveyorCell.IsTermination))
+                !(building.ConveyorCell != null && building.ConveyorCell.IsTermination) &&
+                (this.IsMultiInput || this.InputBelts.Count == 0))
             {
                 LinkConveyors(building.ConveyorCell, this);
             }
@@ -348,9 +351,6 @@ public class ConveyorCell : Cell
 
         source.RecalculateInputs();
         target.RecalculateInputs();
-
-        ConfigureLines(source);
-        ConfigureLines(target);
     }
 
     private void RecalculateInputs()
@@ -387,28 +387,6 @@ public class ConveyorCell : Cell
                 this.InputBelts.Remove((HexSide)i);
             }
         }
-    }
-
-    private static void ConfigureLines(ConveyorCell conveyor)
-    {
-        List<Vector3> points = new List<Vector3>();
-        if (conveyor.InputBelts != null && conveyor.InputBelts.Values.Count != 0)
-        {
-            points.AddRange(conveyor.InputBelts.Values.First().Points);
-        }
-
-        if (conveyor.OutputBelt?.Points.Count > 0)
-        {
-            points.AddRange(conveyor.OutputBelt.Points);
-        }
-
-        for (int i = 0; i < points.Count; i++)
-        {
-            points[i] += Vector3.up * .5f;
-        }
-
-        conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;
-        conveyor.Owner.GetComponent<LineRenderer>().SetPositions(points.ToArray());
     }
 
     private static List<Vector3> GetPathForAngle(float angle, bool reversed = false)

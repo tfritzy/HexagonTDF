@@ -23,5 +23,7 @@ public class Conveyor : Building
         conveyorCell = new ConveyorCell(false);
 
         base.Setup();
+
+        this.GetComponent<ConveyorBody>().Setup();
     }
 }

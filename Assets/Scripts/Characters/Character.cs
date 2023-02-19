@@ -54,7 +54,7 @@ public abstract class Character : MonoBehaviour
         }
     }
 
-    void Awake()
+    void Start()
     {
         Setup();
     }

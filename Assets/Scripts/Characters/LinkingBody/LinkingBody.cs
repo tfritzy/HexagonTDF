@@ -3,15 +3,10 @@ using System.Collections.Generic;
 
 public abstract class LinkingBody : MonoBehaviour
 {
-    protected Character Owner;
+    public Character Owner;
     public HashSet<HexSide> NeighboredSides;
 
-    void Start()
-    {
-        Setup();
-    }
-
-    protected virtual void Setup()
+    public virtual void Setup()
     {
         CalculateCase();
         InformNeighborsOfChange();
@@ -21,8 +16,6 @@ public abstract class LinkingBody : MonoBehaviour
 
     public void CalculateCase()
     {
-        this.Owner = this.transform.parent?.GetComponent<Character>();
-
         if (Owner == null)
         {
             return;
@@ -66,7 +59,7 @@ public abstract class LinkingBody : MonoBehaviour
                 continue;
             }
 
-            if (neighbor.Body.TryGetComponent<LinkingBody>(out LinkingBody linkingBody))
+            if (neighbor.TryGetComponent<LinkingBody>(out LinkingBody linkingBody))
             {
                 linkingBody.CalculateCase();
             }
