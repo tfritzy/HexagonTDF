@@ -171,8 +171,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   effectIntensity:
-    m_OverrideState: 0
-    m_Value: 1
+    m_OverrideState: 1
+    m_Value: 0.649
   distanceFade:
     m_OverrideState: 0
     m_Value: 0
@@ -207,7 +207,7 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
   output:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
 --- !u!114 &4457376427277123587
 MonoBehaviour:

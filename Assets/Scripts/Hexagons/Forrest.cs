@@ -21,7 +21,7 @@ public class Forrest : Hexagon
         ];
     }
 
-    public override int NumDecorations => 2;
+    public override int NumDecorations => 0;
     public override GameObject GetDecorationBody()
     {
         return Managers.Prefabs.Grass;
