@@ -32,19 +32,18 @@ public class ConveyorBody : LinkingBody
 
     protected override void SetupBody()
     {
-        Debug.Log("Setup body");
         HexSide? inputSide = null;
         if (this.Owner.ConveyorCell?.InputBelts != null && this.Owner.ConveyorCell?.InputBelts?.Values.Count > 0)
         {
             inputSide = this.Owner.ConveyorCell?.InputBelts.Values.ToArray()[0].Side;
         }
         HexSide? outputSide = this.Owner.ConveyorCell.OutputBelt?.Side;
-        Debug.Log($"Sides: {inputSide}, {outputSide}");
 
         if (inputSide != null && outputSide != null)
         {
             float inputAngle = (int)inputSide * -60;
             float outputAngle = (int)outputSide * -60;
+            Debug.Log($"Angles: {inputAngle} {outputAngle}");
             float shortestDelta = Mathf.DeltaAngle(inputAngle, outputAngle);
             float midPoint = inputAngle + shortestDelta / 2;
             shortestDelta = Mathf.Abs(shortestDelta);
@@ -57,6 +56,12 @@ public class ConveyorBody : LinkingBody
 
                 int medianSide = (int)inputSide + 1;
                 CurvedBody.transform.rotation = Quaternion.AngleAxis(midPoint + 240, Vector3.up);
+
+                TextureScroll textureScroll = CurvedBody.GetComponentInChildren<TextureScroll>();
+                if (textureScroll)
+                {
+                    textureScroll.direction = midPoint > inputAngle ? 1 : -1;
+                }
             }
             else if (shortestDelta >= 179)
             {
@@ -78,7 +83,7 @@ public class ConveyorBody : LinkingBody
             }
             else if (outputSide != null)
             {
-                StraightBody.transform.rotation = Quaternion.AngleAxis(((int)outputSide) * -60, Vector3.up);
+                StraightBody.transform.rotation = Quaternion.AngleAxis(((int)outputSide) * -60 + 180, Vector3.up);
             }
         }
     }

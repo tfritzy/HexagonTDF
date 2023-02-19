@@ -5,6 +5,7 @@ using UnityEngine;
 public class TextureScroll : MonoBehaviour
 {
     private Material mat;
+    public int direction = 1;
 
     void Start()
     {
@@ -14,7 +15,7 @@ public class TextureScroll : MonoBehaviour
     void Update()
     {
         Vector2 offset = this.mat.mainTextureOffset;
-        offset.x += .2f * Time.deltaTime;
+        offset.x += direction * .2f * Time.deltaTime;
         this.mat.mainTextureOffset = offset;
     }
 }

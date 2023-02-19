@@ -21,11 +21,9 @@ public class ConveyorCell : Cell
             _next = value;
         }
     }
-
-    // private List<Vector3> pointsOnPath;
-    // private float[] pointProgressCache;
-    // private float totalPathDistance;
     private const float VELOCITY = .75f;
+    private const float ITEM_DIST_ABOVE_GROUND = .38f;
+
 
     // A map of side of a hex to a list of items moving along that path.
     public Dictionary<HexSide, Belt> InputBelts { get; private set; }
@@ -416,17 +414,17 @@ public class ConveyorCell : Cell
         switch (side)
         {
             case (HexSide.North):
-                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, Constants.HEXAGON_r) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(0, ITEM_DIST_ABOVE_GROUND, Constants.HEXAGON_r) };
             case (HexSide.NorthEast):
-                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, .43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(.75f, ITEM_DIST_ABOVE_GROUND, .43f) };
             case (HexSide.SouthEast):
-                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, -.43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(.75f, ITEM_DIST_ABOVE_GROUND, -.43f) };
             case (HexSide.South):
-                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, -Constants.HEXAGON_r) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(0, ITEM_DIST_ABOVE_GROUND, -Constants.HEXAGON_r) };
             case (HexSide.SouthWest):
-                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, -.43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(-.75f, ITEM_DIST_ABOVE_GROUND, -.43f) };
             case (HexSide.NorthWest):
-                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, .43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(-.75f, ITEM_DIST_ABOVE_GROUND, .43f) };
             default: throw new Exception("Unknown side: " + side);
         }
     }
@@ -435,7 +433,6 @@ public class ConveyorCell : Cell
     {
         List<Vector3> points = GetPointsForSide(side);
         points.Reverse();
-        Debug.Log(string.Join(",", points));
         for (int i = 0; i < points.Count; i++)
         {
             points[i] = points[i] + center;

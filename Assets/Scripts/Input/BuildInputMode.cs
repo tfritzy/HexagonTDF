@@ -145,10 +145,10 @@ public class BuildInputMode : InputMode
         Building building = GameObject.Instantiate(Prefabs.GetBuilding(type)).GetComponent<Building>();
         Transform body = building.transform.Find("Body");
         body.SetParent(null);
-        GameObject.Destroy(building);
-        if (body.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
+        GameObject.Destroy(building.gameObject);
+        foreach (MeshRenderer renderer in body.GetComponentsInChildren<MeshRenderer>())
         {
-            body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
+            renderer.material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
         }
 
         this.previewBuilding = body.gameObject;
@@ -170,8 +170,6 @@ public class BuildInputMode : InputMode
 
         Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
         Managers.Board.SetBuilding(hex.GridPosition, building);
-
-        ExitPreviewState();
     }
 
     private void ListenToKeyInput()
@@ -187,5 +185,11 @@ public class BuildInputMode : InputMode
     public override void Update()
     {
         ListenToKeyInput();
+    }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+        this.ExitPreviewState();
     }
 }
