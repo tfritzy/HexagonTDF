@@ -165,4 +165,12 @@ public abstract class Character : MonoBehaviour
     {
         this.Cells.ForEach((Cell cell) => cell.SetEnabled(false));
     }
+
+    public virtual void OnDestroy()
+    {
+        foreach (Cell cell in Cells)
+        {
+            cell.OnDestroy();
+        }
+    }
 }

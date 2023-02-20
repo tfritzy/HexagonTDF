@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-public class ConveyorBody : LinkingBody
+public class ConveyorBody : MonoBehaviour
 {
     public GameObject CurvedBody;
     public GameObject StraightBody;
@@ -30,20 +30,20 @@ public class ConveyorBody : LinkingBody
         return angle;
     }
 
-    protected override void SetupBody()
+    public void Setup()
     {
+        Conveyor owner = this.GetComponent<Conveyor>();
         HexSide? inputSide = null;
-        if (this.Owner.ConveyorCell?.InputBelts != null && this.Owner.ConveyorCell?.InputBelts?.Values.Count > 0)
+        if (owner.ConveyorCell?.InputBelts != null && owner.ConveyorCell?.InputBelts?.Values.Count > 0)
         {
-            inputSide = this.Owner.ConveyorCell?.InputBelts.Values.ToArray()[0].Side;
+            inputSide = owner.ConveyorCell?.InputBelts.Values.ToArray()[0].Side;
         }
-        HexSide? outputSide = this.Owner.ConveyorCell.OutputBelt?.Side;
+        HexSide? outputSide = owner.ConveyorCell.OutputBelt?.Side;
 
         if (inputSide != null && outputSide != null)
         {
             float inputAngle = (int)inputSide * -60;
             float outputAngle = (int)outputSide * -60;
-            Debug.Log($"Angles: {inputAngle} {outputAngle}");
             float shortestDelta = Mathf.DeltaAngle(inputAngle, outputAngle);
             float midPoint = inputAngle + shortestDelta / 2;
             shortestDelta = Mathf.Abs(shortestDelta);

@@ -10,7 +10,7 @@ public class BuildInputMode : InputMode
     public BuildInputState State { get; private set; }
 
     private ResourceCollectionIndicator resourceCollectionIndicator;
-    private GameObject previewBuilding;
+    private Building previewBuilding;
     private Character retargetingConveyorOf;
     private GameObject ArrowIndicator;
 
@@ -47,7 +47,15 @@ public class BuildInputMode : InputMode
     {
         if (this.State == BuildInputState.PreviewingBuilding && hexes.Count > 0)
         {
-            this.previewBuilding.transform.position = hexes.First().transform.position;
+            if (this.previewBuilding == null || this.previewBuilding.GridPosition != hexes.First().GridPosition)
+            {
+                if (this.previewBuilding != null)
+                {
+                    Managers.Board.DestroyBuilding(this.previewBuilding);
+                }
+
+                this.CreatePreviewBuilding(SelectedBuildingType, hexes.First().GridPosition);
+            }
         }
     }
 
@@ -125,40 +133,47 @@ public class BuildInputMode : InputMode
 
     public void SelectBuildingType(BuildingType type)
     {
-        this.CreatePreviewBuilding(type);
         this.SelectedBuildingType = type;
         this.State = BuildInputState.PreviewingBuilding;
     }
 
-    private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)
+    private void CreatePreviewBuilding(BuildingType type, Vector2Int gridPos)
     {
-        return building != BuildingType.Invalid && Managers.Board.GetBuilding(pos) == null;
-    }
-
-    private void CreatePreviewBuilding(BuildingType type)
-    {
-        if (previewBuilding != null)
+        if (!CanBuildBuildingOnHex(gridPos, type))
         {
-            GameObject.Destroy(previewBuilding);
+            return;
         }
 
-        Building building = GameObject.Instantiate(Prefabs.GetBuilding(type)).GetComponent<Building>();
-        Transform body = building.transform.Find("Body");
-        body.SetParent(null);
-        GameObject.Destroy(building.gameObject);
-        foreach (MeshRenderer renderer in body.GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
-        }
+        Helpers.WorldToChunkPos(gridPos, out Vector2Int chunkIndex, out Vector3Int subPos);
+        HexagonMono hex = Managers.Board.World.GetTopHexBody(chunkIndex, subPos.x, subPos.y);
 
-        this.previewBuilding = body.gameObject;
+        if (hex != null)
+        {
+            Building building = Managers.Board.BuildBuilding(type, hex.GridPosition);
+            building.MarkPreview();
+            this.previewBuilding = building;
+        }
     }
 
     private void ExitPreviewState()
     {
-        GameObject.Destroy(previewBuilding);
+        if (previewBuilding != null)
+        {
+            Managers.Board.DestroyBuilding(previewBuilding);
+        }
+
         Managers.UI.HideHoverer(this.resourceCollectionIndicator);
         this.State = BuildInputState.Default;
+    }
+
+    private bool CanBuildBuildingOnHex(Vector2Int pos, BuildingType building)
+    {
+        if (building == BuildingType.Invalid)
+        {
+            return false;
+        }
+
+        return Managers.Board.GetBuilding(pos) == null || Managers.Board.GetBuilding(pos).IsPreview;
     }
 
     private void BuildBuilding(HexagonMono hex, BuildingType type)
@@ -168,8 +183,8 @@ public class BuildInputMode : InputMode
             return;
         }
 
-        Building building = Managers.Board.InstantiateBuilding(hex.GridPosition, type);
-        Managers.Board.SetBuilding(hex.GridPosition, building);
+        Managers.Board.DestroyBuilding(this.previewBuilding);
+        Managers.Board.BuildBuilding(type, hex.GridPosition);
     }
 
     private void ListenToKeyInput()

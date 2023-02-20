@@ -15,4 +15,6 @@ public abstract class Cell
     {
         this.IsEnabled = enabled;
     }
+
+    public virtual void OnDestroy() { }
 }

@@ -37,6 +37,12 @@ public class World
         return Chunks[chunkIndex].GetHex(x, y, height);
     }
 
+    public HexagonMono GetTopHexBody(Vector2Int chunkIndex, int x, int y)
+    {
+        int height = Chunks[chunkIndex].GetTopHex(x, y);
+        return Chunks[chunkIndex].GetBody(x, y, height);
+    }
+
     public Hexagon GetHex(Vector2Int chunkIndex, int x, int y, int z)
     {
         return Chunks[chunkIndex].GetHex(x, y, z);
@@ -62,12 +68,6 @@ public class World
         }
 
         Chunks[chunkIndex].SetBuilding(x, y, z, value);
-    }
-
-    public HexagonMono GetTopHexBody(Vector2Int chunkIndex, int x, int y)
-    {
-        int height = Chunks[chunkIndex].GetTopHex(x, y);
-        return Chunks[chunkIndex].GetBody(x, y, height);
     }
 
     public bool TryGetHexBody(Vector2Int chunkIndex, int x, int y, int z, out HexagonMono hex)

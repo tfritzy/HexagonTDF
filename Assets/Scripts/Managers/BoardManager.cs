@@ -167,7 +167,7 @@ public class BoardManager : MonoBehaviour
         return (TownHall)InstantiateBuilding(Vector2Int.zero, BuildingType.TownHall);
     }
 
-    public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
+    private Building InstantiateBuilding(Vector2Int pos, BuildingType type)
     {
         var buildingGO = GameObject.Instantiate(
             Prefabs.GetBuilding(type),
@@ -248,6 +248,12 @@ public class BoardManager : MonoBehaviour
 
     public void SetBuilding(Vector2Int pos, Building building)
     {
+        Building currentBuilding = GetBuilding(pos);
+        if (building != null && currentBuilding != null && !currentBuilding.IsPreview && currentBuilding != building)
+        {
+            Debug.LogError($"Tried to place a building at {pos} but it's already occupied by {currentBuilding?.name}");
+        }
+
         Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
         World.SetBuilding(
             chunkIndex,
@@ -256,27 +262,78 @@ public class BoardManager : MonoBehaviour
             World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
             building);
 
-        foreach (HexSide side in building.ExtraSize)
+        if (building == null && currentBuilding != null)
         {
-            Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
-            Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
-            World.SetBuilding(
-                chunkIndex,
-                extraPos.x,
-                extraPos.y,
-                World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
-                building);
+            foreach (HexSide side in currentBuilding.ExtraSize)
+            {
+                Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+                Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
+                World.SetBuilding(
+                    chunkIndex,
+                    extraPos.x,
+                    extraPos.y,
+                    World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+                    building);
+            }
         }
-    }
+        else if (building != null)
+        {
+            foreach (HexSide side in building.ExtraSize)
+            {
+                Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+                Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
 
-    public void DestroyBuilding(Building building)
-    {
-        SetBuilding(building.GridPosition, null);
-        Destroy(building.gameObject);
+                currentBuilding = GetBuilding(extraPos);
+                if (currentBuilding != null && !currentBuilding.IsPreview && currentBuilding != building)
+                {
+                    Debug.LogError($"Tried to place a building at {extraPos} but it's already occupied");
+                }
+
+                World.SetBuilding(
+                    chunkIndex,
+                    extraPos.x,
+                    extraPos.y,
+                    World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+                    building);
+            }
+        }
     }
 
     public LinkedList<Vector2Int> GetPathBetweenPoints(Vector2Int startPos, Vector2Int endPos)
     {
         return Navigation.BFS(startPos, endPos, this.World);
+    }
+
+    public Building BuildBuilding(BuildingType buildingType, Vector2Int gridPosition)
+    {
+        Building currentBulding = GetBuilding(gridPosition);
+
+        // You can build on top of a preview, but not a real building.
+        if (currentBulding != null && !currentBulding.IsPreview)
+        {
+            if (currentBulding.IsPreview)
+            {
+                DestroyBuilding(currentBulding);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        Building newBuilding = InstantiateBuilding(gridPosition, buildingType);
+        SetBuilding(gridPosition, newBuilding);
+        return newBuilding;
+    }
+
+    public void DestroyBuilding(Building building)
+    {
+        if (GetBuilding(building.GridPosition) == building)
+        {
+            SetBuilding(building.GridPosition, null);
+        }
+
+        Destroy(building.gameObject);
+        building.OnDestroy();
     }
 }

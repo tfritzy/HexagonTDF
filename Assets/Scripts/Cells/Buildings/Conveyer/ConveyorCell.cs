@@ -12,17 +12,10 @@ public class ConveyorCell : Cell
     public bool IsSource { get; private set; }
     public bool IsTermination { get; private set; }
     public bool IsMultiInput { get; private set; }
-    private ConveyorCell _next;
-    public ConveyorCell Next
-    {
-        get { return _next; }
-        set
-        {
-            _next = value;
-        }
-    }
+    public ConveyorCell Next { get; private set; }
     private const float VELOCITY = .75f;
     private const float ITEM_DIST_ABOVE_GROUND = .38f;
+    private ConveyorBody body;
 
 
     // A map of side of a hex to a list of items moving along that path.
@@ -75,6 +68,8 @@ public class ConveyorCell : Cell
         base.Setup(owner);
         InputBelts = new Dictionary<HexSide, Belt>();
         OutputBelt = null;
+        this.body = this.Owner.GetComponent<ConveyorBody>();
+        this.body.Setup();
         SetupConveyorDirection();
     }
 
@@ -88,6 +83,32 @@ public class ConveyorCell : Cell
         Belt nextPath = null;
         this.Next?.InputBelts.TryGetValue(this.GetOppositeSide(OutputBelt.Side), out nextPath);
         MoveItemsForward(OutputBelt, nextPath);
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        Vector2Int ownerPos = this.Owner.GridPosition;
+        for (int i = 0; i < 6; i++)
+        {
+            Vector2Int neighbor = Helpers.GetNeighborPosition(ownerPos.x, ownerPos.y, (HexSide)i);
+            Building neighborBuilding = Managers.Board.GetBuilding(neighbor);
+            if (neighborBuilding?.ConveyorCell != null)
+            {
+                neighborBuilding.ConveyorCell.InformOfDeath(this);
+            }
+        }
+    }
+
+    private void InformOfDeath(ConveyorCell cell)
+    {
+        if (this.Next == cell)
+        {
+            LinkConveyors(this, null);
+        }
+
+        RecalculateInputs();
     }
 
     private void MoveItemsForward(Belt belt, Belt nextBelt)
@@ -296,11 +317,6 @@ public class ConveyorCell : Cell
 
     private void SetupConveyorDirection()
     {
-        if (Owner.Disabled)
-        {
-            return;
-        }
-
         for (int i = 0; i < 6; i++)
         {
             Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
@@ -312,16 +328,15 @@ public class ConveyorCell : Cell
             }
 
             if (building.ConveyorCell.Next == null &&
-                !(building.ConveyorCell != null && building.ConveyorCell.IsTermination) &&
+                !building.ConveyorCell.IsTermination &&
                 (this.IsMultiInput || this.InputBelts.Count == 0))
             {
                 LinkConveyors(building.ConveyorCell, this);
             }
 
             if (building.ConveyorCell.Next != this &&
-                building.ConveyorCell.Next == null &&
-                building.ResourceCollectionCell == null &&
-                !building.ConveyorCell.IsSource)
+                !building.ConveyorCell.IsSource &&
+                (building.ConveyorCell.IsMultiInput || building.ConveyorCell.InputBelts.Count == 0))
             {
                 LinkConveyors(this, building.ConveyorCell);
             }
@@ -330,9 +345,16 @@ public class ConveyorCell : Cell
 
     private void LinkConveyors(ConveyorCell source, ConveyorCell target)
     {
-        if (target?.Next == source)
+        if (target == null)
         {
-            Debug.Log("target next == source");
+            source.OutputBelt = null;
+            source.Next = null;
+            source.body.Setup();
+            return;
+        }
+
+        if (target.Next == source)
+        {
             target.Next = null;
             target.OutputBelt = null;
         }
@@ -349,6 +371,9 @@ public class ConveyorCell : Cell
 
         source.RecalculateInputs();
         target.RecalculateInputs();
+
+        source.body.Setup();
+        target.body.Setup();
     }
 
     private void RecalculateInputs()

@@ -40,6 +40,8 @@ public abstract class LinkingBody : MonoBehaviour
             }
         }
 
+        Debug.Log($"Num neighbors: " + NeighboredSides.Count);
+
         SetupBody();
     }
 

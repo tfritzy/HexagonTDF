@@ -9,6 +9,7 @@ public abstract class Building : Character
     public virtual bool RequiresConfirmationToBuild => true;
     public virtual List<HexSide> ExtraSize => new List<HexSide>();
     public virtual int InventorySize => 8;
+    public bool IsPreview { get; private set; }
     private InventoryCell _inventory;
 
     // Construction
@@ -170,6 +171,17 @@ public abstract class Building : Character
             {
                 meshRenderer.material = Prefabs.GetMaterial(MaterialType.ColorPalette);
             }
+        }
+    }
+
+    public void MarkPreview()
+    {
+        this.IsPreview = true;
+        this.Disabled = true;
+
+        foreach (MeshRenderer mr in this.GetComponentsInChildren<MeshRenderer>())
+        {
+            mr.material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
         }
     }
 }
