@@ -8,52 +8,49 @@ public class BuildInputMode : InputMode
 {
     public BuildingType SelectedBuildingType;
     public BuildInputState State { get; private set; }
-
     private ResourceCollectionIndicator resourceCollectionIndicator;
-    private Building previewBuilding;
-    private Character retargetingConveyorOf;
-    private GameObject ArrowIndicator;
+    private List<Building> previewBuildings = new List<Building>();
 
     public enum BuildInputState
     {
         Default,
-        PreviewingBuilding,
-        RetargetingConveyor,
+        PlacingBuilding, // Waiting for building placement.
+        Previewing, // Waiting for mouse up event.
     }
 
     public override void OnUp(List<HexagonMono> hexes, List<Character> characters, int button, bool hasDragged)
     {
-        if (State == BuildInputState.RetargetingConveyor && retargetingConveyorOf != null)
-        {
-            Character newConveyor = characters.FirstOrDefault((Character c) => c.ConveyorCell != null);
-            if (CanCharacterAcceptInput(retargetingConveyorOf, newConveyor))
-            {
-                retargetingConveyorOf.ConveyorCell.SwitchOutput(newConveyor.ConveyorCell);
-            }
-
-            ArrowIndicator.SetActive(false);
-            State = BuildInputState.Default;
-        }
-        else if (State == BuildInputState.Default && !hasDragged)
+        if (this.State == BuildInputState.Previewing)
         {
             if (hexes.Count > 0 && SelectedBuildingType != BuildingType.Invalid)
             {
-                BuildBuilding(hexes.First(), SelectedBuildingType);
+                foreach (Building building in previewBuildings)
+                {
+                    Managers.Board.DestroyBuilding(building);
+                    BuildBuilding(building);
+                }
+
+                previewBuildings = new List<Building>();
+                this.State = BuildInputState.PlacingBuilding;
             }
         }
     }
 
     public override void OnHover(List<HexagonMono> hexes, List<Character> characters)
     {
-        if (this.State == BuildInputState.PreviewingBuilding && hexes.Count > 0)
+        if (this.State == BuildInputState.PlacingBuilding && hexes.Count > 0)
         {
-            if (this.previewBuilding == null || this.previewBuilding.GridPosition != hexes.First().GridPosition)
+            if (this.previewBuildings.Count > 0)
             {
-                if (this.previewBuilding != null)
+                foreach (Building building in previewBuildings)
                 {
-                    Managers.Board.DestroyBuilding(this.previewBuilding);
+                    Managers.Board.DestroyBuilding(building);
                 }
+                this.previewBuildings = new List<Building>();
+            }
 
+            if (Managers.Board.GetBuilding(hexes.First().GridPosition) == null)
+            {
                 this.CreatePreviewBuilding(SelectedBuildingType, hexes.First().GridPosition);
             }
         }
@@ -61,80 +58,27 @@ public class BuildInputMode : InputMode
 
     public override void OnDrag(List<HexagonMono> hexes, List<Character> characters)
     {
-        if (this.State == BuildInputState.RetargetingConveyor && hexes.Count > 0)
+        if (this.State == BuildInputState.Previewing)
         {
-            Character building = Managers.Board.GetBuilding(hexes.First().GridPosition);
-            ArrowIndicator.transform.LookAt(hexes.First().transform);
-
-            if (building != null && CanCharacterAcceptInput(retargetingConveyorOf, building))
+            if (hexes.Count > 0 && Managers.Board.GetBuilding(hexes.First().GridPosition) == null)
             {
-                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Constants.Colors.Green;
-            }
-            else
-            {
-                ArrowIndicator.GetComponent<MeshRenderer>().material.color = Constants.Colors.Red;
+                this.CreatePreviewBuilding(SelectedBuildingType, hexes.First().GridPosition);
             }
         }
     }
 
     public override void OnDown(List<HexagonMono> hexes, List<Character> characters, int button)
     {
-        if (this.State == BuildInputState.PreviewingBuilding)
+        if (State == BuildInputState.PlacingBuilding)
         {
-            BuildBuilding(hexes.First(), this.SelectedBuildingType);
+            this.State = BuildInputState.Previewing;
         }
-        else
-        {
-            Character conveyor = characters.FirstOrDefault(
-                        (Character character) =>
-                            character.ConveyorCell != null &&
-                            !character.ConveyorCell.IsTermination);
-
-            if (conveyor != null)
-            {
-                this.State = BuildInputState.RetargetingConveyor;
-                Managers.CameraControl.FrozenUntilMouseUp = true;
-                this.retargetingConveyorOf = conveyor;
-                if (this.ArrowIndicator == null)
-                {
-                    this.ArrowIndicator = GameObject.Instantiate(
-                        Managers.Prefabs.RedArrow3D,
-                        conveyor.transform.position,
-                        new Quaternion());
-                }
-                else
-                {
-                    this.ArrowIndicator.transform.position = conveyor.transform.position;
-                    this.ArrowIndicator.SetActive(true);
-                }
-            }
-        }
-    }
-
-    private bool CanCharacterAcceptInput(Character source, Character target)
-    {
-        if (target?.ConveyorCell == null)
-        {
-            return false;
-        }
-
-        if (source.ConveyorCell == target.ConveyorCell)
-        {
-            return false;
-        }
-
-        if (target.ConveyorCell.IsSource)
-        {
-            return false;
-        }
-
-        return !target.ConveyorCell.IsTermination;
     }
 
     public void SelectBuildingType(BuildingType type)
     {
         this.SelectedBuildingType = type;
-        this.State = BuildInputState.PreviewingBuilding;
+        this.State = BuildInputState.PlacingBuilding;
     }
 
     private void CreatePreviewBuilding(BuildingType type, Vector2Int gridPos)
@@ -151,16 +95,17 @@ public class BuildInputMode : InputMode
         {
             Building building = Managers.Board.BuildBuilding(type, hex.GridPosition);
             building.MarkPreview();
-            this.previewBuilding = building;
+            this.previewBuildings.Add(building);
         }
     }
 
     private void ExitPreviewState()
     {
-        if (previewBuilding != null)
+        foreach (Building building in previewBuildings)
         {
-            Managers.Board.DestroyBuilding(previewBuilding);
+            Managers.Board.DestroyBuilding(building);
         }
+        this.previewBuildings = new List<Building>();
 
         Managers.UI.HideHoverer(this.resourceCollectionIndicator);
         this.State = BuildInputState.Default;
@@ -176,24 +121,35 @@ public class BuildInputMode : InputMode
         return Managers.Board.GetBuilding(pos) == null || Managers.Board.GetBuilding(pos).IsPreview;
     }
 
-    private void BuildBuilding(HexagonMono hex, BuildingType type)
+    private void BuildBuilding(Building previewBuilding)
     {
-        if (!CanBuildBuildingOnHex(hex.GridPosition, type))
+        if (!CanBuildBuildingOnHex(previewBuilding.GridPosition, previewBuilding.Type))
         {
             return;
         }
 
-        Managers.Board.DestroyBuilding(this.previewBuilding);
-        Managers.Board.BuildBuilding(type, hex.GridPosition);
+        Managers.Board.BuildBuilding(previewBuilding.Type, previewBuilding.GridPosition);
     }
 
     private void ListenToKeyInput()
     {
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Managers.UI.ShowPage(Page.ActionDrawer);
-            Managers.InputManager.SetGameInputMode();
-            ExitPreviewState();
+            if (this.previewBuildings.Count > 0)
+            {
+                foreach (Building building in previewBuildings)
+                {
+                    Managers.Board.DestroyBuilding(building);
+                }
+                this.previewBuildings = new List<Building>();
+                this.State = BuildInputState.PlacingBuilding;
+            }
+            else
+            {
+                Managers.UI.ShowPage(Page.ActionDrawer);
+                Managers.InputManager.SetGameInputMode();
+                ExitPreviewState();
+            }
         }
     }
 
