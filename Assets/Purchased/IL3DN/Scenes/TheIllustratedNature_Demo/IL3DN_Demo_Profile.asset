@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558a8e2b6826cf840aae193990ba9f2e, type: 3}
   m_Name: ShadowsMidtonesHighlights
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   shadows:
     m_OverrideState: 1
     m_Value: {x: 1, y: 0.99297076, z: 0.9704475, w: 0.050370183}
@@ -171,41 +171,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   effectIntensity:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.903
   distanceFade:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 0.073
   curvaturePixelRadius:
-    m_OverrideState: 0
-    m_Value: 2
+    m_OverrideState: 1
+    m_Value: 4
   curvatureBrights:
-    m_OverrideState: 0
-    m_Value: 3.81
+    m_OverrideState: 1
+    m_Value: 2.3
   curvatureDarks:
-    m_OverrideState: 0
-    m_Value: 3.95
+    m_OverrideState: 1
+    m_Value: 3.04
   cavitySamples:
-    m_OverrideState: 0
-    m_Value: 2
+    m_OverrideState: 1
+    m_Value: 0
   saturateCavity:
-    m_OverrideState: 0
-    m_Value: 1
+    m_OverrideState: 1
+    m_Value: 0
   cavityRadius:
-    m_OverrideState: 0
-    m_Value: 0.315
+    m_OverrideState: 1
+    m_Value: 0.26
   cavityBrights:
-    m_OverrideState: 0
-    m_Value: 3
+    m_OverrideState: 1
+    m_Value: 3.62
   cavityDarks:
-    m_OverrideState: 0
-    m_Value: 2
+    m_OverrideState: 1
+    m_Value: 5
   normalsSource:
     m_OverrideState: 0
     m_Value: 0
   debugMode:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   output:
     m_OverrideState: 1
     m_Value: 1
