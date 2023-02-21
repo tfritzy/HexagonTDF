@@ -71,6 +71,10 @@ public class ConveyorBody : MonoBehaviour
 
                 StraightBody.transform.rotation = Quaternion.AngleAxis(inputAngle, Vector3.up);
             }
+            else
+            {
+                throw new System.Exception($"Conveyor has impossible input/output configuration. angle: {shortestDelta}");
+            }
         }
         else
         {
