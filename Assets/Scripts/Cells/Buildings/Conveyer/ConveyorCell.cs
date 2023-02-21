@@ -108,6 +108,7 @@ public class ConveyorCell : Cell
             LinkConveyors(this, null);
         }
 
+        SetupConveyorDirection();
         RecalculateInputs();
     }
 
@@ -322,25 +323,98 @@ public class ConveyorCell : Cell
             Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
             Building building = Managers.Board.GetBuilding(neighbor);
 
-            if (building == null || building.ConveyorCell == null)
-            {
-                continue;
-            }
-
-            if (building.ConveyorCell.Next == null &&
-                !building.ConveyorCell.IsTermination &&
-                (this.IsMultiInput || this.InputBelts.Count == 0))
+            if (CanBePrev(building))
             {
                 LinkConveyors(building.ConveyorCell, this);
             }
 
-            if (building.ConveyorCell.Next != this &&
-                !building.ConveyorCell.IsSource &&
-                (building.ConveyorCell.IsMultiInput || building.ConveyorCell.InputBelts.Count == 0))
+            if (CanBeNext(building))
             {
                 LinkConveyors(this, building.ConveyorCell);
             }
         }
+    }
+
+    private bool CanBePrev(Building building)
+    {
+        if (building?.ConveyorCell == null)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.Next == null)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.IsTermination)
+        {
+            return false;
+        }
+
+        if (this.InputBelts.Count > 0 && !this.IsMultiInput)
+        {
+            return false;
+        }
+
+        if (IsInputTooSharp(building))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsInputTooSharp(Building building)
+    {
+        HexSide? outputSide = this.OutputBelt?.Side;
+        HexSide checkInputSide =
+                CalculateHexSide(
+                    this.Owner.transform.position,
+                    building.transform.position);
+        if (outputSide != null)
+        {
+            int angle = Math.Abs((int)checkInputSide - (int)outputSide);
+            Debug.Log($"Angle {angle}");
+
+            // Can't do 60 degree turns.
+            if (angle < 2)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool CanBeNext(Building building)
+    {
+        if (building?.ConveyorCell == null)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.Next == this)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.IsSource)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.InputBelts.Count > 0 && !building.ConveyorCell.IsMultiInput)
+        {
+            return false;
+        }
+
+        if (building.ConveyorCell.IsInputTooSharp((Building)this.Owner))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private void LinkConveyors(ConveyorCell source, ConveyorCell target)

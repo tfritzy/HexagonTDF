@@ -44,6 +44,11 @@ public class BuildInputMode : InputMode
             {
                 foreach (Building building in previewBuildings)
                 {
+                    if (building == null)
+                    {
+                        continue;
+                    }
+
                     Managers.Board.DestroyBuilding(building);
                 }
                 this.previewBuildings = new List<Building>();
