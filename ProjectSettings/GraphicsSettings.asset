@@ -27,19 +27,7 @@ GraphicsSettings:
     m_Shader: {fileID: 102, guid: 0000000000000000f000000000000000, type: 0}
   m_VideoShadersIncludeMode: 2
   m_AlwaysIncludedShaders:
-  - {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 4800000, guid: 31ca90c6da45d27488ca5ac3ad2795f4, type: 3}
-  - {fileID: 4800000, guid: b6548a4b943a92b4982bbeef379b0f81, type: 3}
-  - {fileID: 10505, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10620, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10623, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 4800000, guid: a44c41360a81a8a428497d0dc98af6f9, type: 3}
-  - {fileID: 4800000, guid: d3ee592fc42e82e4a85b6e797240592b, type: 3}
   - {fileID: 4800000, guid: bc2f1525021c4d0478c6152672697263, type: 3}
   - {fileID: 4800000, guid: d50391a8aa6e2fa4d9d701d7aa770400, type: 3}
   - {fileID: 4800000, guid: 14ef78a76ea52bb4d944f08d45431287, type: 3}
