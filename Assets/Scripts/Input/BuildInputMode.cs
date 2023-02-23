@@ -26,8 +26,7 @@ public class BuildInputMode : InputMode
             {
                 foreach (Building building in previewBuildings)
                 {
-                    Managers.Board.DestroyBuilding(building);
-                    BuildBuilding(building);
+                    building.PromoteToRealBuilding();
                 }
 
                 previewBuildings = new List<Building>();

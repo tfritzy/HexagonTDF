@@ -155,10 +155,15 @@ public abstract class Character : MonoBehaviour
 
     public void SetMaterial(Material material)
     {
-        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
+        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>(includeInactive: true))
         {
             renderer.material = material;
         }
+    }
+
+    public virtual void SetDefaultMaterial()
+    {
+        SetMaterial(Prefabs.GetMaterial(MaterialType.ColorPalette));
     }
 
     public void DisableAllCells()

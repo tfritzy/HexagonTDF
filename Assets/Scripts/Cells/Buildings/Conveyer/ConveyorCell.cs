@@ -342,7 +342,7 @@ public class ConveyorCell : Cell
             return false;
         }
 
-        if (building.ConveyorCell.Next == null)
+        if (building.ConveyorCell.Next != null)
         {
             return false;
         }
@@ -375,7 +375,6 @@ public class ConveyorCell : Cell
         if (outputSide != null)
         {
             int angle = Math.Abs((int)checkInputSide - (int)outputSide);
-            Debug.Log($"Angle {angle}");
 
             // Can't do 60 degree turns.
             if (angle < 2)
@@ -389,6 +388,11 @@ public class ConveyorCell : Cell
 
     private bool CanBeNext(Building building)
     {
+        if (this.Next != null)
+        {
+            return false;
+        }
+
         if (building?.ConveyorCell == null)
         {
             return false;
@@ -462,7 +466,7 @@ public class ConveyorCell : Cell
         {
             Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition.x, this.Owner.GridPosition.y, (HexSide)i);
             Building neighborBuilding = Managers.Board.GetBuilding(neighbor);
-            if (neighborBuilding?.ConveyorCell != null && neighborBuilding.ConveyorCell.Next == this)
+            if (neighborBuilding?.ConveyorCell != null && neighborBuilding.ConveyorCell.Next == this && !IsInputTooSharp(neighborBuilding))
             {
                 HexSide neighborOutputSide = CalculateHexSide(neighborBuilding.transform.position, this.Owner.transform.position);
                 HexSide inputSide = GetOppositeSide(neighborOutputSide);

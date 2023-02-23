@@ -4,5 +4,5 @@ public enum MaterialType
     ColorPalette,
     UnderConstruction,
     TransparentBlue,
-    Gold,
+    ConveyorBelt,
 }

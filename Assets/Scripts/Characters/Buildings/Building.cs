@@ -54,6 +54,11 @@ public abstract class Building : Character
 
     private void InitConstruction()
     {
+        if (this.IsPreview)
+        {
+            return;
+        }
+
         if (!NeedsConstruction)
         {
             FinishConstruction();
@@ -165,12 +170,9 @@ public abstract class Building : Character
     private void FinishConstruction()
     {
         Managers.UI.HideHoverer(this.constructionProgressHoverer);
-        if (numItemsUsedForConstruction >= numItemsNeededForConstruction)
+        if (!NeedsConstruction || numItemsUsedForConstruction >= numItemsNeededForConstruction)
         {
-            if (this.Body.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
-            {
-                meshRenderer.material = Prefabs.GetMaterial(MaterialType.ColorPalette);
-            }
+            this.SetDefaultMaterial();
         }
     }
 
@@ -178,10 +180,13 @@ public abstract class Building : Character
     {
         this.IsPreview = true;
         this.Disabled = true;
+        this.SetMaterial(Prefabs.GetMaterial(MaterialType.TransparentBlue));
+    }
 
-        foreach (MeshRenderer mr in this.GetComponentsInChildren<MeshRenderer>())
-        {
-            mr.material = Prefabs.GetMaterial(MaterialType.TransparentBlue);
-        }
+    public void PromoteToRealBuilding()
+    {
+        this.IsPreview = false;
+        this.Disabled = false;
+        InitConstruction();
     }
 }
