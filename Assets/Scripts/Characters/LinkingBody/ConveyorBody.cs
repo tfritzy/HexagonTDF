@@ -6,6 +6,18 @@ public class ConveyorBody : MonoBehaviour
     public GameObject CurvedBody;
     public GameObject StraightBody;
 
+    public Transform[] CurvePoints;
+    public Transform[] StraightPoints;
+
+    private Transform[] reverseCurvePoints;
+    private Transform[] reverseStraightPoints;
+
+    public Transform[] ActivePoints =>
+        StraightBody.activeInHierarchy ?
+            (isReverseCase ? reverseStraightPoints : StraightPoints) :
+            (isReverseCase ? reverseCurvePoints : CurvePoints);
+    private bool isReverseCase;
+
     private float AngleMiddlepoint(float deg1, float deg2)
     {
         float rad1 = deg1 * Mathf.Deg2Rad;
@@ -32,7 +44,14 @@ public class ConveyorBody : MonoBehaviour
 
     public void Setup()
     {
-        Conveyor owner = this.GetComponent<Conveyor>();
+        this.reverseCurvePoints = new Transform[this.CurvePoints.Length];
+        this.CurvePoints.CopyTo(reverseCurvePoints, 0);
+        this.reverseCurvePoints.Reverse();
+        this.reverseStraightPoints = new Transform[this.StraightPoints.Length];
+        this.StraightPoints.CopyTo(reverseStraightPoints, 0);
+        this.reverseStraightPoints.Reverse();
+
+        Character owner = this.transform.parent.GetComponent<Character>();
         HexSide? inputSide = null;
         if (owner.ConveyorCell?.InputBelts != null && owner.ConveyorCell?.InputBelts?.Values.Count > 0)
         {
@@ -56,11 +75,12 @@ public class ConveyorBody : MonoBehaviour
 
                 int medianSide = (int)inputSide + 1;
                 CurvedBody.transform.rotation = Quaternion.AngleAxis(midPoint + 240, Vector3.up);
+                isReverseCase = midPoint < inputAngle;
 
                 TextureScroll textureScroll = CurvedBody.GetComponentInChildren<TextureScroll>();
                 if (textureScroll)
                 {
-                    textureScroll.direction = midPoint > inputAngle ? 1 : -1;
+                    textureScroll.direction = isReverseCase ? -1 : 1;
                 }
             }
             else if (shortestDelta >= 179)
@@ -70,6 +90,7 @@ public class ConveyorBody : MonoBehaviour
                 StraightBody.SetActive(true);
 
                 StraightBody.transform.rotation = Quaternion.AngleAxis(inputAngle, Vector3.up);
+                isReverseCase = false;
             }
             else
             {

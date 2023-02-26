@@ -37,20 +37,24 @@ public class ConveyorCell : Cell
     public class Belt
     {
         public LinkedList<ItemOnBelt> Items;
-        public List<Vector3> Points;
+        public Transform[] Points;
         public float TotalLength { get; private set; }
         public HexSide Side;
 
-        public Belt(LinkedList<ItemOnBelt> items, List<Vector3> points, HexSide side)
+        public Belt(LinkedList<ItemOnBelt> items, HexSide side)
         {
             this.Items = items;
-            this.Points = points;
             this.Side = side;
+        }
+
+        public void SetPath(Transform[] points)
+        {
+            this.Points = points;
 
             float totalLength = 0f;
-            for (int i = 1; i < points.Count; i++)
+            for (int i = 1; i < points.Length; i++)
             {
-                totalLength += (points[i] - points[i - 1]).magnitude;
+                totalLength += (points[i].position - points[i - 1].position).magnitude;
             }
             this.TotalLength = totalLength;
         }
@@ -68,7 +72,7 @@ public class ConveyorCell : Cell
         base.Setup(owner);
         InputBelts = new Dictionary<HexSide, Belt>();
         OutputBelt = null;
-        this.body = this.Owner.GetComponent<ConveyorBody>();
+        this.body = this.Owner.GetComponentInChildren<ConveyorBody>();
         this.body.Setup();
         SetupConveyorDirection();
     }
@@ -114,7 +118,7 @@ public class ConveyorCell : Cell
 
     private void MoveItemsForward(Belt belt, Belt nextBelt)
     {
-        if (belt == null || belt.Points.Count == 0)
+        if (belt == null || belt.Points.Length == 0)
         {
             return;
         }
@@ -133,7 +137,7 @@ public class ConveyorCell : Cell
                 continue;
             }
 
-            if (iterRes.CurrentPathPoint < belt.Points.Count - 1)
+            if (iterRes.CurrentPathPoint < belt.Points.Length - 1)
             {
                 if (!iterRes.IsPaused)
                 {
@@ -141,13 +145,13 @@ public class ConveyorCell : Cell
                     if (currentProgress + iterRes.ItemInst.Item.Width < GetMinBoundOfNextItem(currentItem, nextBelt))
                     {
                         Vector3 deltaToNextPoint =
-                            belt.Points[iterRes.CurrentPathPoint + 1] -
+                            belt.Points[iterRes.CurrentPathPoint + 1].position -
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        iterRes.ItemInst.transform.forward =
-                            iterRes.ItemInst.Item.ForwardOnConveyor *
-                            (belt.Points[iterRes.CurrentPathPoint + 1] - iterRes.ItemInst.gameObject.transform.position);
+                        Vector3 targetRot = iterRes.ItemInst.Item.ForwardOnConveyor *
+                            (belt.Points[iterRes.CurrentPathPoint + 1].position - iterRes.ItemInst.gameObject.transform.position);
+                        iterRes.ItemInst.transform.forward = Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 5);
                         iterRes.ProgressAlongPath += moveDelta.magnitude;
 
                         if (deltaToNextPoint.magnitude < .02f)
@@ -440,18 +444,13 @@ public class ConveyorCell : Cell
         HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
         HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
 
-        // todo: recalculate positions of existing items on output belt.
-        source.OutputBelt = new Belt(
-            new LinkedList<ItemOnBelt>(),
-            GetOutputPath(sourceOutputSide, source.Owner.transform.position),
-            sourceOutputSide);
+        source.OutputBelt = new Belt(new LinkedList<ItemOnBelt>(), sourceOutputSide);
         source.Next = target;
 
         source.RecalculateInputs();
         target.RecalculateInputs();
 
-        source.body.Setup();
-        target.body.Setup();
+        source.OutputBelt.SetPath(GetOutputPath());
     }
 
     private void RecalculateInputs()
@@ -472,10 +471,7 @@ public class ConveyorCell : Cell
                 HexSide inputSide = GetOppositeSide(neighborOutputSide);
                 if (!this.InputBelts.ContainsKey(inputSide))
                 {
-                    this.InputBelts[inputSide] = new Belt(
-                        new LinkedList<ItemOnBelt>(),
-                        GetInputPath(inputSide, this.Owner.transform.position),
-                        inputSide);
+                    this.InputBelts[inputSide] = new Belt(new LinkedList<ItemOnBelt>(), inputSide);
                 }
                 foundInputs.Add(inputSide);
             }
@@ -487,6 +483,17 @@ public class ConveyorCell : Cell
             {
                 this.InputBelts.Remove((HexSide)i);
             }
+        }
+
+        this.body.Setup();
+
+        if (this.InputBelts.Count == 1)
+        {
+            this.InputBelts.First().Value.SetPath(GetInputPath());
+        }
+        else if (this.InputBelts.Count > 0)
+        {
+            // TODO go straight to center.
         }
     }
 
@@ -532,27 +539,18 @@ public class ConveyorCell : Cell
         }
     }
 
-    private static List<Vector3> GetInputPath(HexSide side, Vector3 center)
+    private Transform[] GetInputPath()
     {
-        List<Vector3> points = GetPointsForSide(side);
-        points.Reverse();
-        for (int i = 0; i < points.Count; i++)
-        {
-            points[i] = points[i] + center;
-        }
-
-        return points;
+        var points = this.body.ActivePoints.Take((int)Math.Ceiling((float)this.body.ActivePoints.Length / 2)).ToArray();
+        Debug.Log("Active points" + string.Join(",", this.body.ActivePoints.Select((Transform point) => point.position)));
+        Debug.Log(string.Join(",", points.Select((Transform point) => point.position)));
+        return this.body.ActivePoints.Take((int)Math.Ceiling((float)this.body.ActivePoints.Length / 2)).ToArray();
     }
 
-    private static List<Vector3> GetOutputPath(HexSide side, Vector3 center)
+    private Transform[] GetOutputPath()
     {
-        List<Vector3> points = GetPointsForSide(side);
-        for (int i = 0; i < points.Count; i++)
-        {
-            points[i] = points[i] + center;
-        }
-
-        return points;
+        int discardCount = this.body.ActivePoints.Length / 2;
+        return this.body.ActivePoints.Skip(discardCount).Take(this.body.ActivePoints.Length - discardCount).ToArray();
     }
 
     private static HexSide CalculateHexSide(Vector3 sourcePos, Vector3 targetPos)
