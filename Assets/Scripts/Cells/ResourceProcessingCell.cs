@@ -96,18 +96,18 @@ public abstract class ResourceProcessingCell : Cell
         int outputIndex = OutputInventory.FirstNonEmptyIndex();
         if (outputIndex != -1)
         {
-            if (this.Owner.ConveyorCell.CanAccept(this.Owner.ConveyorCell.OutputBelt, this.itemWidth))
+            if (this.Owner.ConveyorCell.CanAccept(this.Owner.ConveyorCell.ConveyorBelt, this.itemWidth))
             {
                 GameObject newResource = GameObject.Instantiate(
                     Prefabs.GetResource(OutputItemType),
-                    this.Owner.ConveyorCell.OutputBelt.Points[0].position,
+                    this.Owner.ConveyorCell.ConveyorBelt.Points[0].position,
                     Prefabs.GetResource(OutputItemType).transform.rotation
                 );
 
                 Item item = OutputInventory.ItemAt(outputIndex);
                 InstantiatedItem itemInst = newResource.AddComponent<InstantiatedItem>();
                 itemInst.Init(item);
-                this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.OutputBelt, itemInst);
+                this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.ConveyorBelt, itemInst);
                 this.OutputInventory.RemoveAt(outputIndex);
             }
         }

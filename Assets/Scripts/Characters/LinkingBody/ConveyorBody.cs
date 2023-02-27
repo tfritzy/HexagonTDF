@@ -52,12 +52,8 @@ public class ConveyorBody : MonoBehaviour
         this.reverseStraightPoints.Reverse();
 
         Character owner = this.transform.parent.GetComponent<Character>();
-        HexSide? inputSide = null;
-        if (owner.ConveyorCell?.InputBelts != null && owner.ConveyorCell?.InputBelts?.Values.Count > 0)
-        {
-            inputSide = owner.ConveyorCell?.InputBelts.Values.ToArray()[0].Side;
-        }
-        HexSide? outputSide = owner.ConveyorCell.OutputBelt?.Side;
+        HexSide? inputSide = owner.ConveyorCell?.ConveyorBelt?.InputSide;
+        HexSide? outputSide = owner.ConveyorCell?.ConveyorBelt?.OutputSide;
 
         if (inputSide != null && outputSide != null)
         {
@@ -75,12 +71,12 @@ public class ConveyorBody : MonoBehaviour
 
                 int medianSide = (int)inputSide + 1;
                 CurvedBody.transform.rotation = Quaternion.AngleAxis(midPoint + 240, Vector3.up);
-                isReverseCase = midPoint < inputAngle;
+                isReverseCase = midPoint > inputAngle;
 
                 TextureScroll textureScroll = CurvedBody.GetComponentInChildren<TextureScroll>();
                 if (textureScroll)
                 {
-                    textureScroll.direction = isReverseCase ? -1 : 1;
+                    textureScroll.direction = isReverseCase ? 1 : -1;
                 }
             }
             else if (shortestDelta >= 179)
@@ -101,6 +97,7 @@ public class ConveyorBody : MonoBehaviour
         {
             CurvedBody.SetActive(false);
             StraightBody.SetActive(true);
+            isReverseCase = false;
 
             if (inputSide != null)
             {
