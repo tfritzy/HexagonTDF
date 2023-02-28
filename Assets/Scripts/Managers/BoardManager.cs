@@ -333,7 +333,7 @@ public class BoardManager : MonoBehaviour
             SetBuilding(building.GridPosition, null);
         }
 
-        Destroy(building.gameObject);
         building.OnDestroy();
+        Destroy(building.gameObject);
     }
 }

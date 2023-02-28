@@ -60,6 +60,7 @@ public class ConveyorCell : Cell
         this.ConveyorBelt = null;
         this.body = this.Owner.GetComponentInChildren<ConveyorBody>();
         this.body.Setup();
+        Debug.Log("Setting up conveyor direction from onStart");
         SetupConveyorDirection();
     }
 
@@ -71,16 +72,18 @@ public class ConveyorCell : Cell
     public override void OnDestroy()
     {
         base.OnDestroy();
+        Debug.Log("Conveyor cell has been destroyed");
 
-        Vector2Int ownerPos = this.Owner.GridPosition;
-        for (int i = 0; i < 6; i++)
+        if (this.Next != null)
         {
-            Vector2Int neighbor = Helpers.GetNeighborPosition(ownerPos.x, ownerPos.y, (HexSide)i);
-            Building neighborBuilding = Managers.Board.GetBuilding(neighbor);
-            if (neighborBuilding?.ConveyorCell != null)
-            {
-                neighborBuilding.ConveyorCell.InformOfDeath(this);
-            }
+            Debug.Log("Telling next i've been destroyed");
+            this.Next.InformOfDeath(this);
+        }
+
+        if (this.Prev != null)
+        {
+            Debug.Log("Telling prev i've been destroyed");
+            this.Prev.InformOfDeath(this);
         }
     }
 
@@ -88,10 +91,17 @@ public class ConveyorCell : Cell
     {
         if (this.Next == cell)
         {
+            Debug.Log("My next was destroyed");
             LinkConveyors(this, null);
+            SetupConveyorDirection();
         }
 
-        SetupConveyorDirection();
+        if (this.Prev == cell)
+        {
+            Debug.Log("My prev was destroyed");
+            LinkConveyors(null, this);
+            SetupConveyorDirection();
+        }
     }
 
     private void MoveItemsForward(Belt belt, Belt nextBelt)
@@ -250,27 +260,6 @@ public class ConveyorCell : Cell
         throw new System.Exception($"Tried to remove item with id {itemId} from this belt, but it wasn't there.");
     }
 
-    public void SwitchOutput(ConveyorCell newOutput)
-    {
-        bool isNewANeighbor = false;
-        for (int i = 0; i < 6; i++)
-        {
-            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
-            if (Managers.Board.GetBuilding(neighbor)?.ConveyorCell == newOutput)
-            {
-                isNewANeighbor = true;
-                break;
-            }
-        }
-
-        if (isNewANeighbor)
-        {
-            var currentItems = this.ConveyorBelt?.Items ?? new LinkedList<ItemOnBelt>();
-            LinkConveyors(this, newOutput);
-            this.ConveyorBelt.Items = currentItems;
-        }
-    }
-
     private float GetMinBoundOfNextItem(LinkedListNode<ItemOnBelt> item, Belt nextBelt)
     {
         if (item.Next != null)
@@ -309,38 +298,55 @@ public class ConveyorCell : Cell
 
     private bool CanBePrev(Building building)
     {
-        if (this.Prev != null)
+        if (building?.ConveyorCell == null)
+        {
+            Debug.Log("Can't be prev because it's not a conveyor");
+            return false;
+        }
+
+        if (building.ConveyorCell.Next != null)
+        {
+            Debug.Log("Can't be prev because it already has a next.");
+            return false;
+        }
+
+        if (building.ConveyorCell.Prev == this)
+        {
+            Debug.Log("Can't be prev because its prev is me");
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool CanBeNext(Building building)
+    {
+        if (this.Next != null)
         {
             return false;
         }
 
         if (building?.ConveyorCell == null)
         {
+            Debug.Log("Can't be next because it's not a conveyor");
             return false;
         }
 
-        if (building.ConveyorCell.Next != null)
+        if (building.ConveyorCell.Prev != null)
         {
+            Debug.Log("Can't be next because it has a prev.");
             return false;
         }
 
-        if (building.ConveyorCell.IsTermination)
+        if (building.ConveyorCell.Next == this)
         {
-            return false;
-        }
-
-        if (building.ConveyorCell.Next != null)
-        {
-            return false;
-        }
-
-        if (IsInputTooSharp(building))
-        {
+            Debug.Log("Can't be next because it's next is me.");
             return false;
         }
 
         return true;
     }
+
 
     private bool IsInputTooSharp(Building building)
     {
@@ -363,50 +369,25 @@ public class ConveyorCell : Cell
         return false;
     }
 
-    private bool CanBeNext(Building building)
+    private static void LinkConveyors(ConveyorCell source, ConveyorCell target)
     {
-        if (this.Next != null)
+        if (source == null)
         {
-            return false;
+            var items = target.ConveyorBelt.Items;
+            HexSide outputSide = target.ConveyorBelt?.OutputSide ?? HexSide.NorthEast;
+            HexSide inputSide = GetOppositeSide(outputSide);
+            target.ConveyorBelt = new Belt(items, inputSide, outputSide, target.body);
+            target.Prev = null;
+            target.body.Setup();
+            return;
         }
 
-        if (this.Next != null)
-        {
-            return false;
-        }
-
-        if (building?.ConveyorCell == null)
-        {
-            return false;
-        }
-
-        if (building.ConveyorCell.Next == this)
-        {
-            return false;
-        }
-
-        if (building.ConveyorCell.IsSource)
-        {
-            return false;
-        }
-
-        if (building.ConveyorCell.Prev != null)
-        {
-            return false;
-        }
-
-        if (building.ConveyorCell.IsInputTooSharp((Building)this.Owner))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private void LinkConveyors(ConveyorCell source, ConveyorCell target)
-    {
         if (target == null)
         {
+            var items = source.ConveyorBelt.Items;
+            HexSide inputSide = source.ConveyorBelt?.InputSide ?? HexSide.SouthWest;
+            HexSide outputSide = GetOppositeSide(inputSide);
+            source.ConveyorBelt = new Belt(items, inputSide, outputSide, source.body);
             source.Next = null;
             source.body.Setup();
             return;
@@ -416,8 +397,10 @@ public class ConveyorCell : Cell
         HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
         HexSide sourceInputSide =
             source.Prev != null ?
-                CalculateHexSide(source.Prev.Owner.transform.position, source.Owner.transform.position) :
+                CalculateHexSide(source.Owner.transform.position, source.Prev.Owner.transform.position) :
                 targetInputSide;
+
+        Debug.Log($"Linking conveyor with input {sourceInputSide} and output {sourceOutputSide} to conveyor with input {targetInputSide}");
 
         var sourceItems = source.ConveyorBelt?.Items ?? new LinkedList<ItemOnBelt>();
         source.ConveyorBelt = new Belt(sourceItems, sourceInputSide, sourceOutputSide, source.body);
@@ -504,7 +487,7 @@ public class ConveyorCell : Cell
         }
     }
 
-    private HexSide GetOppositeSide(HexSide side)
+    private static HexSide GetOppositeSide(HexSide side)
     {
         switch (side)
         {

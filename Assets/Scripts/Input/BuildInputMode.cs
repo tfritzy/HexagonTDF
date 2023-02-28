@@ -39,7 +39,7 @@ public class BuildInputMode : InputMode
     {
         if (this.State == BuildInputState.PlacingBuilding && hexes.Count > 0)
         {
-            if (this.previewBuildings.Count > 0)
+            if (this.previewBuildings.Count > 0 && previewBuildings.First().GridPosition != hexes.First().GridPosition)
             {
                 foreach (Building building in previewBuildings)
                 {

@@ -55,6 +55,8 @@ public class ConveyorBody : MonoBehaviour
         HexSide? inputSide = owner.ConveyorCell?.ConveyorBelt?.InputSide;
         HexSide? outputSide = owner.ConveyorCell?.ConveyorBelt?.OutputSide;
 
+        Debug.Log($"Setting up body with {inputSide}, {outputSide}");
+
         if (inputSide != null && outputSide != null)
         {
             float inputAngle = (int)inputSide * -60;
@@ -79,7 +81,7 @@ public class ConveyorBody : MonoBehaviour
                     textureScroll.direction = isReverseCase ? 1 : -1;
                 }
             }
-            else if (shortestDelta >= 179)
+            else if ((shortestDelta < 181 && shortestDelta >= 179))
             {
                 // Straight case
                 CurvedBody.SetActive(false);
@@ -90,7 +92,7 @@ public class ConveyorBody : MonoBehaviour
             }
             else
             {
-                throw new System.Exception($"Conveyor has impossible input/output configuration. angle: {shortestDelta}");
+                Debug.LogWarning($"Conveyor has impossible input/output configuration. angle: {shortestDelta}");
             }
         }
         else
