@@ -32,10 +32,10 @@ public class ConveyorCell : Cell
     public class Belt
     {
         public LinkedList<ItemOnBelt> Items;
-        public float TotalLength { get; private set; }
         public HexSide InputSide;
         public HexSide OutputSide;
         public Transform[] Points => this.conveyorBody.ActivePoints;
+        public float TotalLength => this.conveyorBody.TotalLength;
 
         private ConveyorBody conveyorBody;
 
@@ -139,8 +139,8 @@ public class ConveyorCell : Cell
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
                         Vector3 targetRot = iterRes.ItemInst.Item.ForwardOnConveyor *
                             (belt.Points[iterRes.CurrentPathPoint + 1].position - iterRes.ItemInst.gameObject.transform.position);
-                        iterRes.ItemInst.transform.forward = Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 3);
-                        iterRes.ProgressAlongPath += moveDelta.magnitude;
+                        iterRes.ItemInst.transform.forward = targetRot; // Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 3);
+                        iterRes.ProgressAlongPath += moveDelta.magnitude / this.ConveyorBelt.TotalLength;
 
                         if (deltaToNextPoint.magnitude < .02f)
                         {
@@ -215,6 +215,8 @@ public class ConveyorCell : Cell
         }
 
         ItemOnBelt firstResource = belt.Items.First.Value;
+
+        Debug.Log($"{firstResource.MinBound} > {itemWidth}");
 
         // Items get added with their center at the start of the path,
         // so we need to check if there's enough space there to fit

@@ -16,6 +16,10 @@ public class ConveyorBody : MonoBehaviour
         StraightBody.activeInHierarchy ?
             (isReverseCase ? reverseStraightPoints : StraightPoints) :
             (isReverseCase ? reverseCurvePoints : CurvePoints);
+    public float TotalLength => StraightBody.activeInHierarchy ? straightPathLength : curvedPathLength;
+    private static float curvedPathLength;
+    private static float straightPathLength;
+
     private bool isReverseCase;
 
     private float AngleMiddlepoint(float deg1, float deg2)
@@ -42,14 +46,32 @@ public class ConveyorBody : MonoBehaviour
         return angle;
     }
 
-    public void Setup()
+    private void InitPointMetadata()
     {
         this.reverseCurvePoints = new Transform[this.CurvePoints.Length];
         this.CurvePoints.CopyTo(reverseCurvePoints, 0);
-        this.reverseCurvePoints.Reverse();
+        this.reverseCurvePoints = this.reverseCurvePoints.Reverse().ToArray();
         this.reverseStraightPoints = new Transform[this.StraightPoints.Length];
         this.StraightPoints.CopyTo(reverseStraightPoints, 0);
-        this.reverseStraightPoints.Reverse();
+        this.reverseStraightPoints = this.reverseStraightPoints.Reverse().ToArray();
+
+        if (curvedPathLength == 0)
+        {
+            for (int i = 1; i < this.CurvePoints.Length; i++)
+            {
+                curvedPathLength += (this.CurvePoints[i].transform.position - this.CurvePoints[i - 1].transform.position).magnitude;
+            }
+
+            for (int i = 1; i < this.StraightPoints.Length; i++)
+            {
+                straightPathLength += (this.StraightPoints[i].transform.position - this.StraightPoints[i - 1].transform.position).magnitude;
+            }
+        }
+    }
+
+    public void Setup()
+    {
+        InitPointMetadata();
 
         Character owner = this.transform.parent.GetComponent<Character>();
         HexSide? inputSide = owner.ConveyorCell?.ConveyorBelt?.InputSide;
@@ -73,12 +95,12 @@ public class ConveyorBody : MonoBehaviour
 
                 int medianSide = (int)inputSide + 1;
                 CurvedBody.transform.rotation = Quaternion.AngleAxis(midPoint + 240, Vector3.up);
-                isReverseCase = midPoint > inputAngle;
+                isReverseCase = midPoint < inputAngle;
 
                 TextureScroll textureScroll = CurvedBody.GetComponentInChildren<TextureScroll>();
                 if (textureScroll)
                 {
-                    textureScroll.direction = isReverseCase ? 1 : -1;
+                    textureScroll.direction = isReverseCase ? -1 : 1;
                 }
             }
             else if ((shortestDelta < 181 && shortestDelta >= 179))
