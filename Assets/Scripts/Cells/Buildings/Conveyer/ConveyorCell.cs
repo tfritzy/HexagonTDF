@@ -104,6 +104,13 @@ public class ConveyorCell : Cell
         }
     }
 
+    private Vector3 GetTargetRotation(ItemOnBelt item)
+    {
+        return item.CurrentPathPoint < this.ConveyorBelt.Points.Length - 2 ?
+            this.ConveyorBelt.Points[item.CurrentPathPoint + 2].position - this.ConveyorBelt.Points[item.CurrentPathPoint + 1].position :
+            this.ConveyorBelt.Points[item.CurrentPathPoint + 1].position - item.ItemInst.gameObject.transform.position;
+    }
+
     private void MoveItemsForward(Belt belt, Belt nextBelt)
     {
         if (belt == null || belt.Points.Length == 0)
@@ -137,9 +144,8 @@ public class ConveyorCell : Cell
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        Vector3 targetRot = iterRes.ItemInst.Item.ForwardOnConveyor *
-                            (belt.Points[iterRes.CurrentPathPoint + 1].position - iterRes.ItemInst.gameObject.transform.position);
-                        iterRes.ItemInst.transform.forward = targetRot; // Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 3);
+                        Vector3 targetRot = GetTargetRotation(iterRes);
+                        iterRes.ItemInst.transform.forward = Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 8);
                         iterRes.ProgressAlongPath += moveDelta.magnitude / this.ConveyorBelt.TotalLength;
 
                         if (deltaToNextPoint.magnitude < .02f)
