@@ -22,10 +22,6 @@ public class BoardManager : MonoBehaviour
     {
         this.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         StartCoroutine(SpawnMap());
-    }
-
-    void Start()
-    {
         SpawnHero();
     }
 
@@ -62,7 +58,6 @@ public class BoardManager : MonoBehaviour
 
     public void DestroyHex(int x, int y, int z)
     {
-        Debug.Log($"Destroying {x} {y} {z}");
         Helpers.WorldToChunkPos(x, y, z, out Vector2Int chunkIndex, out Vector3Int subPos);
         UnloadHex(chunkIndex, subPos.x, subPos.y, z);
         World.DestroyHex(chunkIndex, subPos.x, subPos.y, z);
@@ -75,7 +70,6 @@ public class BoardManager : MonoBehaviour
 
     private void UpdatedLoadedChunks(Vector2Int currentChunk)
     {
-        Debug.Log("Updating chunks");
         HashSet<Vector2Int> chunksInRange = new HashSet<Vector2Int>();
         for (int x = currentChunk.x - CHUNK_RENDER_DIST; x < currentChunk.x + CHUNK_RENDER_DIST; x++)
         {

@@ -34,11 +34,6 @@ public class SelectedCharacterInputMode : InputMode
         int button,
         bool hasDragged)
     {
-        if (!hasDragged && hexes.Count > 0 && button == 1)
-        {
-            SelectedCharacter.SelectedClickHex(hexes.First());
-        }
-
         if (button == 0 && !hasDragged)
         {
             if (characters.Count > 0)
@@ -51,7 +46,6 @@ public class SelectedCharacterInputMode : InputMode
                 Managers.InputManager.SetGameInputMode();
             }
         }
-
     }
 
     public override void OnExit()

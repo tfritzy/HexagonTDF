@@ -24,11 +24,6 @@ public class InputManager : MonoBehaviour
     {
         ShootRayCast();
 
-        if (Managers.CameraControl.IsDragging())
-        {
-            hasDragged = true;
-        }
-
         if (Input.GetMouseButtonUp(0))
         {
             hasDragged = false;
