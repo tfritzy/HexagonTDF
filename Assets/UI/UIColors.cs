@@ -9,8 +9,9 @@ public static class UIColors
         public static Color InventorySlotBackground = ColorExtensions.Create("#272727");
         public static Color InventorySlotOutline = ColorExtensions.Create("#656565");
         public static Color InventorySlotImageTint = ColorExtensions.Create("#808080");
-        public static Color PrimaryButton = ColorExtensions.Create("#55211A");
+        public static Color PrimaryButton = ColorExtensions.Create("#412C29");
         public static Color PrimaryButtonOutline = ColorExtensions.Create("#6F6954");
+        public static Color PrimaryButtonTint = ColorExtensions.Create("#DDDDDD");
         public static Color BrightRed = ColorExtensions.Create("#B53322");
 
         public static class Text

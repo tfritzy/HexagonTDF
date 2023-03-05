@@ -7,7 +7,12 @@ public class PlayerInventory : Drawer
 
     public PlayerInventory()
     {
-        this.inventory = new InventoryTransferUI();
+        this.Add(new SquareButton(
+            onClick: () => Managers.UI.OpenModal(ModalType.TransferItems),
+            icon: Icons.GetUiIcon(UIIconType.Inventory)
+        ));
+        this.Add(new Divider());
+        this.inventory = new InventoryTransferUI(showTitles: false);
         this.Add(inventory);
 
         playerInventory = new List<InventoryCell> { null };

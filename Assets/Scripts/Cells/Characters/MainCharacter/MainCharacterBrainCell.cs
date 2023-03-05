@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class MainCharacterBrainCell : BrainCell
 {
-    private LinkedList<CharacterAction> CurrentActions = new LinkedList<CharacterAction>();
     private MainCharacterResourceCollectionCell harvestCell => (MainCharacterResourceCollectionCell)this.Owner.ResourceCollectionCell;
     private Rigidbody rb;
 

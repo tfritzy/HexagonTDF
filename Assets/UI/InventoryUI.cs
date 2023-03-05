@@ -10,19 +10,20 @@ public class InventoryUI : VisualElement
     private List<InventorySlotUI> itemSlots;
     private InventoryCell inventoryCell;
     private InventoryTransferUI Parent;
-
-    public InventoryUI(InventoryTransferUI parent)
+    public InventoryUI(InventoryTransferUI parent, bool showTitles)
     {
         this.Parent = parent;
-        this.AddToClassList("section");
 
         VisualElement verticalGroup = new VisualElement();
         this.Add(verticalGroup);
 
-        this.NameLabel = new Label();
-        this.NameLabel.AddToClassList("h2");
-        this.NameLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-        verticalGroup.Add(NameLabel);
+        if (showTitles)
+        {
+            this.NameLabel = new Label();
+            this.NameLabel.AddToClassList("h2");
+            this.NameLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+            verticalGroup.Add(NameLabel);
+        }
 
         itemsContainer = new VisualElement();
         itemsContainer.style.justifyContent = Justify.Center;
@@ -36,7 +37,11 @@ public class InventoryUI : VisualElement
     public void Update(InventoryCell inventoryCell)
     {
         this.inventoryCell = inventoryCell;
-        this.NameLabel.text = inventoryCell.Name;
+
+        if (this.NameLabel != null)
+        {
+            this.NameLabel.text = inventoryCell.Name;
+        }
 
         while (itemSlots.Count < inventoryCell.Size)
         {

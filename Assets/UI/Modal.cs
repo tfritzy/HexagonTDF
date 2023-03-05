@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Modal : UIPage
+public abstract class Modal : UIPage
 {
+    public abstract ModalType Type { get; }
+
     public Modal(int width, string titleText)
     {
         this.style.width = width;
@@ -21,7 +23,7 @@ public class Modal : UIPage
         header.Add(title);
 
         Button backButton = new Button();
-        backButton.clicked += () => Managers.UI.Back();
+        backButton.clicked += () => Managers.UI.CloseModal(this.Type);
         backButton.AddToClassList("modal-x-button");
         backButton.style.backgroundImage = new StyleBackground(Icons.GetUiIcon(UIIconType.X));
         backButton.style.unityBackgroundImageTintColor = UIColors.Dark.BrightRed;

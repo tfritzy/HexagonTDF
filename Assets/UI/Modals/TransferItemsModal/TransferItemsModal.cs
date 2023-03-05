@@ -3,19 +3,20 @@ using UnityEngine.UIElements;
 
 public class TransferItemsModal : Modal
 {
+    public override ModalType Type => ModalType.TransferItems;
     private Character renderedSourceCharacter;
     private Character renderedTargetCharacter;
     private List<InventoryCell> renderedInventories;
     private InventoryTransferUI transferUI;
     private ConstructionRequirements constructionRequirements;
 
-    public TransferItemsModal() : base(800, "Transfer items")
+    public TransferItemsModal() : base(800, "Inventory")
     {
         this.constructionRequirements = new ConstructionRequirements();
         this.Add(this.constructionRequirements);
         this.constructionRequirements.style.display = DisplayStyle.None;
 
-        this.transferUI = new InventoryTransferUI();
+        this.transferUI = new InventoryTransferUI(showTitles: true);
         this.Add(this.transferUI);
     }
 

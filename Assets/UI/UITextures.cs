@@ -13,11 +13,8 @@ public static class UITextures
     {
         if (!_uiTextures.ContainsKey(texture))
         {
-            Debug.Log("Path" + $"Textures/{texture}");
             _uiTextures[texture] = Resources.Load<Sprite>($"Textures/{texture}");
         }
-
-        Debug.Log("Getting texture" + _uiTextures[texture]);
 
         return _uiTextures[texture];
     }

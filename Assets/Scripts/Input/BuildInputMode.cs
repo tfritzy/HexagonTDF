@@ -150,8 +150,6 @@ public class BuildInputMode : InputMode
             }
             else
             {
-                Managers.UI.ShowPage(Page.ActionDrawer);
-                Managers.InputManager.SetGameInputMode();
                 ExitPreviewState();
             }
         }

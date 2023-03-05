@@ -137,6 +137,7 @@ public class InputManager : MonoBehaviour
     {
         SwitchMode();
         this.CurrentMode = this.BuildMode;
+        Managers.UI.ShowPage(Page.BuildDrawer);
     }
 
     public void SetGameInputMode()

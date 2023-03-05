@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     private Dictionary<Page, UIPage> Pages;
+    private Dictionary<ModalType, Modal> Modals;
     private Dictionary<Hoverer, Stack<UIHoverer>> Hoverers;
     private Stack<Page> History;
     private VisualElement root;
@@ -21,13 +22,23 @@ public class UI : MonoBehaviour
         {
             {Page.ActionDrawer, new ActionDrawer()},
             {Page.BuildDrawer, new BuildDrawer()},
-            {Page.TransferItemsModal, new TransferItemsModal()},
             {Page.PlayerInventory, new PlayerInventory()},
+        };
+
+        Modals = new Dictionary<ModalType, Modal>()
+        {
+            {ModalType.TransferItems, new TransferItemsModal()},
         };
 
         foreach (UIPage page in Pages.Values)
         {
             root.Add(page);
+        }
+
+        foreach (Modal modal in Modals.Values)
+        {
+            root.Add(modal);
+            modal.Hide();
         }
 
         Hoverers = new Dictionary<Hoverer, Stack<UIHoverer>>();
@@ -47,6 +58,21 @@ public class UI : MonoBehaviour
         }
 
         Pages[History.Peek()].Update();
+    }
+
+    public void OpenModal(ModalType modalType)
+    {
+        foreach (ModalType modal in this.Modals.Keys)
+        {
+            if (modal == modalType)
+            {
+                Modals[modal].Show();
+            }
+            else
+            {
+                Modals[modal].Hide();
+            }
+        }
     }
 
     public void ShowPage(Page page)
@@ -130,5 +156,15 @@ public class UI : MonoBehaviour
     public UIPage GetPage(Page page)
     {
         return Pages[page];
+    }
+
+    public UIPage GetModal(ModalType modalType)
+    {
+        return Modals[modalType];
+    }
+
+    public void CloseModal(ModalType modal)
+    {
+        this.Modals[modal].Hide();
     }
 }

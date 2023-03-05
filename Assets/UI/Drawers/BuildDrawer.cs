@@ -23,9 +23,11 @@ public class BuildDrawer : Drawer
         this.BuildingButtons = new List<Button>();
         foreach (BuildingType building in Buildings)
         {
-            Button button = new SquareButton();
-            button.clicked += () => SelectBuilding(button, building);
-            button.style.backgroundImage = new StyleBackground(Icons.GetBuildingIcon(building));
+            Button button = new SquareButton(
+                onClick: () => Managers.InputManager.BuildMode.SelectBuildingType(building),
+                icon: Icons.GetBuildingIcon(building)
+            );
+
             BuildingButtons.Add(button);
             this.Add(button);
         }
@@ -36,20 +38,8 @@ public class BuildDrawer : Drawer
         this.Add(backButton);
     }
 
-    private void SelectBuilding(Button button, BuildingType buildingType)
-    {
-        Managers.InputManager.BuildMode.SelectBuildingType(buildingType);
-
-        foreach (Button iterButton in BuildingButtons)
-        {
-            iterButton.RemoveFromClassList(BUTTON_SELECTED_CLASS);
-        }
-        button.AddToClassList(BUTTON_SELECTED_CLASS);
-    }
-
     private void GoBack()
     {
-        Managers.UI.ShowPage(Page.ActionDrawer);
-        Managers.InputManager.SetGameInputMode();
+        Managers.InputManager.OpenSelectedCharacterMode(Managers.MainCharacter);
     }
 }

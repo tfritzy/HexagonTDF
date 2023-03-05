@@ -189,10 +189,6 @@
     position: absolute;
 }
 
-.section {
-    padding-bottom: 36px;
-}
-
 .modal {
     position: absolute;
     top: 10%;
@@ -223,4 +219,21 @@
     background-color: rgba(0, 0, 0, 0);
     width: 65px;
     height: 65px;
+}
+
+.verticalDivider {
+    width: 1px;
+    height: 100%;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgb(173, 173, 173);
+    border-right-color: rgb(173, 173, 173);
+    border-top-color: rgb(173, 173, 173);
+    border-bottom-color: rgb(173, 173, 173);
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 0;
+    margin-bottom: 0;
 }

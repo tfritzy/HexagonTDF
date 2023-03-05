@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SelectedCharacterInputMode : InputMode
 {
@@ -55,5 +56,21 @@ public class SelectedCharacterInputMode : InputMode
 
     public override void Update()
     {
+        ListenToKeys();
+    }
+
+    private void ListenToKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (Managers.UI.GetModal(ModalType.TransferItems).style.display == DisplayStyle.None)
+            {
+                Managers.UI.OpenModal(ModalType.TransferItems);
+            }
+            else
+            {
+                Managers.UI.CloseModal(ModalType.TransferItems);
+            }
+        }
     }
 }

@@ -11,11 +11,13 @@ public class InventoryTransferUI : VisualElement
     private List<InventoryUI> inventoriesRendered;
     private List<InventoryCell> inventories;
     private VisualElement inventoryContainer;
+    private bool showTitles;
 
-    public InventoryTransferUI()
+    public InventoryTransferUI(bool showTitles)
     {
         this.RegisterCallback<MouseMoveEvent>(OnMouseMoveEvent);
         this.inventoriesRendered = new List<InventoryUI>();
+        this.showTitles = showTitles;
     }
 
     public void OnSlotMouseDown(InventoryCell inventory, InventorySlotUI slot)
@@ -104,7 +106,7 @@ public class InventoryTransferUI : VisualElement
         int i = 0;
         while (inventoriesRendered.Count < inventoriesToRender.Count)
         {
-            InventoryUI inventory = new InventoryUI(this);
+            InventoryUI inventory = new InventoryUI(this, showTitles);
             this.inventoriesRendered.Add(inventory);
             this.inventoryContainer.Add(inventory);
             i += 1;
