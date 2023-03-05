@@ -22,7 +22,6 @@ public class BoardManager : MonoBehaviour
     {
         this.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         StartCoroutine(SpawnMap());
-        SpawnHero();
     }
 
     void Update()
@@ -150,7 +149,12 @@ public class BoardManager : MonoBehaviour
         }
 
         Debug.Log("Done generating world");
+
+        yield return LoadChunk(new Vector2Int(10, 10));
+
         isWorldGenerated = true;
+
+        SpawnHero();
     }
 
     private TownHall SpawnTownHall()
@@ -186,7 +190,7 @@ public class BoardManager : MonoBehaviour
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
         Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(new Vector2Int(10, 10), 4, 4));
-        character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, spawnPos);
+        character.transform.position = Helpers.ToWorldPosition(new Vector2Int(10, 10), spawnPos);
         character.name = "Main Character";
     }
 

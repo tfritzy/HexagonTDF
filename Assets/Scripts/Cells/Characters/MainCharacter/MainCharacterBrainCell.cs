@@ -18,6 +18,12 @@ public class MainCharacterBrainCell : BrainCell
             this.rb = this.Owner.GetComponent<Rigidbody>();
         }
 
+        Run();
+        Jump();
+    }
+
+    private void Run()
+    {
         Vector3 inputDir = GetDirectionalInput();
         if (inputDir != Vector3.zero)
         {
@@ -69,5 +75,17 @@ public class MainCharacterBrainCell : BrainCell
         }
 
         return direction.normalized;
+    }
+
+    public void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            this.rb.AddRelativeForce(Vector3.up * 7f, ForceMode.VelocityChange);
+            this.Owner.Animator?.SetInteger(
+                Constants.AnimationStateParameter,
+                (int)MainCharacterAnimationState.Jumping
+            );
+        }
     }
 }
