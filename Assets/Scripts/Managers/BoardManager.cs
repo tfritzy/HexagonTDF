@@ -24,6 +24,11 @@ public class BoardManager : MonoBehaviour
         StartCoroutine(SpawnMap());
     }
 
+    void Start()
+    {
+        SpawnHero();
+    }
+
     void Update()
     {
         if (!isWorldGenerated)
@@ -110,7 +115,6 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator LoadChunk(Vector2Int chunkIndex)
     {
-        Debug.Log($"Loading chunk {chunkIndex}");
         int i = 0;
         foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
         {
@@ -187,7 +191,7 @@ public class BoardManager : MonoBehaviour
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(new Vector2Int(0, 0), 4, 4));
+        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(new Vector2Int(10, 10), 4, 4));
         character.transform.position = Helpers.ToWorldPosition(Vector2Int.zero, spawnPos);
         character.name = "Main Character";
     }

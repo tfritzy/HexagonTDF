@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-public class CharacterSelectionModal : Modal
+public class TransferItemsModal : Modal
 {
     private Character renderedSourceCharacter;
     private Character renderedTargetCharacter;
@@ -9,7 +9,7 @@ public class CharacterSelectionModal : Modal
     private InventoryTransferUI transferUI;
     private ConstructionRequirements constructionRequirements;
 
-    public CharacterSelectionModal() : base(800, "Transfer items")
+    public TransferItemsModal() : base(800, "Transfer items")
     {
         this.constructionRequirements = new ConstructionRequirements();
         this.Add(this.constructionRequirements);

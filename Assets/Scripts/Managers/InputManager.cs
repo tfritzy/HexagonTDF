@@ -135,7 +135,7 @@ public class InputManager : MonoBehaviour
     {
         SwitchMode();
         this.CurrentMode = new SelectedCharacterInputMode(character);
-        Managers.UI.ShowPage(Page.CharacterSelectionModal);
+        Managers.UI.ShowPage(Page.PlayerInventory);
     }
 
     public void OpenBuildMode()

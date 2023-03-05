@@ -229,7 +229,8 @@ public static class Helpers
     {
         float xF = (x + chunk.x * Constants.CHUNK_SIZE) * Constants.HorizontalDistanceBetweenHexagons;
         float zF = (y + chunk.y * Constants.CHUNK_SIZE) * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
-        return new Vector3(xF, 0, zF);
+        float yF = GetTopHexWorldHeight(chunk, x, y);
+        return new Vector3(xF, yF, zF);
     }
 
     public static Vector3 ToWorldPosition(Vector2Int chunk, Vector3Int position)

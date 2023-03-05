@@ -61,7 +61,5 @@ public class MainCharacterBrainCell : BrainCell
 
             this.CurrentActions.First.Value.Update();
         }
-
-
     }
 }

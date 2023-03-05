@@ -222,8 +222,6 @@ public class ConveyorCell : Cell
 
         ItemOnBelt firstResource = belt.Items.First.Value;
 
-        Debug.Log($"{firstResource.MinBound} > {itemWidth}");
-
         // Items get added with their center at the start of the path,
         // so we need to check if there's enough space there to fit
         // half the item's size.

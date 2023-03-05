@@ -21,7 +21,7 @@ public class OpenInventoryAction : CharacterAction
         }
         else
         {
-            Managers.UI.ShowPage(Page.CharacterSelectionModal);
+            Managers.UI.ShowPage(Page.TransferItemsModal);
         }
     }
 
@@ -29,7 +29,7 @@ public class OpenInventoryAction : CharacterAction
     {
         base.Update();
 
-        CharacterSelectionModal modal = (CharacterSelectionModal)Managers.UI.GetPage(Page.CharacterSelectionModal);
+        TransferItemsModal modal = (TransferItemsModal)Managers.UI.GetPage(Page.TransferItemsModal);
         modal.Update(this.Owner, target);
     }
 

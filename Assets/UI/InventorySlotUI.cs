@@ -22,7 +22,8 @@ public class InventorySlotUI : Button
         this.AddToClassList("grid-button");
         this.clicked += () => Debug.Log("Click button");
         this.style.backgroundColor = UIColors.Dark.InventorySlotBackground;
-        this.SetBorderColor(UIColors.Dark.InventorySlotBackground);
+        this.style.backgroundImage = new StyleBackground(UITextures.GetTexture(TextureType.Vignette));
+        this.SetBorderColor(UIColors.Dark.InventorySlotOutline);
         this.style.unityBackgroundImageTintColor = UIColors.Dark.InventorySlotImageTint;
         this.itemUI = new ItemUI();
         this.Add(this.itemUI);

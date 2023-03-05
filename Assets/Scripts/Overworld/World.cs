@@ -25,7 +25,7 @@ public class World
     {
         if (!Chunks.ContainsKey(chunkIndex))
         {
-            return int.MinValue;
+            return 0;
         }
 
         return Chunks[chunkIndex].GetTopHex(x, y);
