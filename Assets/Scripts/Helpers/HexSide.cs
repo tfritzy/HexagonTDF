@@ -7,4 +7,6 @@ public enum HexSide
     NorthEast,
     North,
     NorthWest,
+    Up,
+    Down
 };

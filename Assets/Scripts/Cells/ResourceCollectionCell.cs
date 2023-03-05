@@ -7,7 +7,7 @@ public abstract class ResourceCollectionCell : Cell
     public abstract List<Vector2Int> HexesCollectedFrom { get; }
     public CollectionDetails CurrentCollectionDetails { get; private set; }
     public virtual InventoryCell OutputInventory => this.Owner.InventoryCell;
-    public abstract bool CanHarvestFrom(Hexagon hexagon);
+    public abstract bool CanHarvestFrom(HexagonMono hexagon);
     public abstract CollectionDetails BaseCollectionDetails { get; }
     private HarvestProgress harvestHoverer;
 
@@ -38,9 +38,10 @@ public abstract class ResourceCollectionCell : Cell
         this.CurrentCollectionDetails = null;
         foreach (Vector2Int pos in this.HexesCollectedFrom)
         {
-            var hex = Managers.Board.GetHex(pos);
+            Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+            HexagonMono hex = Managers.Board.World.GetTopHexBody(chunkIndex, subPos.x, subPos.y);
 
-            if (hex != null && CanHarvestFrom(hex.Hexagon))
+            if (hex != null && CanHarvestFrom(hex))
             {
                 ItemType collectedItem = BaseCollectionDetails.Item;
 
@@ -107,7 +108,7 @@ public abstract class ResourceCollectionCell : Cell
             int firstItemIndex = this.OutputInventory.FirstNonEmptyIndex();
             if (firstItemIndex != -1 &&
                 this.Owner.ConveyorCell.CanAccept(
-                    this.Owner.ConveyorCell.OutputBelt,
+                    this.Owner.ConveyorCell.ConveyorBelt,
                     this.OutputInventory.ItemAt(firstItemIndex).Width))
             {
                 Item itemToPlace = this.OutputInventory.ItemAt(firstItemIndex);
@@ -133,6 +134,6 @@ public abstract class ResourceCollectionCell : Cell
 
         InstantiatedItem itemInst = resourceGO.AddComponent<InstantiatedItem>();
         itemInst.Init(item);
-        this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.OutputBelt, itemInst);
+        this.Owner.ConveyorCell.AddItem(this.Owner.ConveyorCell.ConveyorBelt, itemInst);
     }
 }

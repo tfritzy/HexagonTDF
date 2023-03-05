@@ -5,10 +5,10 @@ public class MainCharacterResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
     private List<Vector2Int> _hexesCollectedFrom = null;
-    public override bool CanHarvestFrom(Hexagon hexagon)
+    public override bool CanHarvestFrom(HexagonMono hexagon)
     {
         return
-            hexagon.Biome == Biome.Forrest ||
+            (hexagon.Biome == Biome.Forrest && hexagon.HasObstacle) ||
             (hexagon.Biome == Biome.Mountain && hexagon.HasObstacle);
     }
     private Biome currentBiome;

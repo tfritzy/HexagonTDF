@@ -1,0 +1,2 @@
+conveyors will establish links at a 60 degree angle.
+should promote preview buildings to regular buildings.

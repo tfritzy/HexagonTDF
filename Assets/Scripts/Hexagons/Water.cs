@@ -6,6 +6,7 @@ public class Water : Hexagon
     public override bool IsBuildable => false;
     public override bool IsWalkable => false;
     public override Color BaseColor => ColorExtensions.Create("#3d71c4");
+    public override bool IsTransparent => true;
 
-    public Water() : base(0) { }
+    public Water() { }
 }

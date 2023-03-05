@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &787624459895364345
 Transform:
@@ -61,8 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ba1ab9ea8e8b8e4fac5d708d03d0992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridPosition: {x: 0, y: 0}
-  Height: 0
 --- !u!1001 &1462614489734677580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71,6 +69,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 787624459895364345}
     m_Modifications:
+    - target: {fileID: 5525479130187255769, guid: 814af914f78801246a41152df3f8257e, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5525479130187255769, guid: 814af914f78801246a41152df3f8257e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5525479130187255769, guid: 814af914f78801246a41152df3f8257e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cfa06ab5a93c5e54eb75af0c0778ab25, type: 2}
+    - target: {fileID: 5525479130187255769, guid: 814af914f78801246a41152df3f8257e, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: fe11520d2254b734a80b0e45fc5133c8, type: 2}
     - target: {fileID: 6318142969715813900, guid: 814af914f78801246a41152df3f8257e, type: 3}
       propertyPath: m_Name
       value: hex

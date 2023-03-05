@@ -38,8 +38,6 @@ public class BuildDrawer : Drawer
 
     private void SelectBuilding(Button button, BuildingType buildingType)
     {
-        Debug.Log($"Selecting button {button.name} with type {buildingType}");
-
         Managers.InputManager.BuildMode.SelectBuildingType(buildingType);
 
         foreach (Button iterButton in BuildingButtons)
@@ -51,7 +49,7 @@ public class BuildDrawer : Drawer
 
     private void GoBack()
     {
-        Managers.UI.Back();
+        Managers.UI.ShowPage(Page.ActionDrawer);
         Managers.InputManager.SetGameInputMode();
     }
 }

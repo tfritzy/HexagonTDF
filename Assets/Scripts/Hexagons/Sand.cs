@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Sand : Hexagon
 {
-    public Sand(int height) : base(height)
+    public Sand()
     {
     }
 

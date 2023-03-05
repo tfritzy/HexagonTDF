@@ -11,26 +11,13 @@ public class ConveyorCell : Cell
     /// </summary>
     public bool IsSource { get; private set; }
     public bool IsTermination { get; private set; }
-    private ConveyorCell _next;
-    public ConveyorCell Next
-    {
-        get { return _next; }
-        set
-        {
-            _next = value;
-        }
-    }
-
-    // private List<Vector3> pointsOnPath;
-    // private float[] pointProgressCache;
-    // private float totalPathDistance;
+    public ConveyorCell Prev { get; private set; }
+    public ConveyorCell Next { get; private set; }
     private const float VELOCITY = .75f;
+    private const float ITEM_DIST_ABOVE_GROUND = .38f;
+    private ConveyorBody body;
 
-    // A map of side of a hex to a list of items moving along that path.
-    public Dictionary<HexSide, Belt> InputBelts { get; private set; }
-
-    // The items on the way out.
-    public Belt OutputBelt { get; private set; }
+    public Belt ConveyorBelt { get; private set; }
 
     public class ItemOnBelt
     {
@@ -45,22 +32,19 @@ public class ConveyorCell : Cell
     public class Belt
     {
         public LinkedList<ItemOnBelt> Items;
-        public List<Vector3> Points;
-        public float TotalLength { get; private set; }
-        public HexSide Side;
+        public HexSide InputSide;
+        public HexSide OutputSide;
+        public Transform[] Points => this.conveyorBody.ActivePoints;
+        public float TotalLength => this.conveyorBody.TotalLength;
 
-        public Belt(LinkedList<ItemOnBelt> items, List<Vector3> points, HexSide side)
+        private ConveyorBody conveyorBody;
+
+        public Belt(LinkedList<ItemOnBelt> items, HexSide input, HexSide outputSide, ConveyorBody body)
         {
             this.Items = items;
-            this.Points = points;
-            this.Side = side;
-
-            float totalLength = 0f;
-            for (int i = 1; i < points.Count; i++)
-            {
-                totalLength += (points[i] - points[i - 1]).magnitude;
-            }
-            this.TotalLength = totalLength;
+            this.InputSide = input;
+            this.OutputSide = outputSide;
+            this.conveyorBody = body;
         }
     }
 
@@ -73,26 +57,63 @@ public class ConveyorCell : Cell
     public override void Setup(Character owner)
     {
         base.Setup(owner);
-        InputBelts = new Dictionary<HexSide, Belt>();
-        OutputBelt = null;
+        this.ConveyorBelt = null;
+        this.body = this.Owner.GetComponentInChildren<ConveyorBody>();
+        this.body.Setup();
+        Debug.Log("Setting up conveyor direction from onStart");
         SetupConveyorDirection();
     }
 
     public override void Update()
     {
-        foreach (HexSide side in InputBelts.Keys)
+        MoveItemsForward(this.ConveyorBelt, this.Next?.ConveyorBelt);
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        Debug.Log("Conveyor cell has been destroyed");
+
+        if (this.Next != null)
         {
-            MoveItemsForward(InputBelts[side], OutputBelt);
+            Debug.Log("Telling next i've been destroyed");
+            this.Next.InformOfDeath(this);
         }
 
-        Belt nextPath = null;
-        this.Next?.InputBelts.TryGetValue(this.GetOppositeSide(OutputBelt.Side), out nextPath);
-        MoveItemsForward(OutputBelt, nextPath);
+        if (this.Prev != null)
+        {
+            Debug.Log("Telling prev i've been destroyed");
+            this.Prev.InformOfDeath(this);
+        }
+    }
+
+    private void InformOfDeath(ConveyorCell cell)
+    {
+        if (this.Next == cell)
+        {
+            Debug.Log("My next was destroyed");
+            LinkConveyors(this, null);
+            SetupConveyorDirection();
+        }
+
+        if (this.Prev == cell)
+        {
+            Debug.Log("My prev was destroyed");
+            LinkConveyors(null, this);
+            SetupConveyorDirection();
+        }
+    }
+
+    private Vector3 GetTargetRotation(ItemOnBelt item)
+    {
+        return item.CurrentPathPoint < this.ConveyorBelt.Points.Length - 2 ?
+            this.ConveyorBelt.Points[item.CurrentPathPoint + 2].position - this.ConveyorBelt.Points[item.CurrentPathPoint + 1].position :
+            this.ConveyorBelt.Points[item.CurrentPathPoint + 1].position - item.ItemInst.gameObject.transform.position;
     }
 
     private void MoveItemsForward(Belt belt, Belt nextBelt)
     {
-        if (belt == null || belt.Points.Count == 0)
+        if (belt == null || belt.Points.Length == 0)
         {
             return;
         }
@@ -111,7 +132,7 @@ public class ConveyorCell : Cell
                 continue;
             }
 
-            if (iterRes.CurrentPathPoint < belt.Points.Count - 1)
+            if (iterRes.CurrentPathPoint < belt.Points.Length - 1)
             {
                 if (!iterRes.IsPaused)
                 {
@@ -119,14 +140,13 @@ public class ConveyorCell : Cell
                     if (currentProgress + iterRes.ItemInst.Item.Width < GetMinBoundOfNextItem(currentItem, nextBelt))
                     {
                         Vector3 deltaToNextPoint =
-                            belt.Points[iterRes.CurrentPathPoint + 1] -
+                            belt.Points[iterRes.CurrentPathPoint + 1].position -
                             iterRes.ItemInst.gameObject.transform.position;
                         Vector3 moveDelta = deltaToNextPoint.normalized * VELOCITY * Time.deltaTime;
                         iterRes.ItemInst.gameObject.transform.position += moveDelta;
-                        iterRes.ItemInst.transform.forward =
-                            iterRes.ItemInst.Item.ForwardOnConveyor *
-                            (belt.Points[iterRes.CurrentPathPoint + 1] - iterRes.ItemInst.gameObject.transform.position);
-                        iterRes.ProgressAlongPath += moveDelta.magnitude;
+                        Vector3 targetRot = GetTargetRotation(iterRes);
+                        iterRes.ItemInst.transform.forward = Vector3.Lerp(iterRes.ItemInst.transform.forward, targetRot, Time.deltaTime * 8);
+                        iterRes.ProgressAlongPath += moveDelta.magnitude / this.ConveyorBelt.TotalLength;
 
                         if (deltaToNextPoint.magnitude < .02f)
                         {
@@ -158,12 +178,7 @@ public class ConveyorCell : Cell
 
     public void AddItem(HexSide fromSide, InstantiatedItem inst)
     {
-        if (!InputBelts.ContainsKey(fromSide))
-        {
-            throw new System.Exception("Tried to add an item on a side which is not configured as an input side.");
-        }
-
-        AddItem(InputBelts[fromSide], inst);
+        AddItem(this.ConveyorBelt, inst);
     }
 
     public void AddItem(Belt toBelt, InstantiatedItem inst)
@@ -190,12 +205,7 @@ public class ConveyorCell : Cell
 
     public bool CanAccept(HexSide side, float itemWidth)
     {
-        if (!InputBelts.ContainsKey(side))
-        {
-            return false;
-        }
-
-        return CanAccept(InputBelts[side], itemWidth);
+        return CanAccept(this.ConveyorBelt, itemWidth);
     }
 
     public bool CanAccept(Belt belt, float itemWidth)
@@ -256,27 +266,6 @@ public class ConveyorCell : Cell
         throw new System.Exception($"Tried to remove item with id {itemId} from this belt, but it wasn't there.");
     }
 
-    public void SwitchOutput(ConveyorCell newOutput)
-    {
-        bool isNewANeighbor = false;
-        for (int i = 0; i < 6; i++)
-        {
-            Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
-            if (Managers.Board.GetBuilding(neighbor)?.ConveyorCell == newOutput)
-            {
-                isNewANeighbor = true;
-                break;
-            }
-        }
-
-        if (isNewANeighbor)
-        {
-            var currentItems = this.OutputBelt?.Items ?? new LinkedList<ItemOnBelt>();
-            LinkConveyors(this, newOutput);
-            this.OutputBelt.Items = currentItems;
-        }
-    }
-
     private float GetMinBoundOfNextItem(LinkedListNode<ItemOnBelt> item, Belt nextBelt)
     {
         if (item.Next != null)
@@ -296,89 +285,141 @@ public class ConveyorCell : Cell
 
     private void SetupConveyorDirection()
     {
-        if (Owner.Disabled)
-        {
-            return;
-        }
-
         for (int i = 0; i < 6; i++)
         {
             Vector2Int neighbor = Helpers.GetNeighborPosition(this.Owner.GridPosition, (HexSide)i);
             Building building = Managers.Board.GetBuilding(neighbor);
 
-            if (building == null || building.ConveyorCell == null)
-            {
-                continue;
-            }
-
-            if (building.ConveyorCell.Next == null &&
-                !(building.ConveyorCell != null && building.ConveyorCell.IsTermination))
+            if (CanBePrev(building))
             {
                 LinkConveyors(building.ConveyorCell, this);
             }
 
-            if (building.ConveyorCell.Next != this &&
-                building.ConveyorCell.Next == null &&
-                building.ResourceCollectionCell == null &&
-                !building.ConveyorCell.IsSource)
+            if (CanBeNext(building))
             {
                 LinkConveyors(this, building.ConveyorCell);
             }
         }
     }
 
-    private void LinkConveyors(ConveyorCell source, ConveyorCell target)
+    private bool CanBePrev(Building building)
     {
-        HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
-        HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
-
-        // if (this.Next != null)
-        // {
-        //     HexSide existingTargetInputSide = GetOppositeSide(this.OutputBelt.Side);
-        //     this.Next.InputBelts.Remove(existingTargetInputSide);
-        //     ConfigureLines(this.Next);
-        // }
-
-        // todo: recalculate positions of existing items on output belt.
-        source.OutputBelt = new Belt(
-            new LinkedList<ItemOnBelt>(),
-            GetOutputPath(sourceOutputSide, source.Owner.transform.position),
-            sourceOutputSide);
-
-        if (target.InputBelts == null)
+        if (building?.ConveyorCell == null)
         {
-            target.InputBelts = new Dictionary<HexSide, Belt>();
+            Debug.Log("Can't be prev because it's not a conveyor");
+            return false;
         }
-        target.InputBelts[targetInputSide] = new Belt(
-            new LinkedList<ItemOnBelt>(),
-            GetInputPath(targetInputSide, target.Owner.transform.position),
-            targetInputSide);
-        source.Next = target;
 
-        ConfigureLines(source);
-        ConfigureLines(target);
+        if (building.ConveyorCell.Next != null)
+        {
+            Debug.Log("Can't be prev because it already has a next.");
+            return false;
+        }
+
+        if (building.ConveyorCell.Prev == this)
+        {
+            Debug.Log("Can't be prev because its prev is me");
+            return false;
+        }
+
+        return true;
     }
 
-    private static void ConfigureLines(ConveyorCell conveyor)
+    private bool CanBeNext(Building building)
     {
-        List<Vector3> points = new List<Vector3>();
-        if (conveyor.InputBelts != null && conveyor.InputBelts.Values.Count != 0)
+        if (this.Next != null)
         {
-            points.AddRange(conveyor.InputBelts.Values.First().Points);
+            return false;
         }
 
-        if (conveyor.OutputBelt?.Points.Count > 0)
+        if (building?.ConveyorCell == null)
         {
-            points.AddRange(conveyor.OutputBelt.Points);
+            Debug.Log("Can't be next because it's not a conveyor");
+            return false;
         }
 
-        for (int i = 0; i < points.Count; i++)
+        if (building.ConveyorCell.Prev != null)
         {
-            points[i] += Vector3.up * .2f;
+            Debug.Log("Can't be next because it has a prev.");
+            return false;
         }
 
-        conveyor.Owner.GetComponent<LineRenderer>().positionCount = points.Count;
-        conveyor.Owner.GetComponent<LineRenderer>().SetPositions(points.ToArray());
+        if (building.ConveyorCell.Next == this)
+        {
+            Debug.Log("Can't be next because it's next is me.");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private bool IsInputTooSharp(Building building)
+    {
+        HexSide? outputSide = this.ConveyorBelt?.OutputSide;
+        HexSide checkInputSide =
+                CalculateHexSide(
+                    this.Owner.transform.position,
+                    building.transform.position);
+        if (outputSide != null)
+        {
+            int angle = Math.Abs((int)checkInputSide - (int)outputSide);
+
+            // Can't do 60 degree turns.
+            if (angle < 2)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void LinkConveyors(ConveyorCell source, ConveyorCell target)
+    {
+        if (source == null)
+        {
+            var items = target.ConveyorBelt.Items;
+            HexSide outputSide = target.ConveyorBelt?.OutputSide ?? HexSide.NorthEast;
+            HexSide inputSide = GetOppositeSide(outputSide);
+            target.ConveyorBelt = new Belt(items, inputSide, outputSide, target.body);
+            target.Prev = null;
+            target.body.Setup();
+            return;
+        }
+
+        if (target == null)
+        {
+            var items = source.ConveyorBelt.Items;
+            HexSide inputSide = source.ConveyorBelt?.InputSide ?? HexSide.SouthWest;
+            HexSide outputSide = GetOppositeSide(inputSide);
+            source.ConveyorBelt = new Belt(items, inputSide, outputSide, source.body);
+            source.Next = null;
+            source.body.Setup();
+            return;
+        }
+
+        HexSide sourceOutputSide = CalculateHexSide(source.Owner.transform.position, target.Owner.transform.position);
+        HexSide targetInputSide = GetOppositeSide(sourceOutputSide);
+        HexSide sourceInputSide =
+            source.Prev != null ?
+                CalculateHexSide(source.Owner.transform.position, source.Prev.Owner.transform.position) :
+                targetInputSide;
+
+        Debug.Log($"Linking conveyor with input {sourceInputSide} and output {sourceOutputSide} to conveyor with input {targetInputSide}");
+
+        var sourceItems = source.ConveyorBelt?.Items ?? new LinkedList<ItemOnBelt>();
+        source.ConveyorBelt = new Belt(sourceItems, sourceInputSide, sourceOutputSide, source.body);
+
+        var targetItems = target.ConveyorBelt?.Items ?? new LinkedList<ItemOnBelt>();
+        HexSide targetOutputSide = target.ConveyorBelt?.OutputSide ?? sourceOutputSide;
+        target.ConveyorBelt = new Belt(targetItems, targetInputSide, targetOutputSide, target.body);
+
+        source.Next = target;
+        target.Prev = source;
+
+        source.body.Setup();
+        target.body.Setup();
     }
 
     private static List<Vector3> GetPathForAngle(float angle, bool reversed = false)
@@ -408,43 +449,19 @@ public class ConveyorCell : Cell
         switch (side)
         {
             case (HexSide.North):
-                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, Constants.HEXAGON_r) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(0, ITEM_DIST_ABOVE_GROUND, Constants.HEXAGON_r) };
             case (HexSide.NorthEast):
-                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, .43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(.75f, ITEM_DIST_ABOVE_GROUND, .43f) };
             case (HexSide.SouthEast):
-                return new List<Vector3> { Vector3.zero, new Vector3(.75f, 0, -.43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(.75f, ITEM_DIST_ABOVE_GROUND, -.43f) };
             case (HexSide.South):
-                return new List<Vector3> { Vector3.zero, new Vector3(0, 0, -Constants.HEXAGON_r) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(0, ITEM_DIST_ABOVE_GROUND, -Constants.HEXAGON_r) };
             case (HexSide.SouthWest):
-                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, -.43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(-.75f, ITEM_DIST_ABOVE_GROUND, -.43f) };
             case (HexSide.NorthWest):
-                return new List<Vector3> { Vector3.zero, new Vector3(-.75f, 0, .43f) };
+                return new List<Vector3> { Vector3.up * ITEM_DIST_ABOVE_GROUND, new Vector3(-.75f, ITEM_DIST_ABOVE_GROUND, .43f) };
             default: throw new Exception("Unknown side: " + side);
         }
-    }
-
-    private static List<Vector3> GetInputPath(HexSide side, Vector3 center)
-    {
-        List<Vector3> points = GetPointsForSide(side);
-        points.Reverse();
-        Debug.Log(string.Join(",", points));
-        for (int i = 0; i < points.Count; i++)
-        {
-            points[i] = points[i] + center;
-        }
-
-        return points;
-    }
-
-    private static List<Vector3> GetOutputPath(HexSide side, Vector3 center)
-    {
-        List<Vector3> points = GetPointsForSide(side);
-        for (int i = 0; i < points.Count; i++)
-        {
-            points[i] = points[i] + center;
-        }
-
-        return points;
     }
 
     private static HexSide CalculateHexSide(Vector3 sourcePos, Vector3 targetPos)
@@ -476,7 +493,7 @@ public class ConveyorCell : Cell
         }
     }
 
-    private HexSide GetOppositeSide(HexSide side)
+    private static HexSide GetOppositeSide(HexSide side)
     {
         switch (side)
         {

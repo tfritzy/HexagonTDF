@@ -6,9 +6,11 @@ public static class Constants
 {
     public const float HEXAGON_r = 0.866f;
     public const float HEXAGON_R = 1.066f;
-    public const float HEXAGON_HEIGHT = .35f;
+    public const float HEXAGON_HEIGHT = 1f;
     public const float OVERWORLD_HEXAGON_R = .15f;
-    public const int OVERWORLD_DIMENSIONS = 25;
+    public const int CHUNK_SIZE = 16;
+    public const int WORLD_CHUNK_WIDTH = 16;
+    public static readonly Vector3Int CHUNK_DIMENSIONS = new Vector3Int(CHUNK_SIZE, CHUNK_SIZE, MAX_HEIGHT);
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
     public static readonly float OverworldHorizontalDistanceBetweenHexagons = Constants.OVERWORLD_HEXAGON_R + Mathf.Sin(30.0f * Mathf.Deg2Rad) * Constants.OVERWORLD_HEXAGON_R;
@@ -18,6 +20,8 @@ public static class Constants
     public const int MAX_ISH = int.MaxValue;
     public const int MIN_ISH = int.MinValue;
     public const string AnimationStateParameter = "AnimationState";
+    public const int WATER_HEIGHT = 12;
+    public const int MAX_HEIGHT = 64;
 
     public class Colors
     {

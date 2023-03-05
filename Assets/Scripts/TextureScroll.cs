@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class TextureScroll : MonoBehaviour
 {
-    private Material mat;
+    private MeshRenderer mr;
+    public int direction = 1;
 
     void Start()
     {
-        this.mat = this.GetComponent<LineRenderer>().material;
+        this.mr = this.GetComponent<MeshRenderer>();
     }
 
     void Update()
     {
-        Vector2 offset = this.mat.mainTextureOffset;
-        offset.x -= .2f * Time.deltaTime;
-        this.mat.mainTextureOffset = offset;
+        Vector2 offset = this.mr.material.mainTextureOffset;
+        offset.x += direction * .2f * Time.deltaTime;
+        this.mr.material.mainTextureOffset = offset;
     }
 }

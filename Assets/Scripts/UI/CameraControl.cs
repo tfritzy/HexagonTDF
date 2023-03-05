@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    public const float MOVEMENT_SPEED = 9f;
+    public float MOVEMENT_SPEED = 18f;
     public bool DisableXScroll;
     public bool FrozenUntilMouseUp;
     private const float INPUT_BUFFER_DURATION = .25f;
@@ -32,8 +32,7 @@ public class CameraControl : MonoBehaviour
 
     void Update()
     {
-        // HandleTouchInput();
-        this.transform.position += GetDirectionalInput() * MOVEMENT_SPEED * Time.unscaledDeltaTime;
+        this.rb.velocity = GetDirectionalInput() * MOVEMENT_SPEED;
     }
 
     public bool IsDragging()

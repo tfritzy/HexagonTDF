@@ -9,7 +9,21 @@ public class Forrest : Hexagon
     public override bool IsBuildable => false;
     public override bool IsWalkable => false;
 
-    public Forrest(int height) : base(height)
+    public Forrest()
     {
+    }
+
+    public override float ObstacleChance => .2f;
+    public override GameObject GetObstacleBody()
+    {
+        return Managers.Prefabs.Trees[
+            Random.Range(0, Managers.Prefabs.Trees.Length)
+        ];
+    }
+
+    public override int NumDecorations => 0;
+    public override GameObject GetDecorationBody()
+    {
+        return Managers.Prefabs.Grass;
     }
 }

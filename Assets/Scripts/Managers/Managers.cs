@@ -123,7 +123,7 @@ public static class Managers
         {
             if (_mainCharacter == null)
             {
-                _mainCharacter = GameObject.Find("MainCharacter").GetComponent<MainCharacter>();
+                _mainCharacter = GameObject.Find("Main Character")?.GetComponent<MainCharacter>();
             }
 
             return _mainCharacter;

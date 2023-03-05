@@ -1,17 +1,14 @@
 using System.Collections.Generic;
 
-public class PlayerInventory : UIPage
+public class PlayerInventory : Drawer
 {
     private InventoryTransferUI inventory;
     private List<InventoryCell> playerInventory;
 
     public PlayerInventory()
     {
-        var modal = new Modal(800, "Your inventory");
-        this.Add(modal);
-
         this.inventory = new InventoryTransferUI();
-        modal.Add(inventory);
+        this.Add(inventory);
 
         playerInventory = new List<InventoryCell> { null };
     }

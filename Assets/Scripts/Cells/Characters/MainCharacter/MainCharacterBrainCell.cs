@@ -5,64 +5,87 @@ public class MainCharacterBrainCell : BrainCell
 {
     private LinkedList<CharacterAction> CurrentActions = new LinkedList<CharacterAction>();
     private MainCharacterResourceCollectionCell harvestCell => (MainCharacterResourceCollectionCell)this.Owner.ResourceCollectionCell;
+    private Rigidbody rb;
 
     public MainCharacterBrainCell()
     {
-
-    }
-
-    public void SetTargetHex(Vector2Int pos)
-    {
-        foreach (CharacterAction action in this.CurrentActions)
-        {
-            action.End();
-        }
-
-        CurrentActions = new LinkedList<CharacterAction>();
-
-        HexagonMono hex = Managers.Board.GetHex(pos);
-        if (this.Owner.ResourceCollectionCell != null &&
-            this.Owner.ResourceCollectionCell.CanHarvestFrom(hex.Hexagon))
-        {
-            harvestCell.ChangeTargetHex(pos, hex.Biome);
-
-            this.CurrentActions = new LinkedList<CharacterAction>();
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
-            this.CurrentActions.AddLast(new HarvestAction(this.Owner, hex.Biome));
-        }
-        else if (Managers.Board.GetBuilding(hex.GridPosition) != null)
-        {
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: true));
-            this.CurrentActions.AddLast(new OpenInventoryAction(this.Owner, Managers.Board.GetBuilding(hex.GridPosition)));
-        }
-        else
-        {
-            this.CurrentActions.AddLast(new MoveAction(this.Owner, pos, stopOneBefore: false));
-        }
-
-        this.CurrentActions.First.Value.Start();
     }
 
     public override void Update()
     {
-        if (this.CurrentActions.Count > 0)
+        if (this.rb == null)
         {
-            if (this.CurrentActions.First.Value.State == CharacterAction.ActionState.Finished)
-            {
-                this.CurrentActions.RemoveFirst();
-                this.CurrentActions.First?.Value.Start();
-
-                if (this.CurrentActions.Count == 0)
-                {
-                    this.Owner.Animator?.SetInteger(Constants.AnimationStateParameter, (int)MainCharacterAnimationState.Idle);
-                }
-
-                return;
-            }
-
-            this.CurrentActions.First.Value.Update();
+            this.rb = this.Owner.GetComponent<Rigidbody>();
         }
 
+        Run();
+        Jump();
+    }
 
+    private void Run()
+    {
+        Vector3 inputDir = GetDirectionalInput();
+        if (inputDir != Vector3.zero)
+        {
+            SetVelocity(inputDir * this.Owner.MovementCell.MovementSpeed);
+            this.Owner.transform.forward = inputDir;
+            this.Owner.Animator?.SetInteger(
+                Constants.AnimationStateParameter,
+                (int)MainCharacterAnimationState.Running
+            );
+        }
+        else
+        {
+            SetVelocity(Vector3.zero);
+            this.Owner.Animator?.SetInteger(
+                Constants.AnimationStateParameter,
+                (int)MainCharacterAnimationState.Idle
+            );
+        }
+    }
+
+    private void SetVelocity(Vector3 target)
+    {
+        target.y = this.rb.velocity.y;
+        this.rb.velocity = target;
+    }
+
+    public Vector3 GetDirectionalInput()
+    {
+        Vector3 direction = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            direction += Vector3.right;
+        }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            direction += Vector3.forward;
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            direction += Vector3.back;
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            direction += Vector3.left;
+        }
+
+        return direction.normalized;
+    }
+
+    public void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            this.rb.AddRelativeForce(Vector3.up * 7f, ForceMode.VelocityChange);
+            this.Owner.Animator?.SetInteger(
+                Constants.AnimationStateParameter,
+                (int)MainCharacterAnimationState.Jumping
+            );
+        }
     }
 }

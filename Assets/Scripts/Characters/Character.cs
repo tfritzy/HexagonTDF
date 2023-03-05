@@ -107,7 +107,7 @@ public abstract class Character : MonoBehaviour
     }
 
     // The event called when the user clicks on a hex, while having this character selected.
-    public virtual void SelectedClickHex(Vector2Int pos) { }
+    public virtual void SelectedClickHex(HexagonMono hex) { }
 
     private void ApplyEffects()
     {
@@ -155,14 +155,27 @@ public abstract class Character : MonoBehaviour
 
     public void SetMaterial(Material material)
     {
-        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>())
+        foreach (MeshRenderer renderer in this.GetComponentsInChildren<MeshRenderer>(includeInactive: true))
         {
             renderer.material = material;
         }
     }
 
+    public virtual void SetDefaultMaterial()
+    {
+        SetMaterial(Prefabs.GetMaterial(MaterialType.ColorPalette));
+    }
+
     public void DisableAllCells()
     {
         this.Cells.ForEach((Cell cell) => cell.SetEnabled(false));
+    }
+
+    public virtual void OnDestroy()
+    {
+        foreach (Cell cell in Cells)
+        {
+            cell.OnDestroy();
+        }
     }
 }

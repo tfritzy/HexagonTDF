@@ -1,78 +1,175 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public Hexagon[,] Board;
-    public HexagonMono[,] HexagonMonos;
+    public World World;
     public string ActiveMapName;
-    private Building[,] Buildings;
-    public RectInt Dimensions;
-    private Vector2Int Center => this.Dimensions.max / 2;
-    public Navigation Navigation;
+    public TownHall TownHall;
+    private const int CHUNK_RENDER_DIST = 3;
+
+    private Vector2Int renderedChunk = new Vector2Int(int.MinValue, int.MinValue);
+    private Dictionary<Vector2Int, Coroutine> chunkLoadingCoroutines = new Dictionary<Vector2Int, Coroutine>();
+    private int seed;
+    private Dictionary<Biome, LinkedList<GameObject>> hexPool = new Dictionary<Biome, LinkedList<GameObject>>();
+    private bool isWorldGenerated;
 
     void Awake()
     {
-        SpawnMap();
+        this.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        StartCoroutine(SpawnMap());
     }
 
-    private void SpawnMap()
+    void Update()
     {
-        this.Board = OverworldTerrainGenerator.GenerateSingleSegment(
-            Constants.OVERWORLD_DIMENSIONS,
-            Constants.OVERWORLD_DIMENSIONS,
-            UnityEngine.Random.Range(0, 1000));
+        if (!isWorldGenerated)
+        {
+            return;
+        }
 
-        this.Buildings = new Building[Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS];
-        this.Dimensions = new RectInt(0, 0, Constants.OVERWORLD_DIMENSIONS, Constants.OVERWORLD_DIMENSIONS);
+        Vector2Int currentChunk = Helpers.ToGridPosition(Managers.Camera.transform.position) / Constants.CHUNK_SIZE;
+        if (currentChunk != renderedChunk)
+        {
+            UpdatedLoadedChunks(currentChunk);
+            renderedChunk = currentChunk;
+        }
+    }
 
-        TownHall townHall = SpawnTownHall();
-        Navigation = new Navigation(this.Dimensions.max, townHall);
-        AddBuilding(townHall.GridPosition, townHall);
-        SpawnHexagons();
+    private void UnloadHex(Vector2Int chunkIndex, int x, int y, int z)
+    {
+        Hexagon destroyedHex = World.GetHex(chunkIndex, x, y, z);
+        if (World.TryGetHexBody(chunkIndex, x, y, z, out HexagonMono body))
+        {
+            body.gameObject.SetActive(false);
+
+            if (!hexPool.ContainsKey(destroyedHex.Biome))
+            {
+                hexPool[destroyedHex.Biome] = new LinkedList<GameObject>();
+            }
+
+            hexPool[destroyedHex.Biome].AddLast(body.gameObject);
+        }
+    }
+
+    public void DestroyHex(int x, int y, int z)
+    {
+        Helpers.WorldToChunkPos(x, y, z, out Vector2Int chunkIndex, out Vector3Int subPos);
+        UnloadHex(chunkIndex, subPos.x, subPos.y, z);
+        World.DestroyHex(chunkIndex, subPos.x, subPos.y, z);
+        foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
+        {
+            Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
+            SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z);
+        }
+    }
+
+    private void UpdatedLoadedChunks(Vector2Int currentChunk)
+    {
+        HashSet<Vector2Int> chunksInRange = new HashSet<Vector2Int>();
+        for (int x = currentChunk.x - CHUNK_RENDER_DIST; x < currentChunk.x + CHUNK_RENDER_DIST; x++)
+        {
+            for (int y = currentChunk.y - CHUNK_RENDER_DIST; y < currentChunk.y + CHUNK_RENDER_DIST; y++)
+            {
+                Vector2Int chunkIndex = new Vector2Int(x, y);
+                chunksInRange.Add(chunkIndex);
+                if (World.Chunks.ContainsKey(chunkIndex) && !chunkLoadingCoroutines.ContainsKey(chunkIndex) && !World.Chunks[chunkIndex].IsActive)
+                {
+                    var coroutine = StartCoroutine(LoadChunk(chunkIndex));
+                    chunkLoadingCoroutines.Add(chunkIndex, coroutine);
+                }
+                else if (World.Chunks.ContainsKey(chunkIndex) && !World.Chunks[chunkIndex].IsActive)
+                {
+                    World.Chunks[chunkIndex].IsActive = true;
+                }
+            }
+        }
+
+        foreach (Vector2Int chunkIndex in World.Chunks.Keys.ToList())
+        {
+            if (!chunksInRange.Contains(chunkIndex))
+            {
+                UnloadChunk(chunkIndex);
+            }
+        }
+    }
+
+    private void GenerateChunk(Vector2Int chunkIndex)
+    {
+        var chunkContainer = new GameObject("Chunk " + chunkIndex);
+        var terrainGenerator = new TerrainGenerator();
+        terrainGenerator.GenerateChunk(chunkIndex, this.seed, chunkContainer.transform);
+        World.Chunks[chunkIndex] = terrainGenerator.GeneratedChunk;
+        Chunk chunk = World.Chunks[chunkIndex];
+    }
+
+    private IEnumerator LoadChunk(Vector2Int chunkIndex)
+    {
+        int i = 0;
+        foreach (Vector3Int pos in World.Chunks[chunkIndex].NeedsBody.ToList())
+        {
+            Hexagon hex = World.Chunks[chunkIndex].GetHex(pos.x, pos.y, pos.z);
+            bool isFromCache = SpawnHex(hex, chunkIndex, pos.x, pos.y, pos.z);
+            if (isFromCache)
+            {
+                i += 1;
+            }
+
+            if (i % 40 == 0)
+            {
+                yield return null;
+            }
+        }
+
+        World.Chunks[chunkIndex].IsActive = true;
+        chunkLoadingCoroutines.Remove(chunkIndex);
+    }
+
+    private void UnloadChunk(Vector2Int chunkIndex)
+    {
+        Chunk chunk = World.Chunks[chunkIndex];
+        chunk.IsActive = false;
+    }
+
+    private IEnumerator SpawnMap()
+    {
+        this.World = new World();
+
+        for (int x = 0; x < Constants.WORLD_CHUNK_WIDTH; x++)
+        {
+            for (int y = 0; y < Constants.WORLD_CHUNK_WIDTH; y++)
+            {
+                GenerateChunk(new Vector2Int(x, y));
+            }
+
+            yield return null;
+        }
+
+        Debug.Log("Done generating world");
+
+        yield return LoadChunk(new Vector2Int(10, 10));
+
+        isWorldGenerated = true;
+
         SpawnHero();
-
-        this.Navigation.ReacalculateIdealPath(Board, Buildings);
     }
 
     private TownHall SpawnTownHall()
     {
         // flatten area
-        var points = new List<Vector2Int> { Center };
+        var points = new List<Vector2Int> { Vector2Int.zero };
         for (int i = 0; i < 6; i++)
         {
-            points.Add(Helpers.GetNeighborPosition(Center, (HexSide)i));
+            points.Add(Helpers.GetNeighborPosition(Vector2Int.zero, (HexSide)i));
         }
 
-        float averageHeight = 0;
-        List<Biome> biomesThatArentWater = new List<Biome> { Board[Center.x, Center.y].Biome };
-        foreach (Vector2Int point in points)
-        {
-            averageHeight += Board[point.x, point.y].Height;
-
-            if (Board[point.x, point.y].Biome != Biome.Water)
-            {
-                biomesThatArentWater.Add(Board[point.x, point.y].Biome);
-            }
-        }
-
-        averageHeight /= 7;
-        int newHeight = (int)Mathf.Round(averageHeight);
-        Biome mostCommonHex = biomesThatArentWater
-            .GroupBy(q => q)
-            .OrderByDescending(gp => gp.Count())
-            .First().Key;
-        foreach (Vector2Int point in points)
-        {
-            Board[point.x, point.y] = Prefabs.GetHexagonScript(mostCommonHex, newHeight);
-        }
-
-        return (TownHall)InstantiateBuilding(Center, BuildingType.TownHall);
+        return (TownHall)InstantiateBuilding(Vector2Int.zero, BuildingType.TownHall);
     }
 
-    public Building InstantiateBuilding(Vector2Int pos, BuildingType type)
+    private Building InstantiateBuilding(Vector2Int pos, BuildingType type)
     {
         var buildingGO = GameObject.Instantiate(
             Prefabs.GetBuilding(type),
@@ -86,40 +183,15 @@ public class BoardManager : MonoBehaviour
 
     public LinkedList<Vector2Int> ShortestPathBetween(Vector2Int startPos, Vector2Int endPos)
     {
-        return Navigation.BFS(startPos, endPos, this.Board, this.Buildings);
-    }
-
-    private void CleanupMap()
-    {
-        foreach (HexagonMono hexagon in this.HexagonMonos)
-        {
-            Destroy(hexagon?.gameObject);
-        }
-    }
-
-    private void SpawnHexagons()
-    {
-        this.HexagonMonos = new HexagonMono[Board.GetLength(0), Board.GetLength(1)];
-
-        for (int y = 0; y < Board.GetLength(1); y++)
-        {
-            for (int x = 0; x < Board.GetLength(0); x++)
-            {
-                if (Board[x, y] == null)
-                {
-                    continue;
-                }
-
-                BuildHexagon(x, y);
-            }
-        }
+        return Navigation.BFS(startPos, endPos, World);
     }
 
     private void SpawnHero()
     {
         GameObject character = GameObject.Instantiate(Prefabs.GetCharacter(CharacterType.MainCharacter));
-        character.transform.position = Helpers.ToWorldPosition(Center + new Vector2Int(4, 4));
-        character.name = "MainCharacter";
+        Vector3Int spawnPos = new Vector3Int(4, 4, this.World.GetTopHexHeight(new Vector2Int(10, 10), 4, 4));
+        character.transform.position = Helpers.ToWorldPosition(new Vector2Int(10, 10), spawnPos);
+        character.name = "Main Character";
     }
 
     private bool isValidPath(List<Vector2Int> path, Vector2Int expectedStart, Vector2Int expectedEnd)
@@ -127,66 +199,143 @@ public class BoardManager : MonoBehaviour
         return path?.Count > 0 && path[0] == expectedStart && path.Last() == expectedEnd;
     }
 
-    private void BuildHexagon(int x, int y)
+    // Spawns a hex and returns true if it was retrieved from the cache, and false if instantiated.
+    // The distinction is useful for knowing when the coroutine should yield.
+    private bool SpawnHex(Hexagon hex, Vector2Int chunkIndex, int x, int y, int z)
     {
-        Hexagon point = Board[x, y];
-        Vector3 position = Helpers.ToWorldPosition(x, y);
-        position.y = point.Height * Constants.HEXAGON_HEIGHT;
-        GameObject go = Instantiate(Prefabs.Hexagons[point.Biome], position, new Quaternion(), this.transform);
-        HexagonMono hexagonScript = go.GetComponent<HexagonMono>();
-        hexagonScript.SetType(Prefabs.GetHexagonScript(point.Biome, point.Height));
-        this.HexagonMonos[x, y] = go.GetComponent<HexagonMono>();
-        this.HexagonMonos[x, y].GridPosition = new Vector2Int(x, y);
-        this.HexagonMonos[x, y].Height = point.Height;
-        this.HexagonMonos[x, y].name = point.Biome + "," + point.Height.ToString();
-        this.HexagonMonos[x, y].SetSideData();
-    }
-
-    public HexagonMono GetHex(Vector2Int pos)
-    {
-        if (Helpers.IsInBounds(pos, this.Dimensions) == false)
+        if (hex == null)
         {
-            return null;
+            return true;
         }
 
-        return HexagonMonos[pos.x, pos.y];
+        GameObject go;
+        if (hexPool.ContainsKey(hex.Biome) && hexPool[hex.Biome].Count > 0)
+        {
+            go = hexPool[hex.Biome].First.Value;
+            hexPool[hex.Biome].RemoveFirst();
+            go.SetActive(true);
+            go.transform.SetParent(World.Chunks[chunkIndex].Container);
+            AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
+            return true;
+        }
+        else
+        {
+            go = Instantiate(
+                Prefabs.Hexagons[hex.Biome],
+                Vector3.zero,
+                Quaternion.Euler(0, UnityEngine.Random.Range(0, 5) * 60, 0),
+                World.Chunks[chunkIndex].Container.transform);
+            AddHexGameObjectToWorld(hex, go, chunkIndex, x, y, z);
+            return false;
+        }
+    }
+
+    private void AddHexGameObjectToWorld(Hexagon hex, GameObject body, Vector2Int chunkIndex, int x, int y, int z)
+    {
+        Vector3 position = Helpers.ToWorldPosition(chunkIndex, x, y);
+        position.y = z * Constants.HEXAGON_HEIGHT;
+        body.transform.position = position;
+        HexagonMono hexagonScript = body.GetComponent<HexagonMono>();
+        var hexBody = body.GetComponent<HexagonMono>();
+        hexBody.Setup(hex, this.seed, chunkIndex, new Vector3Int(x, y, z));
+        World.SetHexBody(chunkIndex, x, y, z, hexBody);
     }
 
     public Building GetBuilding(Vector2Int pos)
     {
-        if (!Helpers.IsInBounds(pos, this.Dimensions))
-        {
-            return null;
-        }
-
-        return Buildings[pos.x, pos.y];
+        Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+        World.TryGetBuilding(pos.x, pos.y, World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1, out Building building);
+        return building;
     }
 
-    public void AddBuilding(Vector2Int pos, Building building)
+    public void SetBuilding(Vector2Int pos, Building building)
     {
-        this.Buildings[pos.x, pos.y] = building;
-
-        foreach (HexSide side in building.ExtraSize)
+        Building currentBuilding = GetBuilding(pos);
+        if (building != null && currentBuilding != null && !currentBuilding.IsPreview && currentBuilding != building)
         {
-            Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
-            this.Buildings[extraPos.x, extraPos.y] = building;
+            Debug.LogError($"Tried to place a building at {pos} but it's already occupied by {currentBuilding?.name}");
         }
 
-        Navigation.ReacalculatePath(this.Board, this.Buildings);
+        Helpers.WorldToChunkPos(pos, out Vector2Int chunkIndex, out Vector3Int subPos);
+        World.SetBuilding(
+            chunkIndex,
+            subPos.x,
+            subPos.y,
+            World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+            building);
+
+        if (building == null && currentBuilding != null)
+        {
+            foreach (HexSide side in currentBuilding.ExtraSize)
+            {
+                Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+                Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
+                World.SetBuilding(
+                    chunkIndex,
+                    extraPos.x,
+                    extraPos.y,
+                    World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+                    building);
+            }
+        }
+        else if (building != null)
+        {
+            foreach (HexSide side in building.ExtraSize)
+            {
+                Vector2Int extraPos = Helpers.GetNeighborPosition(pos, side);
+                Helpers.WorldToChunkPos(extraPos, out chunkIndex, out subPos);
+
+                currentBuilding = GetBuilding(extraPos);
+                if (currentBuilding != null && !currentBuilding.IsPreview && currentBuilding != building)
+                {
+                    Debug.LogError($"Tried to place a building at {extraPos} but it's already occupied");
+                }
+
+                World.SetBuilding(
+                    chunkIndex,
+                    extraPos.x,
+                    extraPos.y,
+                    World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) + 1,
+                    building);
+            }
+        }
+    }
+
+    public LinkedList<Vector2Int> GetPathBetweenPoints(Vector2Int startPos, Vector2Int endPos)
+    {
+        return Navigation.BFS(startPos, endPos, this.World);
+    }
+
+    public Building BuildBuilding(BuildingType buildingType, Vector2Int gridPosition)
+    {
+        Building currentBulding = GetBuilding(gridPosition);
+
+        // You can build on top of a preview, but not a real building.
+        if (currentBulding != null && !currentBulding.IsPreview)
+        {
+            if (currentBulding.IsPreview)
+            {
+                DestroyBuilding(currentBulding);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        Building newBuilding = InstantiateBuilding(gridPosition, buildingType);
+        SetBuilding(gridPosition, newBuilding);
+        return newBuilding;
     }
 
     public void DestroyBuilding(Building building)
     {
-        this.Buildings[building.GridPosition.x, building.GridPosition.y] = null;
-
-        foreach (HexSide side in building.ExtraSize)
+        if (GetBuilding(building.GridPosition) == building)
         {
-            Vector2Int extraPos = Helpers.GetNeighborPosition(building.GridPosition, side);
-            this.Buildings[extraPos.x, extraPos.y] = null;
+            SetBuilding(building.GridPosition, null);
         }
 
-        Navigation.ReacalculatePath(this.Board, this.Buildings);
-
+        building.OnDestroy();
         Destroy(building.gameObject);
     }
 }

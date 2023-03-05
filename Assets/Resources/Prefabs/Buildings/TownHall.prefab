@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1893829671719449697}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4815365030909168533}
@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Disabled: 0
   Body: {fileID: 0}
+  Animator: {fileID: 0}
+  ShouldInstaBuild: 0
 --- !u!136 &7208058421098550372
 CapsuleCollider:
   m_ObjectHideFlags: 0

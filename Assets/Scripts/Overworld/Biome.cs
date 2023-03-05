@@ -3,6 +3,7 @@
     Invalid,
     Snow,
     Mountain,
+    Stone,
     Forrest,
     Grassland,
     Sand,

@@ -135,22 +135,24 @@ public static class Prefabs
     }
 
 
-    public static Hexagon GetHexagonScript(Biome biome, int height)
+    public static Hexagon GetHexagonScript(Biome biome)
     {
         switch (biome)
         {
             case (Biome.Sand):
-                return new Sand(height);
+                return new Sand();
             case (Biome.Forrest):
-                return new Forrest(height);
+                return new Forrest();
             case (Biome.Grassland):
-                return new Grassland(height);
+                return new Grassland();
             case (Biome.Mountain):
-                return new Mountain(height);
+                return new Mountain();
             case (Biome.Snow):
-                return new Snow(height);
+                return new Snow();
             case (Biome.Water):
                 return new Water();
+            case (Biome.Stone):
+                return new Stone();
             default:
                 throw new System.Exception("Unknown biome " + biome);
         }

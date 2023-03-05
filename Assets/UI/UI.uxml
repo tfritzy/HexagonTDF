@@ -1,3 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=d88e1146f987d25499bcb385717d025a&amp;type=3#Stylesheet" />
+    <ui:VisualElement class="drawer" style="flex-grow: 1; background-color: rgb(36, 36, 36);">
+        <ui:Button text="&#10;" display-tooltip-when-elided="true" class="grid-button" style="background-image: url(&apos;project://database/Assets/Textures/Vignette.png?fileID=2800000&amp;guid=e711d1f86a0af2d449f33db5c08696c3&amp;type=3#Vignette&apos;); background-color: rgb(38, 38, 38);" />
+    </ui:VisualElement>
 </ui:UXML>

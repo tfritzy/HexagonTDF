@@ -5,10 +5,7 @@ using UnityEngine;
 public class Navigation
 {
     public List<Vector2Int> Terminations { get; private set; }
-    private NavMapPoint[,] NavMap;
-    private NavMapPoint[,] IdealNavMap;
     private TownHall townHall;
-    private Vector2Int dimensions;
 
     struct NavMapPoint
     {
@@ -17,103 +14,70 @@ public class Navigation
         public bool IsTermination;
     }
 
-    public Navigation(Vector2Int boardSize, TownHall townHall)
+    public Navigation(TownHall townHall)
     {
-        this.NavMap = new NavMapPoint[boardSize.x, boardSize.y];
-        this.IdealNavMap = new NavMapPoint[boardSize.x, boardSize.y];
         this.townHall = townHall;
-        this.dimensions = boardSize;
     }
 
-    public int GetDistanceToTownHall(Vector2Int pos)
-    {
-        return NavMap[pos.x, pos.y].Distance;
-    }
+    // private void Dijkstra(NavMapPoint[,] navMap, Hexagon[,] segment, Building[,] bulidings, bool ignorePlayerObstacles = false)
+    // {
+    //     Queue<Vector2Int> queue = new Queue<Vector2Int>();
+    //     InitNavMap(navMap, segment);
+    //     navMap[townHall.GridPosition.x, townHall.GridPosition.y].Distance = 0;
+    //     queue.Enqueue(this.townHall.GridPosition);
 
-    public int GetIdealDistanceToTownHall(Vector2Int pos)
-    {
-        return IdealNavMap[pos.x, pos.y].Distance;
-    }
+    //     foreach (HexSide side in townHall.ExtraSize)
+    //     {
+    //         Vector2Int point = Helpers.GetNeighborPosition(townHall.GridPosition, side);
+    //         navMap[point.x, point.y].Distance = 0;
+    //         queue.Enqueue(point);
+    //     }
 
-    public Vector2Int GetNextPos(Vector2Int currentPos)
-    {
-        return NavMap[currentPos.x, currentPos.y].Next;
-    }
-    public Vector2Int GetIdealNextPos(Vector2Int currentPos)
-    {
-        return IdealNavMap[currentPos.x, currentPos.y].Next;
-    }
+    //     while (queue.Count > 0)
+    //     {
+    //         Vector2Int current = queue.Dequeue();
 
+    //         for (int i = 0; i < 6; i++)
+    //         {
+    //             Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
+    //             if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
+    //                 !segment[neighbor.x, neighbor.y].IsWalkable)
+    //             {
+    //                 continue;
+    //             }
 
-    public void ReacalculatePath(Hexagon[,] segment, Building[,] bulidings)
-    {
-        Dijkstra(this.NavMap, segment, bulidings);
-    }
+    //             if (!ignorePlayerObstacles && bulidings[neighbor.x, neighbor.y] != null)
+    //             {
+    //                 continue;
+    //             }
 
-    public void ReacalculateIdealPath(Hexagon[,] segment, Building[,] bulidings)
-    {
-        Dijkstra(this.IdealNavMap, segment, bulidings, ignorePlayerObstacles: true);
-    }
+    //             if (navMap[neighbor.x, neighbor.y].Distance > navMap[current.x, current.y].Distance + 1)
+    //             {
+    //                 queue.Enqueue(neighbor);
+    //                 navMap[neighbor.x, neighbor.y].Distance = navMap[current.x, current.y].Distance + 1;
+    //                 navMap[neighbor.x, neighbor.y].Next = current;
+    //                 navMap[current.x, current.y].IsTermination = false;
+    //             }
+    //         }
+    //     }
 
-    private void Dijkstra(NavMapPoint[,] navMap, Hexagon[,] segment, Building[,] bulidings, bool ignorePlayerObstacles = false)
-    {
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        InitNavMap(navMap, segment);
-        navMap[townHall.GridPosition.x, townHall.GridPosition.y].Distance = 0;
-        queue.Enqueue(this.townHall.GridPosition);
+    //     Terminations = new List<Vector2Int>();
+    //     for (int x = 0; x < dimensions.x; x++)
+    //     {
+    //         for (int y = 0; y < dimensions.y; y++)
+    //         {
+    //             if (navMap[x, y].Distance == Constants.MAX_ISH)
+    //             {
+    //                 navMap[x, y].IsTermination = false;
+    //             }
 
-        foreach (HexSide side in townHall.ExtraSize)
-        {
-            Vector2Int point = Helpers.GetNeighborPosition(townHall.GridPosition, side);
-            navMap[point.x, point.y].Distance = 0;
-            queue.Enqueue(point);
-        }
-
-        while (queue.Count > 0)
-        {
-            Vector2Int current = queue.Dequeue();
-
-            for (int i = 0; i < 6; i++)
-            {
-                Vector2Int neighbor = Helpers.GetNeighborPosition(current, (HexSide)i);
-                if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
-                    !segment[neighbor.x, neighbor.y].IsWalkable)
-                {
-                    continue;
-                }
-
-                if (!ignorePlayerObstacles && bulidings[neighbor.x, neighbor.y] != null)
-                {
-                    continue;
-                }
-
-                if (navMap[neighbor.x, neighbor.y].Distance > navMap[current.x, current.y].Distance + 1)
-                {
-                    queue.Enqueue(neighbor);
-                    navMap[neighbor.x, neighbor.y].Distance = navMap[current.x, current.y].Distance + 1;
-                    navMap[neighbor.x, neighbor.y].Next = current;
-                    navMap[current.x, current.y].IsTermination = false;
-                }
-            }
-        }
-
-        Terminations = new List<Vector2Int>();
-        for (int x = 0; x < dimensions.x; x++)
-        {
-            for (int y = 0; y < dimensions.y; y++)
-            {
-                if (navMap[x, y].Distance == Constants.MAX_ISH)
-                {
-                    navMap[x, y].IsTermination = false;
-                }
-
-                if (navMap[x, y].IsTermination)
-                {
-                    Terminations.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-    }
+    //             if (navMap[x, y].IsTermination)
+    //             {
+    //                 Terminations.Add(new Vector2Int(x, y));
+    //             }
+    //         }
+    //     }
+    // }
 
     struct BFSPoint
     {
@@ -122,10 +86,10 @@ public class Navigation
         public bool IsTermination;
     }
 
-    public LinkedList<Vector2Int> BFS(Vector2Int startPos, Vector2Int targetPos, Hexagon[,] segment, Building[,] bulidings)
+    public static LinkedList<Vector2Int> BFS(Vector2Int startPos, Vector2Int targetPos, World world)
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        bool[,] visited = new bool[segment.GetLength(0), segment.GetLength(1)];
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         // visited[startPos.x, startPos.y] = true;
         Dictionary<Vector2Int, Vector2Int> nextMap = new Dictionary<Vector2Int, Vector2Int>();
         queue.Enqueue(startPos);
@@ -144,16 +108,17 @@ public class Navigation
                     return GetPathFromMap(nextMap, targetPos, startPos);
                 }
 
-                if (!Helpers.IsInBounds(neighbor, this.dimensions) ||
-                    !segment[neighbor.x, neighbor.y].IsWalkable)
+                Helpers.WorldToChunkPos(neighbor, out Vector2Int chunkIndex, out Vector3Int subPos);
+                Hexagon topHex = world.GetTopHex(chunkIndex, subPos.x, subPos.y);
+                if (topHex == null || !topHex.IsWalkable)
                 {
                     continue;
                 }
 
-                if (!visited[neighbor.x, neighbor.y])
+                if (!visited.Contains(neighbor))
                 {
                     queue.Enqueue(neighbor);
-                    visited[neighbor.x, neighbor.y] = true;
+                    visited.Add(neighbor);
                     nextMap[neighbor] = current;
                 }
             }
@@ -162,7 +127,7 @@ public class Navigation
         return new LinkedList<Vector2Int>();
     }
 
-    private LinkedList<Vector2Int> GetPathFromMap(Dictionary<Vector2Int, Vector2Int> map, Vector2Int endPos, Vector2Int startPos)
+    private static LinkedList<Vector2Int> GetPathFromMap(Dictionary<Vector2Int, Vector2Int> map, Vector2Int endPos, Vector2Int startPos)
     {
         LinkedList<Vector2Int> path = new LinkedList<Vector2Int>();
         Vector2Int iterPos = endPos;

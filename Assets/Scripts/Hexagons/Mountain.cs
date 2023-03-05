@@ -2,7 +2,7 @@
 
 public class Mountain : Hexagon
 {
-    public Mountain(int height) : base(height)
+    public Mountain()
     {
     }
 

@@ -16,7 +16,7 @@ public class GuardTower : Building
     private Dictionary<ItemType, int> _itemsNeededForConstruction = new Dictionary<ItemType, int>
     {
         {ItemType.Log, 3},
-        {ItemType.Rock, 20},
+        {ItemType.Rock, 10},
     };
 
     private string _name = "Guard Tower";

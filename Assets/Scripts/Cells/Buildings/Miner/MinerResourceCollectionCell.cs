@@ -5,9 +5,9 @@ public class MinerResourceCollectionCell : ResourceCollectionCell
 {
     public override List<Vector2Int> HexesCollectedFrom => _hexesCollectedFrom;
     private List<Vector2Int> _hexesCollectedFrom;
-    public override bool CanHarvestFrom(Hexagon hexagon)
+    public override bool CanHarvestFrom(HexagonMono hexagon)
     {
-        return hexagon.Biome == Biome.Mountain && hexagon.HasObstacle;
+        return hexagon.Biome == Biome.Stone;
     }
     private CollectionDetails _biomeCollection = new CollectionDetails
     {

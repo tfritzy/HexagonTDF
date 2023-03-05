@@ -9,6 +9,7 @@ public abstract class Building : Character
     public virtual bool RequiresConfirmationToBuild => true;
     public virtual List<HexSide> ExtraSize => new List<HexSide>();
     public virtual int InventorySize => 8;
+    public bool IsPreview { get; private set; }
     private InventoryCell _inventory;
 
     // Construction
@@ -25,8 +26,9 @@ public abstract class Building : Character
     private ConstructionProgress constructionProgressHoverer;
     private float renderedConstructionPercent;
     private float lastConstructionIncrementTime;
-    private const string CONSTRUCTION_MAT_CONSTRUCTED_PROP = "_PercentConstructed";
-    private const string CONSTRUCTION_MAT_MIN_Y = "_ModelMinY";
+    private const string CONSTRUCTION_MAT_CONSTRUCTED_PROP = "_ConstructedPercent";
+    private const string CONSTRUCTION_MAT_MIN_Y = "_Y_Min";
+    private const string CONSTRUCTION_MAT_MAX_Y = "_Y_Max";
 
     public override void Setup()
     {
@@ -52,6 +54,11 @@ public abstract class Building : Character
 
     private void InitConstruction()
     {
+        if (this.IsPreview)
+        {
+            return;
+        }
+
         if (!NeedsConstruction)
         {
             FinishConstruction();
@@ -61,9 +68,10 @@ public abstract class Building : Character
         this.ItemsUsedForConstruction = new Dictionary<ItemType, int>();
         this.SetMaterial(Prefabs.GetMaterial(MaterialType.UnderConstruction));
         this.underConstructionMaterial = this.Body.GetComponent<MeshRenderer>().material;
-        this._bodyBounds = this.Body.GetComponent<MeshRenderer>().bounds;
+        this._bodyBounds = this.Body.GetComponent<MeshRenderer>().localBounds;
         this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_CONSTRUCTED_PROP, 0f);
         this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_MIN_Y, this._bodyBounds.min.y);
+        this.underConstructionMaterial.SetFloat(CONSTRUCTION_MAT_MAX_Y, this._bodyBounds.extents.y);
         this.constructionProgressHoverer = (ConstructionProgress)Managers.UI.ShowHoverer(Hoverer.ConstructionProgress, this.transform);
 
         foreach (ItemType item in ItemsNeededForConstruction.Keys)
@@ -75,14 +83,8 @@ public abstract class Building : Character
     public Vector3 GetWorldPosition()
     {
         Vector3 center = Helpers.ToWorldPosition(this.GridPosition);
-        foreach (HexSide side in ExtraSize)
-        {
-            center += Helpers.ToWorldPosition(Helpers.GetNeighborPosition(this.GridPosition, side));
-        }
-
-        center /= ExtraSize.Count + 1;
-        center.y = Managers.Board.Board[this.GridPosition.x, this.GridPosition.y].Height * Constants.HEXAGON_HEIGHT;
-
+        Helpers.WorldToChunkPos(this.GridPosition, out Vector2Int chunkIndex, out Vector3Int subPos);
+        center.y = Managers.Board.World.GetTopHexHeight(chunkIndex, subPos.x, subPos.y) * Constants.HEXAGON_HEIGHT;
         return center;
     }
 
@@ -168,9 +170,23 @@ public abstract class Building : Character
     private void FinishConstruction()
     {
         Managers.UI.HideHoverer(this.constructionProgressHoverer);
-        if (numItemsUsedForConstruction >= numItemsNeededForConstruction)
+        if (!NeedsConstruction || numItemsUsedForConstruction >= numItemsNeededForConstruction)
         {
-            this.Body.GetComponent<MeshRenderer>().material = Prefabs.GetMaterial(MaterialType.ColorPalette);
+            this.SetDefaultMaterial();
         }
+    }
+
+    public void MarkPreview()
+    {
+        this.IsPreview = true;
+        this.Disabled = true;
+        this.SetMaterial(Prefabs.GetMaterial(MaterialType.TransparentBlue));
+    }
+
+    public void PromoteToRealBuilding()
+    {
+        this.IsPreview = false;
+        this.Disabled = false;
+        InitConstruction();
     }
 }

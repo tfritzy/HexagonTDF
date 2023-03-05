@@ -24,35 +24,32 @@ public class ItemPickupCell : Cell
 
     private void PickupFromConveyor()
     {
-        if (conveyorCell?.InputBelts == null)
+        if (conveyorCell?.ConveyorBelt == null)
         {
             return;
         }
 
         foreach (ItemType itemType in this.acceptedItems)
         {
-            foreach (ConveyorCell.Belt belt in conveyorCell.InputBelts.Values)
+            var furthestResource = conveyorCell.GetFurthestAlongResourceOfType(conveyorCell.ConveyorBelt, itemType);
+            if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
             {
-                var furthestResource = conveyorCell.GetFurthestAlongResourceOfType(belt, itemType);
-                if (furthestResource != null && furthestResource.ProgressAlongPath > .2f)
+                if (furthestResource.ItemInst.Item.Type == itemType && intoInventory.CanAcceptItem(itemType))
                 {
-                    if (furthestResource.ItemInst.Item.Type == itemType && intoInventory.CanAcceptItem(itemType))
-                    {
-                        Item item = furthestResource.ItemInst.Item;
-                        intoInventory.AddItem(item);
-                        conveyorCell.RemoveItem(belt, item.Id);
-                        GameObject.Destroy(furthestResource.ItemInst.gameObject);
+                    Item item = furthestResource.ItemInst.Item;
+                    intoInventory.AddItem(item);
+                    conveyorCell.RemoveItem(conveyorCell.ConveyorBelt, item.Id);
+                    GameObject.Destroy(furthestResource.ItemInst.gameObject);
 
-                        var newFurthest = conveyorCell.GetFurthestAlongResource(belt);
-                        if (newFurthest != null && newFurthest.ProgressAlongPath > .2f)
-                        {
-                            newFurthest.IsPaused = true;
-                        }
-                    }
-                    else
+                    var newFurthest = conveyorCell.GetFurthestAlongResource(conveyorCell.ConveyorBelt);
+                    if (newFurthest != null && newFurthest.ProgressAlongPath > .2f)
                     {
-                        furthestResource.IsPaused = true;
+                        newFurthest.IsPaused = true;
                     }
+                }
+                else
+                {
+                    furthestResource.IsPaused = true;
                 }
             }
         }

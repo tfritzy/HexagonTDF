@@ -24,4 +24,19 @@ public class Conveyor : Building
 
         base.Setup();
     }
+
+    public override void SetDefaultMaterial()
+    {
+        foreach (MeshRenderer mr in this.GetComponentsInChildren<MeshRenderer>(includeInactive: true))
+        {
+            if (mr.name == "Belt")
+            {
+                mr.material = Prefabs.GetMaterial(MaterialType.ConveyorBelt);
+            }
+            else
+            {
+                mr.material = Prefabs.GetMaterial(MaterialType.ColorPalette);
+            }
+        }
+    }
 }
